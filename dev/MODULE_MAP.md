@@ -81,7 +81,7 @@ RAISES: none; per-probe failures become diagnostic results.
 DEPS: none.
 TEST: injected environments and one actual Chromium probe; codec entries stay untested until exact configuration probes. Requirement group AppShell.
 
-## S07 file-access — SHELL — PLANNED
+## S07 file-access — SHELL — GREEN
 
 Purpose: Transfer explicit user-selected bytes through browser file APIs.
 IN: `FileRequest`, browser file/download ports; user activation originates at caller.

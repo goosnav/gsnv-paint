@@ -1,0 +1,20 @@
+✔ S07 golden native open preserves selected bytes and handle (3.10625ms)
+✔ S07 fallback input reads the file and removes the temporary element (0.69858ms)
+✔ S07 native and fallback picker cancellation are explicit (0.522987ms)
+✔ S07 native save writes segments in order and waits for close before succeeding (0.517599ms)
+✔ S07 existing native handle is reused without a picker (0.426089ms)
+✔ S07 write failure aborts and never falls back to download (0.443038ms)
+✔ S07 close failure aborts and never falls back to download (0.244595ms)
+✔ S07 permission denial remains an error without a fallback write (0.259513ms)
+✔ S07 read errors and aborted writes are errors, not user cancellation (1.747219ms)
+✔ S07 fallback download preserves segmented bytes, file name and MIME, releasing URL (0.580279ms)
+✔ S07 fallback errors clean temporary resources (0.360787ms)
+✔ S07 zero bytes and segmented large reads preserve exact file contents (20.604946ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 213.425266
