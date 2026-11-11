@@ -108,7 +108,7 @@ RAISES: `RangeError` for unknown glyph/size.
 DEPS: none.
 TEST: catalog coverage, unique paths/accessibility, inspected original SVG sheet in Chromium. Requirement group AppShell.
 
-## S10 chrome — SHELL — PLANNED
+## S10 chrome — SHELL — GREEN
 
 Purpose: Render the shared desktop window from a view model.
 IN: `{root:HTMLElement,model:ChromeModel,onCommand:(id:string)=>void,onWorkspace:(workspace)=>void}`.
@@ -170,7 +170,7 @@ Wire S02, S04, S06, S10–S14 and existing built workspace adapters. S01/S03/S05
 
 Rung 1: S01 history → S02 session; S03 metadata codec is verified independently before S15. Rung 2: S03 → S15 + S07 → S13 file seam. Rung 3: S03 → S15 + S08 → S14 recovery seam. Rung 4: S05 → S12 → A-SHELL and S09 → S10, with S11 preview transactions. Later phase sections define their cumulative seams.
 
-Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rung 1 (S01→S02) passes. S01–S09 are GREEN with evidence in PHASE-1.md; remaining Phase 1 bricks are PLANNED. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
+Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rung 1 (S01→S02) passes. S01–S10 are GREEN with evidence in PHASE-1.md; remaining Phase 1 bricks are PLANNED. BATCH is halted before S11 after repairing S10 review findings. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
 
 ## Shared conceptual bindings
 

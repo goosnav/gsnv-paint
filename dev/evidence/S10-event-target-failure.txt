@@ -1,0 +1,41 @@
+✔ S10 golden shared window exposes the requested regions and view model (121.29446ms)
+✔ S10 toolbar/palette route enabled commands once and never activate disabled tools (28.724425ms)
+✖ S10 menus open, route enabled items, close on outside interaction and restore focus on Escape (56.634815ms)
+✔ S10 menu keyboard navigation skips disabled items and wraps (22.916462ms)
+✔ S10 workspace controls emit the exact target and reflect updates (19.801252ms)
+✔ S10 updates retain viewport, mounted renderer, panel content and focused control identity (25.713697ms)
+✔ S10 tool focus displays next action and blur restores current status (18.57733ms)
+✔ S10 supplied strings are literal text and panel elements keep their listeners (17.168353ms)
+✔ S10 dispose is idempotent and removes frame and all listeners (22.100345ms)
+✔ S10 invalid root/callbacks/model raise TypeError before damaging current DOM (16.228303ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 9
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1243.397214
+
+✖ failing tests:
+
+test at src/shared/chrome.test.ts:1:3518
+✖ S10 menus open, route enabled items, close on outside interaction and restore focus on Escape (56.634815ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'true' !== 'false'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/chrome.test.ts:67:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'true',
+    expected: 'false',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

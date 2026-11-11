@@ -1,0 +1,14 @@
+
+> gsnv-paint@0.1.0 test:browser
+> playwright test src/shared/chrome.browser.spec.ts
+
+[WebServer] (node:1653724) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1653751) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/shared/chrome.browser.spec.ts:3:1 › S10 real XP shell fits 1280×720 and preserves focus, menus and workspace content (823ms)
+
+  1 passed (2.1s)

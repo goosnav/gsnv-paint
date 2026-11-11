@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>gsnv-paint · Window shell demonstration</title>
+<link rel="stylesheet" href="/src/shared/chrome.css">
+<style>
+html,body { margin:0; height:100%; overflow:hidden }
+#app { height:100%; }
+.fixture-panel-copy { margin:14px; line-height:1.5; color:#555 }
+.fixture-viewport-notice { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#26364b; pointer-events:none }
+.fixture-viewport-notice strong { font-size:16px }
+.fixture-viewport-notice p { font-size:12px }
+</style>
+<main id="app"></main>
+<script type="module" src="/src/shared/chrome.demo.ts"></script>
+</html>

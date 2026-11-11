@@ -1,0 +1,47 @@
+
+> gsnv-paint@0.1.0 test:browser
+> playwright test src/shared/chrome.browser.spec.ts
+
+[WebServer] (node:1652976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1653006) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/shared/chrome.browser.spec.ts:3:1 › S10 real XP shell fits 1280×720 and preserves focus, menus and workspace content (5.8s)
+
+
+  1) src/shared/chrome.browser.spec.ts:3:1 › S10 real XP shell fits 1280×720 and preserves focus, menus and workspace content
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator:  getByRole('menuitem', { name: 'File', exact: true })
+    Expected: focused
+    Received: inactive
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeFocused" getByRole('menuitem', { name: 'File', exact: true }) with timeout 5000ms
+      - waiting for getByRole('menuitem', { name: 'File', exact: true })
+        14 × locator resolved to <button type="button" role="menuitem" data-menu="file" aria-haspopup="menu" aria-expanded="false" class="gc-menu-trigger" data-focus-key="menu:file">File</button>
+           - unexpected value "inactive"
+
+
+      46 |   await expect(page.getByRole('menuitem', { name: 'Open (Ctrl+O)', exact: true })).toBeFocused();
+      47 |   await page.locator('#app').dispatchEvent('fixture-update');
+    > 48 |   await expect(regressionFile).toBeFocused();
+         |                                ^
+      49 |   await expect(regressionFile).toHaveAttribute('aria-expanded', 'false');
+      50 |   await page.keyboard.press('ArrowDown'); await page.keyboard.press('Tab');
+      51 |   await expect(regressionFile).toHaveAttribute('aria-expanded', 'false');
+        at /home/goosnav/Desktop/code/gsnv-paint/src/shared/chrome.browser.spec.ts:48:32
+
+    attachment #1: xp-shell-1280x720 (image/png) ───────────────────────────────────────────────────
+    test-results/shared-chrome.browser-S10--13a0f-menus-and-workspace-content/attachments/xp-shell-1280x720-4bb8194a3cc4494861f3812a46cb706848d6ca75.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/shared-chrome.browser-S10--13a0f-menus-and-workspace-content/error-context.md
+
+  1 failed
+    src/shared/chrome.browser.spec.ts:3:1 › S10 real XP shell fits 1280×720 and preserves focus, menus and workspace content
