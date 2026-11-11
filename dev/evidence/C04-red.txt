@@ -1,0 +1,426 @@
+Command: node --import tsx --test src/cad/named-variables.test.ts
+✖ C04 empty input yields a complete empty context and graph (1.20741ms)
+✖ C04 full reversed-chain golden resolves forty to twenty to ten (0.159035ms)
+✖ C04 full diamond golden follows expression encounter order and direct consumers (0.119878ms)
+✖ C04 independent roots retain source order rather than lexical order (0.113061ms)
+✖ C04 reverse edges are unique lexical direct consumers including zero-weight references (0.128127ms)
+✖ C04 canonical inch and angle values feed the actual public C03 evaluator (0.164751ms)
+✖ C04 unit suffixes and scientific notation never become graph dependencies (0.130659ms)
+✖ C04 case-sensitive names coexist and duplicate names identify the repeated name (0.117746ms)
+✖ C04 every reserved unit name is rejected during preflight (3.060804ms)
+✖ C04 preflight precedes expression errors and preserves input-order validation (0.420481ms)
+✖ C04 a self cycle reports its closing definition and reference (0.242186ms)
+✖ C04 cycle paths exclude active prefixes and follow reference encounter order (0.220643ms)
+✖ C04 zero-weight references still cause cycles or missing-name errors (0.202977ms)
+✖ C04 all C03 error families retain location, original cause and defining variable (0.311235ms)
+✖ C04 errors name the failed prerequisite rather than the requesting root (0.259399ms)
+✖ C04 arithmetic failures and reached cycles retain C03 encounter precedence (0.278826ms)
+✖ C04 a scalar variable stays explicit at later dimension boundaries (0.199811ms)
+✖ C04 prototype-looking names are own data keys, while undeclared inherited names fail (0.135123ms)
+✖ C04 frozen inputs remain unchanged and repeated results share no mutable output state (0.157807ms)
+✖ C04 a source edit recomputes its values and public C03 seam without mutating the prior result (0.108087ms)
+✖ C04 deterministic independent-root reordering preserves values and direct edges (0.121047ms)
+✖ C04 explicit units remain canonical across document-unit settings (0.104833ms)
+✖ C04 a deep reversed chain resolves iteratively with exact integer values and direct edges (3.150414ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 0
+ℹ fail 23
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 212.689669
+
+✖ failing tests:
+
+test at src/cad/named-variables.test.ts:1:1365
+✖ C04 empty input yields a complete empty context and graph (1.20741ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:26:71)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/cad/named-variables.test.ts:1:1567
+✖ C04 full reversed-chain golden resolves forty to twenty to ten (0.159035ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:30:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/cad/named-variables.test.ts:1:2011
+✖ C04 full diamond golden follows expression encounter order and direct consumers (0.119878ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:37:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/named-variables.test.ts:1:2562
+✖ C04 independent roots retain source order rather than lexical order (0.113061ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:46:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/named-variables.test.ts:1:2873
+✖ C04 reverse edges are unique lexical direct consumers including zero-weight references (0.128127ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:52:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/named-variables.test.ts:1:3517
+✖ C04 canonical inch and angle values feed the actual public C03 evaluator (0.164751ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:61:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/named-variables.test.ts:1:4389
+✖ C04 unit suffixes and scientific notation never become graph dependencies (0.130659ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:75:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/named-variables.test.ts:1:4852
+✖ C04 case-sensitive names coexist and duplicate names identify the repeated name (0.117746ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:82:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/named-variables.test.ts:1:5350
+✖ C04 every reserved unit name is rejected during preflight (3.060804ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'ReservedNameError'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:92:61)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'ReservedNameError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/named-variables.test.ts:1:5605
+✖ C04 preflight precedes expression errors and preserves input-order validation (0.420481ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'DuplicateNameError'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:98:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'DuplicateNameError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/named-variables.test.ts:1:6096
+✖ C04 a self cycle reports its closing definition and reference (0.242186ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'VariableCycleError'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:105:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'VariableCycleError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/named-variables.test.ts:1:6427
+✖ C04 cycle paths exclude active prefixes and follow reference encounter order (0.220643ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'VariableCycleError'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:111:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'VariableCycleError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/named-variables.test.ts:1:7054
+✖ C04 zero-weight references still cause cycles or missing-name errors (0.202977ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'VariableCycleError'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:119:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'VariableCycleError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/named-variables.test.ts:1:7419
+✖ C04 all C03 error families retain location, original cause and defining variable (0.311235ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'ExpressionSyntaxError'
+
+      at expressionFailure (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:19:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:128:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'ExpressionSyntaxError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/named-variables.test.ts:1:7900
+✖ C04 errors name the failed prerequisite rather than the requesting root (0.259399ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'UnitMismatchError'
+
+      at expressionFailure (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:19:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:132:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'UnitMismatchError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/named-variables.test.ts:1:8255
+✖ C04 arithmetic failures and reached cycles retain C03 encounter precedence (0.278826ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'DivisionByZeroError'
+
+      at expressionFailure (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:19:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:137:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'DivisionByZeroError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/named-variables.test.ts:1:8761
+✖ C04 a scalar variable stays explicit at later dimension boundaries (0.199811ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'UnitMismatchError'
+
+      at expressionFailure (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:19:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:144:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'UnitMismatchError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/named-variables.test.ts:1:8964
+✖ C04 prototype-looking names are own data keys, while undeclared inherited names fail (0.135123ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:148:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/named-variables.test.ts:1:9673
+✖ C04 frozen inputs remain unchanged and repeated results share no mutable output state (0.157807ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:162:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/named-variables.test.ts:1:10482
+✖ C04 a source edit recomputes its values and public C03 seam without mutating the prior result (0.108087ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:171:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/named-variables.test.ts:1:11211
+✖ C04 deterministic independent-root reordering preserves values and direct edges (0.121047ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:183:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/named-variables.test.ts:1:11954
+✖ C04 explicit units remain canonical across document-unit settings (0.104833ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:193:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/named-variables.test.ts:1:12486
+✖ C04 a deep reversed chain resolves iteratively with exact integer values and direct edges (3.150414ms)
+  Error: C04 is not implemented.
+      at evaluateVariables (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.ts:47:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:9:96)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/named-variables.test.ts:201:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+Exit code: 1

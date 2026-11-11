@@ -1,6 +1,6 @@
 # Module map: CAD, phase 2
 
-Mode A baseline, maintained during Mode B. **C01–C03 are GREEN; C04–C49 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
+Mode A baseline, maintained during Mode B. **C01–C04 and CAD-A1 are GREEN; C05–C49 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
 
 For a desktop user, CAD turns constrained sketches and ordered feature definitions into editable, validated B-rep solids, measurements, exchange files, and dimensioned drawings. Completion requires the CAD golden cases, error cases, complete feature-family coverage, and measured performance from `05-VERIFICATION.md`.
 
@@ -137,12 +137,12 @@ OUT: `EvaluatedValue`; deterministic canonical units, no host evaluation.
 RAISES: `ExpressionSyntaxError`, `UnknownVariableError`, `UnitMismatchError`, `DivisionByZeroError`, or `NonFiniteValueError` at the offending token.
 DEPS: none.
 
-### C04 named-variables — CORE — PLANNED
+### C04 named-variables — CORE — GREEN
 File `src/cad/named-variables.ts`; public `evaluateVariables(request)`.
-Purpose: Resolve named dimensions in dependency order.
+Purpose: Resolve named dimensions in dependency order. The [file header](../src/cad/named-variables.ts) specifies input-order preflight, deterministic prerequisite traversal, cycle paths and C03 error provenance. Resolution uses C03 with real canonical prerequisite values; no duplicate expression parser or placeholder values.
 IN: `{variables:VariableSet,units:'mm'|'inch'}`; user order may differ from reference order.
-OUT: `{context:ExpressionContext,order:string[],dependents:Record<string,string[]>}`; all values resolved without mutating input.
-RAISES: `DuplicateNameError`, `ReservedNameError`, `VariableCycleError`; propagates C03 expression errors with variable name.
+OUT: `{context:ExpressionContext,order:string[],dependents:Record<string,string[]>}`; all values resolved without mutating input. Every name appears once in resolution order and maps to its unique sorted direct consumers, including zero-weight references; empty input succeeds.
+RAISES: `DuplicateNameError`, `ReservedNameError`, `VariableCycleError`; propagates C03 expression errors with the actual failing variable, original cause and source location. The first reached failure wins; no partial result is returned.
 DEPS: C03.
 
 ### C05 feature-graph — CORE — PLANNED
@@ -535,7 +535,7 @@ Overlap identifies a seam, not duplicate ownership. Every ID has only one file. 
 
 ## Build order and assembly ladder
 
-Build C01 and C02 first: genuine WASM/worker spikes precede domain/UI expansion. C01–C03 and CAD-A1 are GREEN. CAD provisional ladder height is 1; C04 is next. The C03 checkpoint halts before C04 after correcting an independent review arithmetic oracle, as recorded in PHASE-2.md. Human ACCEPTED set remains empty. Then C04…C49 in numeric order, with S01/S03/S04/S15 already provided by phase 1. All listed direct dependencies precede their consumer. C41 consumes dimension types/policy and resolved model measurements; C42 supplies projections through assembly afterward, so neither calls the other.
+Build C01 and C02 first: genuine WASM/worker spikes precede domain/UI expansion. C01–C04 and CAD-A1 are GREEN. CAD provisional ladder height is 1; C05 is next. The C03 checkpoint halted before C04 after correcting an independent review arithmetic oracle; the subsequent C04 checkpoint is recorded in PHASE-2.md. Human ACCEPTED set remains empty. BATCH is halted before C05 pending the revision-exhaustion contract amendment proposed in [PHASE-2.md](PHASE-2.md#c05-pending-contract-amendment--revision-exhaustion); its approved error list is unchanged. After owner resolution, continue C05…C49 in numeric order, with S01/S03/S04/S15 already provided by phase 1. All listed direct dependencies precede their consumer. C41 consumes dimension types/policy and resolved model measurements; C42 supplies projections through assembly afterward, so neither calls the other.
 
 Assemblies are wiring/test entry points, **not bricks**, and contain no geometry or application policy. They may import more than three already-eligible bricks because their only role is explicit connection. If wiring starts interpreting feature definitions, calculating dimensions, or resolving failures, extract that decision into a contracted CORE brick and halt before proceeding.
 

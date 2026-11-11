@@ -1,0 +1,34 @@
+$ node --import tsx --test src/cad/named-variables.test.ts
+✔ C04 empty input yields a complete empty context and graph (1.97909ms)
+✔ C04 full reversed-chain golden resolves forty to twenty to ten (1.9526ms)
+✔ C04 full diamond golden follows expression encounter order and direct consumers (0.525869ms)
+✔ C04 independent roots retain source order rather than lexical order (0.198443ms)
+✔ C04 reverse edges are unique lexical direct consumers including zero-weight references (0.45921ms)
+✔ C04 canonical inch and angle values feed the actual public C03 evaluator (0.395042ms)
+✔ C04 unit suffixes and scientific notation never become graph dependencies (0.252077ms)
+✔ C04 case-sensitive names coexist and duplicate names identify the repeated name (0.306256ms)
+✔ C04 every reserved unit name is rejected during preflight (0.212675ms)
+✔ C04 preflight precedes expression errors and preserves input-order validation (0.270275ms)
+✔ C04 a self cycle reports its closing definition and reference (0.193516ms)
+✔ C04 cycle paths exclude active prefixes and follow reference encounter order (0.284848ms)
+✔ C04 zero-weight references still cause cycles or missing-name errors (0.308044ms)
+✔ C04 all C03 error families retain location, original cause and defining variable (0.391278ms)
+✔ C04 errors name the failed prerequisite rather than the requesting root (0.301072ms)
+✔ C04 arithmetic failures and reached cycles retain C03 encounter precedence (0.326365ms)
+✔ C04 a scalar variable stays explicit at later dimension boundaries (0.154197ms)
+✔ C04 prototype-looking names are own data keys, while undeclared inherited names fail (0.291013ms)
+✔ C04 frozen inputs remain unchanged and repeated results share no mutable output state (0.311077ms)
+✔ C04 a source edit recomputes its values and public C03 seam without mutating the prior result (0.236732ms)
+✔ C04 deterministic independent-root reordering preserves values and direct edges (10.975354ms)
+✔ C04 explicit units remain canonical across document-unit settings (0.295568ms)
+✔ C04 a deep reversed chain resolves iteratively with exact integer values and direct edges (308.784459ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 524.559065
+
+Exit code: 0

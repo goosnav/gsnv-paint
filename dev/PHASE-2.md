@@ -1,6 +1,6 @@
 # Phase 2 — CAD — in progress
 
-C01–C03 and the combined CAD-A1 assembly are GREEN. C04–C49 remain PLANNED. No brick is human-ACCEPTED. The shared provisional assembly height remains 4; the CAD provisional assembly height is 1. C01 was pushed as 3ffb2c3, the C02 prerequisite repair as ebe578a, and C02 as 65a9a5d. CAD-A1 was pushed as 5853b7a. The latest expression-evaluator checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
+C01–C04 and the combined CAD-A1 assembly are GREEN. C05–C49 remain PLANNED. No brick is human-ACCEPTED. The shared provisional assembly height remains 4; the CAD provisional assembly height is 1. C01 was pushed as 3ffb2c3, the C02 prerequisite repair as ebe578a, and C02 as 65a9a5d. CAD-A1 was pushed as 5853b7a and C03 as 04d6b9b. The latest named-variable checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
 
 ## C01 kernel-runtime — GREEN; BATCH halted before C02
 
@@ -194,3 +194,44 @@ How to tweak: source expression, requested kind, document units and variable val
 Requirements remain **PASS 13 / FAIL 0 / UNTESTED 373**. Passed IDs: **SYS-005, CAD-001, CAD-002, CAD-003, CAD-006, REL-001, REL-002, REL-005, REL-011, REL-012, REL-014, REL-023, REL-028**. Every other ID remains UNTESTED in requirements.json. In particular, CAD-017/018/019 require real document switching, bound dimensions and downstream rebuilds, so a standalone evaluator does not pass them. Bare expression migration across a document-unit change, named-variable resolution, editors, full CAD goldens/exports, Image/Video and release gates remain unfinished.
 
 GREEN: S01–S15, A-SHELL, C01–C03, CAD-A1. Human ACCEPTED: none. Shared provisional ladder height **4**, CAD provisional ladder height **1**. **C04 is next** after this checkpoint. The full shippable-product objective remains active; no release or acceptance candidate is claimed.
+
+
+## C04 named-variables — GREEN
+
+Mode B resumed after the pushed C03 checkpoint 04d6b9b. [named-variables.ts](../src/cad/named-variables.ts) implements the map's definition-resolution boundary with one entry point, two public boundary types and C03 as its sole brick dependency. Its header/types/stub preceded the sibling testbench; implementation followed the expected RED.
+
+Ordered definitions may refer to later definitions. The result contains canonical values, each name once in resolution order, and unique sorted direct consumers for every name, including empty lists and zero-weight references. Duplicate and reserved names fail in input-order preflight. Reached cycles identify the closing definition, only the cyclic path segment, and the offending reference. Other C03 errors retain their name, location and original cause while identifying the actual failing definition. Inputs remain unchanged and failures return no partial result.
+
+The iterative stack uses C03's located unknown-variable result to resolve declared prerequisites before retrying with real values. This avoids another expression parser and placeholder arithmetic. Successful C03 dependency lists supply reverse edges even when a prerequisite was already resolved. Own-property-safe records support valid prototype-looking names. First-error reporting is deliberate: an arithmetic or syntax failure can precede discovery of a cycle. Wide expressions may be evaluated repeatedly; there is no incremental cache or resource cutoff. Identifier syntax remains a caller precondition.
+
+Test-first evidence: `node --import tsx --test src/cad/named-variables.test.ts` against the stub exited **1: 23 failed, 0 passed, 0 skipped** ([expected RED](evidence/C04-red.txt)). The first implementation passed **23/23**, exit **0**, none skipped ([focused output](evidence/C04-first.txt)). No production repair or assertion weakening followed that run. The suite covers reversed chains, diamonds, deterministic traversal, complete direct consumers, every declared error family, error provenance, immutable inputs, independent outputs and the actual C03 evaluation seam. A **12,000-definition reversed chain** resolves without recursive stack growth. Independent review reran the existing suite with **23/23 passing**, exit **0**, and found no concrete dependency, error, purity or stack defect; no extra ad hoc script was used.
+
+### Verification and demo
+
+| Command | Result | Evidence |
+|---|---|---|
+| `node --import tsx --test src/cad/named-variables.test.ts` | Exit 0; 23 passed, 0 failed, 0 skipped | [Focused output](evidence/C04-first.txt) |
+| `npm test` | Exit 0; 407 passed, 0 failed, 0 skipped | [Cumulative units](evidence/phase2-through-C04.txt) |
+| `npm run typecheck` | Exit 0; no diagnostics | [Verification output](evidence/C04-verification.txt) |
+| C04 module checker, exact command in linked output | Exit 0; `PASS: src/cad/named-variables.ts` | [Verification output](evidence/C04-verification.txt) |
+| `node --import tsx src/cad/named-variables.demo.ts` | Exit 0; canonical width 40 mm, half 20 mm, order width then half, direct consumer half for width | [Verification output](evidence/C04-verification.txt) |
+| `npm run test:browser` | Exit 0; fresh typecheck/build and 13 passed, 0 failed, 0 skipped, in 18.1 s | [Cumulative browser output](evidence/phase2-through-C04-browser.txt) |
+
+The cumulative browser gate ran once in **Chrome 154.0.8037.97, headless Linux x64, 1280×720**. All nine previously tracked evidence PNGs were preserved byte-for-byte. C04 has no workspace UI; its real collaborator seam is exercised directly with C03. Editable variables and dimension fields, document-unit migration and downstream feature rebuilding remain unconnected. No other browser or OS was smoke-tested. `python3 dev/verify-spec.py` exited 0: TRACE/MAP/LINK PASS, 386 requirements, 158 contracts and 17 conceptual owners; its exact output is in [verification evidence](evidence/C04-verification.txt). This audits specification closure, not product behavior.
+
+The standalone demo prints canonical width **40 mm** and half **20 mm**, resolution order `['width', 'half']`, and direct dependents `{half: [], width: ['half']}`. It is a usage example, separate from automated assertions.
+
+The final staged `git diff --cached --check` initially exited 2 because Node's expected-RED diagnostic output contained trailing spaces on blank lines. Only trailing whitespace in captured evidence was normalized; implementation and test assertions were unchanged. The original diagnostics and final exit-0 whitespace/specification checks are preserved in [verification evidence](evidence/C04-verification.txt). BATCH was already halted before C05 for the contract proposal below.
+
+How to tweak: definitions, their order, expressions and document units are explicit request fields. `RESERVED_NAMES` must remain aligned with C03's fixed unit vocabulary. Changes to grammar or unit semantics belong to C03's contract; changes to traversal, cycle reporting or direct-consumer semantics require matching C04 golden/error/property updates. The resolver does not own feature graphs, variable editors, persistence or physical-unit migration.
+
+Requirements remain **PASS 13 / FAIL 0 / UNTESTED 373**; no requirement status changed. CAD-017/018/019 still require the complete document/editing/rebuild procedures. Full CAD goldens and exports, Image/Video, offline deployment and release packaging remain unfinished. GREEN: S01–S15, A-SHELL, C01–C04, CAD-A1. Human ACCEPTED: none. Shared provisional ladder height **4**, CAD provisional ladder height **1**. **C05 is next, but BATCH is halted before its implementation for the contract amendment proposed below**. This component checkpoint is not a release or acceptance candidate.
+
+
+### C05 pending contract amendment — revision exhaustion
+
+Pre-implementation review found an actual boundary gap: the shared `Revision` type permits `Number.MAX_SAFE_INTEGER` (9,007,199,254,740,991), while a content-changing C05 edit must increase the revision and keep the output a safe integer. The existing C05 error list has no exhaustion error. Silently restricting the input range, wrapping the revision or mislabeling this as a dependency error would violate that contract.
+
+**Proposed amendment, awaiting owner approval:** add `RevisionOverflowError` to C05's RAISES list. After ordinary edit validation, a valid no-op retains its revision and returns no invalidations, including at the maximum revision. A content-changing edit at the maximum throws a readable `RevisionOverflowError`, with no input mutation or partial result. Other successful content changes increase revision by exactly one. The currently approved map contract remains unchanged; no C05 header, tests or implementation have been written.
+
+C05's downstream contracts are C27, C36, C46, C48 and C49, all still PLANNED. No GREEN brick or existing assembly rung is invalidated by this proposal. The `goosnav-modular-coding-method` skill, section 10, says BATCH must “halt immediately on any failing test, any needed contract change, any brick that exceeds a hard limit, and any surprise.” The owner explicitly retained these halt conditions. C04 is GREEN; progression stops before C05 pending this specific amendment. The full product goal remains incomplete.

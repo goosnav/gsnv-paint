@@ -1,0 +1,87 @@
+$ python3 /home/goosnav/.agents/skills/synced/00ab2cd7-2e1c-45ca-814e-5f657fe548ca_724affcc-3df3-47d2-bd47-95d03e739484/goosnav-modular-coding-method/scripts/check_module.py src/cad/named-variables.ts
+PASS: src/cad/named-variables.ts
+
+Exit code: 0
+
+$ npm run typecheck
+
+> gsnv-paint@0.1.0 typecheck
+> tsc --noEmit
+
+
+Exit code: 0
+
+$ node --import tsx src/cad/named-variables.demo.ts
+Canonical variables: {
+  width: { value: 40, kind: 'length' },
+  half: { value: 20, kind: 'length' }
+}
+Resolution order: [ 'width', 'half' ]
+Direct dependents: { half: [], width: [ 'half' ] }
+
+Exit code: 0
+
+$ python3 dev/verify-spec.py
+TRACE PASS: 386 unique requirements, 386 unique verification procedures, 7 needs; metadata and Markdown closure valid.
+MAP PASS: 158 unique contracts; all required fields; known dependencies; maximum 3 collaborators; no cycles.
+LINK PASS: local document links resolve; all 17 conceptual design owners bound.
+REQUIREMENT STATUS: PASS 13; FAIL 0; UNTESTED 373. Status is recorded evidence; this audit does not execute product behavior.
+ANALYTICAL ORACLE width=100: 56654.424808105 mm3; not a kernel test.
+ANALYTICAL ORACLE width=120: 68654.424808105 mm3; not a kernel test.
+
+Exit code: 0
+
+$ git diff --cached --check
+dev/evidence/C04-red.txt:142: trailing whitespace.
++
+dev/evidence/C04-red.txt:145: trailing whitespace.
++
+dev/evidence/C04-red.txt:165: trailing whitespace.
++
+dev/evidence/C04-red.txt:168: trailing whitespace.
++
+dev/evidence/C04-red.txt:188: trailing whitespace.
++
+dev/evidence/C04-red.txt:191: trailing whitespace.
++
+dev/evidence/C04-red.txt:211: trailing whitespace.
++
+dev/evidence/C04-red.txt:214: trailing whitespace.
++
+dev/evidence/C04-red.txt:234: trailing whitespace.
++
+dev/evidence/C04-red.txt:237: trailing whitespace.
++
+dev/evidence/C04-red.txt:257: trailing whitespace.
++
+dev/evidence/C04-red.txt:260: trailing whitespace.
++
+dev/evidence/C04-red.txt:281: trailing whitespace.
++
+dev/evidence/C04-red.txt:284: trailing whitespace.
++
+dev/evidence/C04-red.txt:305: trailing whitespace.
++
+dev/evidence/C04-red.txt:308: trailing whitespace.
++
+dev/evidence/C04-red.txt:329: trailing whitespace.
++
+dev/evidence/C04-red.txt:332: trailing whitespace.
++
+
+Exit code: 2
+Captured Node test diagnostic blank lines contained trailing spaces. Evidence text below and C04-red.txt have trailing whitespace normalized only; source and assertions are unchanged.
+
+$ python3 dev/verify-spec.py
+TRACE PASS: 386 unique requirements, 386 unique verification procedures, 7 needs; metadata and Markdown closure valid.
+MAP PASS: 158 unique contracts; all required fields; known dependencies; maximum 3 collaborators; no cycles.
+LINK PASS: local document links resolve; all 17 conceptual design owners bound.
+REQUIREMENT STATUS: PASS 13; FAIL 0; UNTESTED 373. Status is recorded evidence; this audit does not execute product behavior.
+ANALYTICAL ORACLE width=100: 56654.424808105 mm3; not a kernel test.
+ANALYTICAL ORACLE width=120: 68654.424808105 mm3; not a kernel test.
+
+Exit code: 0
+
+$ git diff --cached --check
+
+Exit code: 0
