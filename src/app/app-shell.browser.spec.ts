@@ -52,6 +52,7 @@ test('A-SHELL actual window composes fixture editing, history, project files and
   await page.keyboard.press('Control+Shift+Z'); await idle(page); await expect(value(page)).toHaveText('60');
   const view = page.locator('[data-fixture-view]:visible');
   const bounds = (await page.locator('.gc-viewport').boundingBox())!;
+  expect(bounds.width).toBeGreaterThan(900);
   await page.mouse.move(bounds.x + 200, bounds.y + 150); await page.mouse.wheel(0, -400);
   await expect(view).toHaveAttribute('data-zoom', '2'); await expect(view).toHaveAttribute('data-pan-x', '-200'); await expect(view).toHaveAttribute('data-pan-y', '-150');
   await page.keyboard.down('Space'); await page.mouse.move(bounds.x + 400, bounds.y + 200); await page.mouse.down();
@@ -101,8 +102,8 @@ test('A-SHELL actual window composes fixture editing, history, project files and
       const url = built.resolvedUrls?.local[0]; expect(url, 'The built preview must expose its loopback URL').toBeTruthy();
       await production.goto(url!);
       const capabilitySummary = production.locator('.gc-capabilities summary');
-      await expect(capabilitySummary).not.toHaveText('Capabilities not checked');
-      await expect(capabilitySummary).toHaveText(/^(7 APIs detected|[1-7] capability notices?)$/);
+      await expect(capabilitySummary).not.toHaveText('Browser support not checked');
+      await expect(capabilitySummary).toHaveText(/^(Browser support|[1-7] browser notices?)$/);
       const capabilityRows = production.locator('.gc-capability');
       await expect(capabilityRows).toHaveCount(7);
       const capabilityLabels = ['Native file pickers', 'Background workers', 'WebAssembly', 'WebGL 2', 'Isolated execution', 'Image clipboard', 'Pen pressure API'];

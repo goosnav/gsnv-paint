@@ -35,7 +35,9 @@ test('S10 golden shared window exposes the requested regions and view model', ()
     workspaces: [...f.root.querySelectorAll('[role="tab"]')].map(node => [node.getAttribute('aria-label'), node.getAttribute('aria-selected')]),
     panels: [...f.root.querySelectorAll('h2')].map(node => node.textContent),
     status: f.root.querySelector('[role="status"]')?.textContent,
-  }, { title: 'Test document * — gsnv-paint', menus: ['File', 'Edit'], workspaces: [['CAD', 'true'], ['Image', 'false'], ['Video', 'false']], panels: ['Properties'], status: 'Ready' });
+  }, { title: 'Test document *', menus: ['File', 'Edit'], workspaces: [['CAD', 'true'], ['Image', 'false'], ['Video', 'false']], panels: ['Properties'], status: 'Ready' });
+  assert.equal(f.root.querySelector('.gc-brand')?.textContent, 'gsnv-paint');
+  assert.ok(f.root.querySelector('.gc-app-header [role=tablist]'));
   assert.equal(chrome.viewport.getAttribute('aria-label'), 'CAD workspace view');
   assert.equal(chrome.viewport.tabIndex, 0);
   assert.equal(f.content.parentElement?.className, 'gc-panel-content');
@@ -97,7 +99,7 @@ test('S10 updates retain viewport, mounted renderer, panel content and focused c
   assert.equal(chrome.viewport, viewport); assert.equal(canvas.parentElement, viewport);
   assert.equal(f.content.parentElement?.className, 'gc-panel-content');
   assert.equal((f.document.activeElement as HTMLElement).dataset.command, 'file.open');
-  assert.equal(f.root.querySelector('[data-window-title]')?.textContent, 'Renamed — gsnv-paint');
+  assert.equal(f.root.querySelector('[data-window-title]')?.textContent, 'Renamed');
 });
 
 test('S10 tool focus displays next action and blur restores current status', () => {

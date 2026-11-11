@@ -116,3 +116,10 @@ Each wrapper only finds a runtime: the installed Node.js when it is 22.12 or new
 The local origin is fixed at `http://127.0.0.1:24173`. Browser storage is per origin, so a port that moved between launches would hide recovery data (D08). A second launch finds the running copy and reopens it. A port held by another program is a visible `APP-START` failure, not a silent move. `GSNV_PAINT_PORT` overrides the port and therefore selects different browser storage.
 
 Evidence on macOS 26 arm64 only: installed-Node and managed-Node starts, checksum mismatch, download failure, missing files, a folder name with spaces and non-ASCII characters, second-launch reuse, `crossOriginIsolated` true in a real page. Linux and Windows wrappers are UNTESTED; `run.sh` additionally parses under `dash`.
+
+
+## D15 — XP-inspired web application chrome
+
+The owner's aesthetic-overhaul request replaces the earlier literal OS-window treatment. CTL-001 now calls for a web application: an application header and workspace navigation, useful menus and status, restrained bevels and neutral panels. No simulated desktop, Start/taskbar/clock or window-management buttons. The original Tahoma-style type and original app glyphs remain. Public S10 inputs/callbacks and stable viewport/panel ownership are unchanged. This authorizes the presentation update; it does not approve C05's separate pending revision contract amendment.
+
+Alternative: remove only the decorative footer. Rejected because duplicated window framing and scattered workspace navigation still obscure the work. Revisit on explicit owner direction. [UI refresh evidence](UI-REFRESH.md) records before/after checks and limits.

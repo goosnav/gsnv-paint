@@ -107,6 +107,8 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
   const historyPanel = document.createElement('div'); historyPanel.dataset.panelHistory = '';
   const recoveryPanel = document.createElement('div'); recoveryPanel.dataset.panelRecovery = '';
   const empty = document.createElement('div'); empty.className = 'app-empty';
+  const emptyHeading = document.createElement('h1'); emptyHeading.textContent = 'Editor in development';
+  const emptyDetail = document.createElement('p'); empty.append(emptyHeading, emptyDetail);
   const mark = (event: SessionEvent<unknown>) => { state = session({ state, event }).state; };
   const status = (message: string) => { if (!disposed) { mark({ type: 'status', message }); render(); } };
   const activeView = () => editors[state.workspace]?.view;
@@ -181,7 +183,7 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
       editors[workspace] = { root: pane, view: adapters[workspace]!.mount({ root: pane, commit: (value, label, base) => commit(workspace, value, label, base), dialog }) };
     }
     for (const [name, editor] of Object.entries(editors)) editor.root.hidden = name !== workspace;
-    empty.hidden = !!editors[workspace]; empty.textContent = `${NAMES[workspace]} editing is not available in this development build.`;
+    empty.hidden = !!editors[workspace]; emptyDetail.textContent = `${NAMES[workspace]} editing is not available in this development build.`;
     activeView()?.render(state.documents[workspace], views[workspace]);
     const history = state.histories[workspace]; historyPanel.replaceChildren();
     const list = document.createElement('ol');

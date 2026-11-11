@@ -1,9 +1,9 @@
 /**
- * PURPOSE    Render the shared desktop window from a workspace view model.
+ * PURPOSE    Render the shared web application shell from a workspace view model.
  * KIND       SHELL
  * CONTRACT   IN: ChromeRequest; live root, valid ChromeModel with nonempty IDs and callbacks. Menu entries
  *            marked toolbar=true supply their glyph; tools populate the left palette.
- *            OUT: update/dispose plus a stable viewport element; XP-style title/menu/
+ *            OUT: update/dispose plus a stable viewport element; XP-inspired application header/menu/
  *            toolbar/palette/panels/status, workspace switcher and accessible controls.
  *            update preserves viewport and caller-owned panel content identities;
  *            dispose is idempotent and removes all installed event listeners.
@@ -72,9 +72,8 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     return element;
   };
   const frame = make('section', 'gc-window');
-  frame.innerHTML = `<header class="gc-titlebar"><span class="gc-app-icon"></span><span data-window-title></span><span data-window-workspace></span></header>
-    <nav class="gc-menubar" role="menubar" aria-label="Menu bar"></nav>
-    <div class="gc-command-row"><div class="gc-standard" role="toolbar" aria-label="Standard toolbar"></div><div class="gc-workspaces" role="tablist" aria-label="Workspace"></div></div>
+  frame.innerHTML = `<header class="gc-app-header"><div class="gc-identity"><span class="gc-app-icon"></span><strong class="gc-brand">gsnv-paint</strong></div><span data-window-title></span><div class="gc-workspaces" role="tablist" aria-label="Workspace"></div></header>
+    <div class="gc-command-row"><nav class="gc-menubar" role="menubar" aria-label="Menu bar"></nav><div class="gc-standard" role="toolbar" aria-label="Standard toolbar"></div></div>
     <div class="gc-main"><aside class="gc-palette" role="toolbar" aria-label="Tool palette"></aside><div class="gc-viewport" role="region" tabindex="0"></div><aside class="gc-panels" role="complementary" aria-label="Panels"></aside></div>
     <footer class="gc-statusbar"><div class="gc-status" role="status"></div><details class="gc-capabilities"><summary></summary><div class="gc-capability-list"></div></details></footer>`;
   const get = <T extends HTMLElement>(selector: string) => frame.querySelector<T>(selector)!;
@@ -116,6 +115,7 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     button.setAttribute('aria-label', button.title);
     if ('status' in item) button.dataset.status = item.status;
     if (item.icon) button.append(renderIcon({ document, name: item.icon, label: item.label, size: 18 }));
+    if (surface === 'toolbar') button.append(make('span', 'gc-command-label', item.label));
     if (surface === 'menu') { button.setAttribute('role', 'menuitem'); button.append(make('span', 'gc-menu-label', item.label), make('span', 'gc-key', item.shortcut)); }
     return button;
   };
@@ -126,8 +126,7 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     // Updates close popups, so their focused command must return to a visible trigger.
     if (activeMenu >= 0 && menuNodes[activeMenu]!.popup.contains(focused)) focusKey = menuNodes[activeMenu]!.button.dataset.focusKey;
     closeMenu(); current = next;
-    get<HTMLElement>('[data-window-title]').textContent = `${next.title || 'Untitled'}${next.dirty ? ' *' : ''} — gsnv-paint`;
-    get<HTMLElement>('[data-window-workspace]').textContent = workspaceNames[next.workspace];
+    get<HTMLElement>('[data-window-title]').textContent = `${next.title || 'Untitled'}${next.dirty ? ' *' : ''}`;
     viewport.setAttribute('aria-label', `${workspaceNames[next.workspace]} workspace view`);
     workspaceButtons.forEach(button => { const selected = button.dataset.workspace === next.workspace; button.setAttribute('aria-selected', String(selected)); button.tabIndex = selected ? 0 : -1; });
     menuBar.replaceChildren(); toolbar.replaceChildren(); palette.replaceChildren(); menuNodes = [];
@@ -153,7 +152,7 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     }
     status.textContent = next.status;
     const unavailable = next.capabilities.filter(capability => capability.status !== 'supported').length;
-    get<HTMLElement>('.gc-capabilities summary').textContent = unavailable ? `${unavailable} capability notice${unavailable === 1 ? '' : 's'}` : next.capabilities.length ? `${next.capabilities.length} APIs detected` : 'Capabilities not checked';
+    get<HTMLElement>('.gc-capabilities summary').textContent = unavailable ? `${unavailable} browser notice${unavailable === 1 ? '' : 's'}` : next.capabilities.length ? 'Browser support' : 'Browser support not checked';
     const list = get<HTMLElement>('.gc-capability-list'); list.replaceChildren();
     for (const capability of next.capabilities) { const row = make('p', 'gc-capability', `${capability.label}: ${capability.message}`); row.dataset.state = capability.status; list.append(row); }
     if (focusKey) {

@@ -195,10 +195,10 @@
     "id": "CTL-001",
     "need": "N-002",
     "phase": 1,
-    "statement": "The shell shall use original Windows XP-era blue-gradient title bars, beveled buttons, a menu bar, icon toolbars, a left tool palette, right docked panels, a status bar, and classic modal dialogs.",
+    "statement": "The shell shall use an original Windows XP-inspired web application interface with blue application navigation, lightly beveled buttons, a menu bar, icon toolbars, a left tool palette, right docked panels, a status bar and modal dialogs, without simulated OS taskbars, desktop framing or window-management controls.",
     "module": "AppShell",
     "verification": "V-CTL-001",
-    "procedure": "Capture every workspace at 1280 by 720 and compare each listed chrome component against the approved visual checklist; all eight components must be present.",
+    "procedure": "Capture every workspace at 1280 by 720 and compare application navigation, menus, toolbars, tools, panels, status and dialogs against the approved web-interface checklist; verify no simulated OS taskbar, window-management controls or desktop frame.",
     "method": "T",
     "status": "UNTESTED",
     "verificationPhase": 4

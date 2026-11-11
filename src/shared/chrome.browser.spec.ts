@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-test('S10 real XP shell fits 1280×720 and preserves focus, menus and workspace content', async ({ page }, testInfo) => {
+test('S10 XP-inspired web shell fits 1280×720 and preserves focus, menus and workspace content', async ({ page }, testInfo) => {
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('/dev/fixtures/chrome.html');
-  await expect(page.locator('[data-window-title]')).toHaveText('Untitled — gsnv-paint');
+  await expect(page.locator('[data-window-title]')).toHaveText('Untitled');
   const viewport = page.getByRole('region', { name: 'CAD workspace view', exact: true });
   const rect = await viewport.boundingBox();
   expect(rect!.width).toBeGreaterThan(700); expect(rect!.height).toBeGreaterThan(450);
@@ -19,7 +19,7 @@ test('S10 real XP shell fits 1280×720 and preserves focus, menus and workspace 
   await page.keyboard.press('Escape'); await expect(file).toBeFocused();
   await file.click(); await page.getByRole('menuitem', { name: 'Open (Ctrl+O)', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('Command received: file.open.');
-  await file.click(); await viewport.click({ position: { x: 50, y: 50 } });
+  await file.click(); await viewport.click({ position: { x: 350, y: 220 } });
   await expect(file).toHaveAttribute('aria-expanded', 'false');
   await viewport.evaluate(node => { node.setAttribute('data-retained', 'yes'); });
   await page.getByRole('tab', { name: 'Image', exact: true }).click();
@@ -27,8 +27,8 @@ test('S10 real XP shell fits 1280×720 and preserves focus, menus and workspace 
   await expect(page.getByRole('region', { name: 'Image workspace view', exact: true })).toHaveAttribute('data-retained', 'yes');
   await page.getByRole('tab', { name: 'CAD', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('CAD workspace selected.');
-  await page.screenshot({ path: 'dev/evidence/S10-xp-shell.png' });
-  await testInfo.attach('xp-shell-1280x720', { path: 'dev/evidence/S10-xp-shell.png', contentType: 'image/png' });
+  await page.screenshot({ path: 'dev/evidence/S10-web-shell.png' });
+  await testInfo.attach('web-shell-1280x720', { path: 'dev/evidence/S10-web-shell.png', contentType: 'image/png' });
   await page.evaluate(async () => {
     const modulePath = '/src/shared/chrome.ts';
     const { createChrome } = await import(modulePath);
@@ -53,5 +53,10 @@ test('S10 real XP shell fits 1280×720 and preserves focus, menus and workspace 
   await regressionFile.focus(); await page.keyboard.press('ArrowDown'); await input.focus();
   await page.keyboard.press('ArrowLeft'); await expect(input).toBeFocused();
   await expect(regressionFile).toHaveAttribute('aria-expanded', 'false');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('tab', { name: 'Video', exact: true }).focus();
+  await expect(page.getByRole('tab', { name: 'Video', exact: true })).toBeFocused();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect(input).toBeVisible();
   expect(errors).toEqual([]);
 });

@@ -110,9 +110,9 @@ TEST: catalog coverage, unique paths/accessibility, inspected original SVG sheet
 
 ## S10 chrome — SHELL — GREEN
 
-Purpose: Render the shared desktop window from a view model.
+Purpose: Render the shared web application shell from a view model.
 IN: `{root:HTMLElement,model:ChromeModel,onCommand:(id:string)=>void,onWorkspace:(workspace)=>void}`.
-OUT: `{update(model):void,dispose():void,viewport:HTMLElement}`; gradient title bar, menu bar, beveled toolbar/palette, docked panels/status and workspace switcher at 1280×720; all listeners removed on disposal.
+OUT: `{update(model):void,dispose():void,viewport:HTMLElement}`; blue application header/navigation, menu bar, lightly beveled toolbar/palette, docked panels/status and workspace switcher at 1280×720, without simulated OS furniture; all listeners removed on disposal.
 RAISES: `TypeError` for missing root or invalid view model.
 DEPS: S09.
 TEST: fake DOM contracts and one real Chromium layout/menu/focus/tooltip/switch smoke with screenshot. Requirement group AppShell.

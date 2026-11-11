@@ -1,16 +1,16 @@
-.gc-dialog { box-sizing:border-box; width:400px; max-width:calc(100vw - 32px); max-height:calc(100vh - 32px); padding:0; border:3px solid #0755d6; border-radius:6px 6px 0 0; background:#ece9d8; color:#172232; box-shadow:4px 5px 12px #0005; font:12px Tahoma,"Microsoft Sans Serif",Arial,sans-serif; }
+.gc-dialog { box-sizing:border-box; width:400px; max-width:calc(100vw - 32px); max-height:calc(100vh - 32px); padding:0; border:1px solid #8799ad; border-radius:5px; background:#f4f3ed; color:#172232; box-shadow:0 12px 40px #15294440; font:12px Tahoma,"Microsoft Sans Serif",Arial,sans-serif; }
 .gc-dialog::backdrop { background:#15294444; }
 .gc-dialog * { box-sizing:border-box; }
-.gc-dialog-title { margin:0; padding:7px 9px; color:#fff; background:linear-gradient(#6ba7ff,#1767e7 15%,#0757e7 65%,#0043b5); font-size:13px; text-shadow:1px 1px #153375; overflow-wrap:anywhere; }
+.gc-dialog-title { margin:0; padding:14px 16px; color:#fff; background:linear-gradient(#2c609a,#224f85); font-size:15px; overflow-wrap:anywhere; }
 .gc-dialog-body { padding:16px; }
 .gc-dialog-field { display:grid; grid-template-columns:110px minmax(0,1fr); gap:10px; align-items:center; margin-bottom:12px; }
 .gc-dialog-field span { overflow-wrap:anywhere; }
-.gc-dialog input,.gc-dialog select { font:inherit; width:100%; min-height:25px; padding:3px 5px; color:#172232; background:white; border:2px solid; border-color:#7e8b9a #fff #fff #7e8b9a; }
+.gc-dialog input,.gc-dialog select { font:inherit; width:100%; min-height:30px; padding:3px 5px; color:#172232; background:white; border:1px solid #a7b3c0; border-radius:2px; }
 .gc-dialog input[type=checkbox] { width:16px; min-height:16px; margin:3px 0; accent-color:#2467bd; }
 .gc-dialog [aria-invalid=true] { border-color:#a62e28; }
 .gc-dialog-error { margin:0 0 12px; min-height:16px; color:#9a201c; line-height:1.4; overflow-wrap:anywhere; }
 .gc-dialog-buttons { display:flex; justify-content:flex-end; gap:8px; }
-.gc-dialog button { min-width:76px; height:27px; font:inherit; background:linear-gradient(#fffef5,#dfdccb); color:#172232; border:1px solid; border-color:#fff #8e8a7a #8e8a7a #fff; border-radius:3px; box-shadow:inset -1px -1px #d3cebc; }
+.gc-dialog button { min-width:76px; height:32px; font:inherit; background:linear-gradient(#fff,#eeeee8); color:#172232; border:1px solid; border-color:#a7b3c0; border-radius:3px; box-shadow:inset 0 1px #fff; }
 .gc-dialog button:not(:disabled):active { background:#d8d4c2; border-color:#8e8a7a #fff #fff #8e8a7a; }
 .gc-dialog button:disabled { color:#89877d; }
 .gc-dialog button:focus-visible { outline:1px dotted #172b46; outline-offset:-5px; }

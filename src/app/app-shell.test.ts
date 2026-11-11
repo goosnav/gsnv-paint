@@ -95,7 +95,7 @@ test('A-SHELL golden starts one empty CAD window with unavailable editing comman
   assert.equal(s.root.querySelector<HTMLButtonElement>('[data-command="file.new"]')!.disabled, true);
   await s.app.dispatch('file.new'); await s.app.dispatch('edit.undo');
   assert.deepEqual(s.app.snapshot().documents, {});
-  assert.match(s.root.textContent!, /capability notice/); s.close();
+  assert.match(s.root.textContent!, /browser notice/); s.close();
 });
 
 test('A-SHELL real sessions keep 100 edits, independent workspaces and exactly-once keyboard history', async () => {

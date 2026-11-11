@@ -72,7 +72,7 @@ Performance requirements retain the user’s targets. The reference hardware and
 
 | ID | Need | Introduced | Full verification | Requirement |
 |---|---|---:|---:|---|
-| CTL-001 | N-002 | 1 | 4 | The shell shall use original Windows XP-era blue-gradient title bars, beveled buttons, a menu bar, icon toolbars, a left tool palette, right docked panels, a status bar, and classic modal dialogs. |
+| CTL-001 | N-002 | 1 | 4 | The shell shall use an original Windows XP-inspired web application interface with blue application navigation, lightly beveled buttons, a menu bar, icon toolbars, a left tool palette, right docked panels, a status bar and modal dialogs, without simulated OS taskbars, desktop framing or window-management controls. |
 | CTL-002 | N-002 | 1 | 1 | The UI font stack shall use a Tahoma-style desktop appearance. |
 | CTL-003 | N-002 | 1 | 4 | The shell shall keep chrome and interaction conventions identical while swapping menus, toolbars, and panels for the selected workspace. |
 | CTL-004 | N-002 | 1 | 4 | Every tool shall have an original icon. |

@@ -1,6 +1,6 @@
 # Architecture
 
-One static browser build, three workspace sessions, one XP-style window shell. TypeScript with strict checking and native DOM/CSS keeps interaction boundaries explicit; Vite produces static assets. Framework selection is an implementation decision, not a new user requirement. No runtime server computation.
+One static browser build, three workspace sessions, one XP-inspired web application shell. TypeScript with strict checking and native DOM/CSS keeps interaction boundaries explicit; Vite produces static assets. Framework selection is an implementation decision, not a new user requirement. No runtime server computation.
 
 ```mermaid
 flowchart LR
