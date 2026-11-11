@@ -1,0 +1,42 @@
+✖ S14 hostile error-message coercion cannot reject the adapter promise (1.394389ms)
+✖ S14 malformed storage payload segments are corrupt responses without invoking accessors (3.301044ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 235.707393
+
+✖ failing tests:
+
+test at src/shared/recovery-session.test.ts:1:11558
+✖ S14 hostile error-message coercion cannot reject the adapter promise (1.394389ms)
+  Error: Message coercion escaped
+      at Object.toString (/home/goosnav/Desktop/code/gsnv-paint/src/shared/recovery-session.test.ts:185:103)
+      at fail (/home/goosnav/Desktop/code/gsnv-paint/src/shared/recovery-session.ts:50:145)
+      at recoverySession (/home/goosnav/Desktop/code/gsnv-paint/src/shared/recovery-session.ts:95:12)
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/recovery-session.test.ts:186:24)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/shared/recovery-session.test.ts:1:12045
+✖ S14 malformed storage payload segments are corrupt responses without invoking accessors (3.301044ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'recovery.format'
+  - 'recovery.corrupt'
+              ^
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/recovery-session.test.ts:197:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'recovery.format',
+    expected: 'recovery.corrupt',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

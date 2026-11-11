@@ -1,0 +1,23 @@
+✔ S13 golden actual S07 open decodes an independent complete container (3.626264ms)
+✔ S13 fallback save/open preserves exact metadata and binary bytes through real S15/S07 (1.700187ms)
+✔ S13 each workspace suggests its extension and native picker type (1.134164ms)
+✔ S13 filename sanitation preserves titles, bounds Unicode and appends one extension (2.436265ms)
+✔ S13 final truncated filenames protect reserved basenames within the byte cap (1.038945ms)
+✔ S13 unexpected codec exceptions stay readable even when an error accessor throws (0.446837ms)
+✔ S13 native save reuses the handle and waits for close after ordered part writes (0.598419ms)
+✔ S13 cancellation from both native pickers and fallback open remains explicit (0.690782ms)
+✔ S13 native permission/read/write errors retain S07 codes and never fall back (1.065975ms)
+✔ S13 malformed files return errors without replacing a caller document (2.348504ms)
+✔ S13 malformed project metadata has its own readable error on open and save (0.761582ms)
+✔ S13 invalid or excessive packages fail before any picker or file write (13.332449ms)
+✔ S13 malformed requests reject without invoking getters or browser ports (0.33279ms)
+✔ S13 large assets cross the actual S07 read-chunk boundary without changing bytes (288.096208ms)
+✔ S13 hostile error-message coercion cannot reject the file adapter promise (0.584115ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 509.175366

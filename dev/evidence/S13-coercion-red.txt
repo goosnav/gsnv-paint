@@ -1,0 +1,24 @@
+✖ S13 hostile error-message coercion cannot reject the file adapter promise (1.612362ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 195.444066
+
+✖ failing tests:
+
+test at src/shared/project-files.test.ts:1:11491
+✖ S13 hostile error-message coercion cannot reject the file adapter promise (1.612362ms)
+  Error: Message coercion escaped
+      at Object.toString (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.test.ts:193:103)
+      at codecFailure (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.ts:77:58)
+      at projectFiles (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.ts:99:28)
+      at invalid (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.test.ts:36:57)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.test.ts:196:30)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)

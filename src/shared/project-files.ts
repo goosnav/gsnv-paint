@@ -72,7 +72,7 @@ function codecFailure(cause: unknown): Failure {
   try {
     code = cause instanceof ContainerFormatError ? 'project.format' : cause instanceof ContainerLimitError ? 'project.limit' :
       cause instanceof Error && cause.name === 'ProjectFormatError' ? 'project.metadata' : 'project.codec';
-    reason = cause instanceof Error ? cause.message : String(cause);
+    reason = String(cause instanceof Error ? cause.message : cause);
   } catch { /* A hostile error value must not reject the adapter promise. */ }
   return failure(code, `Project file operation failed: ${reason}`);
 }

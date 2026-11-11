@@ -1,0 +1,15 @@
+
+> gsnv-paint@0.1.0 test:browser
+> playwright test src/shared/recovery-session.browser.spec.ts
+
+[WebServer] (node:1727604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1727634) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+S14: exact metadata and RGBA bytes survived page close/reopen and reload; stale generation 6 returned committed generation 7; discard persisted.
+  ✓  1 src/shared/recovery-session.browser.spec.ts:3:1 › S14 actual recovery validates a native package across page close, reopen and reload (945ms)
+
+  1 passed (2.2s)

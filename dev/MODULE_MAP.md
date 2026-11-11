@@ -144,7 +144,7 @@ RAISES: none; codec errors become readable project errors.
 DEPS: S15, S07.
 TEST: actual encoded files through file adapter, malformed file leaves document untouched; browser download/open seam. Requirement group ProjectPersistence.
 
-## S14 recovery-session — SHELL — PLANNED
+## S14 recovery-session — SHELL — GREEN
 
 Purpose: Adapt committed project snapshots to recovery storage.
 IN: `{operation:'save'|'recover'|'discard',workspace:Workspace,package?:NativePackage,generation:integer}` and recovery port.
@@ -170,7 +170,7 @@ Wire S02, S04, S06, S10–S14 and existing built workspace adapters. S01/S03/S05
 
 Rung 1: S01 history → S02 session; S03 metadata codec is verified independently before S15. Rung 2: S03 → S15 + S07 → S13 file seam. Rung 3: S03 → S15 + S08 → S14 recovery seam. Rung 4: S05 → S12 → A-SHELL and S09 → S10, with S11 preview transactions. Later phase sections define their cumulative seams.
 
-Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rungs 1–2 pass (S01→S02 and S03→S15 + S07→S13). S01–S13 and S15 are GREEN with evidence in PHASE-1.md; S14 and A-SHELL remain PLANNED. BATCH is halted before S14 after correcting the S13 browser fixture assertion and repairing filename/error-containment findings. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
+Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rungs 1–3 pass (S01→S02; S03→S15 + S07→S13; S03→S15 + S08→S14). S01–S15 are GREEN with evidence in PHASE-1.md; A-SHELL remains PLANNED. BATCH is halted before A-SHELL after repairing S14 malformed-response/error-containment findings and the same error-message coercion defect in S13. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
 
 ## Shared conceptual bindings
 

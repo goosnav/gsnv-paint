@@ -1,0 +1,24 @@
+✔ S14 golden real S03/S15/S08 roundtrip returns exact package and journal metadata (22.672759ms)
+✔ S14 missing recovery and serialized discard return null without touching other workspaces (6.347787ms)
+✔ S14 older and equal saves return the actual newer committed package (3.088764ms)
+✔ S14 overlapping saves retain the highest committed generation across real S08 (4.321277ms)
+✔ S14 journal quota failure retains old valid recovery with storage code and context (2.089129ms)
+✔ S14 simulated interrupted write recovers the previous package despite an advanced journal (2.331043ms)
+✔ S14 corrupt or oversized container bytes remain stored and never replace caller state (3.236524ms)
+✔ S14 common metadata errors remain distinguishable on save and recovery (3.798583ms)
+✔ S14 workspace mismatches are rejected before writes and before returning recovered content (1.639201ms)
+✔ S14 invalid packages cannot overwrite old recovery or reach the port (40.420379ms)
+✔ S14 request bounds and accessors fail without I/O; safe integer extremes are accepted (16.022711ms)
+✔ S14 malformed port results cannot masquerade as saved or discarded recovery (1.296007ms)
+✔ S14 unavailable storage, port rejection and unusual codec errors become contextual results (0.67813ms)
+✔ S14 an observing port retains the authoritative generation even when content is corrupt (4.323757ms)
+✔ S14 hostile error-message coercion cannot reject the adapter promise (0.783447ms)
+✔ S14 malformed storage payload segments are corrupt responses without invoking accessors (0.894474ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 409.377753

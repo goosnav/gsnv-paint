@@ -1,0 +1,80 @@
+
+> gsnv-paint@0.1.0 test:browser
+> playwright test
+
+[WebServer] (node:1733732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 9 tests using 1 worker
+
+(node:1733776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "browser": "154.0.8037.97",
+  "platform": "linux",
+  "arch": "x64",
+  "headless": true,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "results": [
+    {
+      "id": "file-access",
+      "label": "Native file pickers",
+      "status": "supported",
+      "message": "Native file pickers are available; access requires your file selection."
+    },
+    {
+      "id": "workers",
+      "label": "Background workers",
+      "status": "supported",
+      "message": "Background worker API is available."
+    },
+    {
+      "id": "wasm",
+      "label": "WebAssembly",
+      "status": "supported",
+      "message": "WebAssembly compilation is available."
+    },
+    {
+      "id": "webgl2",
+      "label": "WebGL 2",
+      "status": "supported",
+      "message": "WebGL 2 context creation is available."
+    },
+    {
+      "id": "cross-origin-isolation",
+      "label": "Isolated execution",
+      "status": "supported",
+      "message": "Cross-origin isolation is active."
+    },
+    {
+      "id": "clipboard",
+      "label": "Image clipboard",
+      "status": "supported",
+      "message": "Image clipboard API is available; access may require permission."
+    },
+    {
+      "id": "pressure",
+      "label": "Pen pressure API",
+      "status": "supported",
+      "message": "Pressure API is available; pen hardware has not been tested."
+    }
+  ]
+}
+  ✓  1 src/shared/capability-probe.browser.spec.ts:4:1 › S06 actual Chromium API probe matches this isolated browser session (325ms)
+  ✓  2 src/shared/chrome.browser.spec.ts:3:1 › S10 real XP shell fits 1280×720 and preserves focus, menus and workspace content (726ms)
+  ✓  3 src/shared/dialog.browser.spec.ts:3:1 › S11 actual modal previews typed edits, traps focus, rolls back and commits once (504ms)
+S07: 8 binary bytes matched after browser upload, download, and reopen; native picker interaction untested.
+  ✓  4 src/shared/file-access.browser.spec.ts:4:1 › S07 actual browser fallback open/download/reopen preserves exact binary bytes (375ms)
+  ✓  5 src/shared/icons.browser.spec.ts:4:1 › S09 original glyph sheet renders local accessible SVG at desktop size (395ms)
+  ✓  6 src/shared/input-adapter.browser.spec.ts:4:1 › S12 actual Chromium wheel, captured pan, context target and native editing route correctly (651ms)
+S13: 247 bytes matched after browser download/open/re-save; corruption retained prior fixture. Chrome 154.0.8037.97, linux/x64, headless 1280x720. Native picker interaction untested.
+  ✓  7 src/shared/project-files.browser.spec.ts:5:1 › S13 actual Chromium download/open roundtrip preserves project assets and rejects corruption (487ms)
+S14: exact metadata and RGBA bytes survived page close/reopen and reload; stale generation 6 returned committed generation 7; discard persisted.
+  ✓  8 src/shared/recovery-session.browser.spec.ts:3:1 › S14 actual recovery validates a native package across page close, reopen and reload (820ms)
+S08: generation 7 and exact payload bytes survived page close/reopen and reload; journal contains metadata only.
+  ✓  9 src/shared/recovery-store.browser.spec.ts:3:1 › S08 actual browser recovery survives page close/reopen and reload with exact bytes (584ms)
+
+  9 passed (7.2s)

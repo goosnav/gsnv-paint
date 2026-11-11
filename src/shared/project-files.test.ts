@@ -188,3 +188,11 @@ test('S13 large assets cross the actual S07 read-chunk boundary without changing
   fake.ports.showOpenFilePicker = async () => [fileHandle({ file })];
   assert.deepEqual(await projectFiles({ operation: 'open' }, fake.ports), { ok: true, value: packageValue });
 });
+
+test('S13 hostile error-message coercion cannot reject the file adapter promise', async () => {
+  const hostile = Object.defineProperty(new Error('Hidden'), 'message', { value: { toString() { throw new Error('Message coercion escaped'); } } });
+  const broken = new Proxy({}, { ownKeys() { throw hostile; } });
+  const fake = portsFor();
+  assert.equal(errorOf(await invalid({ operation: 'save', package: broken }, fake.ports)).code, 'project.codec');
+  assert.deepEqual(fake.calls, []);
+});

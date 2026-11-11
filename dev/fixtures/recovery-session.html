@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>gsnv-paint · Native project recovery demonstration</title>
+<h1>Native project recovery demonstration</h1>
+<p>This transport sample is not an image editor. Save a generation, then reload or close and reopen this page.</p>
+<p>Older or equal generations return the package already committed. Discard removes only this workspace's recovery.</p>
+<label>Title <input id="title" value="Red pixel sample"></label>
+<label>Generation <input id="generation" type="number" value="1" step="1"></label>
+<button id="save">Save sample recovery</button>
+<button id="recover">Read sample recovery</button>
+<button id="discard">Discard sample recovery</button>
+<p id="observed">No generation observed</p>
+<p id="completed">Completed operations: 0</p>
+<pre id="result">Reading…</pre>
+<script type="module" src="/src/shared/recovery-session.demo.ts"></script>
+</html>
