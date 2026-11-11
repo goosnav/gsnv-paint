@@ -1,0 +1,20 @@
+✔ A-SHELL golden starts one empty CAD window with unavailable editing commands (150.162095ms)
+✔ A-SHELL real sessions keep 100 edits, independent workspaces and exactly-once keyboard history (463.434117ms)
+✔ A-SHELL native Open validates domain before replacement and preserves handles on rejection (45.606115ms)
+✔ A-SHELL Open protects its target workspace, including dirty replacement consent (64.168016ms)
+✔ A-SHELL save binds the written revision while later edits remain dirty (29.575779ms)
+✔ A-SHELL late native save cannot bind its handle to a reopened document with the same ID (42.906182ms)
+✔ A-SHELL denied write permission fails before serialization and preserves dirty state (29.630944ms)
+✔ A-SHELL Save-then-replace proceeds only after a successful write of the protected revision (56.409128ms)
+✔ A-SHELL recovery is offered explicitly and restores editable data as dirty (54.893344ms)
+✔ A-SHELL corrupt recovery remains readable and its observed generation is exceeded after discard (26.983085ms)
+✔ A-SHELL discard runs after queued autosaves without recreating a recovery record (51.926611ms)
+✔ A-SHELL stale editor callbacks and post-disposal file completions cannot replace documents (22.700901ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2137.498717

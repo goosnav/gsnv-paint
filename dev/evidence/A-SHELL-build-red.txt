@@ -1,0 +1,7 @@
+
+> gsnv-paint@0.1.0 build
+> tsc --noEmit && vite build
+
+src/app/main.ts(4,8): error TS2882: Cannot find module or type declarations for side-effect import of '../shared/chrome.css'.
+src/app/main.ts(5,8): error TS2882: Cannot find module or type declarations for side-effect import of '../shared/dialog.css'.
+src/app/main.ts(6,8): error TS2882: Cannot find module or type declarations for side-effect import of './app.css'.

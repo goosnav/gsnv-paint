@@ -1,0 +1,62 @@
+
+> gsnv-paint@0.1.0 test:browser
+> npm run build && playwright test src/app/app-shell.browser.spec.ts
+
+
+> gsnv-paint@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 23 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.55 kB │ gzip:  0.34 kB
+dist/assets/index-CY7G_zY5.css   8.20 kB │ gzip:  2.43 kB
+dist/assets/index-DHTtv-bs.js   57.97 kB │ gzip: 20.06 kB
+
+✓ built in 76ms
+[WebServer] (node:1759466) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1759499) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+A-SHELL browser: Chrome 154.0.8037.97; runner linux/x64; viewport {"width":1280,"height":720}.
+A-SHELL: actual wheel/Space pan and typed 2D view settings applied through the shared seams; right-click target reached the fixture adapter.
+A-SHELL emitted production capability results: [
+  {
+    state: 'supported',
+    text: 'Native file pickers: Native file pickers are available; access requires your file selection.'
+  },
+  {
+    state: 'supported',
+    text: 'Background workers: Background worker API is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebAssembly: WebAssembly compilation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebGL 2: WebGL 2 context creation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'Isolated execution: Cross-origin isolation is active.'
+  },
+  {
+    state: 'supported',
+    text: 'Image clipboard: Image clipboard API is available; access may require permission.'
+  },
+  {
+    state: 'supported',
+    text: 'Pen pressure API: Pressure API is available; pen hardware has not been tested.'
+  }
+]
+A-SHELL: emitted dist via Vite preview exposes one shell and explicitly unavailable CAD/Image/Video editing, without fixture tools or enabled New factories. Deployment remains untested.
+A-SHELL: one window; fixture preview/cancel/commit; undo/redo; exact downloaded container reopens; IDB recovery survives page close/reopen. Native picker interaction and product editing remain untested.
+  ✓  1 src/app/app-shell.browser.spec.ts:20:1 › A-SHELL actual window composes fixture editing, history, project files and local recovery (2.5s)
+
+  1 passed (3.9s)

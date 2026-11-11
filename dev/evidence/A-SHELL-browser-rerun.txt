@@ -1,0 +1,18 @@
+
+> gsnv-paint@0.1.0 test:browser
+> playwright test src/app/app-shell.browser.spec.ts
+
+[WebServer] (node:1751085) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1751112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+A-SHELL browser: Chrome 154.0.8037.97; runner linux/x64; viewport {"width":1280,"height":720}.
+A-SHELL: actual wheel/Space pan and typed 2D view settings applied through the shared seams; right-click target reached the fixture adapter.
+A-SHELL: production root exposes one shell and explicitly unavailable CAD/Image/Video editing, without fixture tools or enabled New factories.
+A-SHELL: one window; fixture preview/cancel/commit; undo/redo; exact downloaded container reopens; IDB recovery survives page close/reopen. Native picker interaction and product editing remain untested.
+  ✓  1 src/app/app-shell.browser.spec.ts:18:1 › A-SHELL actual window composes fixture editing, history, project files and local recovery (2.4s)
+
+  1 passed (3.7s)

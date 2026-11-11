@@ -162,15 +162,17 @@ RAISES: `ContainerFormatError` for malformed framing/schema/checksum/length; `Co
 DEPS: S03.
 TEST: literal independently computed header/checksum fixture, segmented boundary input, multi-asset byte roundtrip, 0 assets, limits, corruption/truncation/future magic/duplicate IDs, and S03 seam. Requirement group ProjectPersistence. [Implemented wire format](NATIVE-CONTAINER-V1.md).
 
-## A-SHELL — assembly, not a brick — PLANNED
+## A-SHELL — assembly, not a brick — GREEN
 
 Wire S02, S04, S06, S10–S14 and existing built workspace adapters. S01/S03/S05/S07/S08/S09 are reached through their declared consumers. Phase 1 provides the window, capability notice, project-envelope open/save and recovery plus test fixture documents; unbuilt domain tools are not advertised as working. Workspace-specific new-document factories, copy/edit operations and panels are added only with their own phase's GREEN modules. Composition code contains routing and lifecycle disposal only. There is no fake CAD mesh, placeholder media edit or invented blank domain schema.
+
+Implemented in `src/app/app-shell.ts`, with a production entry and a separate marked development fixture. The [integration contract](APP-SHELL.md) documents adapter ownership, document epochs, native-handle capture, serialized recovery and modal/input lifecycle. Production editing remains unavailable until the corresponding workspace adapter is built.
 
 ## Assembly ladder and acceptance
 
 Rung 1: S01 history → S02 session; S03 metadata codec is verified independently before S15. Rung 2: S03 → S15 + S07 → S13 file seam. Rung 3: S03 → S15 + S08 → S14 recovery seam. Rung 4: S05 → S12 → A-SHELL and S09 → S10, with S11 preview transactions. Later phase sections define their cumulative seams.
 
-Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rungs 1–3 pass (S01→S02; S03→S15 + S07→S13; S03→S15 + S08→S14). S01–S15 are GREEN with evidence in PHASE-1.md; A-SHELL remains PLANNED. BATCH is halted before A-SHELL after repairing S14 malformed-response/error-containment findings and the same error-message coercion defect in S13. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
+Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rungs 1–4 pass cumulatively, including S05→S12→A-SHELL, S09→S10 and S11 preview transactions. S01–S15 and A-SHELL are GREEN with evidence in PHASE-1.md. Phase 1's shared-component scope is complete; full workspace requirements remain open. BATCH is halted before Phase 2 after repairing assembly storage/modal/recovery/pointer lifecycle findings and build typing. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
 
 ## Shared conceptual bindings
 

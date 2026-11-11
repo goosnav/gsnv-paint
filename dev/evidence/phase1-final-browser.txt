@@ -1,0 +1,99 @@
+
+> gsnv-paint@0.1.0 test:browser
+> npm run build && playwright test
+
+
+> gsnv-paint@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 23 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.55 kB │ gzip:  0.34 kB
+dist/assets/index-CY7G_zY5.css   8.20 kB │ gzip:  2.43 kB
+dist/assets/index-DHTtv-bs.js   57.97 kB │ gzip: 20.06 kB
+
+✓ built in 211ms
+[WebServer] (node:1756807) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 10 tests using 1 worker
+
+(node:1756870) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+A-SHELL browser: Chrome 154.0.8037.97; runner linux/x64; viewport {"width":1280,"height":720}.
+A-SHELL: actual wheel/Space pan and typed 2D view settings applied through the shared seams; right-click target reached the fixture adapter.
+A-SHELL: emitted dist via Vite preview exposes one shell and explicitly unavailable CAD/Image/Video editing, without fixture tools or enabled New factories. Deployment remains untested.
+A-SHELL: one window; fixture preview/cancel/commit; undo/redo; exact downloaded container reopens; IDB recovery survives page close/reopen. Native picker interaction and product editing remain untested.
+  ✓   1 src/app/app-shell.browser.spec.ts:20:1 › A-SHELL actual window composes fixture editing, history, project files and local recovery (2.5s)
+{
+  "browser": "154.0.8037.97",
+  "platform": "linux",
+  "arch": "x64",
+  "headless": true,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "results": [
+    {
+      "id": "file-access",
+      "label": "Native file pickers",
+      "status": "supported",
+      "message": "Native file pickers are available; access requires your file selection."
+    },
+    {
+      "id": "workers",
+      "label": "Background workers",
+      "status": "supported",
+      "message": "Background worker API is available."
+    },
+    {
+      "id": "wasm",
+      "label": "WebAssembly",
+      "status": "supported",
+      "message": "WebAssembly compilation is available."
+    },
+    {
+      "id": "webgl2",
+      "label": "WebGL 2",
+      "status": "supported",
+      "message": "WebGL 2 context creation is available."
+    },
+    {
+      "id": "cross-origin-isolation",
+      "label": "Isolated execution",
+      "status": "supported",
+      "message": "Cross-origin isolation is active."
+    },
+    {
+      "id": "clipboard",
+      "label": "Image clipboard",
+      "status": "supported",
+      "message": "Image clipboard API is available; access may require permission."
+    },
+    {
+      "id": "pressure",
+      "label": "Pen pressure API",
+      "status": "supported",
+      "message": "Pressure API is available; pen hardware has not been tested."
+    }
+  ]
+}
+  ✓   2 src/shared/capability-probe.browser.spec.ts:4:1 › S06 actual Chromium API probe matches this isolated browser session (214ms)
+  ✓   3 src/shared/chrome.browser.spec.ts:3:1 › S10 real XP shell fits 1280×720 and preserves focus, menus and workspace content (644ms)
+  ✓   4 src/shared/dialog.browser.spec.ts:3:1 › S11 actual modal previews typed edits, traps focus, rolls back and commits once (474ms)
+S07: 8 binary bytes matched after browser upload, download, and reopen; native picker interaction untested.
+  ✓   5 src/shared/file-access.browser.spec.ts:4:1 › S07 actual browser fallback open/download/reopen preserves exact binary bytes (370ms)
+  ✓   6 src/shared/icons.browser.spec.ts:4:1 › S09 original glyph sheet renders local accessible SVG at desktop size (404ms)
+  ✓   7 src/shared/input-adapter.browser.spec.ts:4:1 › S12 actual Chromium wheel, captured pan, context target and native editing route correctly (626ms)
+S13: 247 bytes matched after browser download/open/re-save; corruption retained prior fixture. Chrome 154.0.8037.97, linux/x64, headless 1280x720. Native picker interaction untested.
+  ✓   8 src/shared/project-files.browser.spec.ts:5:1 › S13 actual Chromium download/open roundtrip preserves project assets and rejects corruption (485ms)
+S14: exact metadata and RGBA bytes survived page close/reopen and reload; stale generation 6 returned committed generation 7; discard persisted.
+  ✓   9 src/shared/recovery-session.browser.spec.ts:3:1 › S14 actual recovery validates a native package across page close, reopen and reload (804ms)
+S08: generation 7 and exact payload bytes survived page close/reopen and reload; journal contains metadata only.
+  ✓  10 src/shared/recovery-store.browser.spec.ts:3:1 › S08 actual browser recovery survives page close/reopen and reload with exact bytes (573ms)
+
+  10 passed (9.4s)

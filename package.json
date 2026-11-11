@@ -8,7 +8,8 @@
     "typecheck": "tsc --noEmit",
     "test:spec": "python3 dev/verify-spec.py",
     "dev": "vite",
-    "test:browser": "playwright test"
+    "build": "tsc --noEmit && vite build",
+    "test:browser": "npm run build && playwright test"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",

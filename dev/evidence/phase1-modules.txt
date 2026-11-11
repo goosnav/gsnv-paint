@@ -1,0 +1,15 @@
+PASS: src/shared/capability-probe.ts
+PASS: src/shared/chrome.ts
+PASS: src/shared/dialog.ts
+PASS: src/shared/file-access.ts
+PASS: src/shared/history.ts
+PASS: src/shared/icons.ts
+PASS: src/shared/input-adapter.ts
+PASS: src/shared/keymap.ts
+PASS: src/shared/native-container.ts
+PASS: src/shared/project-files.ts
+PASS: src/shared/project-format.ts
+PASS: src/shared/recovery-session.ts
+PASS: src/shared/recovery-store.ts
+PASS: src/shared/session.ts
+PASS: src/shared/view-transform.ts

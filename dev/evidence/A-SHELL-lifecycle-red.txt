@@ -1,0 +1,46 @@
+✖ A-SHELL Open completion during another modal settles without a hidden replacement prompt (212.87111ms)
+✖ A-SHELL a new edit after pending discard makes the resulting recovery available again (58.540613ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1138.232062
+
+✖ failing tests:
+
+test at src/app/app-shell.test.ts:1:16778
+✖ A-SHELL Open completion during another modal settles without a hidden replacement prompt (212.87111ms)
+  AssertionError [ERR_ASSERTION]: the pending Open must settle instead of losing its confirmation callback
+
+  false !== true
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:257:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:17861
+✖ A-SHELL a new edit after pending discard makes the resulting recovery available again (58.540613ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Local recovery enabled/. Input:
+
+  'No recovery stored.'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:270:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'No recovery stored.',
+    expected: /Local recovery enabled/,
+    operator: 'match',
+    diff: 'simple'
+  }
