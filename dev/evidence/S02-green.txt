@@ -1,0 +1,43 @@
+✔ S02 golden transcript preserves exact history, metadata and dirty state (2.54108ms)
+✔ S02 unopened workspaces have no invented domain state (0.205385ms)
+✔ S02 each workspace owns independent histories and saved baselines (0.329464ms)
+✔ S02 new documents are dirty; saved open resets history and baseline (1.182269ms)
+✔ S02 undo/redo restores dirty state at the exact saved revision (0.270683ms)
+✔ S02 asynchronous save of an earlier revision leaves newer edits dirty (0.148324ms)
+✔ S02 late save completion after replacement is ignored (1.817342ms)
+✔ S02 a failed save reports status without losing dirty edits (0.236658ms)
+✔ S02 S01 seam: 120 commits retain 100 transactions and new edits discard redo (2.401081ms)
+✔ S02 roundtrip property restores values and dirty states across revision sequences (9.389111ms)
+✔ S02 accepts immutable maps, typed arrays and bigint domain values without cloning (0.192314ms)
+✔ S02 frozen history/session inputs are unmodified, including boundary undo/redo (0.533763ms)
+✔ S02 undo on an unopened workspace raises RangeError (0.440082ms)
+✔ S02 redo on an unopened workspace raises RangeError (0.073062ms)
+✔ S02 commit on an unopened workspace raises RangeError (0.153704ms)
+✔ S02 saved on an unopened workspace raises RangeError (0.15007ms)
+✔ S02 malformed event 0 raises TypeError (0.142214ms)
+✔ S02 malformed event 1 raises TypeError (0.071197ms)
+✔ S02 malformed event 2 raises TypeError (0.066692ms)
+✔ S02 malformed event 3 raises TypeError (0.064356ms)
+✔ S02 malformed event 4 raises TypeError (0.086476ms)
+✔ S02 malformed event 5 raises TypeError (0.103987ms)
+✔ S02 malformed event 6 raises TypeError (0.122294ms)
+✔ S02 malformed event 7 raises TypeError (0.067792ms)
+✔ S02 malformed event 8 raises TypeError (0.075686ms)
+✔ S02 malformed event 9 raises TypeError (0.067482ms)
+✔ S02 malformed event 10 raises TypeError (0.073246ms)
+✔ S02 malformed event 11 raises TypeError (0.063128ms)
+✔ S02 malformed event 12 raises TypeError (0.060531ms)
+✔ S02 malformed event 13 raises TypeError (0.059884ms)
+✔ S02 malformed event 14 raises TypeError (0.068257ms)
+✔ S02 malformed event 15 raises TypeError (0.063456ms)
+✔ S02 malformed event 16 raises TypeError (0.059795ms)
+✔ S02 malformed event 17 raises TypeError (0.085126ms)
+✔ S02 malformed event 18 raises TypeError (0.095798ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 224.241371

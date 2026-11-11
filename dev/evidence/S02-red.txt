@@ -1,0 +1,24 @@
+✖ S02 golden transcript preserves exact history, metadata and dirty state (2.233242ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 198.297104
+
+✖ failing tests:
+
+test at src/shared/session.test.ts:1:860
+✖ S02 golden transcript preserves exact history, metadata and dirty state (2.233242ms)
+  Error: Not implemented
+      at session (/home/goosnav/Desktop/code/gsnv-paint/src/shared/session.ts:48:9)
+      at reduce (/home/goosnav/Desktop/code/gsnv-paint/src/shared/session.test.ts:11:18)
+      at opened (/home/goosnav/Desktop/code/gsnv-paint/src/shared/session.test.ts:15:36)
+      at changed (/home/goosnav/Desktop/code/gsnv-paint/src/shared/session.test.ts:16:30)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/session.test.ts:19:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)

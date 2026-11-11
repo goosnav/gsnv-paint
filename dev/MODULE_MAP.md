@@ -36,7 +36,7 @@ RAISES: `RangeError` for invalid limit/jump; `TypeError` for invalid operation/l
 DEPS: none.
 TEST: 120 distinct commits with 100 retained, full undo/redo, branch after undo, boundary no-op, negative/invalid cases, explicit golden state and immutability property. Requirement group CommandHistory.
 
-## S02 session — CORE — PLANNED
+## S02 session — CORE — GREEN
 
 Purpose: Reduce workspace-level document commands.
 IN: `{state:Session<T>,event:SessionEvent<T>}`; snapshot content validity established by the owning workspace codec/factory; every event carries required workspace and explicit values.
