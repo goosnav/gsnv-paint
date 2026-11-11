@@ -1,0 +1,21 @@
+✖ S12 golden command and gesture transcript uses local coordinates and stable button identity (103.144439ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 947.396167
+
+✖ failing tests:
+
+test at src/shared/input-adapter.test.ts:1:2626
+✖ S12 golden command and gesture transcript uses local coordinates and stable button identity (103.144439ms)
+  Error: Not implemented
+      at bindInput (/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.ts:45:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.test.ts:34:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)

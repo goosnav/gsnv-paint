@@ -1,0 +1,39 @@
+✖ S12 context target uses hit testing when pointer capture retargets the native event (134.044351ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1024.969228
+
+✖ failing tests:
+
+test at src/shared/input-adapter.test.ts:1:12752
+✖ S12 context target uses hit testing when pointer capture retargets the native event (134.044351ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    {
+      point: {
+        x: 30,
+        y: 40
+      },
+  +   targetId: null,
+  -   targetId: 'face-7',
+      type: 'context'
+    }
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.test.ts:192:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { type: 'context', point: { x: 30, y: 40 }, targetId: null },
+    expected: { type: 'context', point: { x: 30, y: 40 }, targetId: 'face-7' },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

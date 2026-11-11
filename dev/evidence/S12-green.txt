@@ -1,0 +1,34 @@
+✔ S12 golden command and gesture transcript uses local coordinates and stable button identity (130.592565ms)
+✔ S12 held Space pans 2D only and latches mode until release (22.95716ms)
+✔ S12 preview/sketch Space pans while timeline Space plays once and CAD3D does not pan (47.368711ms)
+✔ S12 key repeats preserve undo/redo/delete/frame stepping and suppress repeated file/playback actions (10.918418ms)
+✔ S12 native text, select, editable and button events preserve editing and activation (32.429007ms)
+✔ S12 dialog ancestry blocks stale workspace shortcuts and consumed/IME events are ignored (18.459468ms)
+✔ S12 pressure and modifiers remain normalized; hover uses zero pressure (67.659973ms)
+✔ S12 capture loss cancels once and separate pointers do not cross-release (9.641086ms)
+✔ S12 blur cancels active tools and resets Space without duplicate endings (10.447916ms)
+✔ S12 focus cancels active tools and resets Space without duplicate endings (9.758786ms)
+✔ S12 escape cancels active tools and resets Space without duplicate endings (9.140691ms)
+✔ S12 dispose cancels active tools and resets Space without duplicate endings (9.88632ms)
+✔ S12 wheel units, clamp and native scroll exceptions preserve finite factors (11.253615ms)
+✔ S12 context target never escapes root; pointer position can be outside captured view (10.758811ms)
+✔ S12 dispose removes listeners, restores touch-action and supports callback disposal (20.678703ms)
+✔ S12 viewRole none accepts commands without drawing gestures; stale text focus does not swallow view click (9.019941ms)
+✔ S12 invalid ports/context/capture support raise TypeError before installing listeners (6.903155ms)
+✔ S12 held Space resets after blur so the next drag is a tool stroke (8.105674ms)
+✔ S12 held Space resets after focus so the next drag is a tool stroke (8.218608ms)
+✔ S12 held Space resets after escape so the next drag is a tool stroke (8.849303ms)
+✔ S12 failed native capture surfaces the error and retains no pointer lifetime (10.565193ms)
+✔ S12 disposal during replacement cannot start a new pointer after cleanup (7.520265ms)
+✔ S12 disposal during focus cannot start a new pointer after cleanup (8.091803ms)
+✔ S12 context target uses hit testing when pointer capture retargets the native event (9.757204ms)
+✔ S12 focused buttons preserve activation while routing document shortcuts (10.386454ms)
+✔ S12 captured right-click over a native control or outside the view remains native (8.974339ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1455.112147

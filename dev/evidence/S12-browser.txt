@@ -1,0 +1,14 @@
+
+> gsnv-paint@0.1.0 test:browser
+> playwright test src/shared/input-adapter.browser.spec.ts
+
+[WebServer] (node:1684341) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1684378) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/shared/input-adapter.browser.spec.ts:4:1 › S12 actual Chromium wheel, captured pan, context target and native editing route correctly (775ms)
+
+  1 passed (2.0s)

@@ -126,7 +126,7 @@ RAISES: `TypeError` for invalid fields/callbacks.
 DEPS: none.
 TEST: live preview/typed values, invalid range, Esc rollback/Enter commit, keyboard focus, one actual browser smoke. Requirement group AppShell.
 
-## S12 input-adapter — SHELL — PLANNED
+## S12 input-adapter — SHELL — GREEN
 
 Purpose: Forward browser input as normalized commands and gestures.
 IN: `{root:HTMLElement,context:()=>CommandContext,onCommand:(id)=>void,onGesture:(Gesture)=>void}`; context supplies keymap workspace/target and active tool status.
@@ -170,7 +170,7 @@ Wire S02, S04, S06, S10–S14 and existing built workspace adapters. S01/S03/S05
 
 Rung 1: S01 history → S02 session; S03 metadata codec is verified independently before S15. Rung 2: S03 → S15 + S07 → S13 file seam. Rung 3: S03 → S15 + S08 → S14 recovery seam. Rung 4: S05 → S12 → A-SHELL and S09 → S10, with S11 preview transactions. Later phase sections define their cumulative seams.
 
-Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rung 1 (S01→S02) passes. S01–S11 are GREEN with evidence in PHASE-1.md; remaining Phase 1 bricks are PLANNED. BATCH is halted before S12 after repairing S11 callback reentry findings. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
+Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rung 1 (S01→S02) passes. S01–S12 are GREEN with evidence in PHASE-1.md; remaining Phase 1 bricks are PLANNED. BATCH is halted before S15 after repairing S12 lifecycle, focus and captured context-target findings. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
 
 ## Shared conceptual bindings
 

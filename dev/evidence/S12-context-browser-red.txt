@@ -1,0 +1,40 @@
+
+> gsnv-paint@0.1.0 test:browser
+> playwright test src/shared/input-adapter.browser.spec.ts
+
+[WebServer] (node:1679789) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1679837) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/shared/input-adapter.browser.spec.ts:4:1 › S12 actual Chromium wheel, captured pan, context target and native editing route correctly (596ms)
+
+
+  1) src/shared/input-adapter.browser.spec.ts:4:1 › S12 actual Chromium wheel, captured pan, context target and native editing route correctly
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+    -   "targetId": "face-7",
+    +   "targetId": null,
+        "type": "context",
+      }
+
+      23 |   expect((await gestures()).some(value => value.type === 'pointer' && value.phase === 'down' && value.ctrl)).toBe(true);
+      24 |   await target.click({ button: 'right' });
+    > 25 |   expect((await gestures()).filter(value => value.type === 'context').at(-1)).toMatchObject({ type: 'context', targetId: 'face-7' });
+         |                                                                               ^
+      26 |   await page.getByRole('button', { name: 'Reset demonstration' }).click();
+      27 |   const input = page.getByRole('textbox', { name: 'Native text' }); await input.click(); await page.keyboard.press('Control+A'); await page.keyboard.press('Control+C'); await page.keyboard.press('End'); await page.keyboard.press('Control+V');
+      28 |   await expect(input).toHaveValue('alphaalpha'); expect(await commands()).toEqual([]);
+        at /home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.browser.spec.ts:25:79
+
+    Error Context: test-results/shared-input-adapter.brows-9556f-ive-editing-route-correctly/error-context.md
+
+  1 failed
+    src/shared/input-adapter.browser.spec.ts:4:1 › S12 actual Chromium wheel, captured pan, context target and native editing route correctly

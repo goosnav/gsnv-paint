@@ -1,0 +1,67 @@
+✔ S12 held Space resets after blur so the next drag is a tool stroke (129.30913ms)
+✔ S12 held Space resets after focus so the next drag is a tool stroke (25.69373ms)
+✔ S12 held Space resets after escape so the next drag is a tool stroke (12.23496ms)
+✔ S12 failed native capture surfaces the error and retains no pointer lifetime (15.411558ms)
+✖ S12 disposal during replacement cannot start a new pointer after cleanup (15.391523ms)
+✖ S12 disposal during focus cannot start a new pointer after cleanup (10.222644ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 4
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1069.796717
+
+✖ failing tests:
+
+test at src/shared/input-adapter.test.ts:1:12080
+✖ S12 disposal during replacement cannot start a new pointer after cleanup (15.391523ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    [
+      'down',
+      'cancel',
+  +   'down'
+    ]
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.test.ts:184:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'down', 'cancel', 'down' ],
+    expected: [ 'down', 'cancel' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/input-adapter.test.ts:1:12080
+✖ S12 disposal during focus cannot start a new pointer after cleanup (10.222644ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+  + [
+  +   'down'
+  + ]
+  - []
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.test.ts:184:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'down' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

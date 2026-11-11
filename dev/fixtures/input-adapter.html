@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>gsnv-paint · Input demonstration</title>
+<style>
+body { margin:24px 40px; background:#ece9d8; font:12px Tahoma,Arial,sans-serif; color:#172232; }
+h1 { font-size:18px; margin:0 0 8px; }
+.controls { display:flex; align-items:center; gap:12px; margin:14px 0; }
+button,select,input { font:inherit; padding:4px 8px; }
+#view { width:760px; height:320px; position:relative; overflow:hidden; background:#a6b2c2; outline:2px solid #657080; }
+#view:focus { outline:2px solid #0755d6; }
+#shape { transform-origin:0 0; position:absolute; inset:0; pointer-events:none; }
+#target { position:absolute; left:100px; top:80px; width:180px; height:100px; border:2px solid #245b9c; background:#cce2fa; display:grid; place-items:center; pointer-events:auto; }
+#native { position:absolute; left:14px; bottom:14px; }
+#native-button { position:absolute; left:215px; bottom:14px; }
+.logs { display:grid; grid-template-columns:760px 1fr; gap:16px; }
+pre { background:#fffef8; border:1px solid #b7b2a2; padding:8px; overflow:auto; margin:8px 0; }
+#gestures { max-height:175px; }
+#view-state { width:740px; }
+</style>
+<h1>View input demonstration</h1><p>Wheel zooms at the cursor. Hold Space and drag to pan. This fixture shows input routing; it does not edit a document.</p>
+<div class="controls"><button id="reset">Reset demonstration</button><label>Context <select id="context"><option value="canvas2d">Image canvas</option><option value="timeline">Video timeline</option><option value="cad3d">CAD view</option></select></label></div>
+<div id="view" tabindex="0" role="region" aria-label="Input view"><div id="shape"><div id="target" data-target-id="face-7"><span>Face 7</span></div></div><input id="native" aria-label="Native text" value="alpha"><button id="native-button" data-clicks="0">Panel action</button></div>
+<pre id="view-state" aria-label="View state"></pre><div class="logs"><pre id="gestures" aria-label="Gestures"></pre><div><strong>Commands</strong><pre id="commands"></pre></div></div>
+<script type="module" src="/src/shared/input-adapter.demo.ts"></script></html>
