@@ -1,6 +1,6 @@
 # Module map: CAD, phase 2
 
-Mode A baseline, maintained during Mode B. **C01–C02 are GREEN; C03–C49 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
+Mode A baseline, maintained during Mode B. **C01–C03 are GREEN; C04–C49 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
 
 For a desktop user, CAD turns constrained sketches and ordered feature definitions into editable, validated B-rep solids, measurements, exchange files, and dimensioned drawings. Completion requires the CAD golden cases, error cases, complete feature-family coverage, and measured performance from `05-VERIFICATION.md`.
 
@@ -129,9 +129,9 @@ RAISES: `SolverLoadError` on load/init; `DisposedSessionError` on reuse; `Solver
 DEPS: none.
 Vendor: `@salusoft89/planegcs@1.3.0`; the public port is readable only inside the owning worker. Spike precedes sketch UI and cannot pass using a fake. D11 records the repaired declaration packaging; D12 records the guarded facade, temporary probes and worker-owned cleanup. Actual constrained-rectangle and contradictory-set worker evidence is in [PHASE-2.md](PHASE-2.md). Module URLs identify the native glue default initializer; the published wrapper is bundled normally. Exceptions from engine methods propagate after port invalidation; owner termination reclaims failed native state. CAD-A1 integration is GREEN with the paired-worker seam evidence in PHASE-2.md; production sketch/model integration remains pending.
 
-### C03 dimension-expressions — CORE — PLANNED
+### C03 dimension-expressions — CORE — GREEN
 File `src/cad/dimension-expressions.ts`; public `evaluateDimension(request)`.
-Purpose: Evaluate dimension arithmetic with unit checking.
+Purpose: Evaluate dimension arithmetic with unit checking. The [file header](../src/cad/dimension-expressions.ts) specifies literal promotion, unit suffixes, precedence and error locations. Bare numeric arithmetic uses document length units or degrees at a dimension boundary; explicit scalar variables and dimensional ratios remain scalar. Variables carry canonical values. Unit switching must preserve existing physical geometry at the document/editing boundary; C03 alone does not perform that migration.
 IN: `{expression:DimensionValue,context:ExpressionContext}`; grammar and operators are those above.
 OUT: `EvaluatedValue`; deterministic canonical units, no host evaluation.
 RAISES: `ExpressionSyntaxError`, `UnknownVariableError`, `UnitMismatchError`, `DivisionByZeroError`, or `NonFiniteValueError` at the offending token.
@@ -535,7 +535,7 @@ Overlap identifies a seam, not duplicate ownership. Every ID has only one file. 
 
 ## Build order and assembly ladder
 
-Build C01 and C02 first: genuine WASM/worker spikes precede domain/UI expansion. C01–C02 are GREEN. The repaired C02 checkpoint has been followed by GREEN CAD-A1 paired-worker integration. CAD provisional ladder height is 1; C03 is next. This checkpoint halts before C03 after repairing the specification-log capture order described in PHASE-2.md. Human ACCEPTED set remains empty. Then C03…C49 in numeric order, with S01/S03/S04/S15 already provided by phase 1. All listed direct dependencies precede their consumer. C41 consumes dimension types/policy and resolved model measurements; C42 supplies projections through assembly afterward, so neither calls the other.
+Build C01 and C02 first: genuine WASM/worker spikes precede domain/UI expansion. C01–C03 and CAD-A1 are GREEN. CAD provisional ladder height is 1; C04 is next. The C03 checkpoint halts before C04 after correcting an independent review arithmetic oracle, as recorded in PHASE-2.md. Human ACCEPTED set remains empty. Then C04…C49 in numeric order, with S01/S03/S04/S15 already provided by phase 1. All listed direct dependencies precede their consumer. C41 consumes dimension types/policy and resolved model measurements; C42 supplies projections through assembly afterward, so neither calls the other.
 
 Assemblies are wiring/test entry points, **not bricks**, and contain no geometry or application policy. They may import more than three already-eligible bricks because their only role is explicit connection. If wiring starts interpreting feature definitions, calculating dimensions, or resolving failures, extract that decision into a contracted CORE brick and halt before proceeding.
 

@@ -1,6 +1,6 @@
 # Phase 2 — CAD — in progress
 
-C01–C02 and the combined CAD-A1 assembly are GREEN. C03–C49 remain PLANNED. No brick is human-ACCEPTED. The shared provisional assembly height remains 4; the CAD provisional assembly height is 1. C01 was pushed as 3ffb2c3, the C02 prerequisite repair as ebe578a, and C02 as 65a9a5d. The latest paired-engine checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
+C01–C03 and the combined CAD-A1 assembly are GREEN. C04–C49 remain PLANNED. No brick is human-ACCEPTED. The shared provisional assembly height remains 4; the CAD provisional assembly height is 1. C01 was pushed as 3ffb2c3, the C02 prerequisite repair as ebe578a, and C02 as 65a9a5d. CAD-A1 was pushed as 5853b7a. The latest expression-evaluator checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
 
 ## C01 kernel-runtime — GREEN; BATCH halted before C02
 
@@ -160,3 +160,37 @@ Requirements remain **PASS 13 / FAIL 0 / UNTESTED 373**. Passed IDs: **SYS-005, 
 How to tweak: worker `WORK_MS = 600` defines only the responsiveness fixture; the browser assertion deliberately requires at least 600 ms. Demo `WATCHDOG_MS = 30_000` bounds fixture requests, not production job policy. Engine URLs and tolerances remain explicit pinned inputs. Switching vendor builds requires renewed API, license, resource and real-browser evidence. The ports' single-worker lifetime and termination after uncertainty are invariants, not tuning values.
 
 GREEN: S01–S15, A-SHELL, C01–C02, CAD-A1. Human ACCEPTED: none. Shared provisional ladder height: **4**; CAD provisional ladder height: **1**. C03 is next after this halted checkpoint. Phase 2 and the full product objective remain active and incomplete; this checkpoint is not CANDIDATE_FOR_ACCEPTANCE.
+
+
+## C03 dimension-expressions — GREEN
+
+Mode B resumed from clean, pushed 5853b7a. The previous turn made progress through the real paired-engine seam. [dimension-expressions.ts](../src/cad/dimension-expressions.ts) now implements the map's UI-free arithmetic boundary with one entry point, two public boundary types, and no dependencies. Its header/types/stub preceded the sibling testbench; the implementation followed the observed RED.
+
+Inputs contain a typed dimension source, document length units and canonical variable values. Output is a finite canonical value, its field kind and unique sorted dependency names. The grammar supports decimal/scientific literals, documented unit suffixes, identifiers, parentheses, unary signs and the requested arithmetic operators, including their Unicode glyphs. It has no functions, host evaluation or implicit multiplication. Bare arithmetic adopts millimetres/inches or degrees only where dimensional context requires it. Explicit scalar variables and dimensional ratios remain scalar. Compound dimensions and incompatible kinds fail visibly. D13 records the unit semantics and the still-open document-unit switching integration.
+
+The operator/value stacks are iterative. The committed testbench exercises **20,000 nested parentheses**, **20,001 unary signs**, a **5,001-term sum**, precedence/associativity, canonical conversions, scalar propagation through zero, sorted dependencies, own-property variable lookup, immutable inputs, independent output arrays, finite underflow, overflow, signed-zero division, and exact original UTF-16 error offsets/tokens. Deterministic bounded properties check distributivity, grouping, repeated calls and document-unit independence for explicit units/canonical variables. The testbench imports only the public evaluator; no kernel, solver or browser fake is involved.
+
+Test-first evidence: `node --import tsx --test src/cad/dimension-expressions.test.ts` against the stub exited **1: 26 failed, 0 passed, 0 skipped**, all against the unimplemented entry ([original RED](evidence/C03-red.txt)). Before implementation, the test author added scalar-zero assertions and one large finite angle test, bringing the suite to 27 cases. The first implementation passed **27/27**, exit **0**, none skipped ([focused output](evidence/C03-first.txt)). No production fix or test weakening was needed after that first run.
+
+Independent review reran the focused suite successfully and found no concrete parser, unit, purity, token-position or stack defect. A separate ad hoc review assertion initially used **−14** as the expected value of `(-(+2))*-(3--4)`. Correct arithmetic is **+14**: the factors are −2 and −7. That review script exited **1**; correcting only its mistaken expected value produced **16 passing review assertions**, exit **0**, with no production or committed-test change. Both commands and outputs are retained in [review evidence](evidence/C03-review.txt). Those 16 observations are not added to the committed suite's test count. The retained method's “halt immediately on any failing test” rule stops this batch before C04 after completing the current GREEN checkpoint.
+
+### Verification and demo
+
+| Command | Result | Evidence |
+|---|---|---|
+| `node --import tsx --test src/cad/dimension-expressions.test.ts` | Exit 0; 27 passed, 0 failed, 0 skipped | [Focused output](evidence/C03-first.txt) |
+| `npm test` | Exit 0; 384 passed, 0 failed, 0 skipped | [Cumulative units](evidence/phase2-through-C03.txt) |
+| `npm run typecheck` | Exit 0; no diagnostics | [Verification output](evidence/C03-verification.txt) |
+| C03 module checker, exact command in linked output | Exit 0; `PASS: src/cad/dimension-expressions.ts` | [Verification output](evidence/C03-verification.txt) |
+| `npm run test:browser` | Exit 0; fresh build and 13 passed, none skipped | [Cumulative browser output](evidence/phase2-through-C03-browser.txt) |
+| `python3 dev/verify-spec.py` | Exit 0; TRACE/MAP/LINK PASS | [Verification output](evidence/C03-verification.txt) |
+
+The browser run repeats the existing cumulative shared/CAD-A1 ladder in **Chrome 154.0.8037.97, headless Linux x64, 1280×720**. C03 is not connected to a workspace UI yet, so this run does not verify editable dimension fields. All nine previously tracked evidence PNGs were preserved byte-for-byte. No other browser or OS was smoke-tested.
+
+The separate demo command `node --import tsx src/cad/dimension-expressions.demo.ts` exits **0** and prints `Expression: (width - 20mm) / 2`, followed by `Canonical result: { value: 40, kind: 'length', dependencies: [ 'width' ] }`. It supplies a canonical 100 mm width. This is a human-readable usage example, separate from test evidence.
+
+How to tweak: source expression, requested kind, document units and variable values are explicit request fields. `INCH_TO_MM = 25.4` and `DEG_TO_RAD = Math.PI / 180` encode fixed definitions, not adjustable tolerances. The header is the authority for grammar and implicit/explicit unit rules; changing them requires a contract change and corresponding golden/error/property updates. Source offsets let the eventual editor identify the offending token. C04 will resolve definitions and cycles; downstream feature recipes enforce positive sizes and feature-specific ranges.
+
+Requirements remain **PASS 13 / FAIL 0 / UNTESTED 373**. Passed IDs: **SYS-005, CAD-001, CAD-002, CAD-003, CAD-006, REL-001, REL-002, REL-005, REL-011, REL-012, REL-014, REL-023, REL-028**. Every other ID remains UNTESTED in requirements.json. In particular, CAD-017/018/019 require real document switching, bound dimensions and downstream rebuilds, so a standalone evaluator does not pass them. Bare expression migration across a document-unit change, named-variable resolution, editors, full CAD goldens/exports, Image/Video and release gates remain unfinished.
+
+GREEN: S01–S15, A-SHELL, C01–C03, CAD-A1. Human ACCEPTED: none. Shared provisional ladder height **4**, CAD provisional ladder height **1**. **C04 is next** after this checkpoint. The full shippable-product objective remains active; no release or acceptance candidate is claimed.

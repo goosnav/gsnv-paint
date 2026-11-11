@@ -1,0 +1,68 @@
+C03 independent review — ad hoc oracle correction
+
+Provenance: exact commands and command-output text retained in the review agent's
+exec_command tool results. Both commands ran from:
+/home/goosnav/Desktop/code/gsnv-paint
+
+The original review assertion mistakenly expected -14 for
+(-(+2))*-(3--4). The correct result is +14: (-2) * (-7).
+This was a mistake in the independent review oracle, not a production defect.
+Only the ad hoc expected value changed; no production code or committed test
+changed. No commands were rerun to create this evidence file. The corrected
+command's 16 assertions are separate review checks, not additional committed
+test cases. Under the retained any-failing-test BATCH rule, finish the verified
+C03 checkpoint and stop before C04.
+
+Original command (tool chunk 22b781; exit code 1):
+
+node --import tsx --input-type=module <<'JS'
+import assert from 'node:assert/strict';
+import { evaluateDimension } from './src/cad/dimension-expressions.ts';
+const variables={w:{value:25.4,kind:'length'},a:{value:Math.PI/2,kind:'angle'},s:{value:2,kind:'scalar'}};
+const evaluate=(source,kind)=>evaluateDimension({expression:{source,kind},context:{units:'inch',variables}});
+const valid=[['(-(+2))*-(3--4)','scalar',-14],['(w+2)/3','length',25.4],['2*(a+90)','angle',2*Math.PI],['w*(180deg/90deg)','length',50.8],['((1.+.5e1)÷−2)','scalar',-3],['w/(-(-s))','length',12.7],['0*(w/w)','scalar',0]];
+for(const [source,kind,expected]of valid){const actual=evaluate(source,kind).value;assert.ok(Math.abs(actual-expected)<=1e-12*Math.max(1,Math.abs(expected)),source);}
+for(const source of ['(s+0)+w','(w/w)*0','(2+3)in','1inchx','(1)(2)']){assert.throws(()=>evaluate(source,'length'),source);}
+for(const [source,kind,name,offset,token]of [['1e308+w','length','NonFiniteValueError',5,'+'],['−(w/2)','angle','UnitMismatchError',0,'−'],['1 ÷ -(0)','scalar','DivisionByZeroError',2,'÷'],['1+😀','scalar','ExpressionSyntaxError',2,'😀']]){assert.throws(()=>evaluate(source,kind),e=>e.name===name&&e.offset===offset&&e.token===token,source);}
+console.log('Independent combined-expression and boundary checks: 16 passed.');
+JS
+
+Original output:
+
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: (-(+2))*-(3--4)
+    at file:///home/goosnav/Desktop/code/gsnv-paint/[eval1]:6:91
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async ModuleLoader.executeModuleJob (node:internal/modules/esm/loader:220:20)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.21.0
+
+Corrected command (tool chunk 78b0cd; exit code 0):
+
+node --import tsx --input-type=module <<'JS'
+import assert from 'node:assert/strict';
+import { evaluateDimension } from './src/cad/dimension-expressions.ts';
+const variables={w:{value:25.4,kind:'length'},a:{value:Math.PI/2,kind:'angle'},s:{value:2,kind:'scalar'}};
+const evaluate=(source,kind)=>evaluateDimension({expression:{source,kind},context:{units:'inch',variables}});
+const valid=[['(-(+2))*-(3--4)','scalar',14],['(w+2)/3','length',25.4],['2*(a+90)','angle',2*Math.PI],['w*(180deg/90deg)','length',50.8],['((1.+.5e1)÷−2)','scalar',-3],['w/(-(-s))','length',12.7],['0*(w/w)','scalar',0]];
+for(const [source,kind,expected]of valid){const actual=evaluate(source,kind).value;assert.ok(Math.abs(actual-expected)<=1e-12*Math.max(1,Math.abs(expected)),source);}
+for(const source of ['(s+0)+w','(w/w)*0','(2+3)in','1inchx','(1)(2)']){assert.throws(()=>evaluate(source,'length'),source);}
+for(const [source,kind,name,offset,token]of [['1e308+w','length','NonFiniteValueError',5,'+'],['−(w/2)','angle','UnitMismatchError',0,'−'],['1 ÷ -(0)','scalar','DivisionByZeroError',2,'÷'],['1+😀','scalar','ExpressionSyntaxError',2,'😀']]){assert.throws(()=>evaluate(source,kind),e=>e.name===name&&e.offset===offset&&e.token===token,source);}
+console.log('Independent combined-expression and boundary checks: 16 passed.');
+JS
+
+Corrected output:
+
+Independent combined-expression and boundary checks: 16 passed.

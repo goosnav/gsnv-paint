@@ -1,0 +1,38 @@
+$ node --import tsx --test src/cad/dimension-expressions.test.ts
+✔ C03 full golden values preserve canonical variables, field kinds and dependency order (2.449687ms)
+✔ C03 decimal and scientific literals retain normal numeric meaning (0.253638ms)
+✔ C03 unary signs, glyph aliases, precedence and left associativity (0.359922ms)
+✔ C03 fixed explicit unit definitions ignore document units (0.405651ms)
+✔ C03 bare-only arithmetic adopts document length or degrees only when needed (0.322938ms)
+✔ C03 scalar factors and like-dimensional ratios obey dimension rules (0.257098ms)
+✔ C03 explicit scalar results never implicitly become dimensions (0.716404ms)
+✔ C03 incompatible kinds and compound dimensions identify their original operator (0.326333ms)
+✔ C03 final field mismatch identifies the sole operand or root operator (0.291021ms)
+✔ C03 dependencies are unique lexically sorted and include zero-weight references (0.339298ms)
+✔ C03 own-property variables, identifier case and reserved unit names (0.35848ms)
+✔ C03 JS whitespace is accepted without losing original source positions (0.177702ms)
+✔ C03 finite input underflow and either signed zero produce finite positive zero (0.215172ms)
+✔ C03 division rejects signed, computed and typed zero at the division token (0.262176ms)
+✔ C03 overflowing literals, suffix conversion and intermediate arithmetic are rejected (0.264613ms)
+✔ C03 final implicit conversion overflow identifies the root or sole literal (3.987684ms)
+✔ C03 large finite degree conversion does not overflow an avoidable intermediate (0.24152ms)
+✔ C03 nonfinite referenced variable values identify the name (0.333946ms)
+✔ C03 EOF reports the untrimmed source length and an empty token (1.365861ms)
+✔ C03 rejects invalid syntax, implicit multiplication and suffixes on groups (0.388027ms)
+✔ C03 malformed numeric exponents and case-sensitive/unknown suffixes are rejected (0.298201ms)
+✔ C03 rejected statement text cannot execute host code (0.109083ms)
+✔ C03 frozen requests are unchanged and result dependency arrays are independent (0.140388ms)
+✔ C03 deterministic bounded integer arithmetic obeys distributivity and parentheses (4.527651ms)
+✔ C03 canonical variable evaluation and explicit units are invariant across document units (3.834331ms)
+✔ C03 dependency sets survive reordering, duplicates and cancellation (0.271332ms)
+✔ C03 deep parentheses and unary chains do not consume the host call stack (37.035533ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 255.199279
+
+Exit code: 0

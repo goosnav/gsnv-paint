@@ -1,0 +1,539 @@
+Command: node --import tsx --test src/cad/dimension-expressions.test.ts
+✖ C03 full golden values preserve canonical variables, field kinds and dependency order (1.213924ms)
+✖ C03 decimal and scientific literals retain normal numeric meaning (0.13361ms)
+✖ C03 unary signs, glyph aliases, precedence and left associativity (0.119587ms)
+✖ C03 fixed explicit unit definitions ignore document units (0.147288ms)
+✖ C03 bare-only arithmetic adopts document length or degrees only when needed (0.141418ms)
+✖ C03 scalar factors and like-dimensional ratios obey dimension rules (0.140599ms)
+✖ C03 explicit scalar results never implicitly become dimensions (3.330112ms)
+✖ C03 incompatible kinds and compound dimensions identify their original operator (0.380551ms)
+✖ C03 final field mismatch identifies the sole operand or root operator (0.332378ms)
+✖ C03 dependencies are unique lexically sorted and include zero-weight references (0.255205ms)
+✖ C03 own-property variables, identifier case and reserved unit names (0.288478ms)
+✖ C03 JS whitespace is accepted without losing original source positions (0.10965ms)
+✖ C03 finite input underflow and either signed zero produce finite positive zero (0.11298ms)
+✖ C03 division rejects signed, computed and typed zero at the division token (0.267957ms)
+✖ C03 overflowing literals, suffix conversion and intermediate arithmetic are rejected (0.216216ms)
+✖ C03 final implicit conversion overflow identifies the root or sole literal (0.262441ms)
+✖ C03 nonfinite referenced variable values identify the name (0.213437ms)
+✖ C03 EOF reports the untrimmed source length and an empty token (0.288728ms)
+✖ C03 rejects invalid syntax, implicit multiplication and suffixes on groups (0.241479ms)
+✖ C03 malformed numeric exponents and case-sensitive/unknown suffixes are rejected (0.814644ms)
+✖ C03 rejected statement text cannot execute host code (0.209873ms)
+✖ C03 frozen requests are unchanged and result dependency arrays are independent (0.161965ms)
+✖ C03 deterministic bounded integer arithmetic obeys distributivity and parentheses (0.119144ms)
+✖ C03 canonical variable evaluation and explicit units are invariant across document units (0.121818ms)
+✖ C03 dependency sets survive reordering, duplicates and cancellation (0.11176ms)
+✖ C03 deep parentheses and unary chains do not consume the host call stack (0.107066ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 0
+ℹ fail 26
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 210.054484
+
+✖ failing tests:
+
+test at src/cad/dimension-expressions.test.ts:1:1065
+✖ C03 full golden values preserve canonical variables, field kinds and dependency order (1.213924ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:22:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/cad/dimension-expressions.test.ts:1:1575
+✖ C03 decimal and scientific literals retain normal numeric meaning (0.13361ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:30:22)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/cad/dimension-expressions.test.ts:1:1851
+✖ C03 unary signs, glyph aliases, precedence and left associativity (0.119587ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:37:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/dimension-expressions.test.ts:1:2192
+✖ C03 fixed explicit unit definitions ignore document units (0.147288ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:44:22)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/dimension-expressions.test.ts:1:2716
+✖ C03 bare-only arithmetic adopts document length or degrees only when needed (0.141418ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:54:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/dimension-expressions.test.ts:1:3390
+✖ C03 scalar factors and like-dimensional ratios obey dimension rules (0.140599ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:69:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/dimension-expressions.test.ts:1:3915
+✖ C03 explicit scalar results never implicitly become dimensions (3.330112ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'UnitMismatchError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:15:47)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at error (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:14:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:79:68)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'UnitMismatchError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:4317
+✖ C03 incompatible kinds and compound dimensions identify their original operator (0.380551ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'UnitMismatchError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:15:47)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at error (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:14:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:89:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'UnitMismatchError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:4700
+✖ C03 final field mismatch identifies the sole operand or root operator (0.332378ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'UnitMismatchError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:15:47)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at error (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:14:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:94:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'UnitMismatchError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:5080
+✖ C03 dependencies are unique lexically sorted and include zero-weight references (0.255205ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:105:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/dimension-expressions.test.ts:1:5661
+✖ C03 own-property variables, identifier case and reserved unit names (0.288478ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'UnknownVariableError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:15:47)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at error (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:14:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:111:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'UnknownVariableError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:6349
+✖ C03 JS whitespace is accepted without losing original source positions (0.10965ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:120:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/dimension-expressions.test.ts:1:6691
+✖ C03 finite input underflow and either signed zero produce finite positive zero (0.11298ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:128:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/dimension-expressions.test.ts:1:7148
+✖ C03 division rejects signed, computed and typed zero at the division token (0.267957ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'DivisionByZeroError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:15:47)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at error (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:14:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:136:85)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'DivisionByZeroError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:7537
+✖ C03 overflowing literals, suffix conversion and intermediate arithmetic are rejected (0.216216ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'NonFiniteValueError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:15:47)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at error (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:14:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:141:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'NonFiniteValueError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:7986
+✖ C03 final implicit conversion overflow identifies the root or sole literal (0.262441ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'NonFiniteValueError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:15:47)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at error (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:14:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:151:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'NonFiniteValueError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:8259
+✖ C03 nonfinite referenced variable values identify the name (0.213437ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'NonFiniteValueError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:15:47)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at error (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:14:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:157:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'NonFiniteValueError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:8464
+✖ C03 EOF reports the untrimmed source length and an empty token (0.288728ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'ExpressionSyntaxError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:15:47)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at error (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:14:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:161:79)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'ExpressionSyntaxError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:8662
+✖ C03 rejects invalid syntax, implicit multiplication and suffixes on groups (0.241479ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'ExpressionSyntaxError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:15:47)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at error (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:14:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:167:68)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'ExpressionSyntaxError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:9055
+✖ C03 malformed numeric exponents and case-sensitive/unknown suffixes are rejected (0.814644ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    Comparison {
+  +   name: 'Error'
+  -   name: 'ExpressionSyntaxError'
+    }
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:172:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: C03 is not implemented.
+        at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+        at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+        at assert.throws.name (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:172:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:172:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    expected: { name: 'ExpressionSyntaxError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:9293
+✖ C03 rejected statement text cannot execute host code (0.209873ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'ExpressionSyntaxError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:15:47)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at error (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:14:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:180:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'ExpressionSyntaxError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/dimension-expressions.test.ts:1:9605
+✖ C03 frozen requests are unchanged and result dependency arrays are independent (0.161965ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:188:51)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/dimension-expressions.test.ts:1:10141
+✖ C03 deterministic bounded integer arithmetic obeys distributivity and parentheses (0.119144ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:196:22)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/dimension-expressions.test.ts:1:10561
+✖ C03 canonical variable evaluation and explicit units are invariant across document units (0.121818ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:205:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/dimension-expressions.test.ts:1:11062
+✖ C03 dependency sets survive reordering, duplicates and cancellation (0.11176ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:214:22)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/dimension-expressions.test.ts:1:11363
+✖ C03 deep parentheses and unary chains do not consume the host call stack (0.107066ms)
+  Error: C03 is not implemented.
+      at evaluateDimension (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.ts:54:9)
+      at evaluate (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:11:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/dimension-expressions.test.ts:220:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+Exit code: 1
