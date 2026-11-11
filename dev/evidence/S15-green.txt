@@ -1,0 +1,29 @@
+✔ S15 golden wire bytes and complete decoded package match independent fixture (5.720815ms)
+✔ S15 every split boundary, bytewise parts and empty parts preserve the golden (24.181763ms)
+✔ S15 every truncated prefix and one trailing byte are rejected (3.275441ms)
+✔ S15 checks known IEEE CRC vectors and distinct subviews of one buffer (0.637873ms)
+✔ S15 zero assets differ from an empty asset; IDs and order remain opaque (0.708001ms)
+✔ S15 valid noncanonical JSON order/whitespace is accepted (0.359729ms)
+✔ S15 Unicode metadata and identifiers survive byte splits inside UTF-8 (0.582471ms)
+✔ S15 damaged payload or manifest checksum is rejected before any result (0.595222ms)
+✔ S15 rejects future or malformed magic and invalid manifest encodings (0.721004ms)
+✔ S15 manifest and descriptor schemas are exact (0.61826ms)
+✔ S15 rejects negative, fractional, unsafe lengths and non-uint32 checksums (0.739888ms)
+✔ S15 IDs reject paths and duplicates; MIME and IDs must be nonempty strings (1.149731ms)
+✔ S15 rejects malformed requests, non-byte parts, sparse parts/assets and getters (0.613206ms)
+✔ S15 operation accessors are rejected without execution (0.201421ms)
+✔ S15 asset-count boundary accepts 20000 and rejects 20001 on both paths (350.128476ms)
+✔ S15 declared or actual excessive totals fail before checksum/allocation (2.741371ms)
+✔ S15 inclusive 2 GiB total counts header and manifest using repeated immutable views (90.987951ms)
+✔ S15 inclusive 64 MiB UTF-8 manifest boundary counts container metadata (1207.493927ms)
+✔ S15 propagates S03 errors for invalid project metadata without coercion (11.32293ms)
+✔ S15 real S03 seam preserves negative zero and 15000-level metadata (337.042864ms)
+✔ S15 deterministic roundtrip properties retain bytes, order and immutable inputs (22.739651ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2346.343912

@@ -1,0 +1,40 @@
+✖ S15 operation accessors are rejected without execution (3.839081ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 197.232793
+
+✖ failing tests:
+
+test at src/shared/native-container.test.ts:1:7951
+✖ S15 operation accessors are rejected without execution (3.839081ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ContainerFormatError". Received "Error"
+
+  Error message:
+
+  Operation accessor ran
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/native-container.test.ts:145:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Operation accessor ran
+        at Object.get op (/home/goosnav/Desktop/code/gsnv-paint/src/shared/native-container.test.ts:143:48)
+        at nativeContainer (/home/goosnav/Desktop/code/gsnv-paint/src/shared/native-container.ts:192:15)
+        at invoke (/home/goosnav/Desktop/code/gsnv-paint/src/shared/native-container.test.ts:17:36)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/native-container.test.ts:145:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/native-container.test.ts:145:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.start (node:internal/test_runner/test:1262:17),
+    operator: 'throws',
+    diff: 'simple'
+  }

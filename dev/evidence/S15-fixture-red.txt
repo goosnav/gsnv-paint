@@ -1,0 +1,121 @@
+✖ S15 golden wire bytes and complete decoded package match independent fixture (6.65623ms)
+✖ S15 every split boundary, bytewise parts and empty parts preserve the golden (0.796938ms)
+✔ S15 every truncated prefix and one trailing byte are rejected (4.613484ms)
+✔ S15 checks known IEEE CRC vectors and distinct subviews of one buffer (0.748446ms)
+✔ S15 zero assets differ from an empty asset; IDs and order remain opaque (0.900125ms)
+✔ S15 valid noncanonical JSON order/whitespace is accepted (0.430492ms)
+✔ S15 Unicode metadata and identifiers survive byte splits inside UTF-8 (0.775745ms)
+✔ S15 damaged payload or manifest checksum is rejected before any result (0.733388ms)
+✔ S15 rejects future or malformed magic and invalid manifest encodings (0.616201ms)
+✔ S15 manifest and descriptor schemas are exact (0.666591ms)
+✔ S15 rejects negative, fractional, unsafe lengths and non-uint32 checksums (0.711924ms)
+✔ S15 IDs reject paths and duplicates; MIME and IDs must be nonempty strings (1.172856ms)
+✔ S15 rejects malformed requests, non-byte parts, sparse parts/assets and getters (0.683706ms)
+✔ S15 asset-count boundary accepts 20000 and rejects 20001 on both paths (305.651658ms)
+✔ S15 declared or actual excessive totals fail before checksum/allocation (2.576933ms)
+✔ S15 inclusive 2 GiB total counts header and manifest using repeated immutable views (90.795597ms)
+✔ S15 inclusive 64 MiB UTF-8 manifest boundary counts container metadata (1224.197945ms)
+✔ S15 propagates S03 errors for invalid project metadata without coercion (1.675364ms)
+✔ S15 real S03 seam preserves negative zero and 15000-level metadata (353.997073ms)
+✖ S15 deterministic roundtrip properties retain bytes, order and immutable inputs (4.745679ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 17
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2249.157206
+
+✖ failing tests:
+
+test at src/shared/native-container.test.ts:1:1657
+✖ S15 golden wire bytes and complete decoded package match independent fixture (6.65623ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    {
+      assets: [
+        {
+  +       bytes: Buffer(3) [Uint8Array] [
+  -       bytes: Uint8Array(3) [
+            0,
+            255,
+            1
+          ],
+          id: 'tile-0',
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/native-container.test.ts:32:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { project: { content: [Object], format: 'gsnv-image', id: 'p1', title: 'Pixels', version: 1 }, assets: [ [Object] ] },
+    expected: { project: { format: 'gsnv-image', version: 1, id: 'p1', title: 'Pixels', content: [Object] }, assets: [ [Object] ] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/native-container.test.ts:1:1964
+✖ S15 every split boundary, bytewise parts and empty parts preserve the golden (0.796938ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    {
+      assets: [
+        {
+  +       bytes: Buffer(3) [Uint8Array] [
+  -       bytes: Uint8Array(3) [
+            0,
+            255,
+            1
+          ],
+          id: 'tile-0',
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/native-container.test.ts:37:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { project: { content: [Object], format: 'gsnv-image', id: 'p1', title: 'Pixels', version: 1 }, assets: [ [Object] ] },
+    expected: { project: { format: 'gsnv-image', version: 1, id: 'p1', title: 'Pixels', content: [Object] }, assets: [ [Object] ] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/native-container.test.ts:1:12340
+✖ S15 deterministic roundtrip properties retain bytes, order and immutable inputs (4.745679ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    {
+      assets: [
+        {
+  +       bytes: Buffer(9) [Uint8Array] [
+  -       bytes: Uint8Array(9) [
+            8,
+            39,
+            70,
+            101,
+            132,
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/native-container.test.ts:221:58)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { project: { content: [Object], format: 'gsnv-video', id: 'p1', title: 'Pixels', version: 1 }, assets: [ [Object] ] },
+    expected: { project: { format: 'gsnv-video', version: 1, id: 'p1', title: 'Pixels', content: [Object] }, assets: [ [Object] ] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

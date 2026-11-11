@@ -153,14 +153,14 @@ RAISES: none; transport/codec diagnostics propagated with context.
 DEPS: S15, S08.
 TEST: real S03→S15→S08→S15→S03 seam, recovery after simulated interruption and browser reload. Requirement group ProjectPersistence.
 
-## S15 native-container — CORE — PLANNED
+## S15 native-container — CORE — GREEN
 
 Purpose: Pack or unpack versioned project metadata and binary assets without converting pixels to JSON.
 IN: `{op:'encode',package:NativePackage}|{op:'decode',parts:readonly Uint8Array[]}`; metadata follows S03, ≤20,000 unique assets, total ≤2 GiB, metadata ≤64 MiB, IDs and MIME strings nonempty.
 OUT: encode `{parts:readonly Uint8Array[],byteLength:number}` or decode `NativePackage`, preserving exact bytes without lossy coercion. Wire format v1: eight ASCII bytes `GSNVPK1\n`, u32LE manifest-byte length, UTF-8 canonical JSON `{project,assets:[{id,mime,length,crc32}]}`, then asset bytes in manifest order. Asset offsets are cumulative safe integers; no filesystem paths. CRC32 is IEEE 802.3 (polynomial 0xEDB88320, initial/final XOR 0xFFFFFFFF); it detects accidental damage, not authenticity. S03 serializes/validates project metadata; this brick handles framing, canonical manifest and checksums. Decode rejects trailing bytes, truncated parts, duplicate IDs, bad checksums and unsupported magic/version before returning anything.
 RAISES: `ContainerFormatError` for malformed framing/schema/checksum/length; `ContainerLimitError` for declared or actual limits; propagates S03 `ProjectFormatError`.
 DEPS: S03.
-TEST: literal independently computed header/checksum fixture, segmented boundary input, multi-asset byte roundtrip, 0 assets, limits, corruption/truncation/future magic/duplicate IDs, and S03 seam. Requirement group ProjectPersistence.
+TEST: literal independently computed header/checksum fixture, segmented boundary input, multi-asset byte roundtrip, 0 assets, limits, corruption/truncation/future magic/duplicate IDs, and S03 seam. Requirement group ProjectPersistence. [Implemented wire format](NATIVE-CONTAINER-V1.md).
 
 ## A-SHELL — assembly, not a brick — PLANNED
 
@@ -170,7 +170,7 @@ Wire S02, S04, S06, S10–S14 and existing built workspace adapters. S01/S03/S05
 
 Rung 1: S01 history → S02 session; S03 metadata codec is verified independently before S15. Rung 2: S03 → S15 + S07 → S13 file seam. Rung 3: S03 → S15 + S08 → S14 recovery seam. Rung 4: S05 → S12 → A-SHELL and S09 → S10, with S11 preview transactions. Later phase sections define their cumulative seams.
 
-Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rung 1 (S01→S02) passes. S01–S12 are GREEN with evidence in PHASE-1.md; remaining Phase 1 bricks are PLANNED. BATCH is halted before S15 after repairing S12 lifecycle, focus and captured context-target findings. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
+Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rung 1 (S01→S02) passes. S01–S12 and S15 are GREEN with evidence in PHASE-1.md; S13, S14 and A-SHELL remain PLANNED. The real S03→S15 seam passes; full rung 2 still needs S13. BATCH is halted before S13 after correcting S15 test-fixture assumptions and repairing operation-accessor validation. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
 
 ## Shared conceptual bindings
 
