@@ -1,0 +1,419 @@
+✖ C02 golden opens a worker-local facade with empty live data and closes once (1.825826ms)
+✖ C02 clones nested input and snapshot objects across the vendor boundary (0.370381ms)
+✖ C02 probe preserves live settings, data and independent diagnostics (0.295135ms)
+✖ C02 keeps separate sessions independent when one closes (0.335709ms)
+✖ C02 every captured public method rejects after close without calling native code (0.552011ms)
+✖ C02 rejects forged session copies without touching live native state (0.563756ms)
+✖ C02 forwards ordinary solve statuses and negative DOF without applying or invalidating (0.487288ms)
+✖ C02 diagnostic arrays returned from the vendor cannot alias caller-owned results (0.372908ms)
+✖ C02 a thrown vendor push call invalidates once and preserves the original error (0.367173ms)
+✖ C02 a thrown vendor clear_data call invalidates once and preserves the original error (0.27903ms)
+✖ C02 a thrown vendor solve call invalidates once and preserves the original error (0.238333ms)
+✖ C02 a thrown vendor apply_solution call invalidates once and preserves the original error (0.139099ms)
+✖ C02 a thrown vendor get_conflicting call invalidates once and preserves the original error (0.132749ms)
+✖ C02 a thrown vendor get_redundant call invalidates once and preserves the original error (0.16045ms)
+✖ C02 a thrown vendor get_partially_redundant call invalidates once and preserves the original error (0.189031ms)
+✖ C02 a thrown vendor set_convergence_threshold call invalidates once and preserves the original error (0.132262ms)
+✖ C02 a thrown vendor set_max_iterations call invalidates once and preserves the original error (0.207505ms)
+✖ C02 a thrown vendor dof call invalidates once and preserves the original error (0.183551ms)
+✖ C02 a thrown vendor snapshot call invalidates once and preserves the original error (0.196596ms)
+✖ C02 close failure returns a readable diagnostic and never retries native cleanup (0.265243ms)
+✖ C02 missing native reporting is a capability error, not an apparently ready session (4.092445ms)
+✖ C02 wrong probe status, DOF, geometry or conflict evidence rejects readiness (0.488351ms)
+✖ C02 a thrown live probe invalidates the old port without calling native cleanup (0.233963ms)
+✖ C02 rejects cross-origin, credentialed, non-HTTP and malformed URLs before initialization (0.486115ms)
+✖ C02 refuses a main-thread environment before loading the solver (0.338151ms)
+✖ C02 refuses missing WebAssembly before initializing the vendor (0.365029ms)
+✖ C02 missing default initializer and malformed native modules fail readably (1.087632ms)
+✖ C02 initialization and native construction failures become readable load errors (0.358227ms)
+✖ C02 captures the chosen WASM URL before asynchronous loading (0.222876ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 0
+ℹ fail 29
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 231.439121
+
+✖ failing tests:
+
+test at src/cad/solver-runtime.test.ts:4:5044
+✖ C02 golden opens a worker-local facade with empty live data and closes once (1.825826ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:135:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/cad/solver-runtime.test.ts:4:6029
+✖ C02 clones nested input and snapshot objects across the vendor boundary (0.370381ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:149:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:6979
+✖ C02 probe preserves live settings, data and independent diagnostics (0.295135ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:169:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:7831
+✖ C02 keeps separate sessions independent when one closes (0.335709ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:181:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:8263
+✖ C02 every captured public method rejects after close without calling native code (0.552011ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:190:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:9161
+✖ C02 rejects forged session copies without touching live native state (0.563756ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:202:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:9684
+✖ C02 forwards ordinary solve statuses and negative DOF without applying or invalidating (0.487288ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:211:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:10412
+✖ C02 diagnostic arrays returned from the vendor cannot alias caller-owned results (0.372908ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:222:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:11202
+✖ C02 a thrown vendor push call invalidates once and preserves the original error (0.367173ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:233:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:11202
+✖ C02 a thrown vendor clear_data call invalidates once and preserves the original error (0.27903ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:233:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:11202
+✖ C02 a thrown vendor solve call invalidates once and preserves the original error (0.238333ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:233:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:11202
+✖ C02 a thrown vendor apply_solution call invalidates once and preserves the original error (0.139099ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:233:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:11202
+✖ C02 a thrown vendor get_conflicting call invalidates once and preserves the original error (0.132749ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:233:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:11202
+✖ C02 a thrown vendor get_redundant call invalidates once and preserves the original error (0.16045ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:233:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:11202
+✖ C02 a thrown vendor get_partially_redundant call invalidates once and preserves the original error (0.189031ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:233:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:11202
+✖ C02 a thrown vendor set_convergence_threshold call invalidates once and preserves the original error (0.132262ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:233:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:11202
+✖ C02 a thrown vendor set_max_iterations call invalidates once and preserves the original error (0.207505ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:233:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:11202
+✖ C02 a thrown vendor dof call invalidates once and preserves the original error (0.183551ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:233:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:11202
+✖ C02 a thrown vendor snapshot call invalidates once and preserves the original error (0.196596ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:233:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:12669
+✖ C02 close failure returns a readable diagnostic and never retries native cleanup (0.265243ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:254:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:13674
+✖ C02 missing native reporting is a capability error, not an apparently ready session (4.092445ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SolverCapabilityError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:126:45)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.rejects (node:assert:769:3)
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:268:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SolverCapabilityError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/solver-runtime.test.ts:4:14027
+✖ C02 wrong probe status, DOF, geometry or conflict evidence rejects readiness (0.488351ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SolverLoadError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:126:45)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.rejects (node:assert:769:3)
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:280:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SolverLoadError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/solver-runtime.test.ts:4:14527
+✖ C02 a thrown live probe invalidates the old port without calling native cleanup (0.233963ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:123:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:285:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/solver-runtime.test.ts:4:15330
+✖ C02 rejects cross-origin, credentialed, non-HTTP and malformed URLs before initialization (0.486115ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SolverLoadError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:126:45)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.rejects (node:assert:769:3)
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:299:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SolverLoadError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/solver-runtime.test.ts:4:15925
+✖ C02 refuses a main-thread environment before loading the solver (0.338151ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SolverCapabilityError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:126:45)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.rejects (node:assert:769:3)
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:306:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SolverCapabilityError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/solver-runtime.test.ts:4:16157
+✖ C02 refuses missing WebAssembly before initializing the vendor (0.365029ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SolverCapabilityError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:126:45)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.rejects (node:assert:769:3)
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:313:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SolverCapabilityError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/solver-runtime.test.ts:4:16526
+✖ C02 missing default initializer and malformed native modules fail readably (1.087632ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SolverLoadError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:126:45)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.rejects (node:assert:769:3)
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:318:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SolverLoadError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/solver-runtime.test.ts:4:16942
+✖ C02 initialization and native construction failures become readable load errors (0.358227ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SolverLoadError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:126:45)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.rejects (node:assert:769:3)
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:328:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SolverLoadError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/solver-runtime.test.ts:4:17468
+✖ C02 captures the chosen WASM URL before asynchronous loading (0.222876ms)
+  Error: C02 is not implemented.
+      at solverRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.ts:46:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/solver-runtime.test.ts:336:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

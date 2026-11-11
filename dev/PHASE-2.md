@@ -1,6 +1,6 @@
 # Phase 2 — CAD — in progress
 
-C01 is GREEN. C02–C49 remain PLANNED. No brick is human-ACCEPTED; CAD assembly rung CAD-A1 still needs C02. The existing shared assembly height remains 4. The C01 checkpoint was pushed as 3ffb2c3. The subsequent C02 prerequisite checkpoint below repairs vendor declaration packaging; it does not implement another brick. The complete product remains unfinished and is not a release candidate.
+C01–C02 are GREEN. C03–C49 remain PLANNED. No brick is human-ACCEPTED; the combined CAD-A1 assembly is next. The existing shared assembly height remains 4. C01 was pushed as 3ffb2c3 and the C02 prerequisite repair as ebe578a. The latest C02 implementation checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
 
 ## C01 kernel-runtime — GREEN; BATCH halted before C02
 
@@ -72,3 +72,50 @@ The browser run used **Chrome 154.0.8037.97, Linux x64, headless, 1280×720** an
 Vendor-only exploration outside the application supplied a candidate rectangle fixture: fixed A=(0,0); initial B=(95,3), C=(98,57), D=(-2,59); four connected horizontal/vertical edges; width100 and height60 distances. The vendor reported Success/DOF 0 and solved corners (0,0), (100,0), (100,60), (0,60). Adding width101 reported Failed/DOF -1 and conflicting IDs width100/width101. These observations are implementation reconnaissance, **not product or acceptance-test passes**. C02 still needs its own contract-first testbench and real browser worker proof. Negative DOF is a valid over-constraint report; C16 owns geometry commit policy. Probe data must not overwrite live session data. Faulted native sessions require owner termination, not further native calls. Root `index.js?url` is not a standalone runtime asset because its relative imports remain; resolve that loading boundary in the C02 implementation.
 
 Requirement status stays **PASS 11 / FAIL 0 / UNTESTED 375**. Passed IDs remain **SYS-005, CAD-001, CAD-006, REL-001, REL-002, REL-005, REL-011, REL-012, REL-014, REL-023, REL-028**. Every other ID remains UNTESTED; the tooling failure was repaired and does not pass CAD-002. C02–C49 remain PLANNED, CAD-A1 remains pending, and no brick becomes ACCEPTED. The retained modular halt rule stops this checkpoint before C02 implementation. The active full-product goal remains open.
+
+## C02 solver-runtime — GREEN; CAD-A1 still pending
+
+Mode B resumed from clean ebe578a. The previous turn was progress: the exact dependency repair was committed, pushed and verified. This checkpoint implements the approved worker-local solver port in [solver-runtime.ts](../src/cad/solver-runtime.ts), with three public symbols and no brick dependency. It bundles the pinned upstream wrapper and loads the native glue/WASM by same-origin URLs. Its immutable facade exposes only the approved nine engine methods plus DOF, independent primitive snapshots, generation and lifetime state. Readiness proves a solvable point and contradictory coordinate in a temporary native system. Probe leaves live input/settings intact. Engine statuses and negative DOF are forwarded; C16 remains responsible for geometry acceptance and commit policy.
+
+Normal close invalidates the port before destroying its native system once. A thrown engine call invalidates and propagates the original exception without further adapter native calls. Failed initialization/probe requires worker termination; normal close also needs owner termination to reclaim the module heap. Captured methods reject after invalidation. Close failures produce a readable `solver.dispose` diagnostic without retrying native cleanup. D12 records these choices and their alternatives; no kernel or constraint solver algorithm is implemented here.
+
+The module header/types and unimplemented signature preceded the sibling testbench. `node --import tsx --test src/cad/solver-runtime.test.ts` against that stub exited **1: 29 failed, 0 passed, 0 skipped**, including the full golden result failing with `C02 is not implemented.` ([RED evidence](evidence/C02-red.txt)). First implementation passed all **29/29** ([first output](evidence/C02-first.txt)). The harness was then strengthened to capture every callable before close and verify exact probe inputs; all **29/29** still pass, with **0 skipped** ([final focused output](evidence/C02-green.txt)). Assertions were not weakened. Independent review reran 29/29 and found no concrete ownership, copy-boundary, API or fixture blocker.
+
+The cases cover readiness/close goldens, separate systems, temporary-probe preservation, nested input/snapshot copies, independent diagnostic arrays, all four vendor statuses, negative DOF, every exposed call's exception invalidation, captured methods, session identity, cleanup faults, missing native reporting, invalid probe evidence, same-origin URLs, worker/WASM requirements, missing/malformed initializers, readable initialization errors and configuration capture across asynchronous loading. External vendor resources are faked for these unit cases; the real resource smoke follows.
+
+The required checker initially exited **1** with `DECISIONS has no 'Revisit if:' trigger` ([output](evidence/C02-checker-red.txt)). The decisions already had revisit conditions, but lacked the checker’s literal label. The header was corrected; the same command now exits **0**, `PASS: src/cad/solver-runtime.ts` ([output](evidence/C02-checker-green.txt)):
+
+```sh
+python3 /home/goosnav/.agents/skills/synced/00ab2cd7-2e1c-45ca-814e-5f657fe548ca_724affcc-3df3-47d2-bd47-95d03e739484/goosnav-modular-coding-method/scripts/check_module.py src/cad/solver-runtime.ts
+```
+
+This unexpected checker failure triggers the retained BATCH halt. The current brick is finished GREEN; the next combined assembly is not started in this checkpoint. No brick becomes human-ACCEPTED.
+
+### Actual solver browser evidence
+
+`npm run test:browser -- src/cad/solver-runtime.browser.spec.ts` exited **0: 1 passed**, none skipped, including strict typechecking and a fresh static build ([focused output](evidence/C02-browser.txt)). The one real-resource smoke uses **Chrome 154.0.8037.97, Linux x64, headless, 1280×720**. Window and dedicated worker were cross-origin isolated. A rectangle begins with fixed A=(0,0), B=(95,3), C=(98,57), D=(-2,59), joined by horizontal/vertical lines. With no dimensions, width only, and width plus height, actual solving returned **Success (0)** and **DOF 2, 1, 0** respectively, with empty conflicting/redundant/partially redundant arrays. Final corners were exactly **(0,0), (100,0), (100,60), (0,60)** within the asserted 1e-8 allowance.
+
+Adding a second width of 101 returned **Failed (2), DOF -1**, and both IDs **width100 / width101**. The worker did not apply the failed solution; its source snapshot remained unchanged and its separately retained previous-success observation still contained the exact rectangle. The page displayed a readable contradictory-width message. This is a solver fixture, not the full sketch editor or failed-feature acceptance case. Probe preserved live data, DOF and reports. Close invalidated a captured solve function and snapshot access; a replacement worker initialized successfully.
+
+The focused run completed **2,124** repeated real rectangle solves in **400.035 ms** while the main thread delivered **23 animation frames and one click**. The cumulative run also asserts the same bounded responsiveness conditions. These are measured fixture observations, not a 50-feature rebuild, guaranteed 60 fps viewport, arbitrary single-call latency, or complete product performance claim. Native-trap handling is fake-resource tested; this C02 browser fixture does not inject a genuine native fault. Other browsers and operating systems remain UNTESTED.
+
+Demo: `npm run dev`, open `/dev/fixtures/solver-runtime.html`. The smoke exercised it and generated the visually inspected [C02 screenshot](evidence/C02-worker.png): the original XP-style controls, readable conflict line, result panels and scope footer fit 1280×720. The screenshot/demo are illustrative, separate from the executable assertions. The banner explicitly says no sketch editor is connected.
+
+### Cumulative verification and current scope
+
+| Command | Final result | Evidence |
+|---|---|---|
+| `node --import tsx --test src/cad/solver-runtime.test.ts` | Exit 0; 29 pass, 0 fail, 0 skipped | [Focused unit output](evidence/C02-green.txt) |
+| `npm test` | Exit 0; 357 pass, 0 fail, 0 skipped | [Cumulative unit output](evidence/phase2-through-C02.txt) |
+| `npm run test:browser` | Exit 0; fresh build and 12 pass, none skipped | [Cumulative browser output](evidence/phase2-through-C02-browser.txt) |
+| `npm run typecheck` | Exit 0, no diagnostics | [Verification output](evidence/phase2-C02-verification.txt) |
+| C02 module checker (command above) | Exit 0, PASS | [Checker output](evidence/C02-checker-green.txt) |
+| `python3 dev/verify-spec.py` | Exit 0; TRACE/MAP/LINK PASS | [Verification output](evidence/phase2-C02-verification.txt) |
+
+The first cumulative browser command reported 12 passing cases but its process ended with **143 (SIGTERM)** after the summary ([interrupted output](evidence/phase2-through-C02-browser-interrupted.txt)). It is not counted as a successful command. No surviving test/server process was found; both reviewers confirmed they performed no shared-process termination. The cause of that SIGTERM is not established. A fresh execution of the same npm command, captured by Python `subprocess.run(..., start_new_session=True)`, completed with observed **exit 0**. No production or assertion change was made between these runs. Earlier C01 screenshot evidence was restored after cumulative capture, rather than overwriting its historical checkpoint.
+
+The [source artifact manifest](evidence/C02-assets.json) records the exact package/notice and JavaScript/WASM hashes, plus the inspected native memory declaration. Native loader **26,129 bytes**, WASM **484,003 bytes**; both strictly below 26,214,400. The binary's initial/maximum memory is fixed at **337 pages / 22,085,632 bytes**, unshared. Root production still has an empty workspace-adapter registry, so final emitted CAD assets, complete corresponding-source packaging, offline behavior, Cloudflare and M1a remain open. Source-package byte checks do not pass those release requirements.
+
+Current requirement status: **PASS 13 / FAIL 0 / UNTESTED 373**. Newly passed **CAD-002** through exact provenance/artifact inspection and the actual rectangle/contradiction worker test; **CAD-003** through inspection of the two implemented engine boundaries and their genuine upstream calls. Existing passes: **SYS-005, CAD-001, CAD-006, REL-001, REL-002, REL-005, REL-011, REL-012, REL-014, REL-023, REL-028**. Every other ID remains UNTESTED in requirements.json. In particular, the combined worker seam, production sketch/feature tools, full CAD goldens/STEP round-trip, Image/Video, performance and all release gates remain incomplete.
+
+How to tweak: `PROBE_TOLERANCE = 1e-8` belongs only to the known (10,20) point oracle; wrong/nonfinite probe tests catch changes that accept incorrect output. Module/WASM URLs are explicit pinned inputs checked before initialization. The worker demo’s 400 ms loop and 30-second watchdog are fixture settings, not product deadlines. Engine pin changes require renewed declaration, API, binary, license and browser verification. GREEN: S01–S15, A-SHELL, C01–C02. Human ACCEPTED: none. Shared ladder height: 4; **CAD-A1 is next**, before C03. Phase 2 and the full shippable-product objective remain unfinished.

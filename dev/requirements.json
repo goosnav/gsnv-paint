@@ -572,7 +572,7 @@
     "verification": "V-CAD-002",
     "procedure": "Inspect the pinned solver, upstream provenance, and spike evidence; assert it solves a constrained rectangle and reports a contradictory constraint set.",
     "method": "I",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {
@@ -584,7 +584,7 @@
     "verification": "V-CAD-003",
     "procedure": "Inspect the CAD dependency boundary and implementation ownership; assert geometry-kernel and constraint-solving calls delegate to the recorded upstream engines.",
     "method": "I",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {

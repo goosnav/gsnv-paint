@@ -1,0 +1,2 @@
+FAIL: src/cad/solver-runtime.ts
+  - DECISIONS has no 'Revisit if:' trigger

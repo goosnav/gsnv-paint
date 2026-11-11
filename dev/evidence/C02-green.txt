@@ -1,0 +1,37 @@
+✔ C02 golden opens a worker-local facade with empty live data and closes once (3.608776ms)
+✔ C02 clones nested input and snapshot objects across the vendor boundary (0.850527ms)
+✔ C02 probe preserves live settings, data and independent diagnostics (1.118447ms)
+✔ C02 keeps separate sessions independent when one closes (1.315459ms)
+✔ C02 every captured public method rejects after close without calling native code (1.819098ms)
+✔ C02 rejects forged session copies without touching live native state (0.895427ms)
+✔ C02 forwards ordinary solve statuses and negative DOF without applying or invalidating (0.77127ms)
+✔ C02 diagnostic arrays returned from the vendor cannot alias caller-owned results (0.609983ms)
+✔ C02 a thrown vendor push call invalidates once and preserves the original error (0.671096ms)
+✔ C02 a thrown vendor clear_data call invalidates once and preserves the original error (0.619406ms)
+✔ C02 a thrown vendor solve call invalidates once and preserves the original error (0.386328ms)
+✔ C02 a thrown vendor apply_solution call invalidates once and preserves the original error (0.47689ms)
+✔ C02 a thrown vendor get_conflicting call invalidates once and preserves the original error (0.450705ms)
+✔ C02 a thrown vendor get_redundant call invalidates once and preserves the original error (0.35556ms)
+✔ C02 a thrown vendor get_partially_redundant call invalidates once and preserves the original error (0.416431ms)
+✔ C02 a thrown vendor set_convergence_threshold call invalidates once and preserves the original error (1.357569ms)
+✔ C02 a thrown vendor set_max_iterations call invalidates once and preserves the original error (0.556804ms)
+✔ C02 a thrown vendor dof call invalidates once and preserves the original error (0.331669ms)
+✔ C02 a thrown vendor snapshot call invalidates once and preserves the original error (0.356267ms)
+✔ C02 close failure returns a readable diagnostic and never retries native cleanup (0.470517ms)
+✔ C02 missing native reporting is a capability error, not an apparently ready session (0.698545ms)
+✔ C02 wrong probe status, DOF, geometry or conflict evidence rejects readiness (1.969861ms)
+✔ C02 a thrown live probe invalidates the old port without calling native cleanup (0.543095ms)
+✔ C02 rejects cross-origin, credentialed, non-HTTP and malformed URLs before initialization (0.526417ms)
+✔ C02 refuses a main-thread environment before loading the solver (0.195192ms)
+✔ C02 refuses missing WebAssembly before initializing the vendor (0.280587ms)
+✔ C02 missing default initializer and malformed native modules fail readably (0.640693ms)
+✔ C02 initialization and native construction failures become readable load errors (0.634366ms)
+✔ C02 captures the chosen WASM URL before asynchronous loading (0.373558ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 240.768558

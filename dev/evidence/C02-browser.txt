@@ -1,0 +1,32 @@
+
+> gsnv-paint@0.1.0 test:browser
+> npm run build && playwright test src/cad/solver-runtime.browser.spec.ts
+
+
+> gsnv-paint@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 23 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.55 kB │ gzip:  0.34 kB
+dist/assets/index-CY7G_zY5.css   8.20 kB │ gzip:  2.43 kB
+dist/assets/index-DHTtv-bs.js   57.97 kB │ gzip: 20.06 kB
+
+✓ built in 65ms
+[WebServer] (node:1806696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1806723) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+C02 source artifact (not final emitted asset coverage): {"specifier":"@salusoft89/planegcs/dist/planegcs_dist/planegcs.js","bytes":26129,"sha256":"d541e52942d9480438ea44f2ca05bb07dcc216e99da29d7aa31d3cc60ad6ef81"}
+C02 source artifact (not final emitted asset coverage): {"specifier":"@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm","bytes":484003,"sha256":"af9d1874fc895726bd267703a698a86c82d35b7415a02fe5184ebf65ddbc04af"}
+C02 real Chrome worker evidence: {"browser":"154.0.8037.97","platform":"linux","arch":"x64","viewport":{"width":1280,"height":720},"opened":{"ready":true,"workerIsolated":true,"workerOnly":true,"diagnostics":[]},"solved":{"underdefined":{"status":0,"dof":2,"conflicts":[],"redundant":[],"partiallyRedundant":[],"applied":true},"widthOnly":{"status":0,"dof":1,"conflicts":[],"redundant":[],"partiallyRedundant":[],"applied":true},"defined":{"status":0,"dof":0,"conflicts":[],"redundant":[],"partiallyRedundant":[],"applied":true,"snapshotPreserved":false,"points":{"A":[0,0],"B":[100,0],"C":[100,60],"D":[0,60]}}},"conflict":{"status":2,"dof":-1,"conflicts":["width100","width101"],"redundant":[],"partiallyRedundant":[],"applied":false,"snapshotPreserved":true,"points":{"A":[0,0],"B":[95,3],"C":[98,57],"D":[-2,59]},"closed":false,"lastSuccessfulPoints":{"A":[0,0],"B":[100,0],"C":[100,60],"D":[0,60]}},"work":{"elapsedMs":400.0349999666214,"iterations":2124,"status":0,"dof":0,"points":{"A":[0,0],"B":[100,0],"C":[100,60],"D":[0,60]},"framesDuringWork":23,"clicksDuringWork":1}}
+C02 limits: fixture solve/apply policy only; bounded responsiveness is not product performance. No native fault injection, final emitted asset, deployment or other OS/browser coverage.
+  ✓  1 src/cad/solver-runtime.browser.spec.ts:15:1 › C02 real worker solves constrained geometry, reports contradiction and invalidates closed methods (2.1s)
+
+  1 passed (3.3s)

@@ -55,8 +55,8 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-001 | CTL-029 | 1 | 4 | ProjectPersistence | V-CTL-029 | T | UNTESTED |
 | N-001 | CTL-030 | 1 | 4 | ProjectPersistence | V-CTL-030 | T | UNTESTED |
 | N-003 | CAD-001 | 2 | 2 | CADKernel | V-CAD-001 | I | PASS |
-| N-003 | CAD-002 | 2 | 2 | CADKernel | V-CAD-002 | I | UNTESTED |
-| N-003 | CAD-003 | 2 | 2 | CADKernel | V-CAD-003 | I | UNTESTED |
+| N-003 | CAD-002 | 2 | 2 | CADKernel | V-CAD-002 | I | PASS |
+| N-003 | CAD-003 | 2 | 2 | CADKernel | V-CAD-003 | I | PASS |
 | N-003 | CAD-004 | 2 | 2 | CADKernel | V-CAD-004 | T | UNTESTED |
 | N-003 | CAD-005 | 2 | 2 | CADKernel | V-CAD-005 | T | UNTESTED |
 | N-003 | CAD-006 | 2 | 2 | CADKernel | V-CAD-006 | I | PASS |

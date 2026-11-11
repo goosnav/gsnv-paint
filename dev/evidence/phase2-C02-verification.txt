@@ -1,0 +1,17 @@
+$ npm run typecheck
+
+> gsnv-paint@0.1.0 typecheck
+> tsc --noEmit
+
+Exit: 0
+$ python3 /home/goosnav/.agents/skills/synced/00ab2cd7-2e1c-45ca-814e-5f657fe548ca_724affcc-3df3-47d2-bd47-95d03e739484/goosnav-modular-coding-method/scripts/check_module.py src/cad/solver-runtime.ts
+PASS: src/cad/solver-runtime.ts
+Exit: 0
+$ python3 dev/verify-spec.py
+TRACE PASS: 386 unique requirements, 386 unique verification procedures, 7 needs; metadata and Markdown closure valid.
+MAP PASS: 158 unique contracts; all required fields; known dependencies; maximum 3 collaborators; no cycles.
+LINK PASS: local document links resolve; all 17 conceptual design owners bound.
+REQUIREMENT STATUS: PASS 13; FAIL 0; UNTESTED 373. Status is recorded evidence; this audit does not execute product behavior.
+ANALYTICAL ORACLE width=100: 56654.424808105 mm3; not a kernel test.
+ANALYTICAL ORACLE width=120: 68654.424808105 mm3; not a kernel test.
+Exit: 0
