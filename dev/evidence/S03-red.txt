@@ -1,0 +1,1521 @@
+✖ S03 canonical literal golden and input immutability (2.540686ms)
+✖ S03 gsnv-cad preserves nested JSON content (0.264909ms)
+✖ S03 gsnv-image preserves nested JSON content (0.080399ms)
+✖ S03 gsnv-video preserves nested JSON content (0.075786ms)
+✖ S03 deterministic ordering property independent of record insertion order (0.184034ms)
+✖ S03 accepts shared references that are not ancestor cycles and null-prototype records (0.204756ms)
+✖ S03 valid deeply nested content does not depend on the JavaScript call stack (0.117151ms)
+✖ S03 rejects invalid envelope 0 on encode and decode (2.406133ms)
+✖ S03 rejects invalid envelope 1 on encode and decode (0.320787ms)
+✖ S03 rejects invalid envelope 2 on encode and decode (0.277334ms)
+✖ S03 rejects invalid envelope 3 on encode and decode (0.157812ms)
+✖ S03 rejects invalid envelope 4 on encode and decode (0.189168ms)
+✖ S03 rejects invalid envelope 5 on encode and decode (0.218143ms)
+✖ S03 rejects invalid envelope 6 on encode and decode (0.135872ms)
+✖ S03 rejects invalid envelope 7 on encode and decode (0.120256ms)
+✖ S03 rejects invalid envelope 8 on encode and decode (0.152897ms)
+✖ S03 rejects invalid envelope 9 on encode and decode (0.179402ms)
+✖ S03 rejects invalid envelope 10 on encode and decode (0.195853ms)
+✖ S03 rejects invalid envelope 11 on encode and decode (0.121982ms)
+✖ S03 rejects invalid envelope 12 on encode and decode (0.133963ms)
+✖ S03 rejects invalid envelope 13 on encode and decode (0.126755ms)
+✖ S03 rejects invalid envelope 14 on encode and decode (0.138943ms)
+✖ S03 rejects invalid envelope 15 on encode and decode (0.124691ms)
+✖ S03 rejects invalid envelope 16 on encode and decode (0.116894ms)
+✖ S03 rejects invalid envelope 17 on encode and decode (0.130931ms)
+✖ S03 rejects unsafe own key __proto__ at any depth (0.200347ms)
+✖ S03 rejects unsafe own key prototype at any depth (0.125607ms)
+✖ S03 rejects unsafe own key constructor at any depth (0.1218ms)
+✖ S03 rejects non-JSON content 0 without silent coercion (0.157669ms)
+✖ S03 rejects non-JSON content 1 without silent coercion (0.222335ms)
+✖ S03 rejects non-JSON content 2 without silent coercion (0.176753ms)
+✖ S03 rejects non-JSON content 3 without silent coercion (0.125802ms)
+✖ S03 rejects non-JSON content 4 without silent coercion (0.114622ms)
+✖ S03 rejects non-JSON content 5 without silent coercion (0.112225ms)
+✖ S03 rejects non-JSON content 6 without silent coercion (0.111904ms)
+✖ S03 rejects non-JSON content 7 without silent coercion (0.111913ms)
+✖ S03 rejects non-JSON content 8 without silent coercion (0.162153ms)
+✖ S03 rejects non-JSON content 9 without silent coercion (0.144163ms)
+✖ S03 rejects non-JSON content 10 without silent coercion (0.115662ms)
+✖ S03 rejects non-JSON content 11 without silent coercion (0.117175ms)
+✖ S03 rejects non-JSON content 12 without silent coercion (0.111743ms)
+✖ S03 rejects non-JSON content 13 without silent coercion (0.11126ms)
+✖ S03 rejects non-JSON content 14 without silent coercion (0.186737ms)
+✖ S03 rejects non-JSON content 15 without silent coercion (0.121199ms)
+✖ S03 rejects non-JSON content 16 without silent coercion (0.111831ms)
+✖ S03 rejects malformed or nonfinite JSON text (0 characters) (0.153284ms)
+✖ S03 rejects malformed or nonfinite JSON text (1 characters) (0.120066ms)
+✖ S03 rejects malformed or nonfinite JSON text (9 characters) (0.110421ms)
+✖ S03 rejects malformed or nonfinite JSON text (125 characters) (0.108882ms)
+✖ S03 rejects malformed or nonfinite JSON text (128 characters) (0.15111ms)
+✖ S03 invalid operation and text types use the documented error (0.180013ms)
+✖ S03 64 MiB UTF-8 boundary is inclusive and counts bytes rather than code units (0.120227ms)
+ℹ tests 52
+ℹ suites 0
+ℹ pass 0
+ℹ fail 52
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 235.979161
+
+✖ failing tests:
+
+test at src/shared/project-format.test.ts:1:605
+✖ S03 canonical literal golden and input immutability (2.540686ms)
+  Error: Not implemented
+      at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:15:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/shared/project-format.test.ts:1:917
+✖ S03 gsnv-cad preserves nested JSON content (0.264909ms)
+  Error: Not implemented
+      at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:25:58)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/shared/project-format.test.ts:1:917
+✖ S03 gsnv-image preserves nested JSON content (0.080399ms)
+  Error: Not implemented
+      at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:25:58)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/project-format.test.ts:1:917
+✖ S03 gsnv-video preserves nested JSON content (0.075786ms)
+  Error: Not implemented
+      at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:25:58)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/project-format.test.ts:1:1214
+✖ S03 deterministic ordering property independent of record insertion order (0.184034ms)
+  Error: Not implemented
+      at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:34:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/project-format.test.ts:1:1900
+✖ S03 accepts shared references that are not ancestor cycles and null-prototype records (0.204756ms)
+  Error: Not implemented
+      at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+      at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:43:56)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/project-format.test.ts:1:2208
+✖ S03 valid deeply nested content does not depend on the JavaScript call stack (0.117151ms)
+  Error: Not implemented
+      at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:51:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 0 on encode and decode (2.406133ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 1 on encode and decode (0.320787ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 2 on encode and decode (0.277334ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 3 on encode and decode (0.157812ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 4 on encode and decode (0.189168ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 5 on encode and decode (0.218143ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 6 on encode and decode (0.135872ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 7 on encode and decode (0.120256ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 8 on encode and decode (0.152897ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 9 on encode and decode (0.179402ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 10 on encode and decode (0.195853ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 11 on encode and decode (0.121982ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 12 on encode and decode (0.133963ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 13 on encode and decode (0.126755ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 14 on encode and decode (0.138943ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 15 on encode and decode (0.124691ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 16 on encode and decode (0.116894ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:2929
+✖ S03 rejects invalid envelope 17 on encode and decode (0.130931ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:63:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:3216
+✖ S03 rejects unsafe own key __proto__ at any depth (0.200347ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:71:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:71:27)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:71:14)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:3216
+✖ S03 rejects unsafe own key prototype at any depth (0.125607ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:71:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:71:27)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:71:14)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:3216
+✖ S03 rejects unsafe own key constructor at any depth (0.1218ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:71:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:71:27)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:71:14)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 0 without silent coercion (0.157669ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 1 without silent coercion (0.222335ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 2 without silent coercion (0.176753ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 3 without silent coercion (0.125802ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 4 without silent coercion (0.114622ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 5 without silent coercion (0.112225ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 6 without silent coercion (0.111904ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 7 without silent coercion (0.111913ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 8 without silent coercion (0.162153ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 9 without silent coercion (0.144163ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 10 without silent coercion (0.115662ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 11 without silent coercion (0.117175ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 12 without silent coercion (0.111743ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 13 without silent coercion (0.11126ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 14 without silent coercion (0.186737ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 15 without silent coercion (0.121199ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4065
+✖ S03 rejects non-JSON content 16 without silent coercion (0.111831ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at encodeUnknown (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:10:45)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:88:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4303
+✖ S03 rejects malformed or nonfinite JSON text (0 characters) (0.153284ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4303
+✖ S03 rejects malformed or nonfinite JSON text (1 characters) (0.120066ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4303
+✖ S03 rejects malformed or nonfinite JSON text (9 characters) (0.110421ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4303
+✖ S03 rejects malformed or nonfinite JSON text (125 characters) (0.108882ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4303
+✖ S03 rejects malformed or nonfinite JSON text (128 characters) (0.15111ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:94:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4462
+✖ S03 invalid operation and text types use the documented error (0.180013ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "ProjectFormatError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:100:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:100:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:100:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/project-format.test.ts:1:4682
+✖ S03 64 MiB UTF-8 boundary is inclusive and counts bytes rather than code units (0.120227ms)
+  Error: Not implemented
+      at projectFormat (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.ts:36:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-format.test.ts:107:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

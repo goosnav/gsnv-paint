@@ -45,7 +45,7 @@ RAISES: `TypeError` for malformed events; `RangeError` for a document command on
 DEPS: S01.
 TEST: workspace independence, new/open/commit/undo/save failure sequences, late-save completion after document replacement, dirty restoration, golden event transcript. Requirement groups AppShell, CommandHistory.
 
-## S03 project-format — CORE — PLANNED
+## S03 project-format — CORE — GREEN
 
 Purpose: Encode or decode a common versioned native project envelope.
 IN: `{op:'encode',project:ProjectEnvelope} | {op:'decode',text:string}`; maximum encoded text 64 MiB for this JSON envelope transport.
