@@ -127,7 +127,7 @@ IN: `{action:'open'|'close'|'probe',moduleUrl?:string,wasmUrl?:string,session?:S
 OUT: `{ready:boolean,session:SolverSession|null,diagnostics:Diagnostic[]}`; public engine/dof/snapshot methods permit C16 execution without private-field access or reinitialization; probe executes one solvable and one contradictory system using the actual solver.
 RAISES: `SolverLoadError` on load/init; `DisposedSessionError` on reuse; `SolverCapabilityError` if conflict/DOF reporting is absent.
 DEPS: none.
-Vendor: `@salusoft89/planegcs@1.3.0`; the public port is readable only inside the owning worker. Spike precedes sketch UI and cannot pass using a fake.
+Vendor: `@salusoft89/planegcs@1.3.0`; the public port is readable only inside the owning worker. Spike precedes sketch UI and cannot pass using a fake. The pinned package is installed; D11 records its repaired declaration packaging. C02 implementation and actual worker verification remain pending.
 
 ### C03 dimension-expressions — CORE — PLANNED
 File `src/cad/dimension-expressions.ts`; public `evaluateDimension(request)`.
@@ -535,7 +535,7 @@ Overlap identifies a seam, not duplicate ownership. Every ID has only one file. 
 
 ## Build order and assembly ladder
 
-Build C01 and C02 first: genuine WASM/worker spikes precede domain/UI expansion. C01 is GREEN. BATCH is halted before C02 after repairing a WASM-trap cleanup defect and test typing; CAD-A1 remains unassembled until C02 passes. Human ACCEPTED set remains empty. Then C03…C49 in numeric order, with S01/S03/S04/S15 already provided by phase 1. All listed direct dependencies precede their consumer. C41 consumes dimension types/policy and resolved model measurements; C42 supplies projections through assembly afterward, so neither calls the other.
+Build C01 and C02 first: genuine WASM/worker spikes precede domain/UI expansion. C01 is GREEN. The latest BATCH halt is before C02 implementation after repairing an unexpected vendor declaration packaging failure; CAD-A1 remains unassembled until C02 passes. Human ACCEPTED set remains empty. Then C03…C49 in numeric order, with S01/S03/S04/S15 already provided by phase 1. All listed direct dependencies precede their consumer. C41 consumes dimension types/policy and resolved model measurements; C42 supplies projections through assembly afterward, so neither calls the other.
 
 Assemblies are wiring/test entry points, **not bricks**, and contain no geometry or application policy. They may import more than three already-eligible bricks because their only role is explicit connection. If wiring starts interpreting feature definitions, calculating dimensions, or resolving failures, extract that decision into a contracted CORE brick and halt before proceeding.
 

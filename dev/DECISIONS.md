@@ -77,3 +77,13 @@ D03 clarification from pinned sources: FreeCAD native files carry LGPL-2.0-or-la
 Cloudflare's primary [Pages limits](https://developers.cloudflare.com/pages/platform/limits/) were rechecked on 2026-11-11: 25 MiB per asset, 20,000 files on Free. The strict-under asset gate remains unchanged.
 
 Exact inspected notice copies: [package LGPL text](licenses/replicad-opencascadejs-1.2.1.LICENSE.txt), [OCCT exception](licenses/OCCT-8.0.1-EXCEPTION.txt). [C01 artifact manifest](evidence/C01-assets.json) records installed source-asset sizes and SHA-256 hashes; it does not certify final emitted files or a complete corresponding-source distribution.
+
+## D11 — PlaneGCS declaration packaging
+
+Pin `@salusoft89/planegcs@1.3.0` in the lockfile. Its published `dist/index.d.ts` fails strict NodeNext checking with 14 TS7016/TS2835 diagnostics: the native module declaration is absent from `dist`, and relative declaration imports omit required extensions. The same package includes the missing declaration at `planegcs_dist/planegcs.d.ts`. This is a dependency packaging defect; it is not evidence of incorrect native solving.
+
+Choose a reproducible declaration-only preparation step in [prepare-planegcs.mjs](prepare-planegcs.mjs). It copies that published declaration into its expected location and appends `.js` to extensionless relative declaration imports. The [manifest](planegcs-declarations.json) records exact original/prepared SHA-256 values and upstream commit 9d26baef0b240fe0eef4186d4e5e5e66ec3620b7. Version and every expected input/output are validated before writing. Repeated preparation makes no changes. No vendor signatures are rewritten and no JavaScript/WASM changes. Fresh `npm ci` runs the preparation; script-disabled installs require explicit `npm run prepare:solver`.
+
+Alternatives: global `skipLibCheck` hides declaration problems; switching the whole project to Bundler resolution still leaves a missing declaration; a `paths` declaration mirror can also affect runtime resolution in tooling. The narrow installed-package repair preserves existing strict checks and package resolution. Revisit and remove the repair when an audited upstream release packages valid NodeNext declarations. Do not relax hash guards to adopt a changed package silently.
+
+The exact packaged [LGPL text](licenses/planegcs-1.3.0.LICENSE.txt) is retained. D03/D10's component-specific license notices and corresponding source/build/replacement obligations still apply before distribution. This preparation is development tooling, not a product brick, solver implementation, or release clearance. C02 still requires the actual browser worker spike; no requirement is passed by declaration checking.

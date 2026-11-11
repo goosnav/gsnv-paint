@@ -1,0 +1,56 @@
+{
+  "package": "@salusoft89/planegcs",
+  "version": "1.3.0",
+  "upstreamCommit": "9d26baef0b240fe0eef4186d4e5e5e66ec3620b7",
+  "operation": "Append .js to extensionless relative declaration imports; copy published native declaration into missing dist location. No signature or runtime changes.",
+  "changes": [
+    {
+      "source": "dist/planegcs_dist/constraints.d.ts",
+      "target": "dist/planegcs_dist/constraints.d.ts",
+      "originalSha256": "7a6251f1692f5ce98dacde4410b70e15d1de52fe234c7cfefad6fb9bad81dc25",
+      "preparedSha256": "13e50c5ce513e9fe2a1cfeeab1f51185dfcccdccd97821c800712dc952bbcd20"
+    },
+    {
+      "source": "dist/planegcs_dist/gcs_system.d.ts",
+      "target": "dist/planegcs_dist/gcs_system.d.ts",
+      "originalSha256": "4ccbf28056d05161587aed000616bc9d7e8e9cd589857c4d76e5647d14a0308d",
+      "preparedSha256": "f9fe7803fdb64c11690029f624ffa9d1635de6e27724ad2c9e946d7c1870f908"
+    },
+    {
+      "source": "dist/planegcs_dist/gcs_system_mock.d.ts",
+      "target": "dist/planegcs_dist/gcs_system_mock.d.ts",
+      "originalSha256": "86a9ff0faee283dae46db182c3a72487dfeb7132faa7bee3cc8a3cbaf6610f60",
+      "preparedSha256": "4f03059ccfc9813b9dd3322e211a020cdbb0497516c0d7e721ce266509463341"
+    },
+    {
+      "source": "dist/sketch/emsc_vectors.d.ts",
+      "target": "dist/sketch/emsc_vectors.d.ts",
+      "originalSha256": "862a68ba093c15a3964cae5c068cb1ab39f4e129a47e0b5f05a4eafc54def68b",
+      "preparedSha256": "7e8fed3f88c0ed02b7463b374f829eb35e598e2caf8fdd6a5f1d2ff099bba062"
+    },
+    {
+      "source": "dist/sketch/gcs_wrapper.d.ts",
+      "target": "dist/sketch/gcs_wrapper.d.ts",
+      "originalSha256": "2379ec4b73564a539ad1cd3218649b57603cdbc21c6eb337b51fbc8d567d715c",
+      "preparedSha256": "1ff25cf7870233f976216ebd907e10be50dd9a19588eae6042d9e4be63524710"
+    },
+    {
+      "source": "dist/sketch/sketch_index.d.ts",
+      "target": "dist/sketch/sketch_index.d.ts",
+      "originalSha256": "f98fa3721c57874a8693d88927761a43f633d45d090d4ed32f1593f48fb039e2",
+      "preparedSha256": "96e087d25085f87e5774def803f0a9ccb6b0937605aa2dffd4ed665f20308cf9"
+    },
+    {
+      "source": "dist/sketch/sketch_primitive.d.ts",
+      "target": "dist/sketch/sketch_primitive.d.ts",
+      "originalSha256": "57252659d20a8b63aad14c1bc98f697d4081f330b412ece9df2c19285e924783",
+      "preparedSha256": "160013baaa41bf26a08a290d4cca9ba588a5817ba6ae647aca6513be244c741e"
+    },
+    {
+      "source": "planegcs_dist/planegcs.d.ts",
+      "target": "dist/planegcs_dist/planegcs.d.ts",
+      "originalSha256": "eefcf71f801afecea51262b4eaf86e2d8fbe798cd8e3eca5be0cdaedaf32e47a",
+      "preparedSha256": "f29cf989e01281faf10ff700416fda13f9bb1a17d8afed06abc215e417a9d8b9"
+    }
+  ]
+}

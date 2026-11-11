@@ -1,0 +1,134 @@
+
+> gsnv-paint@0.1.0 test:browser
+> npm run build && playwright test
+
+
+> gsnv-paint@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 23 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.55 kB │ gzip:  0.34 kB
+dist/assets/index-CY7G_zY5.css   8.20 kB │ gzip:  2.43 kB
+dist/assets/index-DHTtv-bs.js   57.97 kB │ gzip: 20.06 kB
+
+✓ built in 70ms
+[WebServer] (node:1795366) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 11 tests using 1 worker
+
+(node:1795403) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+A-SHELL browser: Chrome 154.0.8037.97; runner linux/x64; viewport {"width":1280,"height":720}.
+A-SHELL: actual wheel/Space pan and typed 2D view settings applied through the shared seams; right-click target reached the fixture adapter.
+A-SHELL emitted production capability results: [
+  {
+    state: 'supported',
+    text: 'Native file pickers: Native file pickers are available; access requires your file selection.'
+  },
+  {
+    state: 'supported',
+    text: 'Background workers: Background worker API is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebAssembly: WebAssembly compilation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebGL 2: WebGL 2 context creation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'Isolated execution: Cross-origin isolation is active.'
+  },
+  {
+    state: 'supported',
+    text: 'Image clipboard: Image clipboard API is available; access may require permission.'
+  },
+  {
+    state: 'supported',
+    text: 'Pen pressure API: Pressure API is available; pen hardware has not been tested.'
+  }
+]
+A-SHELL: emitted dist via Vite preview exposes one shell and explicitly unavailable CAD/Image/Video editing, without fixture tools or enabled New factories. Deployment remains untested.
+A-SHELL: one window; fixture preview/cancel/commit; undo/redo; exact downloaded container reopens; IDB recovery survives page close/reopen. Native picker interaction and product editing remain untested.
+  ✓   1 src/app/app-shell.browser.spec.ts:20:1 › A-SHELL actual window composes fixture editing, history, project files and local recovery (2.5s)
+C01 source artifact (not final emitted asset coverage): {"specifier":"replicad-opencascadejs","bytes":60483,"sha256":"465b68c209b416396857fad30a6e33e7f5407907373cfe240c194af6d80c4a1d"}
+C01 source artifact (not final emitted asset coverage): {"specifier":"replicad-opencascadejs/wasm","bytes":22942327,"sha256":"a9335919fa64bfeaee3e241d3139ad134022682429c6688e20d8ca12093d33d9"}
+C01 real Chrome worker evidence: {"browser":"154.0.8037.97","platform":"linux","arch":"x64","viewport":{"width":1280,"height":720},"opened":{"ready":true,"mode":"single","version":"replicad-opencascadejs@1.2.1","workerIsolated":true,"workerOnly":true,"valid":true,"volume":23.999999999999996,"center":[1,1.5,2],"heapBytes":104857600},"owned":{"valid":true,"volume":23.999999999999996,"center":[1,1.5,2],"heapBytes":104857600,"probePreservedShape":true,"releasedTokenError":"DisposedSessionError"},"work":{"elapsedMs":400.0550000667572,"iterations":449,"volume":23.999999999999996,"valid":true,"heapBytes":104857600,"framesDuringWork":23,"clicksDuringWork":1,"navigationDuringWork":1},"fault":{"name":"KernelLoadError","message":"OpenCascade box probe failed: Standard_DomainError. Restart the kernel worker.","closed":true,"faultInjection":true}}
+C01 limits: single mode only; native fault injection is fixture-only; this bounded responsiveness check is not CAD product performance, solver, final emitted asset, deployment or other OS/browser coverage.
+  ✓   2 src/cad/kernel-runtime.browser.spec.ts:9:1 › C01 actual isolated worker owns native solids, remains responsive and recovers by replacement (3.1s)
+{
+  "browser": "154.0.8037.97",
+  "platform": "linux",
+  "arch": "x64",
+  "headless": true,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "results": [
+    {
+      "id": "file-access",
+      "label": "Native file pickers",
+      "status": "supported",
+      "message": "Native file pickers are available; access requires your file selection."
+    },
+    {
+      "id": "workers",
+      "label": "Background workers",
+      "status": "supported",
+      "message": "Background worker API is available."
+    },
+    {
+      "id": "wasm",
+      "label": "WebAssembly",
+      "status": "supported",
+      "message": "WebAssembly compilation is available."
+    },
+    {
+      "id": "webgl2",
+      "label": "WebGL 2",
+      "status": "supported",
+      "message": "WebGL 2 context creation is available."
+    },
+    {
+      "id": "cross-origin-isolation",
+      "label": "Isolated execution",
+      "status": "supported",
+      "message": "Cross-origin isolation is active."
+    },
+    {
+      "id": "clipboard",
+      "label": "Image clipboard",
+      "status": "supported",
+      "message": "Image clipboard API is available; access may require permission."
+    },
+    {
+      "id": "pressure",
+      "label": "Pen pressure API",
+      "status": "supported",
+      "message": "Pressure API is available; pen hardware has not been tested."
+    }
+  ]
+}
+  ✓   3 src/shared/capability-probe.browser.spec.ts:4:1 › S06 actual Chromium API probe matches this isolated browser session (202ms)
+  ✓   4 src/shared/chrome.browser.spec.ts:3:1 › S10 real XP shell fits 1280×720 and preserves focus, menus and workspace content (625ms)
+  ✓   5 src/shared/dialog.browser.spec.ts:3:1 › S11 actual modal previews typed edits, traps focus, rolls back and commits once (478ms)
+S07: 8 binary bytes matched after browser upload, download, and reopen; native picker interaction untested.
+  ✓   6 src/shared/file-access.browser.spec.ts:4:1 › S07 actual browser fallback open/download/reopen preserves exact binary bytes (345ms)
+  ✓   7 src/shared/icons.browser.spec.ts:4:1 › S09 original glyph sheet renders local accessible SVG at desktop size (400ms)
+  ✓   8 src/shared/input-adapter.browser.spec.ts:4:1 › S12 actual Chromium wheel, captured pan, context target and native editing route correctly (628ms)
+S13: 247 bytes matched after browser download/open/re-save; corruption retained prior fixture. Chrome 154.0.8037.97, linux/x64, headless 1280x720. Native picker interaction untested.
+  ✓   9 src/shared/project-files.browser.spec.ts:5:1 › S13 actual Chromium download/open roundtrip preserves project assets and rejects corruption (449ms)
+S14: exact metadata and RGBA bytes survived page close/reopen and reload; stale generation 6 returned committed generation 7; discard persisted.
+  ✓  10 src/shared/recovery-session.browser.spec.ts:3:1 › S14 actual recovery validates a native package across page close, reopen and reload (830ms)
+S08: generation 7 and exact payload bytes survived page close/reopen and reload; journal contains metadata only.
+  ✓  11 src/shared/recovery-store.browser.spec.ts:3:1 › S08 actual browser recovery survives page close/reopen and reload with exact bytes (579ms)
+
+  11 passed (11.7s)

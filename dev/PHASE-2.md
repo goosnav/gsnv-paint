@@ -1,6 +1,6 @@
 # Phase 2 — CAD — in progress
 
-C01 is GREEN. C02–C49 remain PLANNED. No brick is human-ACCEPTED; CAD assembly rung CAD-A1 still needs C02. The existing shared assembly height remains 4. The previous goal turn was progress: Phase 1 was committed and pushed as 52926f3. This turn starts the genuine kernel spike required before sketcher/features/UI work. The complete product remains unfinished and is not a release candidate.
+C01 is GREEN. C02–C49 remain PLANNED. No brick is human-ACCEPTED; CAD assembly rung CAD-A1 still needs C02. The existing shared assembly height remains 4. The C01 checkpoint was pushed as 3ffb2c3. The subsequent C02 prerequisite checkpoint below repairs vendor declaration packaging; it does not implement another brick. The complete product remains unfinished and is not a release candidate.
 
 ## C01 kernel-runtime — GREEN; BATCH halted before C02
 
@@ -44,6 +44,31 @@ D1 uses transferred wrapper ownership rather than guessing native refcounts; rev
 
 **PASS 11 / FAIL 0 / UNTESTED 375.** Newly passed **CAD-001**: inspection of the pinned upstream provenance, actual WASM artifact and real solid creation/measurement satisfies V-CAD-001. Existing inspection/process passes remain **SYS-005, CAD-006, REL-001, REL-002, REL-005, REL-011, REL-012, REL-014, REL-023, REL-028**. All other IDs in requirements.json remain UNTESTED. CAD-004 has worker/cancellation evidence here, but its long production-operation coverage remains open. CAD-003 remains open until both engines' implementation boundaries exist.
 
-The solver is not installed or executed yet. C02 is next and must prove actual solving, DOF/conflict IDs and a constrained rectangle/contradictory system in a worker; declaration review alone cannot pass it. All sketch/feature/editable-format/output/drawing requirements, the golden plate/rebuild/STEP case, over-constraint and failing-fillet model errors, all Image/Video work, performance targets and release/platform gates remain incomplete. No narrower success condition replaces the full product objective.
+At the C01 checkpoint, the solver was not installed or executed. C02 is next and must prove actual solving, DOF/conflict IDs and a constrained rectangle/contradictory system in a worker; declaration review alone cannot pass it. All sketch/feature/editable-format/output/drawing requirements, the golden plate/rebuild/STEP case, over-constraint and failing-fillet model errors, all Image/Video work, performance targets and release/platform gates remain incomplete. No narrower success condition replaces the full product objective.
 
 GREEN: S01–S15, A-SHELL and C01. Human ACCEPTED: none. Shared provisional ladder: 4; CAD-A1: pending C02. Phase 2 is incomplete. The retained modular rule “halt immediately on any failing test … and any surprise” stops this batch before C02 after the recorded trap/test-typing repairs. Captured console failure logs have trailing whitespace normalized only. The active full-product goal remains unchanged.
+
+## C02 prerequisite checkpoint — declaration repair; no new brick
+
+Mode B preparation for C02 found an unexpected published-package defect before any C02 contract stub, testbench or implementation was written. The original command `node_modules/.bin/tsc --ignoreConfig --noEmit --strict --module NodeNext --moduleResolution NodeNext --types node node_modules/@salusoft89/planegcs/dist/index.d.ts` exited **2**, with **14 TS7016/TS2835 diagnostics** ([original failure](evidence/C02-vendor-types-red.txt)). BATCH advancement halted. The pinned dependency's missing native declaration and extensionless declaration imports were repaired by the version/hash-guarded development prerequisite described in D11. Strict compiler settings remain intact; no handwritten solver types, runtime modifications or product stubs were added.
+
+Reproduction and verification:
+
+| Command / check | Observed result | Evidence |
+|---|---|---|
+| `npm ci` | Exit 0; 8 declaration files prepared from a clean install; audit reports 0 vulnerabilities | [Install output](evidence/C02-clean-install.txt) |
+| `npm run prepare:solver` | Exit 0; 8 repairs verified, 0 files written on repeat | [Declaration output](evidence/C02-declarations-green.txt) |
+| `npm run test:solver-types` | Exit 0; strict NodeNext declarations, no diagnostics | [Declaration output](evidence/C02-declarations-green.txt) |
+| `npm run typecheck` | Exit 0; no diagnostics | [Declaration output](evidence/C02-declarations-green.txt) |
+| Runtime integrity comparison | All 14 package JavaScript/WASM files match their hashes from before preparation | [Declaration output](evidence/C02-declarations-green.txt) |
+| `npm test` | Exit 0; 328 pass, 0 fail, 0 skipped | [Cumulative unit output](evidence/C02-prerequisite-unit.txt) |
+| `npm run test:browser` | Exit 0; fresh static build and 11 pass, none skipped | [Cumulative browser output](evidence/C02-prerequisite-browser.txt) |
+| `python3 dev/verify-spec.py` | Exit 0; TRACE/MAP/LINK PASS, 386 requirements and 158 contracts | [Specification output](evidence/C02-prerequisite-spec.txt) |
+
+Independent review in isolated copies confirmed exactly the eight intended declaration changes, an idempotent second run, and rejection before any write for a wrong version, corrupted first/last source, and unknown copied-target bytes. All nondeclaration files stayed identical. Review also corrected an overly strong comment about interrupted writes: preparation is not atomic; `npm ci` restores unknown or partially written dependency state. No runtime adapter was reviewed or certified at this checkpoint.
+
+The browser run used **Chrome 154.0.8037.97, Linux x64, headless, 1280×720** and reran the existing shell/kernel fixtures. It did not exercise a solver worker or CAD-A1. Original C01 screenshot evidence was retained rather than replacing it with a later capture. The install reports an existing esbuild postinstall allowScripts warning; the recorded install/build/tests completed successfully. Audit output alone is not a security or release certification.
+
+Vendor-only exploration outside the application supplied a candidate rectangle fixture: fixed A=(0,0); initial B=(95,3), C=(98,57), D=(-2,59); four connected horizontal/vertical edges; width100 and height60 distances. The vendor reported Success/DOF 0 and solved corners (0,0), (100,0), (100,60), (0,60). Adding width101 reported Failed/DOF -1 and conflicting IDs width100/width101. These observations are implementation reconnaissance, **not product or acceptance-test passes**. C02 still needs its own contract-first testbench and real browser worker proof. Negative DOF is a valid over-constraint report; C16 owns geometry commit policy. Probe data must not overwrite live session data. Faulted native sessions require owner termination, not further native calls. Root `index.js?url` is not a standalone runtime asset because its relative imports remain; resolve that loading boundary in the C02 implementation.
+
+Requirement status stays **PASS 11 / FAIL 0 / UNTESTED 375**. Passed IDs remain **SYS-005, CAD-001, CAD-006, REL-001, REL-002, REL-005, REL-011, REL-012, REL-014, REL-023, REL-028**. Every other ID remains UNTESTED; the tooling failure was repaired and does not pass CAD-002. C02–C49 remain PLANNED, CAD-A1 remains pending, and no brick becomes ACCEPTED. The retained modular halt rule stops this checkpoint before C02 implementation. The active full-product goal remains open.
