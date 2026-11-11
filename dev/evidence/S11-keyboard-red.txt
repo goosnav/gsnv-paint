@@ -1,0 +1,47 @@
+✔ S11 golden modal renders typed fields and previews normalized initial values (141.821183ms)
+✔ S11 valid edits preview typed normalized values without mutating the initial record (22.63886ms)
+✔ S11 invalid numeric input "" blocks preview and commit (15.109004ms)
+✔ S11 invalid numeric input "-1" blocks preview and commit (12.979313ms)
+✔ S11 invalid numeric input "101" blocks preview and commit (12.756037ms)
+✔ S11 invalid numeric input "Infinity" blocks preview and commit (14.153511ms)
+✔ S11 step and domain validation errors recover after valid edits (29.295324ms)
+✔ S11 Enter commits once and later terminal actions are inert (15.949966ms)
+✔ S11 button cancels exactly once and restores opener (13.182101ms)
+✔ S11 escape cancels exactly once and restores opener (11.855048ms)
+✔ S11 native-cancel cancels exactly once and restores opener (14.757339ms)
+✔ S11 native-close cancels exactly once and restores opener (8.568549ms)
+✔ S11 handle cancels exactly once and restores opener (9.164342ms)
+✔ S11 Tab wraps, IME Enter/Escape remain native and terminal callback can reenter safely (13.179295ms)
+✖ S11 empty field list supports confirmation and safe literal copy (11.894309ms)
+✔ S11 rejects malformed fields, initial values, bounds and callbacks before mounting (110.438022ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 15
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1395.583396
+
+✖ failing tests:
+
+test at src/shared/dialog.test.ts:1:6624
+✖ S11 empty field list supports confirmation and safe literal copy (11.894309ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  0 !== 1
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/dialog.test.ts:97:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

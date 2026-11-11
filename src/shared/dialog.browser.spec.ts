@@ -1,0 +1,30 @@
+import { test, expect } from '@playwright/test';
+
+test('S11 actual modal previews typed edits, traps focus, rolls back and commits once', async ({ page }, testInfo) => {
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/dev/fixtures/dialog.html');
+  const opener = page.getByRole('button', { name: 'Edit rectangle', exact: true }); await opener.click();
+  const dialog = page.getByRole('dialog', { name: 'Rectangle properties', exact: true });
+  await expect(dialog).toBeVisible(); const name = dialog.getByLabel('Name', { exact: true });
+  await expect(name).toBeFocused(); await page.keyboard.press('Shift+Tab');
+  await expect(dialog.getByRole('button', { name: 'Cancel', exact: true })).toBeFocused();
+  await page.keyboard.press('Tab'); await expect(name).toBeFocused();
+  await name.fill('  Pocket  '); await dialog.getByLabel('Width (mm)', { exact: true }).fill('60.5');
+  await dialog.getByLabel('Visible', { exact: true }).uncheck(); await dialog.getByLabel('Display', { exact: true }).selectOption('outline');
+  await expect(page.locator('#preview')).toHaveText('Pocket · 60.5 mm · outline · hidden');
+  await expect(page.getByRole('status')).toHaveText('Committed 0; cancelled 0');
+  await page.screenshot({ path: 'dev/evidence/S11-live-dialog.png' });
+  await testInfo.attach('live-preview-dialog', { path: 'dev/evidence/S11-live-dialog.png', contentType: 'image/png' });
+  await dialog.getByLabel('Width (mm)', { exact: true }).fill('');
+  await expect(dialog.getByRole('button', { name: 'OK', exact: true })).toBeDisabled();
+  await expect(dialog.getByRole('alert')).not.toBeEmpty(); await page.keyboard.press('Enter'); await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape'); await expect(dialog).toHaveCount(0); await expect(opener).toBeFocused();
+  await expect(page.locator('#preview')).toHaveText('Plate · 40 mm · fill · visible');
+  await expect(page.getByRole('status')).toHaveText('Committed 0; cancelled 1');
+  await opener.click(); await dialog.getByLabel('Width (mm)', { exact: true }).fill('80'); await page.keyboard.press('Enter');
+  await expect(dialog).toHaveCount(0); await expect(opener).toBeFocused();
+  await expect(page.locator('#preview')).toHaveText('Plate · 80 mm · fill · visible');
+  await expect(page.getByRole('status')).toHaveText('Committed 1; cancelled 1');
+  expect(await page.evaluate(() => document.body.scrollWidth <= innerWidth && document.body.scrollHeight <= innerHeight)).toBe(true);
+  expect(errors).toEqual([]);
+});

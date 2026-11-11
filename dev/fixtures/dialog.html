@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>gsnv-paint · Dialog demonstration</title>
+<link rel="stylesheet" href="/src/shared/dialog.css">
+<style>
+body { background:#ece9d8; color:#172232; font:13px Tahoma,Arial,sans-serif; margin:32px; }
+#preview { border:2px solid #376396; min-height:70px; margin:24px 0; padding:12px; }
+#edit { padding:7px 16px; background:linear-gradient(#fffef5,#dfdccb); border:1px solid #8e8a7a; }
+</style>
+<main id="app"><h1>Live-preview dialog</h1><p>Development fixture. Changes preview below; Cancel restores the saved rectangle.</p>
+<button id="edit">Edit rectangle</button><div id="preview"></div><p id="receipt" role="status">Committed 0; cancelled 0</p></main>
+<script type="module" src="/src/shared/dialog.demo.ts"></script>
+</html>

@@ -1,0 +1,30 @@
+✔ S11 golden modal renders typed fields and previews normalized initial values (142.413323ms)
+✔ S11 valid edits preview typed normalized values without mutating the initial record (24.67518ms)
+✔ S11 invalid numeric input "" blocks preview and commit (17.933361ms)
+✔ S11 invalid numeric input "-1" blocks preview and commit (15.641264ms)
+✔ S11 invalid numeric input "101" blocks preview and commit (13.703544ms)
+✔ S11 invalid numeric input "Infinity" blocks preview and commit (17.168501ms)
+✔ S11 step and domain validation errors recover after valid edits (25.32878ms)
+✔ S11 Enter commits once and later terminal actions are inert (16.038733ms)
+✔ S11 button cancels exactly once and restores opener (17.247908ms)
+✔ S11 escape cancels exactly once and restores opener (17.05717ms)
+✔ S11 native-cancel cancels exactly once and restores opener (15.56382ms)
+✔ S11 native-close cancels exactly once and restores opener (8.600978ms)
+✔ S11 handle cancels exactly once and restores opener (9.340674ms)
+✔ S11 Tab wraps, IME Enter/Escape remain native and terminal callback can reenter safely (12.211019ms)
+✔ S11 empty field list supports confirmation and safe literal copy (9.4687ms)
+✔ S11 rejects malformed fields, initial values, bounds and callbacks before mounting (108.057364ms)
+✔ S11 Enter on Cancel cancels rather than committing (9.15681ms)
+✔ S11 a reentrant preview cannot enable commit after a newer invalid edit (10.161898ms)
+✔ S11 cancellation inside validation suppresses post-cancel previews (9.632901ms)
+✔ S11 newer valid edits replace a reentrant validator result (10.879374ms)
+✔ S11 initial preview cancellation never opens or retains the modal (8.902699ms)
+✔ S11 missing modal support and disconnected roots produce readable errors without preview (7.265778ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1455.821201

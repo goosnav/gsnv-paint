@@ -1,0 +1,22 @@
+✖ S11 golden modal renders typed fields and previews normalized initial values (117.255821ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 966.970369
+
+✖ failing tests:
+
+test at src/shared/dialog.test.ts:1:2162
+✖ S11 golden modal renders typed fields and previews normalized initial values (117.255821ms)
+  Error: Not implemented
+      at showDialog (/home/goosnav/Desktop/code/gsnv-paint/src/shared/dialog.ts:38:9)
+      at Object.open (/home/goosnav/Desktop/code/gsnv-paint/src/shared/dialog.test.ts:23:22)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/dialog.test.ts:32:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)

@@ -1,0 +1,36 @@
+
+> gsnv-paint@0.1.0 test:browser
+> playwright test src/shared/dialog.browser.spec.ts
+
+[WebServer] (node:1661126) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1661153) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/shared/dialog.browser.spec.ts:3:1 › S11 actual modal previews typed edits, traps focus, rolls back and commits once (30.0s)
+
+
+  1) src/shared/dialog.browser.spec.ts:3:1 › S11 actual modal previews typed edits, traps focus, rolls back and commits once
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('dialog', { name: 'Rectangle properties', exact: true }).getByLabel('Display', { exact: true })
+
+
+      11 |   await page.keyboard.press('Tab'); await expect(name).toBeFocused();
+      12 |   await name.fill('  Pocket  '); await dialog.getByLabel('Width (mm)', { exact: true }).fill('60.5');
+    > 13 |   await dialog.getByLabel('Visible', { exact: true }).uncheck(); await dialog.getByLabel('Display', { exact: true }).selectOption('outline');
+         |                                                                                                                      ^
+      14 |   await expect(page.locator('#preview')).toHaveText('Pocket · 60.5 mm · outline · hidden');
+      15 |   await expect(page.getByRole('status')).toHaveText('Committed 0; cancelled 0');
+      16 |   await page.screenshot({ path: 'dev/evidence/S11-live-dialog.png' });
+        at /home/goosnav/Desktop/code/gsnv-paint/src/shared/dialog.browser.spec.ts:13:118
+
+    Error Context: test-results/shared-dialog.browser-S11--a5e89-rolls-back-and-commits-once/error-context.md
+
+  1 failed
+    src/shared/dialog.browser.spec.ts:3:1 › S11 actual modal previews typed edits, traps focus, rolls back and commits once
