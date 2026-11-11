@@ -176,6 +176,7 @@ IN: `{tool:'circle'|'arc-three-point'|'arc-center-point'|'arc-tangent'|'slot',an
 OUT: `Entity[]`; arcs preserve declared drawing direction; slot yields two arcs and two segments with connected endpoints.
 RAISES: `AnchorCountError`, `IdCountError`, `CollinearArcError`, `InvalidRadiusError`, `ImpossibleTangentError`, `DegenerateGeometryError`.
 DEPS: none.
+Anchor conventions: circle = center/radius point; three-point arc = start/through/end; tangent arc = start/end with the forward tangent at start; slot = two end-cap centers plus overall width. Center-point arc accepts center/start/end for the shortest signed sweep (the antipodal tie is counterclockwise), or center/start/through/end to declare a major or clockwise sweep from the pointer path. Center-arc through/end anchors specify rays; radius comes from start. Every tool needs one ID except a slot's four, emitted segment/arc/segment/arc around a counterclockwise outline. The construction flag and ID order are preserved. Radius, distinct anchors and slot-center distance must exceed document linear tolerance; collapsed angular sweeps and repeated through directions are rejected. C08 remains UI-free; C50's current line-only project subset is not widened by this brick.
 
 ### C09 sketch-constraint-policy — CORE — PLANNED
 File `src/cad/sketch-constraint-policy.ts`; public `constraintPolicy(request)`.
