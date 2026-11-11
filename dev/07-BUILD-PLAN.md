@@ -26,3 +26,5 @@ The requirements `phase` is introduction ownership; `verificationPhase` is the p
 ## Current execution order (D16)
 
 After the verified Phase 2 engine spikes, build C50–C58 in dependency order and mount the CAD-APP production assembly. This additive vertical increment precedes the remaining feature families so the deployed app supports real editing. The full Phase 2 gate and Phase 3–5 scope remain unchanged. The pending C05 contract is not silently amended.
+
+The working CAD path continues with independent C37, then additive C59/C60 and the STEP-APP export connection. These expose native solid output from the deployed editor; the full exchange/import/drawing requirements remain in Phase 2.

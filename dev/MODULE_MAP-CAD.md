@@ -407,7 +407,7 @@ OUT: encode `CADNativePackage`, decode `CADDocument`; exactly the five S03 envel
 RAISES: `CADFormatError`, `UnsupportedCADVersionError`, `InvalidGraphError`, `MissingEmbeddedAssetError`, `UnexpectedEmbeddedAssetError`, `AssetReferenceError`, `AssetLengthError`; validates exact per-kind source fields, format, references, names/MIME and lengths. S15 owns CRC integrity, S03 owns common JSON validation; C36 owns CAD semantic validation and never replaces a live session itself.
 DEPS: S03, S15, C05.
 
-### C37 step-exchange — SHELL — PLANNED
+### C37 step-exchange — SHELL — GREEN
 File `src/cad/step-exchange.ts`; public `stepExchange(request)`.
 Purpose: Import/export STEP using real kernel translators.
 IN: `{session:KernelSession,action:'import'|'export',bytes?:Uint8Array,bodies?:KernelShapeResult,units:'mm'|'inch'}`; action supplies bytes or valid solids.
@@ -415,6 +415,7 @@ OUT: `{bodies:KernelShapeResult|null,file:ExchangeBytes|null}`; imports become n
 RAISES: `STEPReadError`, `STEPTransferError`, `STEPWriteError`, `InvalidImportedSolidError`, `DisposedSessionError`.
 DEPS: C01.
 Real acceptance disposes original B-rep before importing exported STEP and remeasuring.
+The current brick returns one token per valid imported solid with empty topology/operand metadata; the document assembly retains source bytes and assigns document-local feature IDs. Native import UI and full CAD-A7 remain pending. Canonical kernel geometry is mm regardless of document display units. The pinned writer needs both model units and a temporarily set/restored `write.step.unit` to label inch output correctly (D17).
 
 ### C38 stl-serialization — CORE — PLANNED
 File `src/cad/stl-serialization.ts`; public `writeSTL(request)`.
@@ -646,3 +647,25 @@ DEPS: none.
 CAD-APP assembly: C50/C51 + S01/S03/S15/shared shell; C52 + C02 + C53 + C54 + C01 in one worker; C55/C56/C57/C58 in workspace adapter. Assembly contains only lifecycle/routing. C04 resolves variables before C52 and depth evaluation. Test the real production entry: new → draw/typed rectangle → solve → extrude → edit → undo/redo → save/open → recovery; malformed/open sketches produce readable errors, canceled/stale jobs cannot commit. No shell fixture substitutes for production entry. Full requirement status remains conservative until each entire verification procedure passes.
 
 The CAD-APP increment is provisionally GREEN on Linux/Chrome. Its exact evidence, schema subset and remaining gates are in [CAD-WORKFLOW.md](CAD-WORKFLOW.md). No brick has been marked human-ACCEPTED.
+
+## Output from the working CAD path
+
+C37 is now a GREEN independent exchange leaf. Build C59, then C60, then connect the production STEP export assembly. This continues D16: make each feature available through the working editor without changing the full CAD gate or C05's pending contract. The owner's standing phase BATCH applies after this map commit.
+
+### C59 kernel-linear-prism — SHELL — CONTRACTED
+Purpose: Construct one validated linear B-rep prism.
+IN: `{session:KernelSession,polygon:readonly Vec2[],depth:number}`; polygon is C53's simple CCW boundary in canonical mm; depth is finite and nonzero; session is live and worker-local.
+OUT: `ShapeToken` owned by C01, representing a valid solid. Caller releases the token. Temporary builders, points, wire and face wrappers are disposed on normal completion. No source mutation.
+RAISES: `ExtrusionError` for unsuccessful wire/face/prism construction or invalid solid; `DisposedSessionError` for a closed session. Vendor faults propagate and require worker termination.
+DEPS: C01.
+File `src/cad/kernel-linear-prism.ts`; public `buildLinearPrism(request)`. Extract the already-characterized construction from C54 without changing C54's public contract or numerical test expectations. C54's direct dependency becomes C59, with C01's type-only port retained. The output also feeds C37 so export never reconstructs geometry from a display mesh.
+
+### C60 cad-step-export — SHELL — CONTRACTED
+Purpose: Deliver a cancellable STEP export through browser file access.
+IN: `{files:S07.FilePorts,assets:C55.CADProtocol.assets,createWorker:()=>WorkerPort,onStatus:(state:'busy'|'ready'|'error',message:string)=>void}`. `run({content:C50.CADContent,name:string})` is invoked with user activation. The worker protocol is `{content,assets}` → `{ok:true,file:ExchangeBytes}` or `{ok:false,message:string}`. One fresh worker per job, snapshot-owned source, exactly one job at a time.
+OUT: `{run:()=>Promise<void>,cancel:()=>void,dispose:()=>void}`. Start a native save picker before asynchronous computation when available, then S07 writes and closes the handle; download fallback otherwise. Cancel/dispose terminate native work; late replies and picker resolutions cannot save. Starting a new job cancels the prior job. A 30 s watchdog gives a visible failure. Filename is provided by the caller, with `.step`; the worker's returned bytes must be a nonempty Uint8Array with model/step MIME.
+RAISES: TypeError for invalid ports; picker/worker/file failures become readable status callbacks. Abort/cancel is explicit, not a successful save. Native faults require termination; disposal is idempotent.
+DEPS: S07.
+File `src/cad/cad-step-export.ts`; public `cadSTEPExport(ports)`. Tests cover native handle order/close, fallback handoff, cancellation during picker/work, stale replies, timeout, failures and cleanup. Production browser download with the actual worker is the real resource smoke.
+
+STEP-APP assembly: C50→C04/C52→C02→C53→C03→C59→C37 runs in a dedicated worker. C60 owns export lifetime and S07 file handoff. The adapter exposes Export STEP for the current source, cancels exports on document changes/disposal, and displays progress/cancel/errors. Export does not mutate history, mark a native project saved, or replace editable source. Browser verification downloads an extruded part, independently checks STEP entities/units, re-imports with real C37 and verifies volume, then edits a dimension and exports the new geometry. Do not pass CAD-113/116/124 until their entire procedures and UI coverage exist.
