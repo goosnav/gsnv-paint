@@ -2,7 +2,18 @@
 
 ## What you get today
 
-The launcher opens the gsnv-paint application shell in your browser: menus, the CAD / Image / Video workspace tabs, and the History and Recovery panels. Workspace editing is not built yet, so each workspace says so. Nothing leaves your computer. There are no accounts and no API keys.
+The launcher opens the gsnv-paint application shell in your browser: menus, the CAD / Image / Video workspace tabs, and the History and Recovery panels. The CAD tab supports line/rectangle sketches, dimensions, horizontal/vertical constraints and blind extrusion. Image and Video still display their unavailable state. Nothing leaves your computer. There are no accounts and no API keys.
+
+## Make a first CAD part
+
+1. Choose New (Ctrl+N), then Rectangle dimensions. Width 100 and height 60 create a fully constrained sketch.
+2. Choose Extrude (E). Depth 10 previews a real solid. OK commits; Cancel restores the prior part.
+3. Click Width or Height in the Part panel to edit it. The extrusion rebuilds automatically.
+4. Save with Ctrl+S. Open the `.gsnv-cad` file with Ctrl+O to continue editing. Restore recovery on reload if offered.
+
+Use V to select, L for a two-click line, R for a two-click rectangle, F to fit. The rectangle tool replaces the sketch and can be undone. Select an edge to add or remove H/V constraints. Scroll to zoom, hold Space while dragging to pan the sketch, and middle-drag to orbit the solid (Shift+middle-drag pans). Failed sketches and extrusions display a reason in the Part panel.
+
+This is the first CAD increment, not the complete suite. One XY sketch and one blind boss are supported. The remaining CAD tools and exports, Image, Video and the packaged release are still under development.
 
 ## Start
 

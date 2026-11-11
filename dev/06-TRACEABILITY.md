@@ -96,8 +96,8 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-003 | CAD-040 | 2 | 2 | CADSketch | V-CAD-040 | T | UNTESTED |
 | N-003 | CAD-041 | 2 | 2 | CADSketch | V-CAD-041 | T | UNTESTED |
 | N-003 | CAD-042 | 2 | 2 | CADSketch | V-CAD-042 | T | UNTESTED |
-| N-003 | CAD-043 | 2 | 2 | CADSketch | V-CAD-043 | T | UNTESTED |
-| N-003 | CAD-044 | 2 | 2 | CADSketch | V-CAD-044 | T | UNTESTED |
+| N-003 | CAD-043 | 2 | 2 | CADSketch | V-CAD-043 | T | PASS |
+| N-003 | CAD-044 | 2 | 2 | CADSketch | V-CAD-044 | T | PASS |
 | N-003 | CAD-045 | 2 | 2 | CADSketch | V-CAD-045 | T | UNTESTED |
 | N-003 | CAD-046 | 2 | 2 | CADSketch | V-CAD-046 | T | UNTESTED |
 | N-003 | CAD-047 | 2 | 2 | CADSketch | V-CAD-047 | T | UNTESTED |
@@ -112,7 +112,7 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-003 | CAD-056 | 2 | 2 | CADSketch | V-CAD-056 | T | UNTESTED |
 | N-003 | CAD-057 | 2 | 2 | CADSketch | V-CAD-057 | T | UNTESTED |
 | N-003 | CAD-058 | 2 | 2 | CADSketch | V-CAD-058 | T | UNTESTED |
-| N-003 | CAD-059 | 2 | 2 | CADSketch | V-CAD-059 | T | UNTESTED |
+| N-003 | CAD-059 | 2 | 2 | CADSketch | V-CAD-059 | T | PASS |
 | N-003 | CAD-060 | 2 | 2 | CADSketch | V-CAD-060 | T | UNTESTED |
 | N-003 | CAD-061 | 2 | 2 | CADSketch | V-CAD-061 | T | UNTESTED |
 | N-003 | CAD-062 | 2 | 2 | CADSketch | V-CAD-062 | T | UNTESTED |

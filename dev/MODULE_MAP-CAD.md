@@ -1,6 +1,6 @@
 # Module map: CAD, phase 2
 
-Mode A baseline, maintained during Mode B. **C01–C04, C07 and CAD-A1 are GREEN; C05–C06 and C08–C49 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
+Mode A baseline, maintained during Mode B. **C01–C04, C07, C50–C58, CAD-A1 and the CAD-APP increment are GREEN; C05–C06 and C08–C49 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
 
 For a desktop user, CAD turns constrained sketches and ordered feature definitions into editable, validated B-rep solids, measurements, exchange files, and dimensioned drawings. Completion requires the CAD golden cases, error cases, complete feature-family coverage, and measured performance from `05-VERIFICATION.md`.
 
@@ -579,67 +579,70 @@ Out of scope remains exactly the owner's list: assemblies/mates, sweep, loft, dr
 
 C50–C58 are additive, dependency-ordered contracts for the production path. These do not pass their broader conceptual owners' complete requirements. Existing C05's amendment remains unresolved. The owner's standing phase BATCH authorization applies after this map commit; all new bricks remain provisional until human acceptance.
 
-### C50 editable-cad-content — CORE — CONTRACTED
+### C50 editable-cad-content — CORE — GREEN
 Purpose: Validate the supported editable CAD document subset.
 IN: `{operation:'new'}` or `{operation:'read',value:unknown}`. Read is untrusted JSON.
 OUT: Owned `CADContent` using the existing persisted envelope content: mm/inch, positive tolerance, variable definitions, one XY segment sketch followed by at most one blind boss extrude, rollback at end, nonsuppressed features, empty assets, default appearance, no drawing. Sketch supports H/V and fixed endpoint constraints, linear/aligned single-segment dimensions. Reject unknown keys, unsupported features, duplicate IDs, dangling references, nonfinite/collapsed geometry and invalid revisions. Expressions remain source strings and may fail visibly during rebuild.
 RAISES: `CADContentError` with field/reason for malformed or unsupported content. New supplies an empty XY sketch, explicit tolerance and defaults. Revision is a safe nonnegative integer; this validator does not edit graph revisions.
 DEPS: none.
 
-### C51 edit-cad-content — CORE — CONTRACTED
+### C51 edit-cad-content — CORE — GREEN
 Purpose: Apply source edits to the supported CAD document.
-IN: `{content:C50 output, action}`. Actions: append line from two finite anchors and supplied unique ID; replace sketch with a dimensioned origin-anchored rectangle (positive source width/height); change a dimension; set signed nonzero blind extrusion depth; delete extrusion; remove selected entities with their constraints/dimensions; add H/V constraint for one segment; remove constraint; clear sketch. New IDs are caller-owned and never reused by the caller.
-OUT: New validated C50 content; immutable original; graph revision increments on edit. Rectangle stores H/V, fixed origin and two driving dimensions. Length expressions use C03 canonical units. Maximum revision cannot edit and fails without mutation.
-RAISES: `CADEditError` for invalid action target, collision, unsupported/degenerate size or exhausted revision; C03/C07/C50 errors propagate.
-DEPS: C50, C03, C07.
+IN: `{content:C50 output, action}`. Actions: append line from two finite anchors and supplied unique ID; replace sketch with a dimensioned rectangle (positive source width/height, optional finite anchor origin defaulting to [0,0]); change a dimension; set signed nonzero blind extrusion depth; delete extrusion; remove selected entities with their constraints/dimensions; add H/V constraint for one segment; remove constraint; clear sketch. New IDs are caller-owned and never reused by the caller.
+OUT: New C50-valid content; immutable original; graph revision increments on edit. Rectangle stores H/V, fixed first corner and two driving dimensions. Length expressions use C03 canonical units. Maximum revision cannot edit and fails without mutation.
+RAISES: `CADEditError` for invalid action target, collision, unsupported/degenerate size or exhausted revision; C03/C04/C07 errors propagate.
+DEPS: C03, C04, C07.
+Type-only input comes from C50; the testbench feeds every edit result back through the real C50 validator.
 
-### C52 linear-sketch-program — CORE — CONTRACTED
+### C52 linear-sketch-program — CORE — GREEN
 Purpose: Compile the supported sketch into PlaneGCS primitives.
 IN: C50 sketch, resolved C03 expression context, positive linear tolerance.
-OUT: Vendor point/line/constraint primitives plus a pure accept(snapshot) function restoring segment IDs from solved points. Exact shared endpoints use one solver point; fix anchors its selected endpoint; dimensions compile to point distance; H/V map directly to vendor types. Finite solved coordinates required. Input remains untouched.
-RAISES: `SketchProgramError` for bad targets or missing/nonfinite solved points; C03 expression errors propagate.
+OUT: Vendor point/line/constraint primitives plus a pure accept(snapshot) function restoring segment IDs from solved points. Exact shared endpoints use one solver point; fix anchors its selected endpoint; dimensions compile to point distance; H/V map directly to vendor types. Finite solved coordinates and noncollapsed solved segments required. Input remains untouched.
+RAISES: `SketchProgramError` for bad targets or missing/nonfinite solved points or collapsed edges; C03 expression errors propagate.
 DEPS: C03.
 
-### C53 linear-profile — CORE — CONTRACTED
+### C53 linear-profile — CORE — GREEN
 Purpose: Order one closed sketch boundary for extrusion.
 IN: Solved finite segments and positive linear tolerance. Construction segments are excluded.
 OUT: Ordered counterclockwise polygon vertices in mm; every source segment used once. Single simple nonzero-area loop only.
 RAISES: `ProfileError` with readable reason for empty, open, branched, duplicate, disconnected, self-intersecting or collapsed boundary. Multiple profiles/holes remain for C17.
 DEPS: none.
 
-### C54 extrude-preview — SHELL — CONTRACTED
+### C54 extrude-preview — SHELL — GREEN
 Purpose: Execute a validated linear extrusion with OpenCascade.
 IN: C01 live worker-local session; C53 polygon; finite signed nonzero depth.
 OUT: Actual B-rep volume, surface area, center of mass, triangulated positions and triangle indices; no native handles cross boundary. Kernel validates the solid before publishing. Owned native wrappers disposed on normal completion; unexpected native faults require worker termination.
 RAISES: `ExtrusionError` for failed construction, invalid solid or unavailable triangulation; vendor faults propagate to worker owner.
 DEPS: C01.
 
-### C55 cad-worker-client — SHELL — CONTRACTED
+### C55 cad-worker-client — SHELL — GREEN
 Purpose: Own one cancellable CAD worker request stream.
 IN: Worker factory, engine asset URLs and result/error callbacks; requests carry C50 content and caller identity.
 OUT: submit/cancel/dispose handle; at most one running and one latest pending request; stale replies never publish; cancel/timeout/error terminate native work; next request gets a fresh worker. 30-second watchdog reports a readable failure, never a successful fallback. Disposal is idempotent.
 RAISES: TypeError for invalid ports; worker errors reported through callback.
 DEPS: none.
 
-### C56 cad-viewport — SHELL — CONTRACTED
+### C56 cad-viewport — SHELL — GREEN
 Purpose: Render the current CAD view.
 IN: Live DOM host, finite sketch segments/constraints, S04 2D transform, optional C54 triangle mesh; sketch/solid mode, selected entity IDs and preview geometry.
 OUT: update/fit/dispose handle plus local point conversion and hit testing. SVG XY sketch, constraint glyphs, dimensions; Three.js solid with orbit/pan/cursor zoom. No document mutation; stale/failed meshes clear. WebGL capability failure is visible and does not disable sketch editing.
 RAISES: TypeError for invalid host; rendering failures display a readable message.
 DEPS: none (Three.js is the pinned third-party rendering library).
 
-### C57 cad-tool-input — CORE — CONTRACTED
+### C57 cad-tool-input — CORE — GREEN
 Purpose: Interpret CAD sketch pointer input.
 IN: Tool/anchor/selection state, pointer event in canonical mm, hit entity ID, snap tolerance, available endpoints.
 OUT: New state plus none/select/append-line/replace-rectangle intent; two clicks commit geometry, pointer move previews, Escape cancels. Endpoint snapping has explicit tolerance. No IDs or side effects generated here.
 RAISES: TypeError for malformed finite coordinates/tolerance.
 DEPS: none.
 
-### C58 cad-properties — SHELL — CONTRACTED
+### C58 cad-properties — SHELL — GREEN
 Purpose: Render editable CAD properties.
-IN: DOM host, C50 content, solver/build status and selection; action callback and dialog callback.
-OUT: update/dispose; feature tree, selection constraints, typed dimension/depth fields and model measurements. User strings stay text; form submissions emit typed source intents; no model calculations. Failed sketch/extrusion is visibly flagged. Supported actions are exposed without inactive feature buttons.
+IN: DOM host, C50 content, solver/build status and selection; edit-intent callback. The assembly owns dialog callbacks.
+OUT: update/dispose; feature tree, selection constraints, dimension/depth edit controls and model measurements. User strings stay text; edit buttons request typed source dialogs; no model calculations. Failed sketch/extrusion is visibly flagged. Supported actions are exposed without inactive feature buttons.
 RAISES: TypeError for invalid host; validation remains in C51/dialog caller.
 DEPS: none.
 
 CAD-APP assembly: C50/C51 + S01/S03/S15/shared shell; C52 + C02 + C53 + C54 + C01 in one worker; C55/C56/C57/C58 in workspace adapter. Assembly contains only lifecycle/routing. C04 resolves variables before C52 and depth evaluation. Test the real production entry: new → draw/typed rectangle → solve → extrude → edit → undo/redo → save/open → recovery; malformed/open sketches produce readable errors, canceled/stale jobs cannot commit. No shell fixture substitutes for production entry. Full requirement status remains conservative until each entire verification procedure passes.
+
+The CAD-APP increment is provisionally GREEN on Linux/Chrome. Its exact evidence, schema subset and remaining gates are in [CAD-WORKFLOW.md](CAD-WORKFLOW.md). No brick has been marked human-ACCEPTED.

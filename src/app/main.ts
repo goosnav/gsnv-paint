@@ -1,3 +1,4 @@
+import { createCADWorkspace } from '../cad/cad-workspace.ts';
 import { mountApp } from './app-shell.ts';
 import type { FilePorts } from '../shared/file-access.ts';
 import type { RecoveryPorts } from '../shared/recovery-store.ts';
@@ -12,11 +13,13 @@ try { recovery.indexedDB = window.indexedDB; } catch { /* Leave the missing port
 try { recovery.localStorage = window.localStorage; } catch { /* Manual project files remain available. */ }
 const root = document.querySelector<HTMLElement>('#app')!;
 try {
-  const app = mountApp({ root, adapters: {}, recovery, probe: { environment: window, codecRequests: [] }, files: {
+  const app = mountApp({ root, adapters: { cad: createCADWorkspace() }, recovery, probe: { environment: window, codecRequests: [] }, files: {
     document, URL, setTimeout: (callback, milliseconds) => window.setTimeout(callback, milliseconds),
     ...(browser.showOpenFilePicker ? { showOpenFilePicker: browser.showOpenFilePicker.bind(window) } : {}),
     ...(browser.showSaveFilePicker ? { showSaveFilePicker: browser.showSaveFilePicker.bind(window) } : {}),
   } });
+  root.tabIndex = -1;
+  void app.ready.then(() => { if (document.activeElement === document.body) root.focus(); });
   window.addEventListener('pagehide', () => app.dispose(), { once: true });
 } catch (cause) {
   const notice = document.createElement('p'); notice.className = 'app-startup-error';

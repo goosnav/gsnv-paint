@@ -1,0 +1,4 @@
+/ 200 { coop: 'same-origin', coep: 'require-corp', corp: 'same-origin' }
+/assets/replicad_single-g5eiaENB.wasm 200 { coop: 'same-origin', coep: 'require-corp', corp: 'same-origin' }
+/assets/cad-workspace.worker-BB0rB_gB.js 200 { coop: 'same-origin', coep: 'require-corp', corp: 'same-origin' }
+PASS: Cloudflare local workerd, Chrome 154.0.8037.97 linux x64 1280x720; 60000 mm3 solid; isolation true; no page errors.

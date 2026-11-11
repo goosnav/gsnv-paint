@@ -1,0 +1,65 @@
+{
+  "limitBytes": 26214400,
+  "largest": {
+    "path": "dist/assets/replicad_single-g5eiaENB.wasm",
+    "bytes": 22942327
+  },
+  "files": [
+    {
+      "path": "dist/index.html",
+      "bytes": 554
+    },
+    {
+      "path": "dist/_headers",
+      "bytes": 134
+    },
+    {
+      "path": "dist/THIRD_PARTY_NOTICES.txt",
+      "bytes": 1685
+    },
+    {
+      "path": "dist/licenses/OCCT-8.0.1-EXCEPTION.txt",
+      "bytes": 947
+    },
+    {
+      "path": "dist/licenses/planegcs-1.3.0.LICENSE.txt",
+      "bytes": 26526
+    },
+    {
+      "path": "dist/licenses/three-0.187.0.LICENSE.txt",
+      "bytes": 1081
+    },
+    {
+      "path": "dist/licenses/replicad-opencascadejs-1.2.1.LICENSE.txt",
+      "bytes": 26526
+    },
+    {
+      "path": "dist/assets/index-ChFgnXvJ.js",
+      "bytes": 651009
+    },
+    {
+      "path": "dist/assets/replicad_single-g5eiaENB.wasm",
+      "bytes": 22942327
+    },
+    {
+      "path": "dist/assets/planegcs-DmlzCoVG.js",
+      "bytes": 26129
+    },
+    {
+      "path": "dist/assets/cad-workspace.worker-BB0rB_gB.js",
+      "bytes": 54214
+    },
+    {
+      "path": "dist/assets/index-BN5SO4Pi.css",
+      "bytes": 11319
+    },
+    {
+      "path": "dist/assets/planegcs-DNpN9qS7.wasm",
+      "bytes": 484003
+    },
+    {
+      "path": "dist/assets/replicad_single-DD6apbHo.js",
+      "bytes": 60483
+    }
+  ]
+}

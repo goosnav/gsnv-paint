@@ -1,6 +1,6 @@
 # Shared application assembly
 
-A-SHELL is the composition root for Phase 1. `src/app/app-shell.ts` wires the GREEN shared components; `src/app/main.ts` mounts the production entry. `npm run build` emits one static client in `dist/`. No domain workspace module is installed in the production registry yet, so its New/Open/editing commands remain unavailable. The separate development fixture supplies explicitly marked one-pixel documents to prove shared seams. Its schema is not a CAD, Image or Video project specification.
+A-SHELL is the composition root for Phase 1. `src/app/app-shell.ts` wires the GREEN shared components; `src/app/main.ts` mounts the production entry. `npm run build` emits one static client in `dist/`. The production registry now installs the first CAD workspace adapter; Image and Video editing remain unavailable. The separate development fixture supplies explicitly marked one-pixel documents to prove shared seams. Its schema is not a CAD, Image or Video project specification.
 
 ## Adapter boundary
 
@@ -32,6 +32,6 @@ Content dialogs use S11. The adapter owns the preview and rollback; confirmation
 
 ## Verification boundary
 
-Run `node --import tsx --test src/app/app-shell.test.ts` for real shared-module seams against fake browser resources. Run `npm run test:browser -- src/app/app-shell.browser.spec.ts` for the single real Chrome assembly smoke; this command builds first. It exercises the explicit fixture through UI edits, preview/rollback, keyboard history, cursor zoom, Space-pan, context hit delivery, typed views, actual download/open and IndexedDB page close/reopen. It also serves the emitted `dist` through Vite preview and checks all three production unavailable states. The deployed Cloudflare origin, offline reopening, full domain formats, native OS pickers, other operating systems and M1a launchers remain untested.
+Run `node --import tsx --test src/app/app-shell.test.ts` for real shared-module seams against fake browser resources. Run `npm run test:browser -- src/app/app-shell.browser.spec.ts` for the single real Chrome assembly smoke; this command builds first. It exercises the explicit fixture through UI edits, preview/rollback, keyboard history, cursor zoom, Space-pan, context hit delivery, typed views, actual download/open and IndexedDB page close/reopen. It also serves the emitted `dist` through Vite preview and checks the CAD adapter mount plus the Image and Video unavailable states. The CAD-APP browser suite exercises actual CAD editing and persistence. The deployed Cloudflare origin, offline reopening, full domain formats, native OS pickers, other operating systems and M1a launchers remain untested.
 
 This contributes component evidence to SYS-002/013/014 and CTL-001–003/007–012/014–016/020–028. Those full requirements stay UNTESTED where their procedures require actual CAD, Image and Video editing. Context hit delivery is not a production face/layer/clip context menu. Page close/reopen is not an OS crash test. See `PHASE-1.md` for exact commands, results and retained failure evidence.

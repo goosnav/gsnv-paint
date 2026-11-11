@@ -67,7 +67,7 @@ TEST: cursor invariant, clamp 1%/6400%, pan, negative coordinates and golden tra
 
 Purpose: Translate a keyboard event into an active-workspace command.
 IN: `CommandEvent` with normalized key; text fields retain ordinary text editing, dialog context maps Enter/Esc.
-OUT: `{command:string|null,preventDefault:boolean}` for documented common controls and workspace overrides (Space playback only in the focused Video timeline vs Space pan in preview2d/canvas2d/sketch2d, S split, J/K/L, arrows, I/O, Home/End; Image X/D; CAD F).
+OUT: `{command:string|null,preventDefault:boolean}` for documented common controls and workspace overrides (Space playback only in the focused Video timeline vs Space pan in preview2d/canvas2d/sketch2d, S split, J/K/L, arrows, I/O, Home/End; Image X/D; CAD F fit, V select, L line, R rectangle, E extrude).
 RAISES: `TypeError` for invalid workspace/context/key.
 DEPS: none.
 TEST: full shortcut table, Ctrl/Meta handling, text focus, conflict cases and unknown key. Requirement group AppShell.

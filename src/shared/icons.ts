@@ -19,7 +19,7 @@ export type IconRequest = { document: Document; name: string; label: string; siz
 export const iconCatalog: readonly string[] = Object.freeze([
   'app', 'cad', 'image', 'video', 'new', 'open', 'save', 'undo', 'redo', 'cut', 'copy', 'paste',
   'delete', 'select', 'hand', 'zoomIn', 'zoomOut', 'fit', 'history', 'properties', 'layers',
-  'grid', 'ruler', 'close', 'help', 'chevronRight', 'chevronDown',
+  'grid', 'ruler', 'line', 'rectangle', 'extrude', 'close', 'help', 'chevronRight', 'chevronDown',
 ]);
 
 const PATHS: Readonly<Record<string, string>> = {
@@ -46,6 +46,9 @@ const PATHS: Readonly<Record<string, string>> = {
   layers: 'M12 3 22 8l-10 5L2 8zM2 12l10 5 10-5M2 16l10 5 10-5',
   grid: 'M3 3h18v18H3zM9 3v18M15 3v18M3 9h18M3 15h18',
   ruler: 'M2 16 16 2l6 6L8 22zM6 12l3 3M10 8l2 2M14 4l3 3M4 14l2 2',
+  line: 'M4 20 20 4M2 18h4v4H2zM18 2h4v4h-4z',
+  rectangle: 'M4 5h16v14H4zM2 3h4v4H2zM18 17h4v4h-4z',
+  extrude: 'M3 12l9-5 9 5v7l-9 4-9-4zM3 12l9 5 9-5M12 17v6M12 13V1M8 5l4-4 4 4',
   close: 'M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5',
   help: 'M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0M9 8a3 3 0 0 1 6 0c0 3-3 2-3 5M12 17h0',
   chevronRight: 'M8 4l8 8-8 8',

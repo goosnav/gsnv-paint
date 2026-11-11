@@ -116,15 +116,20 @@ test('A-SHELL actual window composes fixture editing, history, project files and
         await production.getByRole('tab', { name: workspace, exact: true }).click();
         await expect(production.locator('.gc-window')).toHaveCount(1);
         await expect(production.locator('button[data-command="fixture.edit"]')).toHaveCount(0);
-        await expect(production.locator('button[data-command="file.new"]').first()).toBeDisabled();
-        await expect(production.locator('.gc-viewport')).toContainText(`${workspace} editing is not available`);
+        if (workspace === 'CAD') {
+          await expect(production.locator('button[data-command="file.new"]').first()).toBeEnabled();
+          await expect(production.locator('.cad-stage')).toBeVisible();
+        } else {
+          await expect(production.locator('button[data-command="file.new"]').first()).toBeDisabled();
+          await expect(production.locator('.gc-viewport')).toContainText(`${workspace} editing is not available`);
+        }
       }
       await production.getByRole('tab', { name: 'CAD', exact: true }).click();
       await production.screenshot({ path: 'dev/evidence/A-SHELL-production.png' });
       await testInfo.attach('emitted-production-shell-1280x720', { path: 'dev/evidence/A-SHELL-production.png', contentType: 'image/png' });
     } finally { await production.close(); }
   } finally { await built.close(); }
-  console.log('A-SHELL: emitted dist via Vite preview exposes one shell and explicitly unavailable CAD/Image/Video editing, without fixture tools or enabled New factories. Deployment remains untested.');
+  console.log('A-SHELL: emitted dist via Vite preview exposes one shell, the production CAD adapter and explicitly unavailable Image/Video editing, without fixture tools. Deployment remains untested.');
   expect(errors).toEqual([]);
   console.log('A-SHELL: one window; fixture preview/cancel/commit; undo/redo; exact downloaded container reopens; IDB recovery survives page close/reopen. Native picker interaction and product editing remain untested.');
 });

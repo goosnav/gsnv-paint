@@ -1,6 +1,6 @@
 # Phase 2 — CAD — in progress
 
-C01–C04 and the combined CAD-A1 assembly are GREEN. C05–C49 remain PLANNED. No brick is human-ACCEPTED. The shared provisional assembly height remains 4; the CAD provisional assembly height is 1. C01 was pushed as 3ffb2c3, the C02 prerequisite repair as ebe578a, and C02 as 65a9a5d. CAD-A1 was pushed as 5853b7a and C03 as 04d6b9b. The latest named-variable checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
+C01–C04, C07, C50–C58, CAD-A1 and the CAD-APP increment are GREEN. C05–C06 and C08–C49 remain PLANNED. No brick is human-ACCEPTED. The shared provisional assembly height remains 4; the CAD provisional assembly height is 2 (CAD-A1 plus CAD-APP). C01 was pushed as 3ffb2c3, the C02 prerequisite repair as ebe578a, and C02 as 65a9a5d. CAD-A1 was pushed as 5853b7a and C03 as 04d6b9b. The latest named-variable checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
 
 ## C01 kernel-runtime — GREEN; BATCH halted before C02
 
@@ -257,3 +257,7 @@ Cases cover literal geometry goldens, every declared error, tolerance boundaries
 How to tweak: anchors, side count, IDs, construction and the document's linear tolerance are explicit request fields. C07 adds no hidden epsilon. Array-copy changes are guarded by the isolation test; vertex/orientation changes by the literal hexagon and regularity cases; count/range changes by named-error boundary tests. Composite entity semantics or extra modes would require a contract change.
 
 Requirement statuses remain **13 PASS / 0 FAIL / 373 UNTESTED**. Existing PASS IDs remain SYS-005, CAD-001, CAD-002, CAD-003, CAD-006, REL-001, REL-002, REL-005, REL-011, REL-012, REL-014, REL-023 and REL-028. In particular CAD-023/024/025/030/032/033 remain UNTESTED because their procedures require interactive sketching, constraints/profile behavior and/or save/reopen. All other IDs retain their recorded status. GREEN: S01–S15, A-SHELL, C01–C04, C07, CAD-A1. Human ACCEPTED: none. Shared provisional ladder height 4 and CAD ladder height 1 are unchanged. C05 remains the blocked feature-history path pending the specific amendment above; this is not a release candidate.
+
+## Production CAD workflow checkpoint
+
+C50–C58 and CAD-APP now provide the first working sketch → constraint solve → B-rep extrusion → editable save/reopen path in the production entry. The [workflow report](CAD-WORKFLOW.md) records commands, final evidence, discovered integration defects, supported format subset and remaining requirements. C01–C04/C07 remain GREEN; C05's pending amendment is unchanged. CAD-043/044/059 now pass their full stated procedures; the complete Phase 2 acceptance gate remains open.

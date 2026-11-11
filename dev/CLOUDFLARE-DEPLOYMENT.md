@@ -19,3 +19,7 @@ The existing Vite server/preview headers apply only to local servers. `public/_h
 The first disposable-environment attempt installed and built successfully, but its nested `npx` inherited the outer npm execution's `npm_config_call`/`npm_config_package` options and failed with EUSAGE before invoking Wrangler. Clearing those two test-harness variables fixed the invocation; the fresh complete rerun above passed. No production change was needed for that harness issue.
 
 Cloudflare dashboard settings can remain **build: `npm run build`**, **deploy: `npx wrangler deploy`**, repository root directory. The same static output remains suitable for Pages; this Wrangler file specifically fixes the Workers pipeline supplied by the owner. Authentication, upload and the hosted URL were not exercised locally, so this is not a claim of a completed live deployment or full product acceptance. The existing incomplete editor and release statuses remain unchanged.
+
+## Subsequent CAD workflow build
+
+The production CAD increment now emits the kernel and solver assets. `npx wrangler deploy --dry-run --no-autoconfig` succeeds against all 16 emitted files. The largest is the 22,942,327-byte OCCT WASM, below 25 MiB. See [CAD workflow evidence](CAD-WORKFLOW.md) for the updated build/browser/deployment checks. The hosted Cloudflare deployment is still unverified locally.

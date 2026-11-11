@@ -1064,7 +1064,7 @@
     "verification": "V-CAD-043",
     "procedure": "Create a sloped line; apply horizontal, solve, and assert its endpoints have equal Y within the documented solver tolerance.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {
@@ -1076,7 +1076,7 @@
     "verification": "V-CAD-044",
     "procedure": "Create a sloped line; apply vertical, solve, and assert its endpoints have equal X within the documented solver tolerance.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {
@@ -1256,7 +1256,7 @@
     "verification": "V-CAD-059",
     "procedure": "Double-click a displayed dimension, type a new value or expression, confirm, and assert the sketch and downstream solid rebuild.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {

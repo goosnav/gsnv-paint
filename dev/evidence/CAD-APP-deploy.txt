@@ -1,0 +1,7 @@
+
+ ⛅️ wrangler 4.160.1
+────────────────────
+✨ Read 16 files from the assets directory /home/goosnav/Desktop/code/gsnv-paint/dist
+Total Upload: 0.31 KiB / gzip: 0.22 KiB
+No bindings found.
+--dry-run: exiting now.

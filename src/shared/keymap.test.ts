@@ -106,3 +106,9 @@ for (const [index, patch] of [
 ].entries()) test(`S05 malformed event ${index} raises TypeError`, () => {
   assert.throws(() => keymap({ ...base, ...patch } as CommandEvent), TypeError);
 });
+
+test('S05 production CAD tool shortcuts stay native while typing',()=>{
+ for(const [key,command] of Object.entries({v:'cad.select',l:'cad.line',r:'cad.rectangleTool',e:'cad.extrude'})){
+  assert.deepEqual(mapped(key),handled(command));assert.deepEqual(mapped(key,{target:'text'}),unhandled);
+ }
+});

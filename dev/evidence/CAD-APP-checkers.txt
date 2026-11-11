@@ -1,0 +1,9 @@
+PASS: src/cad/editable-cad-content.ts
+PASS: src/cad/edit-cad-content.ts
+PASS: src/cad/linear-sketch-program.ts
+PASS: src/cad/linear-profile.ts
+PASS: src/cad/extrude-preview.ts
+PASS: src/cad/cad-worker-client.ts
+PASS: src/cad/cad-viewport.ts
+PASS: src/cad/cad-tool-input.ts
+PASS: src/cad/cad-properties.ts

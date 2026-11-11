@@ -1,0 +1,338 @@
+editable-cad-content
+{
+  "units": "mm",
+  "tolerance": {
+    "linearMm": 1e-7,
+    "angularRad": 1e-9,
+    "relative": 1e-9
+  },
+  "variables": [],
+  "assets": [],
+  "appearance": {
+    "mode": "shaded-edges",
+    "bodyColors": {},
+    "faceColors": [],
+    "section": {
+      "enabled": false,
+      "frame": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "x": [
+          1,
+          0,
+          0
+        ],
+        "y": [
+          0,
+          1,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ]
+      },
+      "offsetMm": 0
+    }
+  },
+  "drawing": null,
+  "graph": {
+    "revision": 0,
+    "rollback": 1,
+    "features": [
+      {
+        "id": "sketch-1",
+        "name": "Sketch 1",
+        "kind": "sketch",
+        "dependsOn": [],
+        "suppressed": false,
+        "definition": {
+          "kind": "sketch",
+          "sketch": {
+            "id": "sketch-1",
+            "name": "Sketch 1",
+            "plane": "XY",
+            "entities": [],
+            "constraints": [],
+            "dimensions": [],
+            "projected": []
+          }
+        }
+      }
+    ]
+  }
+}
+
+edit-cad-content
+{
+  "units": "mm",
+  "tolerance": {
+    "linearMm": 1e-7,
+    "angularRad": 1e-9,
+    "relative": 1e-9
+  },
+  "variables": [],
+  "assets": [],
+  "appearance": {
+    "mode": "shaded-edges",
+    "bodyColors": {},
+    "faceColors": [],
+    "section": {
+      "enabled": false,
+      "frame": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "x": [
+          1,
+          0,
+          0
+        ],
+        "y": [
+          0,
+          1,
+          0
+        ],
+        "normal": [
+          0,
+          0,
+          1
+        ]
+      },
+      "offsetMm": 0
+    }
+  },
+  "drawing": null,
+  "graph": {
+    "revision": 1,
+    "rollback": 1,
+    "features": [
+      {
+        "id": "sketch-1",
+        "name": "Sketch 1",
+        "kind": "sketch",
+        "dependsOn": [],
+        "suppressed": false,
+        "definition": {
+          "kind": "sketch",
+          "sketch": {
+            "id": "sketch-1",
+            "name": "Sketch 1",
+            "plane": "XY",
+            "entities": [
+              {
+                "id": "plate-edge-0",
+                "kind": "segment",
+                "a": [
+                  0,
+                  0
+                ],
+                "b": [
+                  100,
+                  0
+                ],
+                "construction": false
+              },
+              {
+                "id": "plate-edge-1",
+                "kind": "segment",
+                "a": [
+                  100,
+                  0
+                ],
+                "b": [
+                  100,
+                  60
+                ],
+                "construction": false
+              },
+              {
+                "id": "plate-edge-2",
+                "kind": "segment",
+                "a": [
+                  100,
+                  60
+                ],
+                "b": [
+                  0,
+                  60
+                ],
+                "construction": false
+              },
+              {
+                "id": "plate-edge-3",
+                "kind": "segment",
+                "a": [
+                  0,
+                  60
+                ],
+                "b": [
+                  0,
+                  0
+                ],
+                "construction": false
+              }
+            ],
+            "constraints": [
+              {
+                "id": "plate-axis-0",
+                "kind": "horizontal",
+                "entityIds": [
+                  "plate-edge-0"
+                ],
+                "pointRoles": [],
+                "inferred": true
+              },
+              {
+                "id": "plate-axis-1",
+                "kind": "vertical",
+                "entityIds": [
+                  "plate-edge-1"
+                ],
+                "pointRoles": [],
+                "inferred": true
+              },
+              {
+                "id": "plate-axis-2",
+                "kind": "horizontal",
+                "entityIds": [
+                  "plate-edge-2"
+                ],
+                "pointRoles": [],
+                "inferred": true
+              },
+              {
+                "id": "plate-axis-3",
+                "kind": "vertical",
+                "entityIds": [
+                  "plate-edge-3"
+                ],
+                "pointRoles": [],
+                "inferred": true
+              },
+              {
+                "id": "plate-origin",
+                "kind": "fix",
+                "entityIds": [
+                  "plate-edge-0"
+                ],
+                "pointRoles": [
+                  "a"
+                ],
+                "inferred": true
+              }
+            ],
+            "dimensions": [
+              {
+                "id": "plate-width",
+                "kind": "linear",
+                "entityIds": [
+                  "plate-edge-0"
+                ],
+                "anchors": [
+                  [
+                    0,
+                    0
+                  ],
+                  [
+                    100,
+                    0
+                  ]
+                ],
+                "value": {
+                  "source": "100",
+                  "kind": "length"
+                },
+                "label": [
+                  50,
+                  -8
+                ]
+              },
+              {
+                "id": "plate-height",
+                "kind": "linear",
+                "entityIds": [
+                  "plate-edge-1"
+                ],
+                "anchors": [
+                  [
+                    100,
+                    0
+                  ],
+                  [
+                    100,
+                    60
+                  ]
+                ],
+                "value": {
+                  "source": "60",
+                  "kind": "length"
+                },
+                "label": [
+                  108,
+                  30
+                ]
+              }
+            ],
+            "projected": []
+          }
+        }
+      }
+    ]
+  }
+}
+
+linear-sketch-program
+[
+  { id: 'p0', type: 'point', x: 0, y: 0, fixed: true },
+  { id: 'p1', type: 'point', x: 100, y: 0, fixed: false },
+  { id: 'p2', type: 'point', x: 100, y: 60, fixed: false },
+  { id: 'p3', type: 'point', x: 0, y: 60, fixed: false },
+  { id: 'r-edge-0', type: 'line', p1_id: 'p0', p2_id: 'p1' },
+  { id: 'r-edge-1', type: 'line', p1_id: 'p1', p2_id: 'p2' },
+  { id: 'r-edge-2', type: 'line', p1_id: 'p2', p2_id: 'p3' },
+  { id: 'r-edge-3', type: 'line', p1_id: 'p3', p2_id: 'p0' },
+  { id: 'r-axis-0', type: 'horizontal_l', l_id: 'r-edge-0' },
+  { id: 'r-axis-1', type: 'vertical_l', l_id: 'r-edge-1' },
+  { id: 'r-axis-2', type: 'horizontal_l', l_id: 'r-edge-2' },
+  { id: 'r-axis-3', type: 'vertical_l', l_id: 'r-edge-3' },
+  {
+    id: 'r-width',
+    type: 'p2p_distance',
+    p1_id: 'p0',
+    p2_id: 'p1',
+    distance: 100
+  },
+  {
+    id: 'r-height',
+    type: 'p2p_distance',
+    p1_id: 'p1',
+    p2_id: 'p2',
+    distance: 60
+  }
+]
+
+linear-profile
+[ [ 0, 0 ], [ 10, 0 ], [ 0, 10 ] ]
+
+extrude-preview
+{ volume: 60000, area: 15200, center: [ 50, 30, 5 ], triangles: 12 }
+
+cad-tool-input
+{
+  state: { tool: 'line', anchor: [ 0, 0 ], cursor: [ 0, 0 ], selected: [] },
+  intent: { kind: 'none' }
+}
+{
+  state: { tool: 'line', anchor: null, cursor: [ 20, 30 ], selected: [] },
+  intent: { kind: 'line', a: [ 0, 0 ], b: [ 20, 30 ] }
+}
+
+cad-properties
+Ready to sketch.Feature treeSketch 1XY planeDimensionsUse Rectangle dimensions to create a driven profile.Extrude…SelectionHorizontalVerticalDelete selected

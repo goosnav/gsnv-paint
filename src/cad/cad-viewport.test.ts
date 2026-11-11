@@ -1,0 +1,23 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+import {cadViewport,type CADView} from './cad-viewport.ts';
+import {editableCADContent} from './editable-cad-content.ts';
+import {editCADContent} from './edit-cad-content.ts';
+test('C56 sketch renderer and pointer conversion use the same view transform',()=>{
+ const dom=new JSDOM('<div id="root"></div>'),root=dom.window.document.getElementById('root')!;
+ Object.defineProperties(root,{clientWidth:{value:800},clientHeight:{value:500}});
+ const content=editCADContent({content:editableCADContent({operation:'new'}),action:{kind:'rectangle',prefix:'r',width:'100',height:'60'}});
+ const model:CADView={content,entities:content.graph.features[0].definition.sketch.entities,view:{zoom:1,pan:{x:0,y:0}},selected:[],preview:[],solid:null,mode:'sketch',state:'fully'};
+ const view=cadViewport(root);view.update(model);assert.equal(root.querySelectorAll('[data-entity-id]').length,4);assert.equal(root.querySelectorAll('[data-dimension-id]').length,2);assert.match(root.textContent!,/100/);
+ assert.deepEqual(view.point({x:470,y:190}),[100,60]);
+ view.update({...model,view:{zoom:2,pan:{x:10,y:20}}});assert.deepEqual(view.point({x:950,y:400}),[100,60]);
+ view.update({...model,selected:['r-edge-0']});assert.equal(root.querySelector('[data-entity-id="r-edge-0"]')?.getAttribute('data-selected'),'true');
+ view.dispose();view.dispose();assert.equal(root.childElementCount,0);
+});
+test('C56 invalid hosts fail; unavailable rendering keeps sketch controls usable',()=>{
+ assert.throws(()=>cadViewport(null as unknown as HTMLElement),TypeError);
+ const dom=new JSDOM('<main></main>'),root=dom.window.document.querySelector('main')!,view=cadViewport(root);
+ const model:CADView={content:editableCADContent({operation:'new'}),entities:[],view:{zoom:1,pan:{x:0,y:0}},selected:[],preview:[],solid:null,mode:'solid',state:'under'};
+ view.update(model);assert.match(root.textContent!,/3D view unavailable/);view.update({...model,mode:'sketch'});assert.equal(root.querySelector<SVGElement>('svg')!.style.display,'block');view.dispose();
+});
