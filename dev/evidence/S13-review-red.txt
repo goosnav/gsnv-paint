@@ -1,0 +1,42 @@
+✖ S13 final truncated filenames protect reserved basenames within the byte cap (6.033038ms)
+✖ S13 unexpected codec exceptions stay readable even when an error accessor throws (0.941692ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 194.027215
+
+✖ failing tests:
+
+test at src/shared/project-files.test.ts:1:4724
+✖ S13 final truncated filenames protect reserved basenames within the byte cap (6.033038ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'CON.gsnv-image'
+  - '_CON.gsnv-image'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.test.ts:91:52)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'CON.gsnv-image',
+    expected: '_CON.gsnv-image',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/project-files.test.ts:1:5350
+✖ S13 unexpected codec exceptions stay readable even when an error accessor throws (0.941692ms)
+  Error: Cannot inspect error
+      at Error.get (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.test.ts:97:134)
+      at codecFailure (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.ts:65:37)
+      at projectFiles (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.ts:90:28)
+      at invalid (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.test.ts:36:57)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.test.ts:99:26)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

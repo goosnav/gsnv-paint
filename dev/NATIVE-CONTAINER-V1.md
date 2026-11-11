@@ -44,3 +44,17 @@ Callers retain immutable ownership of all reachable input and output byte views 
 ## Verification
 
 Run `node --import tsx --test src/shared/native-container.test.ts` from the repository root. The suite covers a literal complete-file golden, every split and truncated prefix of it, UTF-8 splits, corruption, schemas, counts and exact size boundaries, real S03 roundtrips, and deterministic properties across all three format tags. The 2 GiB test uses repeated immutable views to verify logical framing without allocating a 2 GiB file. Run `node --import tsx src/shared/native-container.demo.ts` for a separate one-pixel transport demonstration.
+
+## Browser file transport
+
+S13 `projectFiles` connects this format to S07 file access. Save accepts a package and optional existing file handle; it encodes before writing and returns the file result only after native close, or after fallback download handoff. Open returns a validated package without changing a document. Workspace validation still runs before the assembly replaces its document. File names do not override the decoded format tag.
+
+Native extensions are `.gsnv-cad`, `.gsnv-image` and `.gsnv-video`, all transported as `application/octet-stream`. Suggested names derive from the document title: remove one matching extension, replace filesystem-invalid characters, trim trailing dots/spaces, bound the stem to 180 UTF-8 bytes without splitting a code point, protect reserved Windows device basenames, and append the native extension once. Empty stems use `Untitled`. This changes the suggested filename, not the document title. Tests of the naming rule are not an actual Windows smoke test.
+
+S13 returns S07 transport failures/cancellation unchanged. Container framing/checksum failures use `project.format`; limits use `project.limit`; common metadata failures use `project.metadata`; invalid requests use `project.request`; unexpected codec exceptions use `project.codec`. A failure never yields a replacement package or a successful save result.
+
+The application must capture an opened native handle in an operation-local FilePorts wrapper, then associate it only after container validation, domain validation and acceptance of that exact open result. Fallback open has no reusable native handle. Cancellation or rejected opens preserve the previous document/handle association.
+
+Acquire a new save destination and any required write permission during the user action before lengthy serialization, then pass that handle to S13. A reusable handle does not necessarily carry write permission. Chrome documents that processing data before showing the save picker can exhaust the required [user activation](https://developer.chrome.com/docs/capabilities/web-apis/file-system-access). These sequencing obligations belong to the later app assembly; this component does not claim to verify native picker interaction or permission UI.
+
+Run `node --import tsx --test src/shared/project-files.test.ts` for the real S03→S15→S07 transport seams with fake browser ports. Run `npm run test:browser -- src/shared/project-files.browser.spec.ts` for the actual browser fallback download/open/re-save and corrupt-file rejection. The separate `/dev/fixtures/project-files.html` demonstration explicitly uses a transport fixture, not an implemented image editor.

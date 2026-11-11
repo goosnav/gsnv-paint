@@ -135,7 +135,7 @@ RAISES: `TypeError` for invalid ports.
 DEPS: S05.
 TEST: event normalization/focus exceptions, cancellation/pointer capture plus actual Chromium wheel/pan/context menu. Requirement group AppShell.
 
-## S13 project-files — SHELL — PLANNED
+## S13 project-files — SHELL — GREEN
 
 Purpose: Adapt project-envelope serialization to explicit file operations.
 IN: `{operation:'open'|'save',package?:NativePackage,handle?:FileSystemFileHandle}` and file port.
@@ -170,7 +170,7 @@ Wire S02, S04, S06, S10–S14 and existing built workspace adapters. S01/S03/S05
 
 Rung 1: S01 history → S02 session; S03 metadata codec is verified independently before S15. Rung 2: S03 → S15 + S07 → S13 file seam. Rung 3: S03 → S15 + S08 → S14 recovery seam. Rung 4: S05 → S12 → A-SHELL and S09 → S10, with S11 preview transactions. Later phase sections define their cumulative seams.
 
-Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rung 1 (S01→S02) passes. S01–S12 and S15 are GREEN with evidence in PHASE-1.md; S13, S14 and A-SHELL remain PLANNED. The real S03→S15 seam passes; full rung 2 still needs S13. BATCH is halted before S13 after correcting S15 test-fixture assumptions and repairing operation-accessor validation. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
+Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rungs 1–2 pass (S01→S02 and S03→S15 + S07→S13). S01–S13 and S15 are GREEN with evidence in PHASE-1.md; S14 and A-SHELL remain PLANNED. BATCH is halted before S14 after correcting the S13 browser fixture assertion and repairing filename/error-containment findings. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
 
 ## Shared conceptual bindings
 

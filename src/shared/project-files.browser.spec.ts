@@ -1,0 +1,34 @@
+import { readFile } from 'node:fs/promises';
+import { test, expect } from '@playwright/test';
+import { nativeContainer } from './native-container.ts';
+
+test('S13 actual Chromium download/open roundtrip preserves project assets and rejects corruption', async ({ page, browser }) => {
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/dev/fixtures/project-files.html');
+  const summary = page.locator('#package'); const originalText = await summary.textContent();
+  const downloading = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download native project' }).click();
+  const download = await downloading;
+  expect(download.suggestedFilename()).toBe('Pixel sample.gsnv-image'); expect(await download.failure()).toBeNull();
+  const source = await readFile((await download.path())!);
+  const decoded = nativeContainer({ op: 'decode', parts: [new Uint8Array(source)] });
+  expect(decoded.project).toEqual({ format: 'gsnv-image', version: 1, id: 'pixel-example', title: 'Pixel sample', content: { width: 1, height: 1, tile: 'rgba-0' } });
+  expect(decoded.assets).toEqual([{ id: 'rgba-0', mime: 'application/octet-stream', bytes: new Uint8Array([255, 0, 0, 255]) }]);
+  await expect(page.locator('#result')).toHaveText('Download handed to browser: Pixel sample.gsnv-image');
+  await page.getByRole('button', { name: 'Use alternate fixture' }).click(); await expect(summary).toContainText('Alternate pixel');
+  const choose = page.waitForEvent('filechooser'); await page.getByRole('button', { name: 'Open native project' }).click();
+  await (await choose).setFiles({ name: 'Pixel sample.gsnv-image', mimeType: 'application/octet-stream', buffer: source });
+  await expect(page.locator('#result')).toHaveText('Opened Pixel sample');
+  await expect.poll(async () => JSON.parse((await summary.textContent())!)).toEqual(JSON.parse(originalText!));
+  const reopenedText = await summary.textContent();
+  const corrupted = Buffer.from(source); corrupted[corrupted.length - 1] = corrupted[corrupted.length - 1]! ^ 1;
+  const chooseBad = page.waitForEvent('filechooser'); await page.getByRole('button', { name: 'Open native project' }).click();
+  await (await chooseBad).setFiles({ name: 'broken.gsnv-image', mimeType: 'application/octet-stream', buffer: corrupted });
+  await expect(page.locator('#result')).toContainText('project.format:'); await expect(page.locator('#result')).toContainText('checksum mismatch');
+  await expect(summary).toHaveText(reopenedText!);
+  const secondDownload = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download native project' }).click();
+  const second = await secondDownload; expect(await second.failure()).toBeNull();
+  expect(await readFile((await second.path())!)).toEqual(source);
+  expect(errors).toEqual([]);
+  console.log(`S13: ${source.length} bytes matched after browser download/open/re-save; corruption retained prior fixture. Chrome ${browser.version()}, ${process.platform}/${process.arch}, headless 1280x720. Native picker interaction untested.`);
+});

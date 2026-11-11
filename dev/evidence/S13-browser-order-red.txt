@@ -1,0 +1,94 @@
+
+> gsnv-paint@0.1.0 test:browser
+> playwright test src/shared/project-files.browser.spec.ts
+
+[WebServer] (node:1711471) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1711508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/shared/project-files.browser.spec.ts:5:1 › S13 actual Chromium download/open roundtrip preserves project assets and rejects corruption (5.5s)
+
+
+  1) src/shared/project-files.browser.spec.ts:5:1 › S13 actual Chromium download/open roundtrip preserves project assets and rejects corruption
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: locator('#package')
+    Timeout: 5000ms
+    - Expected  - 9
+    + Received  + 9
+
+    @@ -1,16 +1,16 @@
+      {
+        "project": {
+    -     "format": "gsnv-image",
+    -     "version": 1,
+    -     "id": "pixel-example",
+    -     "title": "Pixel sample",
+    -     "content": {
+    +     "content": {
+    +       "height": 1,
+    +       "tile": "rgba-0",
+    +       "width": 1
+    -       "width": 1,
+    -       "height": 1,
+    +     },
+    +     "format": "gsnv-image",
+    +     "id": "pixel-example",
+    -       "tile": "rgba-0"
+    -     }
+    +     "title": "Pixel sample",
+    +     "version": 1
+        },
+        "assets": [
+          {
+            "id": "rgba-0",
+            "mime": "application/octet-stream",
+
+    Call log:
+      - Expect "toHaveText" locator('#package') with timeout 5000ms
+      - waiting for locator('#package')
+        14 × locator resolved to <pre id="package" aria-label="Current fixture package">{↵  "project": {↵    "content": {↵      "height":…</pre>
+           - unexpected value "{
+      "project": {
+        "content": {
+          "height": 1,
+          "tile": "rgba-0",
+          "width": 1
+        },
+        "format": "gsnv-image",
+        "id": "pixel-example",
+        "title": "Pixel sample",
+        "version": 1
+      },
+      "assets": [
+        {
+          "id": "rgba-0",
+          "mime": "application/octet-stream",
+          "bytes": [
+            255,
+            0,
+            0,
+            255
+          ]
+        }
+      ]
+    }"
+
+
+      19 |   const choose = page.waitForEvent('filechooser'); await page.getByRole('button', { name: 'Open native project' }).click();
+      20 |   await (await choose).setFiles({ name: 'Pixel sample.gsnv-image', mimeType: 'application/octet-stream', buffer: source });
+    > 21 |   await expect(page.locator('#result')).toHaveText('Opened Pixel sample'); await expect(summary).toHaveText(originalText!);
+         |                                                                                                  ^
+      22 |   const corrupted = Buffer.from(source); corrupted[corrupted.length - 1] = corrupted[corrupted.length - 1]! ^ 1;
+      23 |   const chooseBad = page.waitForEvent('filechooser'); await page.getByRole('button', { name: 'Open native project' }).click();
+      24 |   await (await chooseBad).setFiles({ name: 'broken.gsnv-image', mimeType: 'application/octet-stream', buffer: corrupted });
+        at /home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.browser.spec.ts:21:98
+
+    Error Context: test-results/shared-project-files.brows-c0295-sets-and-rejects-corruption/error-context.md
+
+  1 failed
+    src/shared/project-files.browser.spec.ts:5:1 › S13 actual Chromium download/open roundtrip preserves project assets and rejects corruption
