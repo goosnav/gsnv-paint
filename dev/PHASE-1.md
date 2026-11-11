@@ -77,3 +77,13 @@ The contract and complete testbench preceded implementation. Focused expected-RE
 D1 stores exact saved identities rather than clearing a boolean, because writes can finish after newer edits; revisit only if saves become synchronous atomic actions. D2 ignores replaced-document completions rather than binding them to a workspace, because late I/O must not change a replacement's baseline. The race tests guard both decisions. No tuning constants; S01 owns history retention. Snapshot content is never serialized here.
 
 GREEN: S01, S03, S02; ACCEPTED: none. Provisional assembly rung 1 passes. S03 independent review found no blocker and independently passed 52/52. Runtime requirement status remains 10 PASS / 0 FAIL / 376 UNTESTED; module evidence alone does not close workspace UI requirements. Next: S04 cursor-centered view transforms.
+
+## S04 view-transform — GREEN
+
+Contract: pure 2D cursor-anchored zoom, pan and screen→document mapping; finite coordinates and positive finite range; Image range 0.01…64. No dependencies. Invalid bounds/coordinates or nonfinite output raise RangeError.
+
+Contract and testbench preceded implementation. Expected RED `node --import tsx --test --test-name-pattern='S04 golden' src/shared/view-transform.test.ts` exited 1: one unimplemented golden test failed ([output](evidence/S04-red.txt), trailing whitespace normalized). Full `node --import tsx --test src/shared/view-transform.test.ts` exited 0: **12 tests, 12 pass, 0 fail, 0 skipped** ([output](evidence/S04-green.txt)). Includes both zoom clamps, negative/fractional coordinates, 100 cursor/inverse property cases, immutable inputs and numeric errors. `npm run typecheck` exited 0; module checker exited 0: `PASS: src/shared/view-transform.ts`. Cumulative `npm test`: **121/121**, zero skipped ([output](evidence/phase1-through-S04.txt)), exit 0.
+
+Demo `node --import tsx src/shared/view-transform.demo.ts` exited 0: zoom 4, pan (-90,-55); document point under cursor remains (50,25). Demo is not evidence. D1 preserves continuous coordinates instead of rounding here to prevent zoom drift; revisit with a distinct snapping contract. Caller-supplied range is the tweak point, guarded by clamp tests. 3D cameras and domain snapping remain outside this brick.
+
+GREEN: S01, S03, S02, S04; ACCEPTED: none. Rung 1 remains GREEN. Independent S02 review found no concrete defect and independently passed 35/35. Requirement totals unchanged; no application/browser smoke yet. Next: S05 keymap.

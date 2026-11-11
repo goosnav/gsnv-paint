@@ -54,7 +54,7 @@ RAISES: `ProjectFormatError` for malformed JSON, invalid envelope, unsupported v
 DEPS: none.
 TEST: literal golden envelope, all three tags, nested roundtrip, malformed/future/unsafe/oversize cases. Requirement group ProjectPersistence.
 
-## S04 view-transform — CORE — PLANNED
+## S04 view-transform — CORE — GREEN
 
 Purpose: Transform a two-dimensional viewport around its cursor.
 IN: `{view:View2D,action:{type:'zoom',factor:number,cursor:Point}|{type:'pan',delta:Point}|{type:'toDocument',point:Point},range:{min:number,max:number}}`; positive finite zoom/factor/range with min≤max.

@@ -1,0 +1,20 @@
+✔ S04 golden cursor-centered zoom, pan and document conversion (1.781782ms)
+✔ S04 clamps exactly to 1% and 6400%, including product overflow/underflow (0.311334ms)
+✔ S04 fixed min/max range works and pan does not change zoom (0.197578ms)
+✔ S04 cursor invariant and inverse property across negative/fractional coordinates (1.26758ms)
+✔ S04 frozen view and request are never mutated (0.253369ms)
+✔ S04 rejects invalid zoom/factor/range 0 (1.478873ms)
+✔ S04 rejects invalid zoom/factor/range -1 (0.163352ms)
+✔ S04 rejects invalid zoom/factor/range NaN (0.192801ms)
+✔ S04 rejects invalid zoom/factor/range Infinity (0.402911ms)
+✔ S04 rejects invalid zoom/factor/range -Infinity (0.200242ms)
+✔ S04 rejects inverted bounds and nonfinite coordinates on every action (0.491288ms)
+✔ S04 rejects unrepresentable output instead of returning infinite coordinates (0.143989ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 198.262846
