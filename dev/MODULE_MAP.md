@@ -90,7 +90,7 @@ RAISES: none; permission/read/write failures yield stable file error codes.
 DEPS: none.
 TEST: fake cancellation/denial/write failure and one actual browser open/download roundtrip; native picker smoke is separate if automation cannot exercise it. Requirement group ProjectPersistence.
 
-## S08 recovery-store — SHELL — PLANNED
+## S08 recovery-store — SHELL — GREEN
 
 Purpose: Persist atomic workspace recovery generations locally.
 IN: `{op:'write',record:RecoveryRecord}|{op:'read'|'remove',workspace:Workspace}`, injected IndexedDB/localStorage adapter ports.

@@ -1,0 +1,72 @@
+
+> gsnv-paint@0.1.0 test:browser
+> playwright test
+
+[WebServer] (node:1631864) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:1631891) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "browser": "154.0.8037.97",
+  "platform": "linux",
+  "arch": "x64",
+  "headless": true,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "results": [
+    {
+      "id": "file-access",
+      "label": "Native file pickers",
+      "status": "supported",
+      "message": "Native file pickers are available; access requires your file selection."
+    },
+    {
+      "id": "workers",
+      "label": "Background workers",
+      "status": "supported",
+      "message": "Background worker API is available."
+    },
+    {
+      "id": "wasm",
+      "label": "WebAssembly",
+      "status": "supported",
+      "message": "WebAssembly compilation is available."
+    },
+    {
+      "id": "webgl2",
+      "label": "WebGL 2",
+      "status": "supported",
+      "message": "WebGL 2 context creation is available."
+    },
+    {
+      "id": "cross-origin-isolation",
+      "label": "Isolated execution",
+      "status": "supported",
+      "message": "Cross-origin isolation is active."
+    },
+    {
+      "id": "clipboard",
+      "label": "Image clipboard",
+      "status": "supported",
+      "message": "Image clipboard API is available; access may require permission."
+    },
+    {
+      "id": "pressure",
+      "label": "Pen pressure API",
+      "status": "supported",
+      "message": "Pressure API is available; pen hardware has not been tested."
+    }
+  ]
+}
+  ✓  1 src/shared/capability-probe.browser.spec.ts:4:1 › S06 actual Chromium API probe matches this isolated browser session (295ms)
+S07: 8 binary bytes matched after browser upload, download, and reopen; native picker interaction untested.
+  ✓  2 src/shared/file-access.browser.spec.ts:4:1 › S07 actual browser fallback open/download/reopen preserves exact binary bytes (390ms)
+S08: generation 7 and exact payload bytes survived page close/reopen and reload; journal contains metadata only.
+  ✓  3 src/shared/recovery-store.browser.spec.ts:3:1 › S08 actual browser recovery survives page close/reopen and reload with exact bytes (600ms)
+
+  3 passed (2.5s)

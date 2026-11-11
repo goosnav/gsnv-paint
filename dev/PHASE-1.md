@@ -1,6 +1,6 @@
 # Phase 1 execution ledger
 
-Active: Phase 1, Mode B, owner-authorized BATCH. Baseline spec/map push: ea1e22c. No human ACCEPTED bricks. The phase is incomplete; no application/browser/OS claim is made.
+Active phase: Phase 1, Mode B. BATCH advancement is halted before S09 after the S08 review finding; the current brick was repaired and verified GREEN. Baseline spec/map push: ea1e22c. No human ACCEPTED bricks. The phase is incomplete; no application/browser/OS claim is made.
 
 ## S01 history — GREEN
 
@@ -123,3 +123,21 @@ Cumulative `npm test` exited 0: **158/158**, none skipped ([output](evidence/pha
 D1 preserves segmented payloads instead of flattening large projects; READ_CHUNK_BYTES (8 MiB) is the tweak point, guarded by exact large-file tests. D2 calls fallback success a browser handoff because a page cannot observe disk completion; real download evidence is collected by the test harness separately. REVOKE_DELAY_MS (1000 ms) allows download consumption before cleanup; fallback cleanup and real browser tests guard it. Revisit on measured memory/compatibility evidence. Workspace formats, native picker interaction and durable disk confirmation remain outside this module's passing evidence.
 
 GREEN: S01, S03, S02, S04, S05, S06, S07; ACCEPTED: none. Rung 1 GREEN; Phase 1 incomplete and not pushed. Next: S08 recovery store.
+
+## S08 recovery-store — GREEN; BATCH halted before S09
+
+Contract: IndexedDB transactions persist monotonic, complete recovery generations independently per workspace; localStorage holds small non-authoritative journal metadata only. Older/equal writes cannot replace newer generations. Payloads are stored as Blob segments and returned as bytes. Quota/corrupt/unavailable failures are explicit. Failed replacement transactions retain the old copy. No domain or container interpretation.
+
+The header and fake/real testbenches preceded implementation. Expected RED `node --import tsx --test --test-name-pattern='S08 golden' src/shared/recovery-store.test.ts` exited 1 with the unimplemented golden failing ([output](evidence/S08-red.txt), whitespace normalized). Initial 10 fake tests, strict typecheck, checker and browser smoke passed. Independent review then found a missing malformed-input case: Array.every skipped holes in a sparse payload array, allowing unreadable data to replace a valid generation. **Batch advancement stopped immediately; S09 was not started.**
+
+Added a regression without changing the contract: `node --import tsx --test --test-name-pattern='S08 rejects sparse' src/shared/recovery-store.test.ts` exited **1**, reproducing the defect ([output](evidence/S08-review-red.txt)). Replaced hole-skipping validation with an explicit check of every own array element for both incoming bytes and stored Blobs. The regression asserts rejection, survival of the previous complete generation, and a readable corruption diagnostic for stored sparse payloads. No test was weakened.
+
+Fresh `node --import tsx --test src/shared/recovery-store.test.ts` exited 0: **11 tests, 11 pass, 0 fail, 0 skipped** ([output](evidence/S08-green.txt)). Coverage includes competing writes, stale generations, journal quota, transaction interruption after journal advance, corrupt journal/schema, missing storage and malformed/sparse records. Independent repair review also passed **11/11** and confirmed the specific defect is resolved.
+
+`npm run typecheck` exited 0, no diagnostics. Module checker exited 0: `PASS: src/shared/recovery-store.ts`. Full cumulative `npm test` exited 0: **169/169**, zero skipped ([output](evidence/phase1-through-S08.txt)). `npm run test:browser` exited 0: **3 passed** ([output](evidence/S08-browser.txt)), including exactly one S08 smoke that preserves generation 7 and exact bytes after page close/reopen and reload, with metadata-only localStorage. Environment: Chrome 154.0.8037.97 / Linux x64 / headless / 1280×720. The interrupted transaction is simulated in the fake IndexedDB suite; browser reload is real. No OS process/power-loss test is claimed.
+
+Demo `/dev/fixtures/recovery-store.html` runs via `npm run dev`; its separate entry prints the persisted generation and payload. The browser test exercised it, but its display alone is not evidence. D1 makes IndexedDB authoritative rather than trusting a cross-API journal pointer, preventing crashes from stranding good data. D2 stores Blobs instead of synchronous base64/localStorage payloads. DB_NAME/DB_VERSION/STORE/JOURNAL_PREFIX are migration-sensitive tweak points. Monotonicity, interruption and reload tests guard changes. Consumer container/domain integrity, storage eviction and explicit durable project files remain separate concerns. fake-indexeddb 6.2.8 is a pinned development-only test dependency; actual Chromium storage is also exercised.
+
+`python3 dev/verify-spec.py` exited 0: TRACE/MAP/LINK PASS (386 requirements, 158 module contracts); `git diff --check` exited 0. Full requirement totals remain **10 PASS / 0 FAIL / 376 UNTESTED**: no complete runtime workspace requirement closes from these foundations alone. Native picker interaction, other browsers/OSes, full application behavior, CAD, Image and Video golden outputs remain UNTESTED.
+
+GREEN: S01, S03, S02, S04, S05, S06, S07, S08. ACCEPTED: none. Provisional assembly rung 1 is GREEN. Phase 1 is incomplete, has not been pushed, and is not a release candidate. The retained batch rule (“halt immediately on any failing test … and any surprise”) caused this checkpoint after repairing the active brick. Next planned brick: S09 original SVG icons, then S10 XP chrome; neither has source scaffolding yet.

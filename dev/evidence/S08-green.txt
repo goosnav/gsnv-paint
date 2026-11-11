@@ -1,0 +1,19 @@
+✔ S08 golden write/read roundtrip stores only journal metadata in localStorage (15.204951ms)
+✔ S08 missing, empty payload, independent workspaces, and remove are explicit (3.102459ms)
+✔ S08 older/equal generations cannot replace the latest complete record (2.203725ms)
+✔ S08 overlapping writes serialize and keep the highest complete generation (2.308517ms)
+✔ S08 journal quota failure leaves previous recovery intact (3.462993ms)
+✔ S08 interrupted IndexedDB write retains old generation despite advanced journal hint (1.472416ms)
+✔ S08 stale/corrupt journal never hides an intact committed record (1.043606ms)
+✔ S08 corrupt database schema is a diagnostic, not an empty document (1.218603ms)
+✔ S08 missing/denied storage reports unavailable without throwing (0.376163ms)
+✔ S08 malformed record metadata/payload is rejected before persistence (1.785857ms)
+✔ S08 rejects sparse input and stored payloads without replacing intact recovery (1.207279ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 269.431396
