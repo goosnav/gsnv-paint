@@ -184,8 +184,8 @@ Purpose: Validate, infer, add, and delete the listed sketch constraints.
 IN: `{sketch:Sketch,action:'validate'|'infer'|'add'|'delete'|'compile',candidate?:Constraint,pointer?:Vec2,removeId?:Id,tolerance:Tolerance,context:ExpressionContext}`; action supplies its required field, compile resolves stored dimension bindings.
 OUT: `{delta:SketchDelta,suggestions:Constraint[],program:SolverProgram}`; exact pinned vendor aliases above define primitive fields; compile emits only allowed line/circle/arc/point and constraint types. Inferred suggestions require user-visible glyphs and remain individually deletable.
 RAISES: `ConstraintArityError`, `UnsupportedConstraintPairError`, `MissingEntityError`, `MissingConstraintError`, `ConflictingFixRequestError`.
-DEPS: C03.
-H-CAD-02 now concerns real solver behavior only; published types and required mappings are enumerated above.
+DEPS: C61, C62, C63.
+D19 separates geometry mapping, relationship/dimension mapping and inference behind this existing entry point. C09 owns action validation, immutable deltas and assembly of the declared SolverProgram; it does not duplicate those translations. C03 is reached through C62. H-CAD-02 still requires real solver behavior; published types alone do not prove it.
 
 ### C10 sketch-dimensions — CORE — PLANNED
 File `src/cad/sketch-dimensions.ts`; public `dimensionPolicy(request)`.
@@ -672,3 +672,35 @@ File `src/cad/cad-step-export.ts`; public `cadSTEPExport(ports)`. Tests cover na
 STEP-APP assembly: C50→C04/C52→C02→C53→C03→C59→C37 runs in a dedicated worker. C60 owns export lifetime and S07 file handoff. The adapter exposes Export STEP for the current source, cancels exports on document changes/disposal before close begins, and displays progress/cancel/errors. Export does not mutate history, mark a native project saved, or replace editable source. Browser verification downloads an extruded part, independently checks STEP entities/units, re-imports with real C37 and verifies volume, then edits a dimension and exports the new geometry. Do not pass CAD-113/116/124 until their entire procedures and UI coverage exist.
 
 The STEP-APP increment is provisionally GREEN. [CAD-STEP-EXPORT.md](CAD-STEP-EXPORT.md) records real file readback, cancellation, errors, source ownership and verification limits. No additional whole-product requirement has been closed by this component increment.
+
+
+## Full sketch constraint implementation (D19)
+
+C61–C63 split the internal work of planned C09 before implementation. C09 retains its public request/result, action set and responsibility; no GREEN implementation or persisted format changes here. C61 is independent, C62 consumes its typed result, and C09 joins the three leaves. C09/C16 and the production document integration remain PLANNED until their complete tests pass. No circle/arc editing is exposed by this mapping alone.
+
+### C61 sketch-geometry-program — CORE — PLANNED
+File `src/cad/sketch-geometry-program.ts`; public `sketchGeometryProgram(request)`.
+Purpose: Translate analytic sketch geometry into PlaneGCS geometry.
+IN: `{entities:readonly (LinearEntity|CircularEntity)[],reservedIds:readonly string[],tolerance:Tolerance}`; canonical mm/radians, explicit construction flags, positive finite tolerance. Entity IDs are unique nonempty strings; reserved IDs include the remaining sketch IDs and may overlap entity IDs. Empty geometry is valid.
+OUT: `{primitives:SolverGeometryPrimitive[],sourceBySolverId:Record<Id,Id>,roles:Record<Id,{geometryId:Id,points:Partial<Record<'p'|'a'|'b'|'center'|'start'|'end',Id>>}>}`. SolverGeometryPrimitive is the pinned vendor union SketchPoint|SketchLine|SketchCircle|SketchArc|ArcRules. All solver points precede curves, and mandatory ArcRules follow curves. Native geometry IDs retain source entity IDs. Generated point/rule IDs deterministically avoid all supplied/generated IDs. Source mappings cover every primitive; each output owns its records and arrays.
+RAISES: `SketchGeometryError` for malformed IDs/tolerance, unsupported/nonfinite/collapsed geometry, or unrepresentable arc endpoints/angles.
+DEPS: none.
+Point roles are p for a point, a/b for a segment, center for a circle, and center/start/end for an arc. Exact coordinate coincidence does not merge independent source points: relationships must remain explicit and deletable. All points start unfixed; C62 supplies explicit fix policy. Construction geometry is retained for solving. Arc angles preserve signed source order, with end=start+sweep and one ArcRules record per arc; no angle wrapping or implicit full circle. Arc radius, endpoint separation and segment length exceed linearMm; sweep and its gap to a full turn exceed angularRad. The actual representable end-start must match sweep within angularRad. Derived coordinates/extrema must stay finite. Valid construction of the source geometry remains C07/C08's responsibility; this mapper does not snap, solve, mutate or infer constraints.
+
+### C62 sketch-relationship-program — CORE — PLANNED
+File `src/cad/sketch-relationship-program.ts`; public `sketchRelationshipProgram(request)`.
+Purpose: Translate declared sketch relationships into PlaneGCS constraints.
+IN: `{sketch:Sketch,geometry:C61 output,context:ExpressionContext,tolerance:Tolerance}`; geometry comes from the same entities and reserves all sketch IDs.
+OUT: `{primitives:SolverConstraintPrimitive[],sourceBySolverId:Record<Id,Id>,fixedPointIds:Id[],fixedSourceIds:Id[]}`. Uses only the pinned allowed constraint interfaces; dimensions are evaluated by C03. Generated IDs avoid the geometry and all source IDs. Fixed points are identified for C09 to mark in its owned program; source entities are not mutated.
+RAISES: `ConstraintArityError`, `UnsupportedConstraintPairError`, `MissingEntityError`, `MissingConstraintError`, `ConflictingFixRequestError`; C03 errors propagate.
+DEPS: C03.
+Point-role combinations, dimension associations and complete relationship fixtures must close at CONTRACTED before this leaf is built. No coordinate-nearest retargeting, non-driving substitute or implicit relationship may silently replace the stored intent. This decomposition does not remove any of C09's listed constraints or dimension types.
+
+### C63 sketch-constraint-inference — CORE — PLANNED
+File `src/cad/sketch-constraint-inference.ts`; public `inferSketchConstraints(request)`.
+Purpose: Suggest declared sketch relationships from drawing geometry.
+IN: `{sketch:Sketch,pointer:Vec2,tolerance:Tolerance}`; all coordinates are canonical mm and geometry IDs exist.
+OUT: `Constraint[]` with deterministic proposal IDs, source IDs/point roles and inferred=true; equivalent existing constraints are excluded. Proposals are transient until the tool controller assigns persistent IDs and commits them with visible, removable glyphs. No automatic document mutation or solver call.
+RAISES: `MissingEntityError`, `UnsupportedConstraintPairError` for invalid proposal sources.
+DEPS: none.
+The exact suggestion ordering/proximity policy closes at CONTRACTED with representative drawing fixtures. C09 remains responsible for action dispatch; C49/C44 remain responsible for applying only explicit user-visible intent. This leaf does not decide mathematical consistency; C16 reports the real solver result.
