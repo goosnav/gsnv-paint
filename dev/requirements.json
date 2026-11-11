@@ -560,7 +560,7 @@
     "verification": "V-CAD-001",
     "procedure": "Inspect the pinned dependency, upstream provenance, compiled artifact, and spike evidence; assert the engine is OpenCascade-based B-rep WASM and successfully creates and measures a solid.",
     "method": "I",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {

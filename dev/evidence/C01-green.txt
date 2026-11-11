@@ -1,0 +1,24 @@
+✔ C01 golden opens a genuine-probe contract and closes the worker-local port (4.223921ms)
+✔ C01 tracks ownership, stale tokens and cross-session generation isolation (1.785711ms)
+✔ C01 probe preserves owned shapes and returns independent status arrays (0.643719ms)
+✔ C01 rejects disposed and forged sessions without calling the vendor (1.034781ms)
+✔ C01 checks same origin and finite positive tolerance before loading (1.143643ms)
+✔ C01 refuses the main thread and unsupported threaded lifecycle explicitly (0.457961ms)
+✔ C01 detects missing SIMD and exception support before module initialization (0.817281ms)
+✔ C01 turns initialization and malformed module failures into readable load errors (0.739459ms)
+✔ C01 refuses invalid solid or inaccurate/nonfinite mass instead of readiness (1.296193ms)
+✔ C01 failed live probe invalidates tokens and reports native type with context (0.743798ms)
+✔ C01 malformed token and invalid ownership cannot delete another shape (0.92691ms)
+✔ C01 close reports cleanup failure and still releases remaining ordinary wrappers (1.034587ms)
+✔ C01 native release failure invalidates the entire session without further geometry calls (0.823216ms)
+✔ C01 native close failure avoids subsequent native calls and leaves a readable result (0.452925ms)
+✔ C01 snapshots configuration before asynchronous module loading (0.2526ms)
+✔ C01 a WASM trap stops all native cleanup and invalidates retained shapes (0.447628ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 211.858768

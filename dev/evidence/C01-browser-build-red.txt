@@ -1,0 +1,16 @@
+
+> gsnv-paint@0.1.0 test:browser
+> npm run build && playwright test src/cad/kernel-runtime.browser.spec.ts
+
+
+> gsnv-paint@0.1.0 build
+> tsc --noEmit && vite build
+
+src/cad/kernel-runtime.test.ts(176,53): error TS2367: This comparison appears to be unintentional because the types '{ kind: string; deletes: number; }' and 'TopoDS_Shape' have no overlap.
+src/cad/kernel-runtime.test.ts(176,73): error TS2339: Property 'deletes' does not exist on type 'never'.
+src/cad/kernel-runtime.test.ts(185,53): error TS2367: This comparison appears to be unintentional because the types '{ kind: string; deletes: number; }' and 'TopoDS_Shape' have no overlap.
+src/cad/kernel-runtime.test.ts(185,73): error TS2339: Property 'deletes' does not exist on type 'never'.
+src/cad/kernel-runtime.test.ts(194,53): error TS2367: This comparison appears to be unintentional because the types '{ kind: string; deletes: number; }' and 'TopoDS_Shape' have no overlap.
+src/cad/kernel-runtime.test.ts(194,73): error TS2339: Property 'deletes' does not exist on type 'never'.
+src/cad/kernel-runtime.test.ts(211,53): error TS2367: This comparison appears to be unintentional because the types '{ kind: string; deletes: number; }' and 'TopoDS_Shape' have no overlap.
+src/cad/kernel-runtime.test.ts(211,70): error TS2339: Property 'deletes' does not exist on type 'never'.

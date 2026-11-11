@@ -1,0 +1,21 @@
+✖ C01 golden opens a genuine-probe contract and closes the worker-local port (2.429065ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 197.845121
+
+✖ failing tests:
+
+test at src/cad/kernel-runtime.test.ts:1:3112
+✖ C01 golden opens a genuine-probe contract and closes the worker-local port (2.429065ms)
+  Error: C01 unimplemented
+      at kernelRuntime (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-runtime.ts:48:9)
+      at open (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-runtime.test.ts:61:20)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-runtime.test.ts:68:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)

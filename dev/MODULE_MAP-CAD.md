@@ -1,6 +1,6 @@
 # Module map: CAD, phase 2
 
-Mode A. This document specifies contracts; it creates no application modules. Every brick is **PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
+Mode A. This document specifies contracts; it creates no application modules. **C01 is GREEN; C02–C49 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
 
 For a desktop user, CAD turns constrained sketches and ordered feature definitions into editable, validated B-rep solids, measurements, exchange files, and dimensioned drawings. Completion requires the CAD golden cases, error cases, complete feature-family coverage, and measured performance from `05-VERIFICATION.md`.
 
@@ -111,14 +111,14 @@ Allowed interfaces are `Equal`, `P2PDistance`, `P2PAngle`, `P2LDistance`, `Point
 
 ## Brick contracts, in dependency order
 
-### C01 kernel-runtime — SHELL — PLANNED
+### C01 kernel-runtime — SHELL — GREEN
 File `src/cad/kernel-runtime.ts`; public `kernelRuntime(request)`.
 Purpose: Own a real OpenCascade WASM instance and its worker-local lifetime.
 IN: `{action:'open'|'close'|'probe',config?:KernelConfig,session?:KernelSession}`; open supplies same-origin pinned URLs, close/probe supplies a live typed worker-local port.
 OUT: `{status:KernelStatus,session:KernelSession|null}`; open returns the public library/retain/resolve/release port and runs a real box/volume probe; close releases tracked handles and invalidates generation. Downstream executors exclusively use this port; temporary vendor objects are disposed in their owning executor before return.
 RAISES: `KernelLoadError` on fetch/compile/init failure; `CapabilityError` for unsupported SIMD/exceptions/thread requirements; `DisposedSessionError` for invalid token.
 DEPS: none.
-Vendor: `replicad-opencascadejs@1.2.1`; commercial-distribution and byte-size evidence recorded in DECISIONS. Spike gate is real worker execution, readable exception conversion, disposal, and asset-size verification.
+Vendor: `replicad-opencascadejs@1.2.1`; commercial-distribution and byte-size evidence recorded in DECISIONS. Spike gate is real worker execution, readable exception conversion, disposal, and asset-size verification. C01 passes the single-runtime gate with evidence in [PHASE-2.md](PHASE-2.md). D10 records fatal-worker replacement, actual heap bounds and explicit unsupported pthread lifecycle; source asset size is verified, final distribution remains open.
 
 ### C02 solver-runtime — SHELL — PLANNED
 File `src/cad/solver-runtime.ts`; public `solverRuntime(request)`.
@@ -535,7 +535,7 @@ Overlap identifies a seam, not duplicate ownership. Every ID has only one file. 
 
 ## Build order and assembly ladder
 
-Build C01 and C02 first: genuine WASM/worker spikes precede domain/UI expansion. Then C03…C49 in numeric order, with S01/S03/S04/S15 already provided by phase 1. All listed direct dependencies precede their consumer. C41 consumes dimension types/policy and resolved model measurements; C42 supplies projections through assembly afterward, so neither calls the other.
+Build C01 and C02 first: genuine WASM/worker spikes precede domain/UI expansion. C01 is GREEN. BATCH is halted before C02 after repairing a WASM-trap cleanup defect and test typing; CAD-A1 remains unassembled until C02 passes. Human ACCEPTED set remains empty. Then C03…C49 in numeric order, with S01/S03/S04/S15 already provided by phase 1. All listed direct dependencies precede their consumer. C41 consumes dimension types/policy and resolved model measurements; C42 supplies projections through assembly afterward, so neither calls the other.
 
 Assemblies are wiring/test entry points, **not bricks**, and contain no geometry or application policy. They may import more than three already-eligible bricks because their only role is explicit connection. If wiring starts interpreting feature definitions, calculating dimensions, or resolving failures, extract that decision into a contracted CORE brick and halt before proceeding.
 

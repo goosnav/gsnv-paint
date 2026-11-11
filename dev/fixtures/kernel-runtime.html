@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gsnv-paint · C01 development kernel spike</title>
+<style>
+  * { box-sizing:border-box } body { margin:0; background:#ece9d8; color:#172536; font:12px Tahoma,Arial,sans-serif }
+  h1 { margin:0; padding:10px 14px; color:white; background:linear-gradient(#298cff,#0754cb 70%,#0044af); font-size:18px }
+  .notice { margin:0; padding:9px 14px; background:#fff8d3; border-bottom:1px solid #b8ad79 }
+  .controls,.monitor { padding:10px 14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; border-bottom:1px solid #aca899 }
+  button,a { font:inherit } button { padding:6px 10px; background:linear-gradient(#fffef8,#ece9d8); border:1px solid; border-color:#fff #807c6e #807c6e #fff; box-shadow:1px 1px #c0bcad; color:#152635 }
+  button:disabled { color:#827f75 } button:focus-visible,a:focus-visible { outline:2px dotted #063988; outline-offset:2px }
+  .monitor strong { min-width:225px } .pulse-track { width:220px; height:12px; overflow:hidden; border:1px inset #aaa; background:white } #pulse { width:16px;height:10px;background:#316ac5 }
+  main { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; padding:12px 14px }
+  section { border:1px solid #9aa9bb; background:#fffef8; min-height:150px } h2 { margin:0; padding:6px 8px; font-size:12px; background:linear-gradient(#fff,#dbe3ed); border-bottom:1px solid #9aa9bb }
+  pre { margin:9px; font:12px/1.5 Consolas,monospace; white-space:pre-wrap; overflow-wrap:anywhere }
+  footer { padding:8px 14px; border-top:1px solid #aca899; line-height:1.6 } #error-result { color:#861b19 } #notes { scroll-margin-top:0 }
+</style>
+<h1>gsnv-paint — Development kernel spike (C01)</h1>
+<p class="notice">Real OpenCascade WASM in a dedicated worker. Fixture operations only; no CAD modeler is connected. Native fault injection deliberately requests an invalid box.</p>
+<div class="controls">
+  <button id="load">Load kernel</button><button id="ownership">Check ownership</button><button id="close">Close session</button>
+  <button id="work">Run 400 ms kernel work</button><button id="restart">Terminate and restart</button><button id="fault">Inject native fault</button>
+</div>
+<div class="monitor">
+  <strong id="kernel-status" role="status">Not loaded</strong>
+  <span>Worker <b id="worker-epoch">0</b> alive: <b id="worker-alive">no</b></span><span>Window isolated: <b id="window-isolated"></b></span>
+  <span>Animation frames: <b id="frames">0</b></span><div class="pulse-track" aria-label="Main-thread animation"><div id="pulse"></div></div>
+  <button id="main-click">Main-thread click</button><span id="click-count">0</span><a href="#notes">Main-thread navigation</a><span id="navigation"></span>
+</div>
+<main>
+  <section><h2>Native box: 2 × 3 × 4 mm</h2><pre id="open-result">Not run</pre></section>
+  <section><h2>Probe, retain, resolve and release</h2><pre id="ownership-result">Not run</pre></section>
+  <section><h2>Close and token invalidation</h2><pre id="close-result">Not run</pre></section>
+  <section><h2>Bounded work and UI observations</h2><pre id="work-result">Not run</pre></section>
+  <section><h2>Fixture-only native fault injection</h2><pre id="fault-result">Not run</pre></section>
+  <section><h2>Worker ownership</h2><pre id="termination">No worker terminated</pre><pre id="error-result">No unexpected failure</pre></section>
+</main>
+<footer id="notes"><strong>Scope:</strong> <span id="limits">Threaded mode is unsupported (D10). This fixture measures responsiveness, not product performance.</span><br>
+  The 30-second harness watchdog terminates stuck workers. Close releases shapes; worker termination releases the runtime heap. No kernel handle is sent to the page.</footer>
+<script type="module" src="/src/cad/kernel-runtime.demo.ts"></script>
+</html>

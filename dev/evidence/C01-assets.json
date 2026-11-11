@@ -1,0 +1,45 @@
+{
+  "package": "replicad-opencascadejs",
+  "version": "1.2.1",
+  "gitHead": "5e4ad9bb5a35bb9ae0571e91c25fa1897ba0570c",
+  "scope": "Installed upstream assets; not final emitted release files. Multi is inspected, not enabled.",
+  "limitBytesExclusive": 26214400,
+  "files": [
+    {
+      "file": "package.json",
+      "bytes": 2099,
+      "sha256": "082bf561981d3c676e16ed48b9851f1a1c3d940ec4b7ce12ee2bce25f168a551",
+      "strictlyBelowPagesLimit": true
+    },
+    {
+      "file": "LICENSE",
+      "bytes": 26526,
+      "sha256": "20c17d8b8c48a600800dfd14f95d5cb9ff47066a9641ddeab48dc54aec96e331",
+      "strictlyBelowPagesLimit": true
+    },
+    {
+      "file": "dist/replicad_single.js",
+      "bytes": 60483,
+      "sha256": "465b68c209b416396857fad30a6e33e7f5407907373cfe240c194af6d80c4a1d",
+      "strictlyBelowPagesLimit": true
+    },
+    {
+      "file": "dist/replicad_single.wasm",
+      "bytes": 22942327,
+      "sha256": "a9335919fa64bfeaee3e241d3139ad134022682429c6688e20d8ca12093d33d9",
+      "strictlyBelowPagesLimit": true
+    },
+    {
+      "file": "dist/replicad_multi.js",
+      "bytes": 67754,
+      "sha256": "a2c0245f19702849731b760c930cabecdc95aa70c8f69e82ea3a808f67a0f21e",
+      "strictlyBelowPagesLimit": true
+    },
+    {
+      "file": "dist/replicad_multi.wasm",
+      "bytes": 22475349,
+      "sha256": "0ef8a780af86de92c4b74a39f27ae6ed9c5c47a7e7003d48331dc3fc196cb70e",
+      "strictlyBelowPagesLimit": true
+    }
+  ]
+}

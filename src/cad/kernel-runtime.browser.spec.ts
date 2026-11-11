@@ -1,0 +1,68 @@
+import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { expect, test, type Page } from '@playwright/test';
+
+const receipt = async (page: Page, id: string) => JSON.parse((await page.locator(`#${id}-result`).textContent())!);
+const ready = (page: Page) => expect(page.locator('#kernel-status')).toHaveText('Kernel ready', { timeout: 30_000 });
+
+test('C01 actual isolated worker owns native solids, remains responsive and recovers by replacement', async ({ page, browser }, testInfo) => {
+  test.setTimeout(90_000);
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  for (const specifier of ['replicad-opencascadejs', 'replicad-opencascadejs/wasm']) {
+    const path = fileURLToPath(import.meta.resolve(specifier)), bytes = await readFile(path);
+    expect(bytes.byteLength).toBeLessThan(26_214_400);
+    console.log('C01 source artifact (not final emitted asset coverage):', JSON.stringify({ specifier, bytes: bytes.byteLength, sha256: createHash('sha256').update(bytes).digest('hex') }));
+  }
+  await page.goto('/dev/fixtures/kernel-runtime.html');
+  await expect(page.locator('h1')).toContainText('Development kernel spike');
+  await expect(page.locator('#limits')).toContainText('Threaded mode is unsupported');
+  expect(await page.evaluate(() => crossOriginIsolated)).toBe(true);
+  await page.getByRole('button', { name: 'Load kernel', exact: true }).click(); await ready(page);
+  const opened = await receipt(page, 'open');
+  expect(opened).toMatchObject({ ready: true, mode: 'single', version: 'replicad-opencascadejs@1.2.1', workerIsolated: true, workerOnly: true, valid: true });
+  expect(opened.volume).toBeCloseTo(24, 8);
+  expect(opened.center).toHaveLength(3); [1, 1.5, 2].forEach((coordinate, index) => expect(opened.center[index]).toBeCloseTo(coordinate, 8));
+  expect(Number.isFinite(opened.heapBytes)).toBe(true); expect(opened.heapBytes).toBeGreaterThan(0);
+  await page.getByRole('button', { name: 'Check ownership', exact: true }).click();
+  await expect(page.locator('#ownership-result')).not.toHaveText('Not run');
+  const owned = await receipt(page, 'ownership');
+  expect(owned).toMatchObject({ valid: true, probePreservedShape: true, releasedTokenError: 'DisposedSessionError' });
+  expect(owned.volume).toBeCloseTo(24, 8); expect(owned.center).toHaveLength(3);
+  [1, 1.5, 2].forEach((coordinate, index) => expect(owned.center[index]).toBeCloseTo(coordinate, 8));
+  await page.getByRole('button', { name: 'Close session', exact: true }).click();
+  await expect(page.locator('#kernel-status')).toHaveText('Session closed; worker still owns its heap');
+  expect(await receipt(page, 'close')).toEqual({ ready: false, closed: true, generationChanged: true, closedTokenError: 'DisposedSessionError', diagnostics: [] });
+  await page.getByRole('button', { name: 'Terminate and restart', exact: true }).click(); await ready(page);
+  await expect(page.locator('#worker-epoch')).toHaveText('2');
+  expect((await receipt(page, 'open')).volume).toBeCloseTo(24, 8);
+  await page.getByRole('button', { name: 'Run 400 ms kernel work', exact: true }).click();
+  await expect(page.locator('#kernel-status')).toHaveText('Working in kernel worker');
+  await page.getByRole('button', { name: 'Main-thread click', exact: true }).click();
+  await page.getByRole('link', { name: 'Main-thread navigation', exact: true }).click();
+  await ready(page);
+  const work = await receipt(page, 'work');
+  expect(work.elapsedMs).toBeGreaterThanOrEqual(400); expect(work.iterations).toBeGreaterThan(0);
+  expect(work.volume).toBeCloseTo(24, 8); expect(work.valid).toBe(true);
+  expect(work.framesDuringWork).toBeGreaterThan(0); expect(work.clicksDuringWork).toBe(1); expect(work.navigationDuringWork).toBe(1);
+  expect(new URL(page.url()).hash).toBe('#notes');
+  await page.getByRole('button', { name: 'Run 400 ms kernel work', exact: true }).click();
+  await expect(page.locator('#kernel-status')).toHaveText('Working in kernel worker');
+  await page.getByRole('button', { name: 'Terminate and restart', exact: true }).click(); await ready(page);
+  await expect(page.locator('#worker-epoch')).toHaveText('3');
+  await expect(page.locator('#termination')).toHaveText('Terminated worker 2 during work');
+  expect((await receipt(page, 'open')).volume).toBeCloseTo(24, 8);
+  await page.getByRole('button', { name: 'Inject native fault', exact: true }).click();
+  await expect(page.locator('#kernel-status')).toHaveText('Faulted worker terminated');
+  const fault = await receipt(page, 'fault');
+  expect(fault).toMatchObject({ name: 'KernelLoadError', closed: true, faultInjection: true });
+  expect(fault.message).toContain('Standard_DomainError'); expect(fault.message).toContain('Restart the kernel worker');
+  await expect(page.locator('#worker-alive')).toHaveText('no');
+  await page.getByRole('button', { name: 'Main-thread click', exact: true }).click();
+  await expect(page.locator('#click-count')).toHaveText('2');
+  expect(errors).toEqual([]);
+  await page.screenshot({ path: 'dev/evidence/C01-worker.png' });
+  await testInfo.attach('C01-worker-spike', { path: 'dev/evidence/C01-worker.png', contentType: 'image/png' });
+  console.log('C01 real Chrome worker evidence:', JSON.stringify({ browser: browser.version(), platform: process.platform, arch: process.arch, viewport: page.viewportSize(), opened, owned, work, fault }));
+  console.log('C01 limits: single mode only; native fault injection is fixture-only; this bounded responsiveness check is not CAD product performance, solver, final emitted asset, deployment or other OS/browser coverage.');
+});

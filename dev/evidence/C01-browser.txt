@@ -1,0 +1,32 @@
+
+> gsnv-paint@0.1.0 test:browser
+> npm run build && playwright test src/cad/kernel-runtime.browser.spec.ts
+
+
+> gsnv-paint@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 23 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.55 kB │ gzip:  0.34 kB
+dist/assets/index-CY7G_zY5.css   8.20 kB │ gzip:  2.43 kB
+dist/assets/index-DHTtv-bs.js   57.97 kB │ gzip: 20.06 kB
+
+✓ built in 69ms
+[WebServer] (node:1780248) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1780278) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+C01 source artifact (not final emitted asset coverage): {"specifier":"replicad-opencascadejs","bytes":60483,"sha256":"465b68c209b416396857fad30a6e33e7f5407907373cfe240c194af6d80c4a1d"}
+C01 source artifact (not final emitted asset coverage): {"specifier":"replicad-opencascadejs/wasm","bytes":22942327,"sha256":"a9335919fa64bfeaee3e241d3139ad134022682429c6688e20d8ca12093d33d9"}
+C01 real Chrome worker evidence: {"browser":"154.0.8037.97","platform":"linux","arch":"x64","viewport":{"width":1280,"height":720},"opened":{"ready":true,"mode":"single","version":"replicad-opencascadejs@1.2.1","workerIsolated":true,"workerOnly":true,"valid":true,"volume":23.999999999999996,"center":[1,1.5,2],"heapBytes":104857600},"owned":{"valid":true,"volume":23.999999999999996,"center":[1,1.5,2],"heapBytes":104857600,"probePreservedShape":true,"releasedTokenError":"DisposedSessionError"},"work":{"elapsedMs":400.34999990463257,"iterations":379,"volume":23.999999999999996,"valid":true,"heapBytes":104857600,"framesDuringWork":23,"clicksDuringWork":1,"navigationDuringWork":1},"fault":{"name":"KernelLoadError","message":"OpenCascade box probe failed: Standard_DomainError. Restart the kernel worker.","closed":true,"faultInjection":true}}
+C01 limits: single mode only; native fault injection is fixture-only; this bounded responsiveness check is not CAD product performance, solver, final emitted asset, deployment or other OS/browser coverage.
+  ✓  1 src/cad/kernel-runtime.browser.spec.ts:9:1 › C01 actual isolated worker owns native solids, remains responsive and recovers by replacement (2.8s)
+
+  1 passed (4.0s)

@@ -1,0 +1,19 @@
+✔ C01 golden opens a genuine-probe contract and closes the worker-local port (2.967013ms)
+✔ C01 tracks ownership, stale tokens and cross-session generation isolation (1.26661ms)
+✔ C01 probe preserves owned shapes and returns independent status arrays (0.646645ms)
+✔ C01 rejects disposed and forged sessions without calling the vendor (0.999895ms)
+✔ C01 checks same origin and finite positive tolerance before loading (1.25286ms)
+✔ C01 refuses the main thread and unsupported threaded lifecycle explicitly (0.478655ms)
+✔ C01 detects missing SIMD and exception support before module initialization (0.761479ms)
+✔ C01 turns initialization and malformed module failures into readable load errors (0.740241ms)
+✔ C01 refuses invalid solid or inaccurate/nonfinite mass instead of readiness (1.276284ms)
+✔ C01 failed live probe invalidates tokens and reports native type with context (0.638463ms)
+✔ C01 malformed token and invalid ownership cannot delete another shape (0.465923ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 207.931881
