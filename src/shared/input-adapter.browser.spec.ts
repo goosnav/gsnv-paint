@@ -24,7 +24,7 @@ test('S12 actual Chromium wheel, captured pan, context target and native editing
   await target.click({ button: 'right' });
   expect((await gestures()).filter(value => value.type === 'context').at(-1)).toMatchObject({ type: 'context', targetId: 'face-7' });
   await page.getByRole('button', { name: 'Reset demonstration' }).click();
-  const input = page.getByRole('textbox', { name: 'Native text' }); await input.click(); await page.keyboard.press('Control+A'); await page.keyboard.press('Control+C'); await page.keyboard.press('End'); await page.keyboard.press('Control+V');
+  const input = page.getByRole('textbox', { name: 'Native text' }); await input.click(); await page.keyboard.press('ControlOrMeta+A'); await page.keyboard.press('ControlOrMeta+C'); await page.keyboard.press('ArrowRight'); await page.keyboard.press('ControlOrMeta+V');
   await expect(input).toHaveValue('alphaalpha'); expect(await commands()).toEqual([]);
   expect((await gestures()).some(value => value.type === 'pointer' && value.phase === 'down')).toBe(false);
   const nativeButton = page.getByRole('button', { name: 'Panel action', exact: true }); await nativeButton.focus();
