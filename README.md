@@ -24,6 +24,14 @@ Run `npm ci` and `npm run dev` to open the current application shell with live r
 
 `npm run build` creates the static output in `dist/`. `npm test` runs unit and assembly seams; `npm run test:browser` builds first, then runs the Chrome component and assembly checks. Browser tests require an installed Chrome channel. See the [shell integration contract](dev/APP-SHELL.md) and [Phase 1 evidence](dev/PHASE-1.md) for scope and limitations.
 
+## Cloudflare deployment
+
+For the Cloudflare Workers build pipeline, keep the build command **`npm run build`** and deploy command **`npx wrangler deploy`**, with the repository root as the project directory. The committed `wrangler.jsonc` publishes `dist/` as static assets. It does not add application server code or require the Cloudflare Vite plugin. Wrangler is pinned in the lockfile, so deployment does not install a changing CLI version or run automatic framework setup.
+
+`npm run test:deploy` builds and validates the deployment locally without uploading. `npx wrangler dev` serves the built files through Cloudflare's local runtime. `public/_headers` is copied into `dist/` to set the same cross-origin isolation policy as the local launcher. The same static output can be published through Pages using `npm run build` and output directory `dist`; the Wrangler configuration targets the Workers pipeline shown above.
+
+The [deployment repair report](dev/CLOUDFLARE-DEPLOYMENT.md) records the original failure and verification limits.
+
 The [Phase 2 kernel spike](dev/PHASE-2.md) runs real OpenCascade WASM in a browser worker. Its development demo is `/dev/fixtures/kernel-runtime.html`; the production CAD modeler is not connected yet.
 
 The pinned PlaneGCS package requires a declaration packaging repair, applied automatically by `npm ci`. If lifecycle scripts are disabled, run `npm run prepare:solver` explicitly. `npm run test:solver-types` checks the repaired upstream declarations with strict NodeNext resolution. See [D11](dev/DECISIONS.md#d11--planegcs-declaration-packaging).

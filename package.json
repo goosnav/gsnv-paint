@@ -17,7 +17,8 @@
     "start": "node launcher/start.mjs",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "test:browser": "npm run build && playwright test"
+    "test:browser": "npm run build && playwright test",
+    "test:deploy": "npm run build && wrangler deploy --dry-run --no-autoconfig"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",
@@ -27,7 +28,8 @@
     "jsdom": "31.0.0",
     "tsx": "4.23.15",
     "typescript": "7.0.2",
-    "vite": "8.3.8"
+    "vite": "8.3.8",
+    "wrangler": "4.160.1"
   },
   "dependencies": {
     "@salusoft89/planegcs": "1.3.0",
