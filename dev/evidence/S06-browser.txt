@@ -1,0 +1,68 @@
+
+> gsnv-paint@0.1.0 test:browser
+> playwright test
+
+[WebServer] (node:1618144) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1618171) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "browser": "154.0.8037.97",
+  "platform": "linux",
+  "arch": "x64",
+  "headless": true,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "results": [
+    {
+      "id": "file-access",
+      "label": "Native file pickers",
+      "status": "supported",
+      "message": "Native file pickers are available; access requires your file selection."
+    },
+    {
+      "id": "workers",
+      "label": "Background workers",
+      "status": "supported",
+      "message": "Background worker API is available."
+    },
+    {
+      "id": "wasm",
+      "label": "WebAssembly",
+      "status": "supported",
+      "message": "WebAssembly compilation is available."
+    },
+    {
+      "id": "webgl2",
+      "label": "WebGL 2",
+      "status": "supported",
+      "message": "WebGL 2 context creation is available."
+    },
+    {
+      "id": "cross-origin-isolation",
+      "label": "Isolated execution",
+      "status": "supported",
+      "message": "Cross-origin isolation is active."
+    },
+    {
+      "id": "clipboard",
+      "label": "Image clipboard",
+      "status": "supported",
+      "message": "Image clipboard API is available; access may require permission."
+    },
+    {
+      "id": "pressure",
+      "label": "Pen pressure API",
+      "status": "supported",
+      "message": "Pressure API is available; pen hardware has not been tested."
+    }
+  ]
+}
+  ✓  1 src/shared/capability-probe.browser.spec.ts:4:1 › S06 actual Chromium API probe matches this isolated browser session (327ms)
+
+  1 passed (1.5s)

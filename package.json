@@ -6,11 +6,15 @@
   "scripts": {
     "test": "node --import tsx --test src/**/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "test:spec": "python3 dev/verify-spec.py"
+    "test:spec": "python3 dev/verify-spec.py",
+    "dev": "vite",
+    "test:browser": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "1.65.0",
     "@types/node": "24.19.2",
     "tsx": "4.23.15",
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "vite": "8.3.8"
   }
 }

@@ -55,3 +55,9 @@ Name is exactly `gsnv-paint`; workspaces are Image, Video, CAD. Copy is short an
 ## D08 — native project persistence
 
 Each workspace has a documented versioned envelope and its own content schema. File System Access is primary, explicit file input/download is fallback. Large recovery data belongs in browser local IndexedDB/OPFS; localStorage holds only small journal metadata. Alternative putting all pixel/video payload into synchronous localStorage risks quota and UI stalls. “Local storage” is interpreted as on-device browser persistence, with no cloud storage. Revisit if the owner specifically requires all data in the localStorage API.
+
+## D09 — real browser verification during shell construction
+
+Use pinned Vite 8.3.8 (MIT) to serve TypeScript module fixtures and Playwright 1.65.0 (Apache-2.0) to exercise installed desktop Chrome. Added when S06 first required a real browser resource. Alternative: fake-only shell tests; rejected because they cannot prove browser integration. Headless Linux evidence is labeled explicitly and never substitutes for other browsers, native OS launcher tests or hardware tests. Browser tests fail when the browser/server is missing; they do not silently skip. Revisit if a test needs a headed interaction or real hardware.
+
+The fixture server has the same isolation header policy required by D04; release Pages/local verification remains separate. [Playwright browser channels](https://playwright.dev/docs/browsers#google-chrome--microsoft-edge), [WebCodecs configuration support](https://www.w3.org/TR/webcodecs/).

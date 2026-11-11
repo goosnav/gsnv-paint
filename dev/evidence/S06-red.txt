@@ -1,0 +1,21 @@
+✖ S06 golden: missing APIs are unavailable, never silently supported (0.982323ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 212.709662
+
+✖ failing tests:
+
+test at src/shared/capability-probe.test.ts:1:899
+✖ S06 golden: missing APIs are unavailable, never silently supported (0.982323ms)
+  Error: Not implemented
+      at capabilityProbe (/home/goosnav/Desktop/code/gsnv-paint/src/shared/capability-probe.ts:42:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/capability-probe.test.ts:16:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)

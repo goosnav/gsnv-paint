@@ -72,7 +72,7 @@ RAISES: `TypeError` for invalid workspace/context/key.
 DEPS: none.
 TEST: full shortcut table, Ctrl/Meta handling, text focus, conflict cases and unknown key. Requirement group AppShell.
 
-## S06 capability-probe — SHELL — PLANNED
+## S06 capability-probe — SHELL — GREEN
 
 Purpose: Inspect browser APIs available to this session.
 IN: `{environment:WindowLike,codecRequests:CodecConfig[]}` from caller; may be empty in Phase 1.

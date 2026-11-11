@@ -1,0 +1,14 @@
+✔ S06 golden: missing APIs are unavailable, never silently supported (1.750798ms)
+✔ S06 recognizes present APIs without requesting files or clipboard data (7.356182ms)
+✔ S06 partial picker/clipboard support and null WebGL context are unavailable (0.395493ms)
+✔ S06 isolates probe exceptions and releases the temporary WebGL context (0.440899ms)
+✔ S06 exact codec configurations are passed unchanged and ordered as requested (2.383239ms)
+✔ S06 distinguishes unsupported codec, missing API and codec probe error (0.727253ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 190.592927
