@@ -1,0 +1,17 @@
+Independent read-only review of C61
+
+Initial review: 13 focused tests and typecheck passed. Two P2 findings:
+1. Array.every skipped sparse coordinate/reserved-ID holes.
+2. Large-angle modulo reduction could miss an overflowing arc interior.
+
+Both findings were reproduced by failing regressions and repaired.
+
+Follow-up reviewer result:
+Both findings are resolved. Required-slot validation rejects sparse inputs,
+and the extrema check now handles large angles while preserving native
+start/end values.
+All 15 focused tests pass. Additional clockwise/counterclockwise probes
+confirm overflow rejection and valid inward-arc mapping.
+No remaining concrete defects found in C61. Ready to merge within its
+stated scope; relationship mapping, solver-result acceptance, and UI
+integration remain outside this review.

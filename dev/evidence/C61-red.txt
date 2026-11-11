@@ -1,0 +1,251 @@
+✖ C61 empty geometry has an exact empty program (1.030284ms)
+✖ C61 mixed geometry golden preserves identities, source roles and native dependency order (0.149612ms)
+✖ C61 equal coordinates remain independent and construction geometry stays in the solver (0.142704ms)
+✖ C61 generated IDs avoid reserved, later source and generated IDs (0.175117ms)
+✖ C61 special JavaScript property names remain owned source IDs (0.152829ms)
+✖ C61 deterministic owned results do not mutate frozen source geometry (0.223655ms)
+✖ C61 malformed IDs and tolerance fail without returning a partial program (3.555509ms)
+✖ C61 malformed and nonfinite point coordinates or unknown entities are rejected (0.368192ms)
+✖ C61 segment lengths and radii respect the physical resolution boundary (0.433375ms)
+✖ C61 arc angular boundaries and unrepresentable angle sums are rejected (1.0061ms)
+✖ C61 derived extents are checked on the actual arc, including interior extrema (0.316031ms)
+✖ C61 real primitive seams retain clockwise, major and slot arc directions (1.099482ms)
+✖ C61 actual PlaneGCS consumes generated circles/arcs/slots and solves an edited radius (28.127064ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 0
+ℹ fail 13
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 252.173851
+
+✖ failing tests:
+
+test at src/cad/sketch-geometry-program.test.ts:1:1321
+✖ C61 empty geometry has an exact empty program (1.030284ms)
+  Error: C61 not implemented
+      at sketchGeometryProgram (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.ts:47:9)
+      at run (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:10:74)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:21:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/cad/sketch-geometry-program.test.ts:1:1452
+✖ C61 mixed geometry golden preserves identities, source roles and native dependency order (0.149612ms)
+  Error: C61 not implemented
+      at sketchGeometryProgram (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.ts:47:9)
+      at run (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:10:74)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:24:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/cad/sketch-geometry-program.test.ts:1:2545
+✖ C61 equal coordinates remain independent and construction geometry stays in the solver (0.142704ms)
+  Error: C61 not implemented
+      at sketchGeometryProgram (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.ts:47:9)
+      at run (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:10:74)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:42:17)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-geometry-program.test.ts:1:3103
+✖ C61 generated IDs avoid reserved, later source and generated IDs (0.175117ms)
+  Error: C61 not implemented
+      at sketchGeometryProgram (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.ts:47:9)
+      at run (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:10:74)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:52:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-geometry-program.test.ts:1:3753
+✖ C61 special JavaScript property names remain owned source IDs (0.152829ms)
+  Error: C61 not implemented
+      at sketchGeometryProgram (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.ts:47:9)
+      at run (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:10:74)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:60:17)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-geometry-program.test.ts:1:4318
+✖ C61 deterministic owned results do not mutate frozen source geometry (0.223655ms)
+  Error: C61 not implemented
+      at sketchGeometryProgram (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.ts:47:9)
+      at run (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:10:74)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:71:41)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-geometry-program.test.ts:1:4872
+✖ C61 malformed IDs and tolerance fail without returning a partial program (3.555509ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SketchGeometryError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:16:44)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at bad (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:15:64)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:76:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SketchGeometryError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-geometry-program.test.ts:1:5331
+✖ C61 malformed and nonfinite point coordinates or unknown entities are rejected (0.368192ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SketchGeometryError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:16:44)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at bad (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:15:64)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:83:53)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SketchGeometryError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-geometry-program.test.ts:1:5652
+✖ C61 segment lengths and radii respect the physical resolution boundary (0.433375ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SketchGeometryError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:16:44)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at bad (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:15:64)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:89:37)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SketchGeometryError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-geometry-program.test.ts:1:6068
+✖ C61 arc angular boundaries and unrepresentable angle sums are rejected (1.0061ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SketchGeometryError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:16:44)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at bad (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:15:64)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:96:92)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SketchGeometryError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-geometry-program.test.ts:1:6393
+✖ C61 derived extents are checked on the actual arc, including interior extrema (0.316031ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'SketchGeometryError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:16:44)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at bad (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:15:64)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:101:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'SketchGeometryError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-geometry-program.test.ts:1:6832
+✖ C61 real primitive seams retain clockwise, major and slot arc directions (1.099482ms)
+  Error: C61 not implemented
+      at sketchGeometryProgram (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.ts:47:9)
+      at run (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:10:74)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:111:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-geometry-program.test.ts:1:8040
+✖ C61 actual PlaneGCS consumes generated circles/arcs/slots and solves an edited radius (28.127064ms)
+  Error: C61 not implemented
+      at sketchGeometryProgram (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.ts:47:9)
+      at run (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:10:74)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:127:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

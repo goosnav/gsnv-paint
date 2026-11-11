@@ -23,3 +23,7 @@ Cloudflare dashboard settings can remain **build: `npm run build`**, **deploy: `
 ## Subsequent CAD workflow build
 
 The production CAD increment now emits the kernel and solver assets. `npx wrangler deploy --dry-run --no-autoconfig` succeeds against all 16 emitted files. The largest is the 22,942,327-byte OCCT WASM, below 25 MiB. See [CAD workflow evidence](CAD-WORKFLOW.md) for the updated build/browser/deployment checks. The hosted Cloudflare deployment is still unverified locally.
+
+## Current build recheck
+
+After C61, a fresh disposable copy repeated `npm clean-install --progress=false --no-audit --no-fund`, `npm run build` and `npx wrangler deploy --dry-run` with the owner's Node 24.22.1 and npm 10.9.2. All commands exited 0; Wrangler 4.160.1 read the asset directory and completed without automatic setup or Vite modification. [Complete output](evidence/C61-cloudflare-clean.txt). The [asset inventory](evidence/C61-assets.json) keeps every file below the current 25 MiB limit. Cumulative checks passed 508 unit tests and 18 Chromium browser tests. The configuration repair is commit `46d2683`, already in `main`'s history. GitHub reported no status entries for the previously pushed commit; upload/authentication and the hosted URL remain unverified, not passed.

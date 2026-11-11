@@ -1,6 +1,6 @@
 # Phase 2 — CAD — in progress
 
-C01–C04, C07–C08, C37, C50–C60, CAD-A1, CAD-APP and STEP-APP are GREEN. C05–C06, C09–C36 and C38–C49 remain PLANNED. No brick is human-ACCEPTED. The shared provisional assembly height remains 4; the CAD provisional assembly height is 3 (CAD-A1, CAD-APP and STEP-APP). C01 was pushed as 3ffb2c3, the C02 prerequisite repair as ebe578a, and C02 as 65a9a5d. CAD-A1 was pushed as 5853b7a and C03 as 04d6b9b. The latest named-variable checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
+C01–C04, C07–C08, C37, C50–C61, CAD-A1, CAD-APP and STEP-APP are GREEN. C05–C06, C09–C36, C38–C49 and C62–C63 remain PLANNED. No brick is human-ACCEPTED. The shared provisional assembly height remains 4; the CAD provisional assembly height is 3 (CAD-A1, CAD-APP and STEP-APP). C01 was pushed as 3ffb2c3, the C02 prerequisite repair as ebe578a, and C02 as 65a9a5d. CAD-A1 was pushed as 5853b7a and C03 as 04d6b9b. The latest named-variable checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
 
 ## C01 kernel-runtime — GREEN; BATCH halted before C02
 
@@ -269,3 +269,8 @@ C37, C59/C60 and STEP-APP connect native STEP export to the production CAD edito
 ## C08 circular sketch primitives — GREEN
 
 C08 constructs circles, three-point/center-point/tangent arcs and slots as pure analytic geometry. [CAD-CIRCULAR-PRIMITIVES.md](CAD-CIRCULAR-PRIMITIVES.md) records its 23 focused tests, review regressions, 493 cumulative unit tests, 18 Chromium tests and remaining integration work. The repaired review findings halt this batch before another brick under the retained method. This leaf is not connected to the canvas or saved document yet; requirement status remains 16 PASS / 0 FAIL / 370 UNTESTED. No brick becomes human-ACCEPTED, and CAD provisional assembly height stays 3. C05's separate revision-overflow amendment remains pending.
+
+
+## C61 sketch geometry program — GREEN
+
+C61 maps point/segment/circle/arc geometry to the pinned PlaneGCS primitives with complete source identities and mandatory arc rules. [CAD-SKETCH-GEOMETRY-PROGRAM.md](CAD-SKETCH-GEOMETRY-PROGRAM.md) records its 15 focused tests, actual native solver smoke, review regressions, 508 cumulative unit tests and 18 Chromium tests. The independent review found no remaining concrete defects after repair. C61 remains outside the production document/canvas until C62/C63/C09/C16 and their seams are complete. Requirement status remains 16 PASS / 0 FAIL / 370 UNTESTED; assembly heights and human acceptance are unchanged. The repaired unexpected typecheck/review failures end this batch before C62. C05's separate amendment remains pending.

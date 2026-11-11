@@ -1,0 +1,78 @@
+{
+  "primitives": [
+    {
+      "id": "circle:center",
+      "type": "point",
+      "x": 0,
+      "y": 0,
+      "fixed": false
+    },
+    {
+      "id": "clockwise:center",
+      "type": "point",
+      "x": 30,
+      "y": 0,
+      "fixed": false
+    },
+    {
+      "id": "clockwise:start",
+      "type": "point",
+      "x": 40,
+      "y": 0,
+      "fixed": false
+    },
+    {
+      "id": "clockwise:end",
+      "type": "point",
+      "x": 30,
+      "y": -10,
+      "fixed": false
+    },
+    {
+      "id": "circle",
+      "type": "circle",
+      "c_id": "circle:center",
+      "radius": 10
+    },
+    {
+      "id": "clockwise",
+      "type": "arc",
+      "c_id": "clockwise:center",
+      "radius": 10,
+      "start_id": "clockwise:start",
+      "end_id": "clockwise:end",
+      "start_angle": 0,
+      "end_angle": -1.5707963267948966
+    },
+    {
+      "id": "clockwise:rules",
+      "type": "arc_rules",
+      "a_id": "clockwise"
+    }
+  ],
+  "sourceBySolverId": {
+    "circle": "circle",
+    "circle:center": "circle",
+    "clockwise": "clockwise",
+    "clockwise:center": "clockwise",
+    "clockwise:start": "clockwise",
+    "clockwise:end": "clockwise",
+    "clockwise:rules": "clockwise"
+  },
+  "roles": {
+    "circle": {
+      "geometryId": "circle",
+      "points": {
+        "center": "circle:center"
+      }
+    },
+    "clockwise": {
+      "geometryId": "clockwise",
+      "points": {
+        "center": "clockwise:center",
+        "start": "clockwise:start",
+        "end": "clockwise:end"
+      }
+    }
+  }
+}

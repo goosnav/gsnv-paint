@@ -1,0 +1,23 @@
+✔ C61 empty geometry has an exact empty program (1.887142ms)
+✔ C61 mixed geometry golden preserves identities, source roles and native dependency order (0.583998ms)
+✔ C61 equal coordinates remain independent and construction geometry stays in the solver (0.563523ms)
+✔ C61 generated IDs avoid reserved, later source and generated IDs (0.480567ms)
+✔ C61 special JavaScript property names remain owned source IDs (0.233481ms)
+✔ C61 deterministic owned results do not mutate frozen source geometry (0.478324ms)
+✔ C61 malformed IDs and tolerance fail without returning a partial program (0.93915ms)
+✔ C61 malformed and nonfinite point coordinates or unknown entities are rejected (0.55612ms)
+✔ C61 sparse coordinates and reserved IDs cannot bypass required-slot validation (0.812188ms)
+✔ C61 segment lengths and radii respect the physical resolution boundary (2.56892ms)
+✔ C61 arc angular boundaries and unrepresentable angle sums are rejected (0.562709ms)
+✔ C61 derived extents are checked on the actual arc, including interior extrema (0.359747ms)
+✔ C61 large representable angles retain direction while rejecting overflowing arc interiors (0.299111ms)
+✔ C61 real primitive seams retain clockwise, major and slot arc directions (7.254567ms)
+✔ C61 actual PlaneGCS consumes generated circles/arcs/slots and solves an edited radius (41.32555ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 272.061165

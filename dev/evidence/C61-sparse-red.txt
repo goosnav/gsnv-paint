@@ -1,0 +1,42 @@
+✔ C61 empty geometry has an exact empty program (2.033875ms)
+✔ C61 mixed geometry golden preserves identities, source roles and native dependency order (0.622834ms)
+✔ C61 equal coordinates remain independent and construction geometry stays in the solver (0.483916ms)
+✔ C61 generated IDs avoid reserved, later source and generated IDs (0.546018ms)
+✔ C61 special JavaScript property names remain owned source IDs (0.240507ms)
+✔ C61 deterministic owned results do not mutate frozen source geometry (0.516238ms)
+✔ C61 malformed IDs and tolerance fail without returning a partial program (0.816694ms)
+✔ C61 malformed and nonfinite point coordinates or unknown entities are rejected (0.414593ms)
+✖ C61 sparse coordinates and reserved IDs cannot bypass required-slot validation (3.676844ms)
+✔ C61 segment lengths and radii respect the physical resolution boundary (0.721121ms)
+✔ C61 arc angular boundaries and unrepresentable angle sums are rejected (0.647169ms)
+✔ C61 derived extents are checked on the actual arc, including interior extrema (0.346546ms)
+✔ C61 real primitive seams retain clockwise, major and slot arc directions (6.233323ms)
+✔ C61 actual PlaneGCS consumes generated circles/arcs/slots and solves an edited radius (40.275835ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 13
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 274.627534
+
+✖ failing tests:
+
+test at src/cad/sketch-geometry-program.test.ts:1:5649
+✖ C61 sparse coordinates and reserved IDs cannot bypass required-slot validation (3.676844ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at bad (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:15:64)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-geometry-program.test.ts:90:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }

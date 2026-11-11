@@ -1,0 +1,6 @@
+
+> gsnv-paint@0.1.0 typecheck
+> tsc --noEmit
+
+src/cad/sketch-geometry-program.test.ts(113,11): error TS7022: 'source' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+src/cad/sketch-geometry-program.test.ts(120,44): error TS2353: Object literal may only specify known properties, and 'wasmBinary' does not exist in type '{ locateFile: () => string; }'.
