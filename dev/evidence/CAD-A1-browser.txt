@@ -1,0 +1,37 @@
+Command: npm run test:browser -- src/cad/engine-assembly.browser.spec.ts
+
+> gsnv-paint@0.1.0 test:browser
+> npm run build && playwright test src/cad/engine-assembly.browser.spec.ts
+
+
+> gsnv-paint@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 23 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.55 kB │ gzip:  0.34 kB
+dist/assets/index-CY7G_zY5.css   8.20 kB │ gzip:  2.43 kB
+dist/assets/index-DHTtv-bs.js   57.97 kB │ gzip: 20.06 kB
+
+✓ built in 64ms
+[WebServer] (node:1826926) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1826953) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 2:26:17 AM [vite] (client) [console.error] wasm streaming compile failed: TypeError: Failed to fetch
+[WebServer] 2:26:17 AM [vite] (client) [console.error] falling back to ArrayBuffer instantiation
+[WebServer] 2:26:17 AM [vite] (client) [console.error] failed to asynchronously prepare wasm: NetworkError: Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'http://127.0.0.1:4173/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm'.
+[WebServer] 2:26:17 AM [vite] (client) [console.error] Aborted(NetworkError: Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'http://127.0.0.1:4173/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm'.)
+CAD-A1 paired-worker evidence: {"browser":"154.0.8037.97","platform":"linux","arch":"x64","viewport":{"width":1280,"height":720},"headers":{"coop":"same-origin","coep":"require-corp","corp":"same-origin"},"initial":{"box":{"valid":true,"volume":23.999999999999996},"solved":{"status":0,"dof":0,"conflicts":[],"point":[10,20]},"contradiction":{"status":2,"dof":-1,"conflicts":["x10","x11"],"applied":false,"snapshotPreserved":true},"probes":{"kernelReady":true,"solverReady":true,"shapePreserved":true,"solverSnapshotPreserved":true},"after":{"valid":true,"volume":23.999999999999996,"kernelClosed":false,"solverClosed":false}},"initialClose":{"kernelClosed":true,"solverClosed":true,"kernelGenerationChanged":true,"solverGenerationChanged":true,"kernelTokenError":"DisposedSessionError","capturedSolveError":"DisposedSessionError","diagnostics":[]},"initializationFailure":"{\n  \"name\": \"SolverLoadError\",\n  \"message\": \"PlaneGCS initialization/probe failed: Aborted(NetworkError: Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'http://127.0.0.1:4173/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm'.). Build with -sASSERTIONS for more info.. Terminate the solver worker.\",\n  \"failedAction\": \"open\",\n  \"kernelState\": \"open\",\n  \"solverState\": \"absent\"\n}","work":{"elapsedMs":600.5,"iterations":301,"framesDuringWork":35,"clicksDuringWork":1,"navigationDuringWork":1},"nativeFailure":"{\n  \"name\": \"KernelLoadError\",\n  \"message\": \"OpenCascade box probe failed: Standard_DomainError. Restart the kernel worker.\",\n  \"failedAction\": \"fault\",\n  \"kernelState\": \"closed\",\n  \"solverState\": \"open\"\n}","recovered":{"box":{"valid":true,"volume":23.999999999999996},"solved":{"status":0,"dof":0,"conflicts":[],"point":[10,20]},"contradiction":{"status":2,"dof":-1,"conflicts":["x10","x11"],"applied":false,"snapshotPreserved":true},"probes":{"kernelReady":true,"solverReady":true,"shapePreserved":true,"solverSnapshotPreserved":true},"after":{"valid":true,"volume":23.999999999999996,"kernelClosed":false,"solverClosed":false}},"finalClose":{"kernelClosed":true,"solverClosed":true,"kernelGenerationChanged":true,"solverGenerationChanged":true,"kernelTokenError":"DisposedSessionError","capturedSolveError":"DisposedSessionError","diagnostics":[]}}
+CAD-A1 limits: single kernel mode; development fault injection only. Bounded paired-probe work does not prove product operation latency, 50-feature performance, offline behavior, release assets, deployment or other OS/browser coverage.
+  ✓  1 src/cad/engine-assembly.browser.spec.ts:30:1 › CAD-A1 real paired worker preserves both engines and owns failure, cancellation and replacement (5.0s)
+
+  1 passed (6.3s)
+
+Exit code: 0

@@ -1,6 +1,6 @@
 # Phase 2 — CAD — in progress
 
-C01–C02 are GREEN. C03–C49 remain PLANNED. No brick is human-ACCEPTED; the combined CAD-A1 assembly is next. The existing shared assembly height remains 4. C01 was pushed as 3ffb2c3 and the C02 prerequisite repair as ebe578a. The latest C02 implementation checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
+C01–C02 and the combined CAD-A1 assembly are GREEN. C03–C49 remain PLANNED. No brick is human-ACCEPTED. The shared provisional assembly height remains 4; the CAD provisional assembly height is 1. C01 was pushed as 3ffb2c3, the C02 prerequisite repair as ebe578a, and C02 as 65a9a5d. The latest paired-engine checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
 
 ## C01 kernel-runtime — GREEN; BATCH halted before C02
 
@@ -119,3 +119,44 @@ The [source artifact manifest](evidence/C02-assets.json) records the exact packa
 Current requirement status: **PASS 13 / FAIL 0 / UNTESTED 373**. Newly passed **CAD-002** through exact provenance/artifact inspection and the actual rectangle/contradiction worker test; **CAD-003** through inspection of the two implemented engine boundaries and their genuine upstream calls. Existing passes: **SYS-005, CAD-001, CAD-006, REL-001, REL-002, REL-005, REL-011, REL-012, REL-014, REL-023, REL-028**. Every other ID remains UNTESTED in requirements.json. In particular, the combined worker seam, production sketch/feature tools, full CAD goldens/STEP round-trip, Image/Video, performance and all release gates remain incomplete.
 
 How to tweak: `PROBE_TOLERANCE = 1e-8` belongs only to the known (10,20) point oracle; wrong/nonfinite probe tests catch changes that accept incorrect output. Module/WASM URLs are explicit pinned inputs checked before initialization. The worker demo’s 400 ms loop and 30-second watchdog are fixture settings, not product deadlines. Engine pin changes require renewed declaration, API, binary, license and browser verification. GREEN: S01–S15, A-SHELL, C01–C02. Human ACCEPTED: none. Shared ladder height: 4; **CAD-A1 is next**, before C03. Phase 2 and the full shippable-product objective remain unfinished.
+
+
+## CAD-A1 paired-engine assembly — GREEN
+
+Mode C joins the already GREEN C01/C02 public ports under the owner's provisional assembly authorization. The [contract](CAD-ENGINE-ASSEMBLY.md) was written before the browser test and implementation. One dedicated worker owns both native engines, a retained real box and the live solver session. Only structured-clone observations cross the boundary. This is a development seam fixture, not the production sketch/model dispatcher, and neither runtime brick was modified.
+
+The test-first command `npm run test:browser -- src/cad/engine-assembly.browser.spec.ts` initially exited **1** because the unimplemented fixture had no “Combined engine spike” heading ([expected RED](evidence/CAD-A1-red.txt)). Before implementation verification, source inspection showed the pinned solver loader retries a failed streaming fetch through an ArrayBuffer path. The test stimulus was corrected to block every solver-WASM request during the failed-open attempt and remove that route before recovery. It asserts at least one blocked request and both observed port states. No assertion was weakened to accommodate an implementation failure.
+
+The focused command then exited **0: 1 passed**, with strict typechecking and a fresh build ([exact output](evidence/CAD-A1-browser.txt)). Actual environment: **Chrome 154.0.8037.97, Linux x64, headless, 1280×720**. The response supplied COOP `same-origin`, COEP `require-corp`, and CORP `same-origin`; both page and worker were cross-origin isolated. The kernel remains in single mode; isolation is not evidence of pthread execution.
+
+Observed native results:
+
+- The retained 2×3×4 box was valid and measured **23.999999999999996 mm³** before and after the solver contradiction and both runtime probes.
+- The point fixture solved to **(10,20)** with status **Success (0)**, **DOF 0**, and no conflicts. Adding x=11 returned **Failed (2)**, **DOF -1**, and conflicting IDs **x10/x11**. The failed result was not applied; its source snapshot stayed unchanged. Both probes preserved the retained shape and solver snapshot.
+- Clean close changed both generations and invalidated the old shape token and captured solve function with **DisposedSessionError**. Both disposal diagnostic lists were empty, followed by owner termination.
+- Blocking solver-WASM initialization reported **SolverLoadError**, with the kernel port still **open** and the solver **absent** before owner termination. Removing the resource block allowed a fresh pair to open.
+- The actual zero-width native box injection reported **KernelLoadError / Standard_DomainError**, with kernel **closed** and solver **open** before owner termination. A replacement pair produced the same valid observations and closed cleanly. This does not pass the failing-fillet acceptance case.
+- Focused paired work completed **301** real probe pairs in **600.5 ms**, while the page delivered **35 animation frames**, **one click**, and **one hash navigation**. A second active workload was terminated and replaced successfully. These bounded loops are not single-operation or complete-product performance evidence.
+
+The worker acquires its busy/opening guard before awaiting initialization. On disposal diagnostics it stops before sibling cleanup and emits an error receipt; the page terminates the whole worker. The owner correlates request ID and worker identity, uses a 30-second watchdog, and removes handlers on replacement/page disposal. Independent reviews found no concrete ownership, disposal-order, protocol or assertion defect. Those reviews are inspection evidence, not extra automated test passes. The real smoke exercises clean close, partial initialization, native failure, busy cancellation and replacement; it does not wait for a watchdog timeout or inject disposal diagnostics. C01/C02 unit tests remain the cleanup-fault evidence.
+
+Demo: `npm run dev`, then `/dev/fixtures/engine-assembly.html`. The smoke ran that page and produced the [visually inspected screenshot](evidence/CAD-A1.png). Controls, six receipt panels and scope footer fit 1280×720; the long inspection receipt scrolls inside its panel. No other browser or OS was smoke-tested.
+
+### Cumulative gate and requirement status
+
+| Command | Result | Exact output |
+|---|---|---|
+| `npm run test:browser -- src/cad/engine-assembly.browser.spec.ts` | Exit 0; fresh build, 1 passed, none skipped | [Focused browser](evidence/CAD-A1-browser.txt) |
+| `npm test` | Exit 0; 357 passed, 0 failed, 0 skipped | [Unit suite](evidence/phase2-through-CAD-A1.txt) |
+| `npm run test:browser` | Exit 0; fresh build, 13 passed, none skipped | [Cumulative browser](evidence/phase2-through-CAD-A1-browser.txt) |
+| `python3 dev/verify-spec.py` | Exit 0; TRACE/MAP/LINK PASS | [Specification gate](evidence/phase2-CAD-A1-verification.txt) |
+
+The first specification-check command exited **1** because this report linked its output file before the capture script created that file ([original failure](evidence/phase2-CAD-A1-verification-red.txt)). The capture order now opens the output file before invoking the checker; no requirement or assertion changed. The repeated command exits **0**. This unexpected failed gate triggers the retained modular BATCH halt: finish this verified checkpoint, then stop before C03.
+
+The complete browser ladder includes all previous shared assembly and C01/C02 real-resource checks. The focused screenshot is retained; cumulative captures do not overwrite historical C01/C02/S10 screenshot evidence. CAD-A1 is an assembly rather than a new brick, so it has no standalone module checker. Strict build/typechecking and the real seam test are its implementation gates.
+
+Requirements remain **PASS 13 / FAIL 0 / UNTESTED 373**. Passed IDs: **SYS-005, CAD-001, CAD-002, CAD-003, CAD-006, REL-001, REL-002, REL-005, REL-011, REL-012, REL-014, REL-023, REL-028**. Every other ID in requirements.json is UNTESTED. No additional requirement is passed merely by joining the engines. CAD-004/005 still require their long individual production-operation procedures. The full plate/rebuild/STEP golden, sketch/feature editors, Image/Video, offline deployment, final asset sizes and M1a package remain unfinished.
+
+How to tweak: worker `WORK_MS = 600` defines only the responsiveness fixture; the browser assertion deliberately requires at least 600 ms. Demo `WATCHDOG_MS = 30_000` bounds fixture requests, not production job policy. Engine URLs and tolerances remain explicit pinned inputs. Switching vendor builds requires renewed API, license, resource and real-browser evidence. The ports' single-worker lifetime and termination after uncertainty are invariants, not tuning values.
+
+GREEN: S01–S15, A-SHELL, C01–C02, CAD-A1. Human ACCEPTED: none. Shared provisional ladder height: **4**; CAD provisional ladder height: **1**. C03 is next after this halted checkpoint. Phase 2 and the full product objective remain active and incomplete; this checkpoint is not CANDIDATE_FOR_ACCEPTANCE.

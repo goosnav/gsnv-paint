@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gsnv-paint · CAD-A1 combined engine spike</title>
+<style>
+  * { box-sizing:border-box }
+  body { margin:0; height:100vh; min-height:660px; min-width:1000px; display:flex; flex-direction:column; background:#ece9d8; color:#172536; font:12px Tahoma,Arial,sans-serif }
+  h1 { flex:none; margin:0; padding:9px 14px; color:white; background:linear-gradient(#298cff,#0754cb 70%,#0044af); border-bottom:1px solid #003d9f; font-size:17px }
+  .notice { flex:none; margin:0; padding:8px 14px; background:#fff8d3; border-bottom:1px solid #b8ad79; line-height:1.4 }
+  .controls,.monitor { flex:none; padding:8px 14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; border-bottom:1px solid #aca899 }
+  button,a { font:inherit }
+  button { padding:6px 10px; background:linear-gradient(#fffef8,#ece9d8); border:1px solid; border-color:#fff #807c6e #807c6e #fff; box-shadow:1px 1px #c0bcad; color:#152635 }
+  button:disabled { color:#827f75 }
+  button:focus-visible,a:focus-visible,pre:focus-visible { outline:2px dotted #063988; outline-offset:2px }
+  .monitor strong { min-width:250px }
+  .pulse-track { width:140px; height:12px; overflow:hidden; border:1px inset #aaa; background:white }
+  #pulse { width:16px; height:10px; background:#316ac5 }
+  main { flex:1; min-height:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:repeat(2,minmax(0,1fr)); gap:10px; padding:10px 14px }
+  section { min-height:0; display:flex; flex-direction:column; border:1px solid #9aa9bb; background:#fffef8 }
+  h2 { flex:none; margin:0; padding:6px 8px; font-size:12px; background:linear-gradient(#fff,#dbe3ed); border-bottom:1px solid #9aa9bb }
+  pre { min-height:0; margin:0; padding:8px; overflow:auto; font:11px/1.35 Consolas,monospace; white-space:pre-wrap; overflow-wrap:anywhere }
+  section p { margin:8px; line-height:1.45 }
+  #error-result { color:#861b19 }
+  footer { flex:none; padding:8px 14px; border-top:1px solid #aca899; line-height:1.5 }
+</style>
+<h1>gsnv-paint — Combined engine spike (CAD-A1)</h1>
+<p class="notice">Real OpenCascade and PlaneGCS share one dedicated worker. Development fixture commands only; no sketch editor, feature tree or modeler is connected.</p>
+<div class="controls" aria-label="Development fixture commands">
+  <button id="load" title="Load the two native engines in one worker">Load both engines</button>
+  <button id="inspect" title="Inspect a 24 mm³ box, point constraints and retained state">Inspect pair</button>
+  <button id="close" title="Close both runtime ports, then terminate their worker">Close pair</button>
+  <button id="work" title="Repeat both native probes while the page remains interactive">Run 600 ms paired work</button>
+  <button id="restart" title="Terminate current work and start a fresh paired worker">Terminate and restart</button>
+  <button id="fault" title="Development-only injection of an invalid native box">Inject native fault</button>
+</div>
+<div class="monitor">
+  <strong id="assembly-status" role="status">Not loaded</strong>
+  <span>Worker <b id="worker-epoch">0</b> alive: <b id="worker-alive">no</b></span>
+  <span>Window isolated: <b id="window-isolated"></b></span>
+  <span>Frames: <b id="frames">0</b></span>
+  <div class="pulse-track" aria-label="Main-thread animation"><div id="pulse"></div></div>
+  <button id="main-click">Main-thread click</button><span id="click-count">0</span>
+  <a href="#notes">Main-thread navigation</a><span id="navigation"></span>
+</div>
+<main>
+  <section><h2>Both native engines</h2><pre id="open-result" tabindex="0">Not run</pre></section>
+  <section><h2>Box, constraints and state preservation</h2><pre id="inspect-result" tabindex="0">Not run</pre></section>
+  <section><h2>Port closure and stale handle checks</h2><pre id="close-result" tabindex="0">Not run</pre></section>
+  <section><h2>Paired work and page interaction</h2><pre id="work-result" tabindex="0">Not run</pre></section>
+  <section><h2>Last failure receipt</h2><pre id="error-result" tabindex="0">No unexpected failure</pre></section>
+  <section><h2>Worker ownership</h2><pre id="termination" tabindex="0">No worker terminated</pre>
+    <p>Close ends both runtime lifetimes and terminates their worker. Restart cancels current work by replacing the worker.</p>
+    <p>Native fault injection requests a zero-width box. It does not test the product's failing-fillet requirement.</p>
+  </section>
+</main>
+<footer id="notes"><strong>Scope:</strong> Single kernel mode. Isolation does not mean pthread execution. The 600 ms probe loop is a responsiveness fixture, not a product performance result.<br>
+  A 30-second watchdog terminates stuck work. Receipts contain values only; native libraries, sessions and tokens stay in the worker.</footer>
+<script type="module" src="/src/cad/engine-assembly.demo.ts"></script>
+</html>
