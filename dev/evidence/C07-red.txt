@@ -1,0 +1,274 @@
+✖ C07 golden point and construction line preserve coordinates and identities (1.0499ms)
+✖ C07 golden 100 by 60 plate rectangle uses the chosen opposite corners (0.121175ms)
+✖ C07 golden centered 20 by 20 pocket and reversed rectangle anchors (0.129643ms)
+✖ C07 six-sided polygon has the prescribed radius, first vertex and counterclockwise direction (0.135398ms)
+✖ C07 polygon regularity and orientation hold for translated, rotated and differently sized fixtures (0.187836ms)
+✖ C07 every primitive applies construction to all output entities (0.143326ms)
+✖ C07 anchor-count errors cover every drawing tool on both sides of its boundary (2.955268ms)
+✖ C07 entity ID count matches point, line and each closed composite exactly (0.452513ms)
+✖ C07 polygon side count rejects missing, noninteger and less than three values (0.358318ms)
+✖ C07 line and rectangle dimensions must exceed the explicit linear tolerance (0.477602ms)
+✖ C07 polygon rejects collapsed radii and edges below document resolution (0.279507ms)
+✖ C07 nonrepresentable computed geometry fails instead of returning infinite coordinates (0.237952ms)
+✖ C07 frozen inputs stay unchanged and output arrays do not alias inputs or sibling endpoints (0.214267ms)
+✖ C07 real C03 seam preserves millimetre dimensions evaluated from an inch document (0.597439ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 0
+ℹ fail 14
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 203.456338
+
+✖ failing tests:
+
+test at src/cad/sketch-linear-primitives.test.ts:1:1102
+✖ C07 golden point and construction line preserve coordinates and identities (1.0499ms)
+  Error: C07 implementation pending
+      at makeLinearEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.ts:41:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:24:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/cad/sketch-linear-primitives.test.ts:1:1436
+✖ C07 golden 100 by 60 plate rectangle uses the chosen opposite corners (0.121175ms)
+  Error: C07 implementation pending
+      at makeLinearEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.ts:41:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:29:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/cad/sketch-linear-primitives.test.ts:1:1721
+✖ C07 golden centered 20 by 20 pocket and reversed rectangle anchors (0.129643ms)
+  Error: C07 implementation pending
+      at makeLinearEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.ts:41:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:36:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-linear-primitives.test.ts:1:2204
+✖ C07 six-sided polygon has the prescribed radius, first vertex and counterclockwise direction (0.135398ms)
+  Error: C07 implementation pending
+      at makeLinearEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.ts:41:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:47:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-linear-primitives.test.ts:1:2721
+✖ C07 polygon regularity and orientation hold for translated, rotated and differently sized fixtures (0.187836ms)
+  Error: C07 implementation pending
+      at makeLinearEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.ts:41:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:60:28)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-linear-primitives.test.ts:1:3544
+✖ C07 every primitive applies construction to all output entities (0.143326ms)
+  Error: C07 implementation pending
+      at makeLinearEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.ts:41:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:76:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-linear-primitives.test.ts:1:3931
+✖ C07 anchor-count errors cover every drawing tool on both sides of its boundary (2.955268ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'AnchorCountError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:17:41)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:16:59)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:84:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'AnchorCountError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-linear-primitives.test.ts:1:4250
+✖ C07 entity ID count matches point, line and each closed composite exactly (0.452513ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'IdCountError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:17:41)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:16:59)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:91:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'IdCountError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-linear-primitives.test.ts:1:4585
+✖ C07 polygon side count rejects missing, noninteger and less than three values (0.358318ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'InvalidPolygonError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:17:41)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:16:59)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:98:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'InvalidPolygonError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-linear-primitives.test.ts:1:4917
+✖ C07 line and rectangle dimensions must exceed the explicit linear tolerance (0.477602ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'DegenerateGeometryError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:17:41)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:16:59)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:106:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'DegenerateGeometryError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-linear-primitives.test.ts:1:5598
+✖ C07 polygon rejects collapsed radii and edges below document resolution (0.279507ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'DegenerateGeometryError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:17:41)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:16:59)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:118:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'DegenerateGeometryError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-linear-primitives.test.ts:1:5866
+✖ C07 nonrepresentable computed geometry fails instead of returning infinite coordinates (0.237952ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'DegenerateGeometryError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:17:41)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:16:59)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:123:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'DegenerateGeometryError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-linear-primitives.test.ts:1:6212
+✖ C07 frozen inputs stay unchanged and output arrays do not alias inputs or sibling endpoints (0.214267ms)
+  Error: C07 implementation pending
+      at makeLinearEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.ts:41:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:132:56)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-linear-primitives.test.ts:1:6921
+✖ C07 real C03 seam preserves millimetre dimensions evaluated from an inch document (0.597439ms)
+  Error: C07 implementation pending
+      at makeLinearEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.ts:41:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-linear-primitives.test.ts:146:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

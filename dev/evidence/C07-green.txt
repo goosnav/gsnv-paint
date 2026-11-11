@@ -1,0 +1,22 @@
+✔ C07 golden point and construction line preserve coordinates and identities (1.92282ms)
+✔ C07 golden 100 by 60 plate rectangle uses the chosen opposite corners (0.224064ms)
+✔ C07 golden centered 20 by 20 pocket and reversed rectangle anchors (0.243069ms)
+✔ C07 six-sided polygon has the prescribed radius, first vertex and counterclockwise direction (0.444248ms)
+✔ C07 polygon regularity and orientation hold for translated, rotated and differently sized fixtures (26.023973ms)
+✔ C07 every primitive applies construction to all output entities (0.339665ms)
+✔ C07 anchor-count errors cover every drawing tool on both sides of its boundary (0.670713ms)
+✔ C07 entity ID count matches point, line and each closed composite exactly (0.283993ms)
+✔ C07 polygon side count rejects missing, noninteger and less than three values (0.323602ms)
+✔ C07 line and rectangle dimensions must exceed the explicit linear tolerance (0.885523ms)
+✔ C07 polygon rejects collapsed radii and edges below document resolution (0.191364ms)
+✔ C07 nonrepresentable computed geometry fails instead of returning infinite coordinates (0.14355ms)
+✔ C07 frozen inputs stay unchanged and output arrays do not alias inputs or sibling endpoints (0.40943ms)
+✔ C07 real C03 seam preserves millimetre dimensions evaluated from an inch document (0.747951ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 213.050846

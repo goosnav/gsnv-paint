@@ -1,0 +1,128 @@
+Commands (run in the repository root):
+  npm run build
+  python3 /home/goosnav/.agents/skills/synced/00ab2cd7-2e1c-45ca-814e-5f657fe548ca_724affcc-3df3-47d2-bd47-95d03e739484/goosnav-modular-coding-method/scripts/check_module.py src/cad/sketch-linear-primitives.ts
+  node --import tsx src/cad/sketch-linear-primitives.demo.ts
+Exit: 0
+The demo below is a usage example, not a test.
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 23 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.55 kB │ gzip:  0.34 kB
+dist/assets/index-Bi5oqIQk.css   9.28 kB │ gzip:  2.53 kB
+dist/assets/index-ByIf1OlU.js   58.09 kB │ gzip: 20.11 kB
+
+✓ built in 83ms
+PASS: src/cad/sketch-linear-primitives.ts
+{
+  "plate": [
+    {
+      "id": "bottom",
+      "kind": "segment",
+      "a": [
+        0,
+        0
+      ],
+      "b": [
+        100,
+        0
+      ],
+      "construction": false
+    },
+    {
+      "id": "right",
+      "kind": "segment",
+      "a": [
+        100,
+        0
+      ],
+      "b": [
+        100,
+        60
+      ],
+      "construction": false
+    },
+    {
+      "id": "top",
+      "kind": "segment",
+      "a": [
+        100,
+        60
+      ],
+      "b": [
+        0,
+        60
+      ],
+      "construction": false
+    },
+    {
+      "id": "left",
+      "kind": "segment",
+      "a": [
+        0,
+        60
+      ],
+      "b": [
+        0,
+        0
+      ],
+      "construction": false
+    }
+  ],
+  "pocket": [
+    {
+      "id": "pocket-bottom",
+      "kind": "segment",
+      "a": [
+        40,
+        20
+      ],
+      "b": [
+        60,
+        20
+      ],
+      "construction": false
+    },
+    {
+      "id": "pocket-right",
+      "kind": "segment",
+      "a": [
+        60,
+        20
+      ],
+      "b": [
+        60,
+        40
+      ],
+      "construction": false
+    },
+    {
+      "id": "pocket-top",
+      "kind": "segment",
+      "a": [
+        60,
+        40
+      ],
+      "b": [
+        40,
+        40
+      ],
+      "construction": false
+    },
+    {
+      "id": "pocket-left",
+      "kind": "segment",
+      "a": [
+        40,
+        40
+      ],
+      "b": [
+        40,
+        20
+      ],
+      "construction": false
+    }
+  ]
+}
