@@ -87,3 +87,13 @@ Contract and testbench preceded implementation. Expected RED `node --import tsx 
 Demo `node --import tsx src/shared/view-transform.demo.ts` exited 0: zoom 4, pan (-90,-55); document point under cursor remains (50,25). Demo is not evidence. D1 preserves continuous coordinates instead of rounding here to prevent zoom drift; revisit with a distinct snapping contract. Caller-supplied range is the tweak point, guarded by clamp tests. 3D cameras and domain snapping remain outside this brick.
 
 GREEN: S01, S03, S02, S04; ACCEPTED: none. Rung 1 remains GREEN. Independent S02 review found no concrete defect and independently passed 35/35. Requirement totals unchanged; no application/browser smoke yet. Next: S05 keymap.
+
+## S05 keymap — GREEN
+
+Contract: pure focus/workspace keyboard routing, stable command intent, native text editing preserved, dialog Enter/Escape, shared Ctrl/Meta controls, CAD F, Image X/D and focused Video timeline controls. Space pans 2D views and plays only a Video timeline. Unsupported combinations are untouched. No dependencies or browser side effects.
+
+Contract and full testbench preceded implementation. Expected RED `node --import tsx --test --test-name-pattern='S05 golden' src/shared/keymap.test.ts` exited 1: one unimplemented golden test failed ([output](evidence/S05-red.txt), whitespace normalized). Full `node --import tsx --test src/shared/keymap.test.ts` exited 0: **19 tests, 19 pass, 0 fail, 0 skipped** ([output](evidence/S05-green.txt)). Tests enumerate all common Ctrl/Meta commands in all workspaces, text/modal conflicts, Video-only keys, Space roles, invalid input and preventDefault consistency. `npm run typecheck` exited 0; module checker exited 0: `PASS: src/shared/keymap.ts`. Cumulative `npm test` exited 0: **140/140**, none skipped ([output](evidence/phase1-through-S05.txt)).
+
+Demo `node --import tsx src/shared/keymap.demo.ts` exited 0: Space emits video.togglePlayback in timeline, view.panHold in preview, and null/native handling in text. Demo is not test evidence. D1 resolves focus first instead of global shortcuts to protect typing; revisit with a different focus model. D2 treats Ctrl/Meta as intent without OS guessing; revisit only after an observed conflict. COMMON/VIDEO_KEYS tables are the tweak points, guarded by exhaustive shortcut tables. Adapter event capture, repeat and keyup remain outside this CORE.
+
+GREEN: S01, S03, S02, S04, S05; ACCEPTED: none. Rung 1 GREEN. Runtime requirement totals unchanged; browser key interception remains untested until S12. Next: S06 browser capability probe and its first actual Chromium smoke.

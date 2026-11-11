@@ -63,7 +63,7 @@ RAISES: `RangeError` for invalid bounds/nonfinite coordinates.
 DEPS: none.
 TEST: cursor invariant, clamp 1%/6400%, pan, negative coordinates and golden transform. Requirement group AppShell; ImageViewport.
 
-## S05 keymap — CORE — PLANNED
+## S05 keymap — CORE — GREEN
 
 Purpose: Translate a keyboard event into an active-workspace command.
 IN: `CommandEvent` with normalized key; text fields retain ordinary text editing, dialog context maps Enter/Esc.

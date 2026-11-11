@@ -1,0 +1,27 @@
+✔ S05 golden shortcut transcript (2.045952ms)
+✔ S05 complete common Ctrl/Meta table across all workspaces (0.988485ms)
+✔ S05 ordinary text editing stays native; document file shortcuts still work (0.525225ms)
+✔ S05 dialogs map Enter and Escape and shield workspace commands (0.9859ms)
+✔ S05 Space pans every 2D view but plays only a Video timeline (0.217241ms)
+✔ S05 complete Video timeline table is limited to the focused timeline (0.341997ms)
+✔ S05 Image color keys and CAD fit are workspace-specific (0.218967ms)
+✔ S05 unspecified modifier combinations and unknown keys are untouched (0.232008ms)
+✔ S05 output property: only handled commands request preventDefault; input stays frozen (0.347052ms)
+✔ S05 malformed event 0 raises TypeError (0.490551ms)
+✔ S05 malformed event 1 raises TypeError (0.104793ms)
+✔ S05 malformed event 2 raises TypeError (0.149272ms)
+✔ S05 malformed event 3 raises TypeError (0.06398ms)
+✔ S05 malformed event 4 raises TypeError (0.060749ms)
+✔ S05 malformed event 5 raises TypeError (0.102883ms)
+✔ S05 malformed event 6 raises TypeError (0.185542ms)
+✔ S05 malformed event 7 raises TypeError (0.063136ms)
+✔ S05 malformed event 8 raises TypeError (0.133982ms)
+✔ S05 malformed event 9 raises TypeError (0.080192ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 190.250322
