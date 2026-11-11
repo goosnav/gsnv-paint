@@ -2,7 +2,7 @@
 
 One creative suite with Image, Video and CAD workspaces. The same static browser build will run on the web and from a local launcher. Work stays on the device.
 
-Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MODULE_MAP.md). CAD now has a working first workflow: line/rectangle sketches, driving dimensions, horizontal/vertical constraints and a real OpenCascade blind extrusion. Save/open, undo/redo and local recovery are connected. Image and Video editing, the remaining CAD features and the packaged release are unfinished.
+Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MODULE_MAP.md). CAD now has a working first workflow: line/rectangle sketches, driving dimensions, horizontal/vertical constraints and a real OpenCascade blind extrusion. Save/open, undo/redo, local recovery and STEP export are connected. Image and Video editing, the remaining CAD features and the packaged release are unfinished.
 
 The [decision record](dev/DECISIONS.md) documents dependency selection, distribution constraints and license obligations. Phase reports under `dev/` distinguish passed, failed and untested requirements. Only the owner accepts a release.
 
@@ -48,5 +48,6 @@ C07 constructs points, lines, corner/center rectangles and regular polygons as p
 2. Choose **Extrude…** (E), enter depth 10, inspect the live solid, then confirm.
 3. Use the Width/Height controls to edit driving dimensions. The solid rebuilds with the sketch.
 4. Use Ctrl+Z/Ctrl+Y for history and Ctrl+S/Ctrl+O for editable `.gsnv-cad` files. On reload, choose Restore recovery if needed.
+5. Choose **Export STEP** to save the solid for other CAD software. Esc cancels an export that is still running.
 
-V selects sketch edges, L draws lines, R draws a rectangle, F fits the view. Rectangle drawing replaces the current sketch; Undo restores it. Sketch coordinates use millimetres internally. A single closed linear XY profile and a blind boss are supported in this increment. Holes, cuts, fillets, other planes, STEP/STL export and drawing sheets remain unfinished. See [CAD workflow evidence](dev/CAD-WORKFLOW.md) for exact tests and limits.
+V selects sketch edges, L draws lines, R draws a rectangle, F fits the view. Rectangle drawing replaces the current sketch; Undo restores it. Sketch coordinates use millimetres internally. A single closed linear XY profile and a blind boss are supported in this increment. Holes, cuts, fillets, other planes, STEP import, STL/3MF/DXF export and drawing sheets remain unfinished. See [CAD workflow evidence](dev/CAD-WORKFLOW.md) and [STEP export evidence](dev/CAD-STEP-EXPORT.md) for exact tests and limits.

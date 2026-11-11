@@ -1,0 +1,4 @@
+PASS: src/cad/step-exchange.ts
+PASS: src/cad/kernel-linear-prism.ts
+PASS: src/cad/cad-step-export.ts
+PASS: src/cad/extrude-preview.ts

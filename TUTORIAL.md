@@ -10,10 +10,11 @@ The launcher opens the gsnv-paint application shell in your browser: menus, the 
 2. Choose Extrude (E). Depth 10 previews a real solid. OK commits; Cancel restores the prior part.
 3. Click Width or Height in the Part panel to edit it. The extrusion rebuilds automatically.
 4. Save with Ctrl+S. Open the `.gsnv-cad` file with Ctrl+O to continue editing. Restore recovery on reload if offered.
+5. Choose Export STEP to download the solid or write it through the browser’s file picker. Export does not save the editable project; keep the `.gsnv-cad` file for dimensions and feature history. Esc cancels an export that is still running.
 
 Use V to select, L for a two-click line, R for a two-click rectangle, F to fit. The rectangle tool replaces the sketch and can be undone. Select an edge to add or remove H/V constraints. Scroll to zoom, hold Space while dragging to pan the sketch, and middle-drag to orbit the solid (Shift+middle-drag pans). Failed sketches and extrusions display a reason in the Part panel.
 
-This is the first CAD increment, not the complete suite. One XY sketch and one blind boss are supported. The remaining CAD tools and exports, Image, Video and the packaged release are still under development.
+This is the first CAD increment, not the complete suite. One XY sketch, one blind boss and STEP output are supported. The remaining CAD tools and exports, Image, Video and the packaged release are still under development.
 
 ## Start
 

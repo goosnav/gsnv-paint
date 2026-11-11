@@ -1,7 +1,7 @@
 /**
  * PURPOSE    Connect the working CAD increment to the shared application.
  * KIND       SHELL assembly CAD-APP; routing, lifecycle and transactional UI only.
- * CONTRACT   IN: browser DOM/Worker capabilities. OUT: production WorkspaceAdapter.
+ * CONTRACT   IN: S07 file ports and browser DOM/Worker capabilities. OUT: production WorkspaceAdapter.
  *            Sources persist through S15; native results are disposable display data.
  *            RAISES: invalid project content errors; editing failures display in properties.
  * GUARANTEES No native handles or cached meshes in saved files; stale builds cannot commit.
@@ -14,6 +14,7 @@
 import type { WorkspaceAdapter, AppDocument } from '../app/app-shell.ts';
 import type { DialogSpec } from '../shared/dialog.ts';
 import type { View2D } from '../shared/view-transform.ts';
+import type { FilePorts } from '../shared/file-access.ts';
 import { editableCADContent, type CADContent } from './editable-cad-content.ts';
 import { editCADContent, type CADAction } from './edit-cad-content.ts';
 import { evaluateDimension } from './dimension-expressions.ts';
@@ -23,6 +24,7 @@ import { cadWorkerClient, type CADBuild } from './cad-worker-client.ts';
 import { cadViewport } from './cad-viewport.ts';
 import { cadToolInput, type CADToolState } from './cad-tool-input.ts';
 import { cadProperties, type PropertyEdit } from './cad-properties.ts';
+import { cadSTEPExport } from './cad-step-export.ts';
 import kernelModule from 'replicad-opencascadejs?url';
 import kernelWasm from 'replicad-opencascadejs/wasm?url';
 import solverModule from '@salusoft89/planegcs/dist/planegcs_dist/planegcs.js?url';
@@ -30,7 +32,7 @@ import solverWasm from '@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm?ur
 import './cad-workspace.css';
 
 type Snapshot=Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
-export function createCADWorkspace():WorkspaceAdapter{
+export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
  const value=(document:AppDocument)=>editableCADContent({operation:'read',value:document.value});
  return{
   create:()=>({id:crypto.randomUUID(),title:'Untitled part',format:'gsnv-cad',version:1,value:editableCADContent({operation:'new'})}),
@@ -41,10 +43,11 @@ export function createCADWorkspace():WorkspaceAdapter{
    stage.className='cad-stage';stage.tabIndex=-1;hint.className='cad-tool-hint';host.root.append(stage,hint);
    const viewport=cadViewport(stage);
    let current:Snapshot,content:CADContent|null=null,preview:CADContent|null=null,result:CADBuild|null=null,view:View2D={zoom:1,pan:{x:0,y:0}};
-   let mode:'sketch'|'solid'='sketch',status:'idle'|'busy'|'ready'|'error'='idle',message='Start a new part with Ctrl+N.',disposed=false,jobIdentity='',previewSequence=0;
+   let mode:'sketch'|'solid'='sketch',status:'idle'|'busy'|'ready'|'error'='idle',message='Start a new part with Ctrl+N.',disposed=false,jobIdentity='',previewSequence=0,exportMessage='';
    let tool:CADToolState={tool:'select',anchor:null,cursor:null,selected:[]};
    const properties=cadProperties({root:panel,onEdit:edit});
    const assets={kernelModule:new URL(kernelModule,location.href).href,kernelWasm:new URL(kernelWasm,location.href).href,solverModule:new URL(solverModule,location.href).href,solverWasm:new URL(solverWasm,location.href).href};
+   const exporter=cadSTEPExport({files,assets,createWorker:()=>new Worker(new URL('./cad-step-export.worker.ts',import.meta.url),{type:'module'}),onStatus(state,text){exportMessage=text;hint.dataset.exportState=state;refresh(false);}});
    const worker=cadWorkerClient({assets,createWorker:()=>new Worker(new URL('./cad-workspace.worker.ts',import.meta.url),{type:'module'}),
     onResult(identity,output){if(disposed||identity!==jobIdentity)return;result=output;status='ready';message=output.dof===0?'Sketch is fully defined.':`Sketch has ${output.dof} degrees of freedom.`;refresh();},
     onError(identity,error){if(disposed||identity!==jobIdentity)return;result=null;status='error';message=error;refresh();},
@@ -57,7 +60,7 @@ export function createCADWorkspace():WorkspaceAdapter{
     if(disposed)return;const shown=effective();let ghost:LinearEntity[]=[];
     if(shown&&tool.anchor&&tool.cursor&&tool.tool!=='select')try{ghost=makeLinearEntities({tool:tool.tool==='line'?'line':'corner-rectangle',anchors:[tool.anchor,tool.cursor],ids:tool.tool==='line'?['preview']:['preview1','preview2','preview3','preview4'],construction:false,tolerance:shown.tolerance});}catch{/* A zero-length hover is a preview, never a committed segment. */}
     viewport.update({content:shown,entities:entities(),view,selected:tool.selected,preview:ghost,solid:result?.solid??null,mode,state:status==='error'?'error':result?.dof===0?'fully':'under'});
-    hint.textContent=toolStatus();hint.dataset.tool=tool.tool;
+    hint.textContent=exportMessage||toolStatus();hint.dataset.tool=tool.tool;
     if(includePanel)properties.update({content:shown,selected:tool.selected,state:status,message,result});
     if(current&&document.activeElement===document.body&&!document.querySelector('dialog[open]'))stage.focus();
    }
@@ -89,7 +92,8 @@ export function createCADWorkspace():WorkspaceAdapter{
    }
    function command(id:string){
     if(!content)return;
-    if(id==='tool.cancel'){worker.cancel();preview=null;tool=cadToolInput({state:tool,event:{kind:'cancel'},endpoints:[],tolerance:content.tolerance.linearMm}).state;build(content,current!.identity);return;}
+    if(id==='tool.cancel'){exporter.cancel();worker.cancel();preview=null;tool=cadToolInput({state:tool,event:{kind:'cancel'},endpoints:[],tolerance:content.tolerance.linearMm}).state;build(content,current!.identity);return;}
+    if(id==='cad.exportSTEP'){void exporter.run({content,name:`${current?.title.trim()||'part'}.step`});return;}
     if(id==='tool.confirm'){if(tool.anchor&&tool.cursor)pointer(tool.cursor,null,false,false);return;}
     if(['cad.select','cad.line','cad.rectangleTool'].includes(id)){mode='sketch';tool=cadToolInput({state:tool,event:{kind:'tool',tool:id==='cad.select'?'select':id==='cad.line'?'line':'rectangle'},endpoints:[],tolerance:content.tolerance.linearMm}).state;refresh();return;}
     if(id==='cad.sketch'||id==='cad.solid'){mode=id==='cad.sketch'?'sketch':'solid';refresh();return;}
@@ -121,15 +125,15 @@ export function createCADWorkspace():WorkspaceAdapter{
    return{
     render(snapshot,nextView){
      const changed=snapshot?.identity!==current?.identity;current=snapshot;view=nextView;
-     if(changed){preview=null;content=snapshot?value(snapshot):null;tool={...tool,anchor:null,cursor:null,selected:tool.selected.filter(id=>content?.graph.features[0].definition.sketch.entities.some(e=>e.id===id))};if(content)build(content,snapshot!.identity);else{worker.cancel();result=null;refresh();}}else refresh();
+     if(changed){exporter.cancel();exportMessage='';delete hint.dataset.exportState;preview=null;content=snapshot?value(snapshot):null;tool={...tool,anchor:null,cursor:null,selected:tool.selected.filter(id=>content?.graph.features[0].definition.sketch.entities.some(e=>e.id===id))};if(content)build(content,snapshot!.identity);else{worker.cancel();result=null;refresh();}}else refresh();
     },
     model(){
      const enabled=!!current,item=(id:string,label:string,icon:string,shortcut='',toolbar=false)=>({id,label,icon,shortcut,toolbar,enabled});
-     return{menus:[{id:'sketch',label:'Sketch',items:[item('cad.rectangle','Rectangle dimensions…','rectangle','',true),item('cad.lineCoordinates','Line coordinates…','line'),item('cad.sketch','Edit sketch','grid'),item('cad.horizontal','Horizontal constraint','ruler'),item('cad.vertical','Vertical constraint','ruler'),item('edit.selectAll','Select all','select','Ctrl+A'),item('edit.delete','Delete selected','delete','Delete')]},{id:'solid',label:'Solid',items:[item('cad.extrude','Extrude…','extrude','E',true),item('cad.solid','Solid view','cad','',true),item('cad.removeExtrude','Delete extrusion','delete'),item('view.fit','Zoom to fit','fit','F',true)]}],
+     return{menus:[{id:'sketch',label:'Sketch',items:[item('cad.rectangle','Rectangle dimensions…','rectangle','',true),item('cad.lineCoordinates','Line coordinates…','line'),item('cad.sketch','Edit sketch','grid'),item('cad.horizontal','Horizontal constraint','ruler'),item('cad.vertical','Vertical constraint','ruler'),item('edit.selectAll','Select all','select','Ctrl+A'),item('edit.delete','Delete selected','delete','Delete')]},{id:'solid',label:'Solid',items:[item('cad.extrude','Extrude…','extrude','E',true),item('cad.solid','Solid view','cad','',true),item('cad.removeExtrude','Delete extrusion','delete'),item('view.fit','Zoom to fit','fit','F',true),{...item('cad.exportSTEP','Export STEP','export','',true),enabled:enabled&&!!content?.graph.features[1]}]}],
      tools:[{id:'cad.select',label:'Select',icon:'select',shortcut:'V',enabled,status:'Click an edge to select it.'},{id:'cad.line',label:'Line',icon:'line',shortcut:'L',enabled,status:'Click two endpoints to draw a line.'},{id:'cad.rectangleTool',label:'Rectangle',icon:'rectangle',shortcut:'R',enabled,status:'Click two corners to replace the sketch with a rectangle.'}],panels:[{id:'cad-properties',title:'Part',content:panel}]};
-    },context:()=>({viewRole:mode==='sketch'?'sketch2d':'cad3d',activeTool:tool.tool,status:toolStatus()}),command,
+    },context:()=>({viewRole:mode==='sketch'?'sketch2d':'cad3d',activeTool:tool.tool,status:exportMessage||toolStatus()}),command,
     gesture(gesture){if(mode!=='sketch'||gesture.type!=='pointer')return;if(gesture.phase==='cancel'){tool={...tool,anchor:null,cursor:null};refresh();}else if(gesture.phase==='down'&&gesture.button===0)pointer(viewport.point(gesture.point),viewport.hit(gesture.point),gesture.ctrl,gesture.shift);else if(gesture.phase==='move')pointer(viewport.point(gesture.point),null,gesture.ctrl,gesture.shift,true);},
-    dispose(){if(disposed)return;disposed=true;worker.dispose();stage.removeEventListener('dblclick',dimensionEdit);stage.removeEventListener('keydown',dimensionEdit);viewport.dispose();properties.dispose();host.root.replaceChildren();},
+    dispose(){if(disposed)return;disposed=true;exporter.dispose();worker.dispose();stage.removeEventListener('dblclick',dimensionEdit);stage.removeEventListener('keydown',dimensionEdit);viewport.dispose();properties.dispose();host.root.replaceChildren();},
    };
   },
  };

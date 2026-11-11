@@ -1,0 +1,17 @@
+{
+  "name": "part.step",
+  "bytes": 16229,
+  "fileUnits": "inch",
+  "importedBodies": 1,
+  "volumeMm3": 60000.00000005723
+}
+{
+  "retainedToken": {
+    "id": 1,
+    "generation": 1
+  },
+  "volumeMm3": 60000
+}
+Retained shapes after release: 0
+{ volume: 60000, area: 15200, center: [ 50, 30, 5 ], triangles: 12 }
+Browser demo: Untitled part.step handed to Chrome 154.0.8037.97 from /dev/fixtures/cad-step-export.html.

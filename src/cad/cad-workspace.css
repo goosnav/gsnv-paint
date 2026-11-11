@@ -5,6 +5,7 @@
 .cad-viewport-notice { position:absolute; top:45%; left:12%; right:12%; text-align:center; color:#51677b; pointer-events:none; }
 .cad-viewport-notice:empty { display:none; }
 .cad-tool-hint { position:absolute; left:12px; bottom:12px; max-width:80%; padding:7px 10px; background:#f8fafce8; border:1px solid #c7d2dd; color:#42576c; pointer-events:none; line-height:1.5; }
+.cad-tool-hint[data-export-state="error"] { color:#8c3029; background:#fff0ed; border-color:#c55143; }
 .cad-dimension { cursor:pointer; paint-order:stroke; stroke:#edf1f6; stroke-width:4px; }
 .cad-properties { padding:12px; color:#354b60; line-height:1.5; }
 .cad-properties h3 { margin:16px 0 8px; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:#63788a; }

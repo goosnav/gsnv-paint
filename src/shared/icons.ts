@@ -19,7 +19,7 @@ export type IconRequest = { document: Document; name: string; label: string; siz
 export const iconCatalog: readonly string[] = Object.freeze([
   'app', 'cad', 'image', 'video', 'new', 'open', 'save', 'undo', 'redo', 'cut', 'copy', 'paste',
   'delete', 'select', 'hand', 'zoomIn', 'zoomOut', 'fit', 'history', 'properties', 'layers',
-  'grid', 'ruler', 'line', 'rectangle', 'extrude', 'close', 'help', 'chevronRight', 'chevronDown',
+  'grid', 'ruler', 'line', 'rectangle', 'extrude', 'export', 'close', 'help', 'chevronRight', 'chevronDown',
 ]);
 
 const PATHS: Readonly<Record<string, string>> = {
@@ -30,6 +30,7 @@ const PATHS: Readonly<Record<string, string>> = {
   new: 'M5 2.5h10l5 5V21H5zM15 2.5v5h5M9 14h7M12.5 10.5v7',
   open: 'M2.5 8V5h7l3 3H21v3M2.5 8v12H20l3-9H7l-4.5 9',
   save: 'M4 3h14l3 3v15H3V3zM7 3v6h9V3M7 21v-8h10v8M10 16h4',
+  export: 'M5 3h8l4 4v5M13 3v5h4M5 3v18h12v-3M11 15h11M18 11l4 4-4 4',
   undo: 'M8 4 3 9l5 5M3 9h10a7 7 0 0 1 7 7v4',
   redo: 'M16 4l5 5-5 5M21 9h-10a7 7 0 0 0-7 7v4',
   cut: 'M4 14a3 3 0 1 0 0 6 3 3 0 1 0 0-6M17 14a3 3 0 1 0 0 6 3 3 0 1 0 0-6M6 15 18 3M15 15 3 3',

@@ -1,0 +1,4 @@
+/ 200 { coop: 'same-origin', coep: 'require-corp', corp: 'same-origin' }
+/assets/cad-step-export.worker-DV7y-4Jy.js 200 { coop: 'same-origin', coep: 'require-corp', corp: 'same-origin' }
+/assets/replicad_single-g5eiaENB.wasm 200 { coop: 'same-origin', coep: 'require-corp', corp: 'same-origin' }
+PASS: Cloudflare local workerd, Chrome 154.0.8037.97 linux/x64 1280x720; STEP download 15469 bytes; native solid entities/mm units; isolation true; no page errors.

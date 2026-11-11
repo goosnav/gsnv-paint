@@ -1,6 +1,6 @@
 # Phase 2 — CAD — in progress
 
-C01–C04, C07, C50–C58, CAD-A1 and the CAD-APP increment are GREEN. C05–C06 and C08–C49 remain PLANNED. No brick is human-ACCEPTED. The shared provisional assembly height remains 4; the CAD provisional assembly height is 2 (CAD-A1 plus CAD-APP). C01 was pushed as 3ffb2c3, the C02 prerequisite repair as ebe578a, and C02 as 65a9a5d. CAD-A1 was pushed as 5853b7a and C03 as 04d6b9b. The latest named-variable checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
+C01–C04, C07, C37, C50–C60, CAD-A1, CAD-APP and STEP-APP are GREEN. C05–C06, C08–C36 and C38–C49 remain PLANNED. No brick is human-ACCEPTED. The shared provisional assembly height remains 4; the CAD provisional assembly height is 3 (CAD-A1, CAD-APP and STEP-APP). C01 was pushed as 3ffb2c3, the C02 prerequisite repair as ebe578a, and C02 as 65a9a5d. CAD-A1 was pushed as 5853b7a and C03 as 04d6b9b. The latest named-variable checkpoint is recorded below. The complete product remains unfinished and is not a release candidate.
 
 ## C01 kernel-runtime — GREEN; BATCH halted before C02
 
@@ -261,3 +261,7 @@ Requirement statuses remain **13 PASS / 0 FAIL / 373 UNTESTED**. Existing PASS I
 ## Production CAD workflow checkpoint
 
 C50–C58 and CAD-APP now provide the first working sketch → constraint solve → B-rep extrusion → editable save/reopen path in the production entry. The [workflow report](CAD-WORKFLOW.md) records commands, final evidence, discovered integration defects, supported format subset and remaining requirements. C01–C04/C07 remain GREEN; C05's pending amendment is unchanged. CAD-043/044/059 now pass their full stated procedures; the complete Phase 2 acceptance gate remains open.
+
+## STEP output checkpoint
+
+C37, C59/C60 and STEP-APP connect native STEP export to the production CAD editor. Export rebuilds the selected source in a worker, preserves the editable project history, and supports cancel and file fallback. [CAD-STEP-EXPORT.md](CAD-STEP-EXPORT.md) contains the commands, evidence, unit defect found by the real-kernel test, and remaining requirements. Requirement status remains 16 PASS / 0 FAIL / 370 UNTESTED; full native import and exchange acceptance remain open.

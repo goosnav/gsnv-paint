@@ -1,6 +1,6 @@
 # Module map: CAD, phase 2
 
-Mode A baseline, maintained during Mode B. **C01–C04, C07, C50–C58, CAD-A1 and the CAD-APP increment are GREEN; C05–C06 and C08–C49 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
+Mode A baseline, maintained during Mode B. **C01–C04, C07, C37, C50–C60, CAD-A1, CAD-APP and STEP-APP are GREEN; C05–C06, C08–C36 and C38–C49 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
 
 For a desktop user, CAD turns constrained sketches and ordered feature definitions into editable, validated B-rep solids, measurements, exchange files, and dimensioned drawings. Completion requires the CAD golden cases, error cases, complete feature-family coverage, and measured performance from `05-VERIFICATION.md`.
 
@@ -536,7 +536,7 @@ Overlap identifies a seam, not duplicate ownership. Every ID has only one file. 
 
 ## Build order and assembly ladder
 
-Build C01 and C02 first: genuine WASM/worker spikes precede domain/UI expansion. C01–C04 and CAD-A1 are GREEN. CAD provisional ladder height is 1; C05 is next. The C03 checkpoint halted before C04 after correcting an independent review arithmetic oracle; the subsequent C04 checkpoint is recorded in PHASE-2.md. Human ACCEPTED set remains empty. BATCH is halted before C05 pending the revision-exhaustion contract amendment proposed in [PHASE-2.md](PHASE-2.md#c05-pending-contract-amendment--revision-exhaustion); its approved error list is unchanged. The owner’s subsequent request to continue functionality resumed independent work: C07 has no dependencies and was completed while the C05 amendment remained pending. No C05 implementation or contract change was made. The C07 GREEN checkpoint, including repaired implementation/checker findings, is recorded in PHASE-2.md. After owner resolution, continue C05…C49 in dependency order, skipping GREEN C07, with S01/S03/S04/S15 already provided by phase 1. All listed direct dependencies precede their consumer. C41 consumes dimension types/policy and resolved model measurements; C42 supplies projections through assembly afterward, so neither calls the other.
+The current GREEN foundation is C01–C04/C07; C37 provides native STEP exchange, and C50–C60 provide the working CAD path. CAD-A1, CAD-APP and STEP-APP are three provisional CAD assembly rungs. Human ACCEPTED remains empty. C05's separate revision-exhaustion amendment remains pending in [PHASE-2.md](PHASE-2.md#c05-pending-contract-amendment--revision-exhaustion); its approved contract has not changed. D16/D17 record the working-editor execution order. Remaining independent leaves and their consumers continue in dependency order; C38–C40 supply further export formats, and the complete C05–C49 scope remains required. C41 consumes dimension policy and resolved model measurements; C42 supplies projections through assembly, so neither calls the other.
 
 Assemblies are wiring/test entry points, **not bricks**, and contain no geometry or application policy. They may import more than three already-eligible bricks because their only role is explicit connection. If wiring starts interpreting feature definitions, calculating dimensions, or resolving failures, extract that decision into a contracted CORE brick and halt before proceeding.
 
@@ -614,7 +614,7 @@ Purpose: Execute a validated linear extrusion with OpenCascade.
 IN: C01 live worker-local session; C53 polygon; finite signed nonzero depth.
 OUT: Actual B-rep volume, surface area, center of mass, triangulated positions and triangle indices; no native handles cross boundary. Kernel validates the solid before publishing. Owned native wrappers disposed on normal completion; unexpected native faults require worker termination.
 RAISES: `ExtrusionError` for failed construction, invalid solid or unavailable triangulation; vendor faults propagate to worker owner.
-DEPS: C01.
+DEPS: C59.
 
 ### C55 cad-worker-client — SHELL — GREEN
 Purpose: Own one cancellable CAD worker request stream.
@@ -652,7 +652,7 @@ The CAD-APP increment is provisionally GREEN on Linux/Chrome. Its exact evidence
 
 C37 is now a GREEN independent exchange leaf. Build C59, then C60, then connect the production STEP export assembly. This continues D16: make each feature available through the working editor without changing the full CAD gate or C05's pending contract. The owner's standing phase BATCH applies after this map commit.
 
-### C59 kernel-linear-prism — SHELL — CONTRACTED
+### C59 kernel-linear-prism — SHELL — GREEN
 Purpose: Construct one validated linear B-rep prism.
 IN: `{session:KernelSession,polygon:readonly Vec2[],depth:number}`; polygon is C53's simple CCW boundary in canonical mm; depth is finite and nonzero; session is live and worker-local.
 OUT: `ShapeToken` owned by C01, representing a valid solid. Caller releases the token. Temporary builders, points, wire and face wrappers are disposed on normal completion. No source mutation.
@@ -660,12 +660,14 @@ RAISES: `ExtrusionError` for unsuccessful wire/face/prism construction or invali
 DEPS: C01.
 File `src/cad/kernel-linear-prism.ts`; public `buildLinearPrism(request)`. Extract the already-characterized construction from C54 without changing C54's public contract or numerical test expectations. C54's direct dependency becomes C59, with C01's type-only port retained. The output also feeds C37 so export never reconstructs geometry from a display mesh.
 
-### C60 cad-step-export — SHELL — CONTRACTED
+### C60 cad-step-export — SHELL — GREEN
 Purpose: Deliver a cancellable STEP export through browser file access.
 IN: `{files:S07.FilePorts,assets:C55.CADProtocol.assets,createWorker:()=>WorkerPort,onStatus:(state:'busy'|'ready'|'error',message:string)=>void}`. `run({content:C50.CADContent,name:string})` is invoked with user activation. The worker protocol is `{content,assets}` → `{ok:true,file:ExchangeBytes}` or `{ok:false,message:string}`. One fresh worker per job, snapshot-owned source, exactly one job at a time.
-OUT: `{run:()=>Promise<void>,cancel:()=>void,dispose:()=>void}`. Start a native save picker before asynchronous computation when available, then S07 writes and closes the handle; download fallback otherwise. Cancel/dispose terminate native work; late replies and picker resolutions cannot save. Starting a new job cancels the prior job. A 30 s watchdog gives a visible failure. Filename is provided by the caller, with `.step`; the worker's returned bytes must be a nonempty Uint8Array with model/step MIME.
+OUT: `{run:()=>Promise<void>,cancel:()=>void,dispose:()=>void}`. Start a native save picker before asynchronous computation when available, then S07 writes and closes the handle; download fallback otherwise. Cancel/dispose terminate native work; late replies and picker resolutions cannot save. Starting a new job cancels prior preparation/writes. Once native close starts, cancellation/replacement is refused and reports that saving is finishing; the original job reports the actual outcome. Disposal suppresses late UI but cannot revoke the in-flight commit. A 30 s watchdog gives a visible failure. Filename is provided by the caller, with `.step`; the worker's returned bytes must be a nonempty Uint8Array with model/step MIME.
 RAISES: TypeError for invalid ports; picker/worker/file failures become readable status callbacks. Abort/cancel is explicit, not a successful save. Native faults require termination; disposal is idempotent.
 DEPS: S07.
 File `src/cad/cad-step-export.ts`; public `cadSTEPExport(ports)`. Tests cover native handle order/close, fallback handoff, cancellation during picker/work, stale replies, timeout, failures and cleanup. Production browser download with the actual worker is the real resource smoke.
 
-STEP-APP assembly: C50→C04/C52→C02→C53→C03→C59→C37 runs in a dedicated worker. C60 owns export lifetime and S07 file handoff. The adapter exposes Export STEP for the current source, cancels exports on document changes/disposal, and displays progress/cancel/errors. Export does not mutate history, mark a native project saved, or replace editable source. Browser verification downloads an extruded part, independently checks STEP entities/units, re-imports with real C37 and verifies volume, then edits a dimension and exports the new geometry. Do not pass CAD-113/116/124 until their entire procedures and UI coverage exist.
+STEP-APP assembly: C50→C04/C52→C02→C53→C03→C59→C37 runs in a dedicated worker. C60 owns export lifetime and S07 file handoff. The adapter exposes Export STEP for the current source, cancels exports on document changes/disposal before close begins, and displays progress/cancel/errors. Export does not mutate history, mark a native project saved, or replace editable source. Browser verification downloads an extruded part, independently checks STEP entities/units, re-imports with real C37 and verifies volume, then edits a dimension and exports the new geometry. Do not pass CAD-113/116/124 until their entire procedures and UI coverage exist.
+
+The STEP-APP increment is provisionally GREEN. [CAD-STEP-EXPORT.md](CAD-STEP-EXPORT.md) records real file readback, cancellation, errors, source ownership and verification limits. No additional whole-product requirement has been closed by this component increment.
