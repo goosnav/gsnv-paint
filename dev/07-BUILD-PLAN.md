@@ -22,3 +22,7 @@ No deadline or artificial scope reduction is inferred. CAD remains first. A bloc
 ## Phase evidence boundary
 
 The requirements `phase` is introduction ownership; `verificationPhase` is the planned full-procedure closure phase. A phase gate requires every contracted brick and cumulative seam implemented in that phase to pass its complete testbench, checker and smoke procedure. A shared requirement whose full test spans later workspaces stays UNTESTED until that entire procedure runs; a passing foundation test is recorded as component evidence, never a partial requirement PASS. This permits the ordered Phase 1 shell to be verified without inventing unbuilt CAD/Image/Video behavior. All tests actually run must be green before a phase push; unexpected failures still halt BATCH.
+
+## Current execution order (D16)
+
+After the verified Phase 2 engine spikes, build C50–C58 in dependency order and mount the CAD-APP production assembly. This additive vertical increment precedes the remaining feature families so the deployed app supports real editing. The full Phase 2 gate and Phase 3–5 scope remain unchanged. The pending C05 contract is not silently amended.
