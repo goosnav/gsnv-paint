@@ -1,0 +1,30 @@
+✔ S01 golden: create, commit, undo and redo retain exact state and labels (2.134052ms)
+✔ S01 / CTL-021 retains at least 100 complete edits, with oldest-only eviction (1.666574ms)
+✔ S01 undo/redo roundtrip property for 0 through 150 transactions (29.085019ms)
+✔ S01 branch after undo discards only the redo branch (0.252825ms)
+✔ S01 boundaries are no-ops and input arrays remain untouched (0.208394ms)
+✔ S01 preserves immutable typed arrays, maps and bigint values without JSON conversion (0.263647ms)
+✔ S01 invalid limit 0 raises RangeError (0.485425ms)
+✔ S01 invalid limit 99 raises RangeError (0.144432ms)
+✔ S01 invalid limit -1 raises RangeError (0.245926ms)
+✔ S01 invalid limit 100.5 raises RangeError (0.164576ms)
+✔ S01 invalid limit NaN raises RangeError (0.1671ms)
+✔ S01 invalid limit Infinity raises RangeError (0.111003ms)
+✔ S01 invalid jump -1 raises RangeError (0.229365ms)
+✔ S01 invalid jump 1 raises RangeError (0.190626ms)
+✔ S01 invalid jump 0.5 raises RangeError (0.165075ms)
+✔ S01 invalid jump NaN raises RangeError (0.140267ms)
+✔ S01 invalid jump Infinity raises RangeError (0.063233ms)
+✔ S01 invalid commit label  raises TypeError (0.193606ms)
+✔ S01 invalid commit label     raises TypeError (0.182311ms)
+✔ S01 invalid commit label null raises TypeError (0.095383ms)
+✔ S01 invalid commit label 7 raises TypeError (0.11991ms)
+✔ S01 invalid operation raises TypeError (0.11198ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 251.362264

@@ -1,0 +1,16 @@
+{
+  "name": "gsnv-paint",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "test:spec": "python3 dev/verify-spec.py"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}

@@ -27,7 +27,7 @@ Shared boundary types are declarations here, not code scaffolding. All numbers a
 - `NativeAsset={id:string,mime:string,bytes:Uint8Array}`; unique ID, no paths. `NativePackage={project:ProjectEnvelope,assets:readonly NativeAsset[]}`. Workspace codecs map in-memory tiles/bigint/STEP data into Json metadata plus named byte assets; they validate asset references and reconstruct domain types. S03 validates only common metadata; S15 validates the binary container, CRC and asset bounds.
 - `RecoveryRecord={workspace:Workspace,generation:integer,payload:readonly Uint8Array[],title:string}`. `RecoveryPort` is async load/store/remove by workspace. Generations prevent partial overwrite; journal contains no user document payload.
 
-## S01 history — CORE — PLANNED
+## S01 history — CORE — GREEN
 
 Purpose: Apply bounded immutable document history transactions.
 IN: `HistoryRequest<T>`; valid immutable values (including readonly maps, typed-array tiles and bigint); callers retain ownership and never mutate reachable snapshots, nonempty commit labels, limit ≥100.
@@ -170,7 +170,7 @@ Wire S02, S04, S06, S10–S14 and existing built workspace adapters. S01/S03/S05
 
 Rung 1: S01 history → S02 session; S03 metadata codec is verified independently before S15. Rung 2: S03 → S15 + S07 → S13 file seam. Rung 3: S03 → S15 + S08 → S14 recovery seam. Rung 4: S05 → S12 → A-SHELL and S09 → S10, with S11 preview transactions. Later phase sections define their cumulative seams.
 
-Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly height: 0. Implementation statuses remain PLANNED until evidence exists. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
+Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly height: 0. S01 is GREEN with evidence in PHASE-1.md; other statuses remain PLANNED. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
 
 ## Shared conceptual bindings
 

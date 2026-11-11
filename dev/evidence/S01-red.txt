@@ -1,0 +1,427 @@
+✖ S01 golden: create, commit, undo and redo retain exact state and labels (1.368016ms)
+✖ S01 / CTL-021 retains at least 100 complete edits, with oldest-only eviction (0.134609ms)
+✖ S01 undo/redo roundtrip property for 0 through 150 transactions (0.12156ms)
+✖ S01 branch after undo discards only the redo branch (0.11192ms)
+✖ S01 boundaries are no-ops and input arrays remain untouched (0.139731ms)
+✖ S01 preserves immutable typed arrays, maps and bigint values without JSON conversion (0.149893ms)
+✖ S01 invalid limit 0 raises RangeError (2.305023ms)
+✖ S01 invalid limit 99 raises RangeError (0.228002ms)
+✖ S01 invalid limit -1 raises RangeError (0.253621ms)
+✖ S01 invalid limit 100.5 raises RangeError (4.658866ms)
+✖ S01 invalid limit NaN raises RangeError (0.219007ms)
+✖ S01 invalid limit Infinity raises RangeError (0.152494ms)
+✖ S01 invalid jump -1 raises RangeError (0.129101ms)
+✖ S01 invalid jump 1 raises RangeError (0.063282ms)
+✖ S01 invalid jump 0.5 raises RangeError (0.058081ms)
+✖ S01 invalid jump NaN raises RangeError (0.05759ms)
+✖ S01 invalid jump Infinity raises RangeError (0.071454ms)
+✖ S01 invalid commit label  raises TypeError (0.089429ms)
+✖ S01 invalid commit label     raises TypeError (0.057038ms)
+✖ S01 invalid commit label null raises TypeError (0.055411ms)
+✖ S01 invalid commit label 7 raises TypeError (0.056637ms)
+✖ S01 invalid operation raises TypeError (0.178405ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 0
+ℹ fail 22
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 211.229933
+
+✖ failing tests:
+
+test at src/shared/history.test.ts:1:338
+✖ S01 golden: create, commit, undo and redo retain exact state and labels (1.368016ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:10:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/shared/history.test.ts:1:907
+✖ S01 / CTL-021 retains at least 100 complete edits, with oldest-only eviction (0.134609ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:24:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/shared/history.test.ts:1:1385
+✖ S01 undo/redo roundtrip property for 0 through 150 transactions (0.12156ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:36:17)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:1764
+✖ S01 branch after undo discards only the redo branch (0.11192ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:45:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:2110
+✖ S01 boundaries are no-ops and input arrays remain untouched (0.139731ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:59:22)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:2620
+✖ S01 preserves immutable typed arrays, maps and bigint values without JSON conversion (0.149893ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:71:17)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:3122
+✖ S01 invalid limit 0 raises RangeError (2.305023ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
+  
+  Error message:
+  
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/history.test.ts:1:3122
+✖ S01 invalid limit 99 raises RangeError (0.228002ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
+  
+  Error message:
+  
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/history.test.ts:1:3122
+✖ S01 invalid limit -1 raises RangeError (0.253621ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
+  
+  Error message:
+  
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/history.test.ts:1:3122
+✖ S01 invalid limit 100.5 raises RangeError (4.658866ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
+  
+  Error message:
+  
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/history.test.ts:1:3122
+✖ S01 invalid limit NaN raises RangeError (0.219007ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
+  
+  Error message:
+  
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/history.test.ts:1:3122
+✖ S01 invalid limit Infinity raises RangeError (0.152494ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
+  
+  Error message:
+  
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/shared/history.test.ts:1:3291
+✖ S01 invalid jump -1 raises RangeError (0.129101ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:84:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:3291
+✖ S01 invalid jump 1 raises RangeError (0.063282ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:84:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:3291
+✖ S01 invalid jump 0.5 raises RangeError (0.058081ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:84:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:3291
+✖ S01 invalid jump NaN raises RangeError (0.05759ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:84:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:3291
+✖ S01 invalid jump Infinity raises RangeError (0.071454ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:84:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:3506
+✖ S01 invalid commit label  raises TypeError (0.089429ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:90:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:3506
+✖ S01 invalid commit label     raises TypeError (0.057038ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:90:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:3506
+✖ S01 invalid commit label null raises TypeError (0.055411ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:90:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:3506
+✖ S01 invalid commit label 7 raises TypeError (0.056637ms)
+  Error: Not implemented
+      at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:90:21)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/history.test.ts:1:3677
+✖ S01 invalid operation raises TypeError (0.178405ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "TypeError". Received "Error"
+  
+  Error message:
+  
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:95:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at history (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.ts:29:9)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:95:23)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:95:10)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
