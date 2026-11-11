@@ -6,7 +6,21 @@ Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MO
 
 The [decision record](dev/DECISIONS.md) documents dependency selection, distribution constraints and license obligations. Phase reports under `dev/` distinguish passed, failed and untested requirements. Only the owner accepts a release.
 
-Run `npm ci` and `npm run dev` to open the current application shell. Production workspace editing remains unavailable. The development-only `/dev/fixtures/app-shell.html` page exercises shared controls and persistence with explicit one-pixel test data.
+## Run it
+
+No setup is needed. Start the launcher for your system from this folder:
+
+| System | Start with |
+|---|---|
+| macOS | double-click `run.command` |
+| Windows | double-click `run.cmd` (it runs `run.ps1`) |
+| Linux | `./run.sh` in a terminal |
+
+The launcher builds the application, serves it only to this computer at `http://127.0.0.1:24173/` and opens your browser. The first start needs a network connection. Keep the launcher window open while you work; press Ctrl+C in it to stop. [TUTORIAL.md](TUTORIAL.md) covers setup details, data locations and troubleshooting. The launchers are verified on macOS (Apple Silicon) only; Windows and Linux are untested. They run this source folder and are not the planned packaged release ([D14](dev/DECISIONS.md#d14--script-launchers-for-the-source-folder)).
+
+## Develop
+
+Run `npm ci` and `npm run dev` to open the current application shell with live reload. `npm start` is the launcher without the runtime check; `npm run test:launcher` starts it for real and checks the served page, isolation headers and second-launch reuse. Production workspace editing remains unavailable. The development-only `/dev/fixtures/app-shell.html` page exercises shared controls and persistence with explicit one-pixel test data.
 
 `npm run build` creates the static output in `dist/`. `npm test` runs unit and assembly seams; `npm run test:browser` builds first, then runs the Chrome component and assembly checks. Browser tests require an installed Chrome channel. See the [shell integration contract](dev/APP-SHELL.md) and [Phase 1 evidence](dev/PHASE-1.md) for scope and limitations.
 

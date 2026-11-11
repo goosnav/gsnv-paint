@@ -1,0 +1,4 @@
+# Shell launchers and the checksum list they parse must keep LF endings on every OS.
+*.sh text eol=lf
+*.command text eol=lf
+*.sha256 text eol=lf

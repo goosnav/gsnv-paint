@@ -3,13 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "postinstall": "node dev/prepare-planegcs.mjs",
     "prepare:solver": "node dev/prepare-planegcs.mjs",
     "test:solver-types": "tsc --ignoreConfig --noEmit --strict --noUncheckedIndexedAccess --exactOptionalPropertyTypes --module NodeNext --moduleResolution NodeNext --types node node_modules/@salusoft89/planegcs/dist/index.d.ts",
-    "test": "node --import tsx --test src/**/*.test.ts",
+    "test": "node --import tsx --test \"src/**/*.test.ts\"",
+    "test:launcher": "node launcher/start.test.mjs",
     "typecheck": "tsc --noEmit",
     "test:spec": "python3 dev/verify-spec.py",
+    "start": "node launcher/start.mjs",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "test:browser": "npm run build && playwright test"
