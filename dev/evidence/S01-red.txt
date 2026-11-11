@@ -104,9 +104,9 @@ test at src/shared/history.test.ts:1:2620
 test at src/shared/history.test.ts:1:3122
 ✖ S01 invalid limit 0 raises RangeError (2.305023ms)
   AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
-  
+
   Error message:
-  
+
   Not implemented
       at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
       at Test.runInAsyncScope (node:async_hooks:227:14)
@@ -135,9 +135,9 @@ test at src/shared/history.test.ts:1:3122
 test at src/shared/history.test.ts:1:3122
 ✖ S01 invalid limit 99 raises RangeError (0.228002ms)
   AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
-  
+
   Error message:
-  
+
   Not implemented
       at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
       at Test.runInAsyncScope (node:async_hooks:227:14)
@@ -166,9 +166,9 @@ test at src/shared/history.test.ts:1:3122
 test at src/shared/history.test.ts:1:3122
 ✖ S01 invalid limit -1 raises RangeError (0.253621ms)
   AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
-  
+
   Error message:
-  
+
   Not implemented
       at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
       at Test.runInAsyncScope (node:async_hooks:227:14)
@@ -197,9 +197,9 @@ test at src/shared/history.test.ts:1:3122
 test at src/shared/history.test.ts:1:3122
 ✖ S01 invalid limit 100.5 raises RangeError (4.658866ms)
   AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
-  
+
   Error message:
-  
+
   Not implemented
       at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
       at Test.runInAsyncScope (node:async_hooks:227:14)
@@ -228,9 +228,9 @@ test at src/shared/history.test.ts:1:3122
 test at src/shared/history.test.ts:1:3122
 ✖ S01 invalid limit NaN raises RangeError (0.219007ms)
   AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
-  
+
   Error message:
-  
+
   Not implemented
       at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
       at Test.runInAsyncScope (node:async_hooks:227:14)
@@ -259,9 +259,9 @@ test at src/shared/history.test.ts:1:3122
 test at src/shared/history.test.ts:1:3122
 ✖ S01 invalid limit Infinity raises RangeError (0.152494ms)
   AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
-  
+
   Error message:
-  
+
   Not implemented
       at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:79:12)
       at Test.runInAsyncScope (node:async_hooks:227:14)
@@ -398,9 +398,9 @@ test at src/shared/history.test.ts:1:3506
 test at src/shared/history.test.ts:1:3677
 ✖ S01 invalid operation raises TypeError (0.178405ms)
   AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "TypeError". Received "Error"
-  
+
   Error message:
-  
+
   Not implemented
       at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/history.test.ts:95:10)
       at Test.runInAsyncScope (node:async_hooks:227:14)
