@@ -99,7 +99,7 @@ RAISES: none; quota, corrupt data and unavailable storage yield stable diagnosti
 DEPS: none.
 TEST: fake crash between writes, old generation, corruption/quota plus real browser close/reload recovery. Requirement group ProjectPersistence.
 
-## S09 icons — SHELL — PLANNED
+## S09 icons — SHELL — GREEN
 
 Purpose: Render original interface glyphs.
 IN: `{document:Document,name:string,label:string,size:number}`; name belongs to supplied original glyph catalog, size 12–64 CSS px.
@@ -170,7 +170,7 @@ Wire S02, S04, S06, S10–S14 and existing built workspace adapters. S01/S03/S05
 
 Rung 1: S01 history → S02 session; S03 metadata codec is verified independently before S15. Rung 2: S03 → S15 + S07 → S13 file seam. Rung 3: S03 → S15 + S08 → S14 recovery seam. Rung 4: S05 → S12 → A-SHELL and S09 → S10, with S11 preview transactions. Later phase sections define their cumulative seams.
 
-Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly height: 0. S01 is GREEN with evidence in PHASE-1.md; other statuses remain PLANNED. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
+Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rung 1 (S01→S02) passes. S01–S09 are GREEN with evidence in PHASE-1.md; remaining Phase 1 bricks are PLANNED. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
 
 ## Shared conceptual bindings
 

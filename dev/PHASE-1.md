@@ -1,6 +1,6 @@
 # Phase 1 execution ledger
 
-Active phase: Phase 1, Mode B. BATCH advancement is halted before S09 after the S08 review finding; the current brick was repaired and verified GREEN. Baseline spec/map push: ea1e22c. No human ACCEPTED bricks. The phase is incomplete; no application/browser/OS claim is made.
+Active phase: Phase 1, Mode B, owner-authorized BATCH resumed by the continued build instruction. The S08 review finding is repaired and independently verified. Baseline spec/map push: ea1e22c. No human ACCEPTED bricks. The phase is incomplete; no application/browser/OS claim is made.
 
 ## S01 history — GREEN
 
@@ -141,3 +141,13 @@ Demo `/dev/fixtures/recovery-store.html` runs via `npm run dev`; its separate en
 `python3 dev/verify-spec.py` exited 0: TRACE/MAP/LINK PASS (386 requirements, 158 module contracts); `git diff --check` exited 0. Full requirement totals remain **10 PASS / 0 FAIL / 376 UNTESTED**: no complete runtime workspace requirement closes from these foundations alone. Native picker interaction, other browsers/OSes, full application behavior, CAD, Image and Video golden outputs remain UNTESTED.
 
 GREEN: S01, S03, S02, S04, S05, S06, S07, S08. ACCEPTED: none. Provisional assembly rung 1 is GREEN. Phase 1 is incomplete, has not been pushed, and is not a release candidate. The retained batch rule (“halt immediately on any failing test … and any surprise”) caused this checkpoint after repairing the active brick. Next planned brick: S09 original SVG icons, then S10 XP chrome; neither has source scaffolding yet.
+
+## S09 icons — GREEN
+
+The continuation resumes the phase after the repaired S08 finding. Contract: original local SVG catalog, accessible literal labels, a 24-unit viewBox, sizes 12–64 CSS pixels, RangeError for invalid names/sizes. No fetched imagery or Microsoft assets. The 27 current shared glyphs are original path data drawn in this source; later domain tools will supply their original glyphs in their own phase.
+
+Header/catalog signature and fake/real testbenches preceded implementation. Expected RED `node --import tsx --test --test-name-pattern='S09 golden' src/shared/icons.test.ts` exited 1 with an unimplemented golden ([output](evidence/S09-red.txt), whitespace normalized). Before implementation, the golden test was corrected to compare the fake DOM wrapper's own fields rather than its class prototype; no SVG expectation changed. Full `node --import tsx --test src/shared/icons.test.ts` exited 0: **14/14**, no failures or skipped tests ([output](evidence/S09-green.txt)). `npm run typecheck` exited 0. Initial checker requested the literal “Revisit if:” phrase in DECISIONS; advancement was held while the header wording was corrected, then checker exited 0: `PASS: src/shared/icons.ts`. No behavior or contract changed.
+
+`npm run test:browser -- src/shared/icons.browser.spec.ts` exited 0: **1 passed** ([output](evidence/S09-browser.txt)); actual Chrome 154 Linux x64 headless, 1280×720. [Glyph sheet](evidence/S09-glyph-sheet.png) rendered from the separate `/dev/fixtures/icons.html` demo was visually inspected at 16/24/40 px: all 27 distinct glyphs are visible and labeled, with no clipping or external resources. No other platform is claimed. Demo appearance is supplementary to assertions. Cumulative `npm test`: **183/183**, zero skipped, exit 0 ([output](evidence/phase1-through-S09.txt)).
+
+D1 uses original app paths instead of stock imagery; revisit only if the owner's original-assets requirement changes. D2 uses aria-label plus text titles instead of generated IDs to avoid collisions; revisit for demonstrated assistive-technology gaps. PATHS/STROKE_WIDTH are tweak points, guarded by catalog, golden, accessibility and rendered-sheet checks. Tooltips/active styling belong to S10. GREEN: S01–S09; ACCEPTED: none; provisional rung 1 passes. Full runtime requirement totals remain 10 PASS / 0 FAIL / 376 UNTESTED. Next: S10 XP chrome.
