@@ -4256,7 +4256,7 @@
     "verification": "V-REL-001",
     "procedure": "Inspect the first specification commit and repository history; assert all three artifacts precede implementation and every requirement has a verification entry.",
     "method": "I",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 0
   },
   {
@@ -4268,7 +4268,7 @@
     "verification": "V-REL-002",
     "procedure": "Inspect the map, contracts/ownership boundaries, and commit history; assert the map commit predates the first implementation brick.",
     "method": "I",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 0
   },
   {
@@ -4304,7 +4304,7 @@
     "verification": "V-REL-005",
     "procedure": "Inspect Phase 0 evidence, committed tree, local commit ID, and remote branch ID; assert the pushed commit includes the reconnaissance/spec/map deliverables.",
     "method": "I",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 0
   },
   {
@@ -4376,7 +4376,7 @@
     "verification": "V-REL-011",
     "procedure": "Inspect the checkout remote URL, working tree, commits, and remote ref; assert the target repository is goosnav/gsnv-paint.",
     "method": "I",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 0
   },
   {
@@ -4388,7 +4388,7 @@
     "verification": "V-REL-012",
     "procedure": "Compare the initial remote commit and tree with the resulting history; assert the initial commit remains an ancestor and existing content has not been discarded without an authorized replacement.",
     "method": "I",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 0
   },
   {
@@ -4412,7 +4412,7 @@
     "verification": "V-REL-014",
     "procedure": "Inspect push commands and remote history; assert no force or lease-forced ref update was used.",
     "method": "I",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 0
   },
   {

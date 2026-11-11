@@ -37,3 +37,23 @@ UNTESTED: all remaining 382 requirement IDs in `requirements.json`/`06-TRACEABIL
 ## State
 
 All 158 bricks PLANNED. GREEN bricks: none. ACCEPTED bricks: none. Human acceptance ladder: 0; provisional assembly: 0. The committed map activates the owner's current-phase BATCH authorization. Phase 1 starts with S01 history, then S03 metadata and S02 session; the complete dependency-safe order is in MODULE_MAP. Any unexpected failure or required contract change still halts the batch.
+
+## Remote verification — Phase 0 complete
+
+Baseline commit: `eec3f1410ab13fdd87f7599d4e1f58f2e0b3f5dc`. Push command: `git push origin main` — exit 0.
+
+```text
+To https://github.com/goosnav/gsnv-paint.git
+   71bd8f4..eec3f14  main -> main
+```
+
+Commands: `git rev-parse HEAD`, `git ls-remote origin refs/heads/main`, `git merge-base --is-ancestor 71bd8f4 HEAD`, `git status --short` — all exit 0. Output:
+
+```text
+eec3f1410ab13fdd87f7599d4e1f58f2e0b3f5dc
+eec3f1410ab13fdd87f7599d4e1f58f2e0b3f5dc refs/heads/main
+```
+
+The ancestry and status commands emitted no output. Existing history is preserved; no force flag was used. The map/spec commit contains no application source. This adds inspection PASS for REL-001, REL-002, REL-005, REL-011 (checkout/remote destination), REL-012 and REL-014, limited to this phase's observed operations.
+
+Final classification: PASS **SYS-005, CAD-006, REL-001, REL-002, REL-005, REL-011, REL-012, REL-014, REL-023, REL-028**. FAIL: **none**. UNTESTED: **the other 376 IDs**, explicitly enumerated by status in requirements.json and 06-TRACEABILITY.md. No runtime requirement has passed. The earlier four-pass audit output remains the exact pre-push result; rerunning the audit now reports PASS 10 / FAIL 0 / UNTESTED 376 with identical closure/analytical results.
