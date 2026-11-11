@@ -1,0 +1,27 @@
+✔ C08 golden circle preserves radius, identity and construction (1.973448ms)
+✔ C08 golden three-point semicircle passes through all three anchors in drawing order (0.431623ms)
+✔ C08 golden center arc projects end direction to start radius (0.376154ms)
+✔ C08 explicit through points retain clockwise and major arcs (0.325371ms)
+✔ C08 golden tangent arc follows the forward tangent, including a major sweep (0.249276ms)
+✔ C08 golden slot is a closed pair of parallel sides and radius-4 semicircles (0.205601ms)
+✔ C08 three-point arcs preserve radius, center and signed sweep under translation/rotation/scaling (4.997581ms)
+✔ C08 tangent arcs preserve a forward unit tangent after rotations and vector rescaling (5.20933ms)
+✔ C08 rotated/reversed slots retain connected tangent joins and a counterclockwise outline (1.347565ms)
+✔ C08 every tool enforces its exact anchor and ID counts (0.985344ms)
+✔ C08 radii must be finite, positive and larger than document resolution (0.430661ms)
+✔ C08 collinear and near-collinear three-point arcs are rejected using physical tolerance (0.187366ms)
+✔ C08 a missing, zero or chord-parallel forward tangent cannot form a circular arc (0.251063ms)
+✔ C08 repeated anchors and unresolved through/end directions fail visibly (0.27043ms)
+✔ C08 zero/full-turn and below-resolution arc sweeps use angular tolerance (0.233808ms)
+✔ C08 scaled circumcenters avoid square overflow on finite large geometry (0.212594ms)
+✔ C08 nonrepresentable resulting extents fail instead of returning unusable geometry (0.148433ms)
+✔ C08 outputs own their arrays; frozen input and repeated calls are unchanged (0.367344ms)
+✔ C08 real C03 seam creates a circle and slot from inch-document length expressions (0.706871ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 210.584653

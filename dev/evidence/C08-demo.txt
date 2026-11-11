@@ -1,0 +1,121 @@
+{
+  "tool": "circle",
+  "entities": [
+    {
+      "id": "circle",
+      "kind": "circle",
+      "center": [
+        0,
+        0
+      ],
+      "radius": 10,
+      "construction": false
+    }
+  ]
+}
+{
+  "tool": "arc-three-point",
+  "entities": [
+    {
+      "id": "arc",
+      "kind": "arc",
+      "center": [
+        10,
+        0
+      ],
+      "radius": 10,
+      "startRad": 3.141592653589793,
+      "sweepRad": -3.141592653589793,
+      "construction": false
+    }
+  ]
+}
+{
+  "tool": "arc-tangent",
+  "entities": [
+    {
+      "id": "tangent",
+      "kind": "arc",
+      "center": [
+        0,
+        10
+      ],
+      "radius": 10,
+      "startRad": -1.5707963267948966,
+      "sweepRad": 1.5707963267948966,
+      "construction": false
+    }
+  ]
+}
+{
+  "tool": "arc-center-point",
+  "entities": [
+    {
+      "id": "major-arc",
+      "kind": "arc",
+      "center": [
+        0,
+        0
+      ],
+      "radius": 10,
+      "startRad": 0,
+      "sweepRad": -4.71238898038469,
+      "construction": false
+    }
+  ]
+}
+{
+  "tool": "slot",
+  "entities": [
+    {
+      "id": "side-a",
+      "kind": "segment",
+      "a": [
+        0,
+        -4
+      ],
+      "b": [
+        20,
+        -4
+      ],
+      "construction": false
+    },
+    {
+      "id": "cap-b",
+      "kind": "arc",
+      "center": [
+        20,
+        0
+      ],
+      "radius": 4,
+      "startRad": -1.5707963267948966,
+      "sweepRad": 3.141592653589793,
+      "construction": false
+    },
+    {
+      "id": "side-b",
+      "kind": "segment",
+      "a": [
+        20,
+        4
+      ],
+      "b": [
+        0,
+        4
+      ],
+      "construction": false
+    },
+    {
+      "id": "cap-a",
+      "kind": "arc",
+      "center": [
+        0,
+        0
+      ],
+      "radius": 4,
+      "startRad": 1.5707963267948966,
+      "sweepRad": 3.141592653589793,
+      "construction": false
+    }
+  ]
+}

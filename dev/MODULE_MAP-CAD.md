@@ -1,6 +1,6 @@
 # Module map: CAD, phase 2
 
-Mode A baseline, maintained during Mode B. **C01–C04, C07, C37, C50–C60, CAD-A1, CAD-APP and STEP-APP are GREEN; C05–C06, C08–C36 and C38–C49 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
+Mode A baseline, maintained during Mode B. **C01–C04, C07–C08, C37, C50–C60, CAD-A1, CAD-APP and STEP-APP are GREEN; C05–C06, C09–C36 and C38–C49 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
 
 For a desktop user, CAD turns constrained sketches and ordered feature definitions into editable, validated B-rep solids, measurements, exchange files, and dimensioned drawings. Completion requires the CAD golden cases, error cases, complete feature-family coverage, and measured performance from `05-VERIFICATION.md`.
 
@@ -169,14 +169,14 @@ OUT: `Entity[]`; closed composites share exact endpoints; polygon sides integer 
 RAISES: `AnchorCountError`, `IdCountError`, `DegenerateGeometryError`, `InvalidPolygonError`.
 DEPS: none.
 
-### C08 sketch-circular-primitives — CORE — PLANNED
+### C08 sketch-circular-primitives — CORE — GREEN
 File `src/cad/sketch-circular-primitives.ts`; public `makeCircularEntities(request)`.
 Purpose: Construct circles, 3-point arcs, center-point arcs, tangent arcs, and slots.
 IN: `{tool:'circle'|'arc-three-point'|'arc-center-point'|'arc-tangent'|'slot',anchors:Vec2[],tangent?:Vec2,widthMm?:number,construction:boolean,ids:Id[],tolerance:Tolerance}`; tangent arc supplies tangent direction; slot supplies positive width.
 OUT: `Entity[]`; arcs preserve declared drawing direction; slot yields two arcs and two segments with connected endpoints.
 RAISES: `AnchorCountError`, `IdCountError`, `CollinearArcError`, `InvalidRadiusError`, `ImpossibleTangentError`, `DegenerateGeometryError`.
 DEPS: none.
-Anchor conventions: circle = center/radius point; three-point arc = start/through/end; tangent arc = start/end with the forward tangent at start; slot = two end-cap centers plus overall width. Center-point arc accepts center/start/end for the shortest signed sweep (the antipodal tie is counterclockwise), or center/start/through/end to declare a major or clockwise sweep from the pointer path. Center-arc through/end anchors specify rays; radius comes from start. Every tool needs one ID except a slot's four, emitted segment/arc/segment/arc around a counterclockwise outline. The construction flag and ID order are preserved. Radius, distinct anchors and slot-center distance must exceed document linear tolerance; collapsed angular sweeps and repeated through directions are rejected. C08 remains UI-free; C50's current line-only project subset is not widened by this brick.
+Anchor conventions: circle = center/radius point; three-point arc = start/through/end; tangent arc = start/end with the forward tangent at start; slot = two end-cap centers plus overall width. Center-point arc accepts center/start/end for the shortest signed sweep (the antipodal tie is counterclockwise), or center/start/through/end to declare a major or clockwise sweep from the pointer path. Center-arc through/end anchors specify rays; radius comes from start. Every tool needs one ID except a slot's four, emitted segment/arc/segment/arc around a counterclockwise outline. The construction flag and ID order are preserved. Radius, distinct anchors and slot-center distance must exceed document linear tolerance; collapsed angular sweeps and repeated through directions are rejected. Reconstruction residuals use max(linearMm, relative × local extent): the maximum anchor-pair span for three-point arcs, chord length for tangent arcs, explicit radius for center arcs, and width for slot caps. World-coordinate magnitude, distant circumcenters and center-arc ray lengths never enlarge this bound. Radius/separation/collinearity collapse remains governed by linearMm; sweep and tangent-direction resolution use angularRad. Unrepresentable results raise DegenerateGeometryError. C08 remains UI-free; C50's current line-only project subset is not widened by this brick. The focused and cumulative evidence, review repairs and integration limits are in [CAD-CIRCULAR-PRIMITIVES.md](CAD-CIRCULAR-PRIMITIVES.md).
 
 ### C09 sketch-constraint-policy — CORE — PLANNED
 File `src/cad/sketch-constraint-policy.ts`; public `constraintPolicy(request)`.

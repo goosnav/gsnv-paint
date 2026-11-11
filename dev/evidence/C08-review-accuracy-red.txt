@@ -1,0 +1,88 @@
+✔ C08 golden circle preserves radius, identity and construction (2.100191ms)
+✔ C08 golden three-point semicircle passes through all three anchors in drawing order (0.374379ms)
+✔ C08 golden center arc projects end direction to start radius (0.458989ms)
+✔ C08 rotated antipodal center arcs keep the counterclockwise tie (0.660099ms)
+✔ C08 explicit through points retain clockwise and major arcs (0.234197ms)
+✔ C08 golden tangent arc follows the forward tangent, including a major sweep (0.285373ms)
+✔ C08 golden slot is a closed pair of parallel sides and radius-4 semicircles (0.203312ms)
+✔ C08 three-point arcs preserve radius, center and signed sweep under translation/rotation/scaling (5.059856ms)
+✔ C08 tangent arcs preserve a forward unit tangent after rotations and vector rescaling (5.522037ms)
+✖ C08 shallow arcs cannot silently lose their supplied anchors (3.749637ms)
+✖ C08 relative reconstruction tolerance uses local span, never the distant center or world origin (0.397831ms)
+✖ C08 tangent direction survives translation of small resolvable arcs (0.438341ms)
+✔ C08 rotated/reversed slots retain connected tangent joins and a counterclockwise outline (1.663899ms)
+✔ C08 every tool enforces its exact anchor and ID counts (0.905182ms)
+✔ C08 radii must be finite, positive and larger than document resolution (0.524709ms)
+✔ C08 collinear and near-collinear three-point arcs are rejected using physical tolerance (0.241012ms)
+✔ C08 a missing, zero or chord-parallel forward tangent cannot form a circular arc (0.363944ms)
+✔ C08 repeated anchors and unresolved through/end directions fail visibly (0.358652ms)
+✔ C08 zero/full-turn and below-resolution arc sweeps use angular tolerance (0.272036ms)
+✔ C08 scaled circumcenters avoid square overflow on finite large geometry (0.150869ms)
+✔ C08 nonrepresentable resulting extents fail instead of returning unusable geometry (0.19001ms)
+✔ C08 outputs own their arrays; frozen input and repeated calls are unchanged (0.461989ms)
+✔ C08 real C03 seam creates a circle and slot from inch-document length expressions (0.712011ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 20
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 235.181005
+
+✖ failing tests:
+
+test at src/cad/sketch-circular-primitives.test.ts:1:5473
+✖ C08 shallow arcs cannot silently lose their supplied anchors (3.749637ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:54)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:84:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-circular-primitives.test.ts:1:6291
+✖ C08 relative reconstruction tolerance uses local span, never the distant center or world origin (0.397831ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:54)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:97:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-circular-primitives.test.ts:1:6784
+✖ C08 tangent direction survives translation of small resolvable arcs (0.438341ms)
+  AssertionError [ERR_ASSERTION]: -4.3655746884633386e-9 differs from 0
+      at near (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:11:51)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:108:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

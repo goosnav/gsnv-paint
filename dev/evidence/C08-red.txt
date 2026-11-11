@@ -1,0 +1,357 @@
+✖ C08 golden circle preserves radius, identity and construction (1.141767ms)
+✖ C08 golden three-point semicircle passes through all three anchors in drawing order (0.117941ms)
+✖ C08 golden center arc projects end direction to start radius (0.112689ms)
+✖ C08 explicit through points retain clockwise and major arcs (0.143988ms)
+✖ C08 golden tangent arc follows the forward tangent, including a major sweep (0.13428ms)
+✖ C08 golden slot is a closed pair of parallel sides and radius-4 semicircles (0.127573ms)
+✖ C08 three-point arcs preserve radius, center and signed sweep under translation/rotation/scaling (0.185431ms)
+✖ C08 tangent arcs preserve a forward unit tangent after rotations and vector rescaling (0.157751ms)
+✖ C08 rotated/reversed slots retain connected tangent joins and a counterclockwise outline (0.204507ms)
+✖ C08 every tool enforces its exact anchor and ID counts (3.519669ms)
+✖ C08 radii must be finite, positive and larger than document resolution (0.341692ms)
+✖ C08 collinear and near-collinear three-point arcs are rejected using physical tolerance (0.281627ms)
+✖ C08 a missing, zero or chord-parallel forward tangent cannot form a circular arc (0.248434ms)
+✖ C08 repeated anchors and unresolved through/end directions fail visibly (0.249058ms)
+✖ C08 zero/full-turn and below-resolution arc sweeps use angular tolerance (0.245437ms)
+✖ C08 scaled circumcenters avoid square overflow on finite large geometry (0.118726ms)
+✖ C08 nonrepresentable resulting extents fail instead of returning unusable geometry (0.20785ms)
+✖ C08 outputs own their arrays; frozen input and repeated calls are unchanged (0.168237ms)
+✖ C08 real C03 seam creates a circle and slot from inch-document length expressions (0.510194ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 0
+ℹ fail 19
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 214.30208
+
+✖ failing tests:
+
+test at src/cad/sketch-circular-primitives.test.ts:1:1183
+✖ C08 golden circle preserves radius, identity and construction (1.141767ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:18:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/cad/sketch-circular-primitives.test.ts:1:1419
+✖ C08 golden three-point semicircle passes through all three anchors in drawing order (0.117941ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:23:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/cad/sketch-circular-primitives.test.ts:1:1708
+✖ C08 golden center arc projects end direction to start radius (0.112689ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:28:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-circular-primitives.test.ts:1:2129
+✖ C08 explicit through points retain clockwise and major arcs (0.143988ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at arc (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:13:45)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:35:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-circular-primitives.test.ts:1:2604
+✖ C08 golden tangent arc follows the forward tangent, including a major sweep (0.13428ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:41:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-circular-primitives.test.ts:1:3174
+✖ C08 golden slot is a closed pair of parallel sides and radius-4 semicircles (0.127573ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:49:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-circular-primitives.test.ts:1:3671
+✖ C08 three-point arcs preserve radius, center and signed sweep under translation/rotation/scaling (0.185431ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at arc (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:13:45)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:60:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-circular-primitives.test.ts:1:4327
+✖ C08 tangent arcs preserve a forward unit tangent after rotations and vector rescaling (0.157751ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at arc (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:13:45)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:68:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-circular-primitives.test.ts:1:4979
+✖ C08 rotated/reversed slots retain connected tangent joins and a counterclockwise outline (0.204507ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:76:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-circular-primitives.test.ts:1:5866
+✖ C08 every tool enforces its exact anchor and ID counts (3.519669ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'AnchorCountError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:140)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:54)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:96:40)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'AnchorCountError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-circular-primitives.test.ts:1:6569
+✖ C08 radii must be finite, positive and larger than document resolution (0.341692ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'InvalidRadiusError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:140)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:54)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:103:37)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'InvalidRadiusError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-circular-primitives.test.ts:1:7161
+✖ C08 collinear and near-collinear three-point arcs are rejected using physical tolerance (0.281627ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'CollinearArcError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:140)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:54)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:111:33)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'CollinearArcError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-circular-primitives.test.ts:1:7511
+✖ C08 a missing, zero or chord-parallel forward tangent cannot form a circular arc (0.248434ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'ImpossibleTangentError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:140)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:54)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:115:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'ImpossibleTangentError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-circular-primitives.test.ts:1:7926
+✖ C08 repeated anchors and unresolved through/end directions fail visibly (0.249058ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'DegenerateGeometryError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:140)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:54)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:120:101)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'DegenerateGeometryError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-circular-primitives.test.ts:1:8599
+✖ C08 zero/full-turn and below-resolution arc sweeps use angular tolerance (0.245437ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'DegenerateGeometryError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:140)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:54)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:128:39)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'DegenerateGeometryError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-circular-primitives.test.ts:1:9038
+✖ C08 scaled circumcenters avoid square overflow on finite large geometry (0.118726ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at arc (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:13:45)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:133:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-circular-primitives.test.ts:1:9321
+✖ C08 nonrepresentable resulting extents fail instead of returning unusable geometry (0.20785ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Error'
+  - 'DegenerateGeometryError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:140)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at reject (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:15:54)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:138:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Error',
+    expected: 'DegenerateGeometryError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/sketch-circular-primitives.test.ts:1:9578
+✖ C08 outputs own their arrays; frozen input and repeated calls are unchanged (0.168237ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:143:41)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/sketch-circular-primitives.test.ts:1:10306
+✖ C08 real C03 seam creates a circle and slot from inch-document length expressions (0.510194ms)
+  Error: C08 is not implemented.
+      at makeCircularEntities (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.ts:43:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/sketch-circular-primitives.test.ts:152:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

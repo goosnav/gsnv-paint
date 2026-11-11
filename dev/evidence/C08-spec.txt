@@ -1,0 +1,10 @@
+
+> gsnv-paint@0.1.0 test:spec
+> python3 dev/verify-spec.py
+
+TRACE PASS: 386 unique requirements, 386 unique verification procedures, 7 needs; metadata and Markdown closure valid.
+MAP PASS: 169 unique contracts; all required fields; known dependencies; maximum 3 collaborators; no cycles.
+LINK PASS: local document links resolve; all 17 conceptual design owners bound.
+REQUIREMENT STATUS: PASS 16; FAIL 0; UNTESTED 370. Status is recorded evidence; this audit does not execute product behavior.
+ANALYTICAL ORACLE width=100: 56654.424808105 mm3; not a kernel test.
+ANALYTICAL ORACLE width=120: 68654.424808105 mm3; not a kernel test.

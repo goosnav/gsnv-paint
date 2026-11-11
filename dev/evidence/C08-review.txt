@@ -1,0 +1,5 @@
+Independent C08 review, read-only
+
+Initial review: 19 focused tests passed, but two Important defects were found: a rotated antipodal center arc selected the wrong semicircle; shallow arcs could reconstruct anchors or supplied tangents outside document tolerance. Exact regressions are in the committed testbench and RED logs.
+
+Follow-up after repairs: all 23 focused tests and typecheck passed. Reviewer found no remaining Critical or Important issues in C08. Both original findings were resolved; local-extent residual checks and supplied-vector tangent construction matched the documented policy. UI, solver, persistence and malformed caller-precondition inputs were outside this review. The reviewer made no file changes.
