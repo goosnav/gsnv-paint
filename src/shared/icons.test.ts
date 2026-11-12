@@ -18,7 +18,7 @@ test('S09 golden accessible original close glyph', () => {
   assert.deepEqual({ ...svg }, {
     namespace: 'http://www.w3.org/2000/svg', tag: 'svg', textContent: '',
     attributes: { viewBox: '0 0 24 24', width: '16', height: '16', role: 'img', 'aria-label': 'Close',
-      focusable: 'false', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.7', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' },
+      focusable: 'false', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.5', 'stroke-linecap': 'square', 'stroke-linejoin': 'miter', 'shape-rendering': 'crispEdges', 'data-icon': 'close' },
     children: [Object.assign(new Element('http://www.w3.org/2000/svg', 'title'), { textContent: 'Close' }),
       Object.assign(new Element('http://www.w3.org/2000/svg', 'path'), { attributes: { d: 'M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5' } })],
   });

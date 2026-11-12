@@ -33,6 +33,8 @@ const CAD_KEYS: Readonly<Record<string, string>> = { f: 'view.fit', v: 'cad.sele
 const IMAGE_KEYS: Readonly<Record<string, string>> = {
   x: 'color.swap', d: 'color.reset', s: 'image.select', p: 'image.pencil', b: 'image.brush', e: 'image.eraser',
   g: 'image.fill', i: 'image.picker', l: 'image.line', r: 'image.rectangle', o: 'image.ellipse', t: 'image.text', f: 'view.fit',
+  v: 'image.move', m: 'image.ellipseSelect', q: 'image.lasso', w: 'image.wand', a: 'image.airbrush', c: 'image.clone', u: 'image.blur', n: 'image.gradient',
+  '[': 'image.sizeDown', ']': 'image.sizeUp',
 };
 const PHOTO_KEYS: Readonly<Record<string, string>> = { '\\': 'photo.beforeAfter', r: 'photo.crop' };
 const VIDEO_KEYS: Readonly<Record<string, string>> = {

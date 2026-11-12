@@ -1,23 +1,26 @@
 /*
- * gsnv-paint design tokens. Neutral dark "studio" surfaces keep colour judgement unbiased and let the
- * artwork be the brightest thing on screen; one accent marks state (active, selected, focus, primary).
- * Every workspace stylesheet uses these properties instead of literal colours. See dev/PLAN-2026-11-12.md.
+ * gsnv-paint design system: a better Windows XP (Luna Blue). See dev/DESIGN-XP.md and DECISIONS D24.
+ * World: the XP desktop at 96 dpi — Luna blue title bars, beige 3D control faces, Explorer task panes.
+ * Focus: the canvas and the active tool. Signature: genuine 8 pt Tahoma pixel text and crisp pixel icons.
+ * "Better" means: one 4 px spacing grid, larger hit targets, accessible contrast, no clutter, consistent states.
  */
+@font-face { font-family:"Pixel Tahoma"; font-weight:400; font-display:block; src:url("./fonts/pixel-tahoma.woff2") format("woff2"); }
+@font-face { font-family:"Pixel Tahoma"; font-weight:700; font-display:block; src:url("./fonts/pixel-tahoma-bold.woff2") format("woff2"); }
 :root {
-  color-scheme: dark;
-  --surface-app:#16171a; --surface-panel:#1e1f23; --surface-raised:#26282d; --surface-control:#2d2f35;
-  --surface-hover:#363941; --surface-pressed:#40444d; --surface-well:#111214; --surface-menu:#25272c;
-  --text-primary:#e8e9ec; --text-secondary:#a3a7b0; --text-muted:#7c808a; --text-on-accent:#fff;
-  --line:#2f3137; --line-strong:#3b3e46; --line-focus:#4f8cff;
-  --accent:#4f8cff; --accent-hover:#6a9dff; --accent-subtle:#4f8cff26; --accent-strong:#3a74e0;
-  --success:#3fb68b; --warning:#e0a43b; --danger:#ef5d5d; --danger-subtle:#ef5d5d1f;
-  --radius-s:4px; --radius:6px; --radius-l:10px;
-  --shadow-float:0 12px 32px #00000073,0 2px 6px #00000052;
-  --font-ui:"Inter","Segoe UI Variable Text","Segoe UI","SF Pro Text",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
-  --font-size:12.5px; --font-size-s:11px;
-  --ease:cubic-bezier(.2,.7,.2,1); --fast:120ms;
+  color-scheme: light;
+  /* Luna Blue */
+  --xp-title-1:#0a5ae6; --xp-title-2:#2c80f7; --xp-title-3:#0848d4; --xp-title-edge:#0831a8; --xp-title-text:#ffffff;
+  --xp-task-1:#3a81f3; --xp-task-2:#1f5fd8; --xp-task-active:#1e48aa; --xp-task-edge:#0c2f86;
+  --xp-face:#ece9d8; --xp-face-light:#f6f5ee; --xp-face-dark:#d8d4c4; --xp-shadow:#aca899; --xp-dark:#716f64; --xp-white:#ffffff;
+  --xp-pane-1:#7ba2e7; --xp-pane-2:#6375d6; --xp-group-head-1:#ffffff; --xp-group-head-2:#c6d3f7; --xp-group-text:#215dc6; --xp-group-body:#d6dff7; --xp-group-edge:#ffffff;
+  --xp-button-edge:#003c74; --xp-hover:#f8b330; --xp-hover-soft:#ffe7a2; --xp-highlight:#316ac5; --xp-highlight-text:#ffffff;
+  --xp-field:#ffffff; --xp-field-edge:#7f9db9; --xp-text:#000000; --xp-text-muted:#4d4d4d; --xp-disabled:#a19f92;
+  --xp-workspace:#808080; --xp-error:#c50f0f; --xp-ok:#2f7d32; --xp-warn:#8a5a00;
+  --font-ui:"Pixel Tahoma",Tahoma,"Segoe UI",Verdana,sans-serif;
+  /* Pixel text is exact at 11 px (and 22 px); never use other sizes for it. */
+  --text:11px; --text-large:22px;
 
-  /* Original XP-style cursors (src/shared/cursors). Hotspots match each drawing's working point. */
+  /* Original XP-style cursors (src/shared/cursors). */
   --cursor-arrow:url("./cursors/arrow.svg") 2 2, default;
   --cursor-hand:url("./cursors/hand.svg") 11 2, pointer;
   --cursor-text:url("./cursors/text.svg") 16 16, text;
@@ -36,12 +39,39 @@
   --cursor-zoom:url("./cursors/zoom.svg") 12 12, zoom-in;
 }
 html { cursor:var(--cursor-arrow); }
-html,body { background:var(--surface-app); color:var(--text-primary); font-family:var(--font-ui); font-size:var(--font-size); -webkit-font-smoothing:antialiased; }
+html,body { background:var(--xp-face); color:var(--xp-text); font:var(--text)/1.45 var(--font-ui); -webkit-font-smoothing:none; text-rendering:optimizeSpeed; }
+button,input,select,textarea,summary { font:inherit; }
+svg,canvas,img { image-rendering:pixelated; }
 /* XP convention: controls keep the arrow; links and link-like targets show the hand. */
 button,select,summary,[role=tab],[role=button],input[type=checkbox],input[type=radio],input[type=range],input[type=color] { cursor:var(--cursor-arrow); }
 a[href],[data-cursor=hand] { cursor:var(--cursor-hand); }
 input:not([type=checkbox],[type=radio],[type=range],[type=color],[type=button]),textarea,[contenteditable=true] { cursor:var(--cursor-text); }
 :disabled { cursor:var(--cursor-arrow); }
 [aria-busy=true],[aria-busy=true] * { cursor:var(--cursor-busy) !important; }
-::selection { background:#4f8cff59; }
-* { scrollbar-width:thin; scrollbar-color:#454953 transparent; }
+::selection { background:var(--xp-highlight); color:var(--xp-highlight-text); }
+
+/* XP push button (also used by workspace stylesheets through .xp-button). */
+.xp-button,.gc-dialog button { min-height:23px; padding:0 12px; color:var(--xp-text); border:1px solid var(--xp-button-edge); border-radius:3px; background:linear-gradient(#ffffff,#f3f3ef 45%,#e6e5dc 85%,#d6d0c5); box-shadow:inset 0 -1px 0 #c9c4b5; }
+.xp-button:not(:disabled):hover,.gc-dialog button:not(:disabled):hover { box-shadow:inset 0 0 0 2px var(--xp-hover-soft),inset 0 -1px 0 var(--xp-hover); }
+.xp-button:not(:disabled):active,.gc-dialog button:not(:disabled):active { background:linear-gradient(#e3e2da,#ebeae2); box-shadow:inset 1px 1px 0 #cfccc0; }
+.xp-button:disabled,.gc-dialog button:disabled { color:var(--xp-disabled); border-color:#c9c7ba; background:#f5f4ea; box-shadow:none; }
+.xp-button[aria-pressed=true],.xp-button[aria-checked=true] { background:linear-gradient(#dcdbd2,#ecebe4); box-shadow:inset 1px 1px 0 #b9b6a8; }
+/* XP text field and drop-down. */
+.xp-field,.gc-dialog input:not([type=checkbox]),.gc-dialog select { min-height:21px; padding:1px 4px; color:var(--xp-text); background:var(--xp-field); border:1px solid var(--xp-field-edge); border-radius:0; }
+/* XP focus: a dotted rectangle, never a glow. */
+:focus { outline:none; }
+:focus-visible { outline:1px dotted #000; outline-offset:-4px; }
+input:focus-visible,select:focus-visible { outline:1px dotted #000; outline-offset:1px; }
+/* XP trackbar: sunken groove and a pointed thumb. */
+input[type=range].xp-range { -webkit-appearance:none; appearance:none; height:22px; margin:0; background:transparent; }
+input[type=range].xp-range::-webkit-slider-runnable-track { height:4px; border-top:1px solid #9d9c99; border-left:1px solid #9d9c99; border-bottom:1px solid #fff; border-right:1px solid #fff; background:#ecebe6; }
+input[type=range].xp-range::-webkit-slider-thumb { -webkit-appearance:none; width:11px; height:19px; margin-top:-9px; border:1px solid #6a8cbf; border-radius:2px 2px 5px 5px / 2px 2px 8px 8px; background:linear-gradient(#fdfdfd,#e9e8e3 70%,#21a121 72%,#21a121 86%,#e9e8e3 88%); }
+input[type=range].xp-range:not(:disabled):hover::-webkit-slider-thumb { border-color:var(--xp-hover); }
+input[type=range].xp-range::-moz-range-track { height:2px; border:1px solid #9d9c99; background:#ecebe6; }
+input[type=range].xp-range::-moz-range-thumb { width:9px; height:17px; border:1px solid #6a8cbf; border-radius:2px; background:linear-gradient(#fdfdfd,#e9e8e3); }
+input[type=number].xp-field { width:52px; text-align:right; }
+/* Luna scrollbars. */
+::-webkit-scrollbar { width:17px; height:17px; background:#f4f3ee; }
+::-webkit-scrollbar-thumb { border:1px solid #fff; outline:1px solid #b8cbf5; outline-offset:-2px; border-radius:3px; background:linear-gradient(90deg,#c8d6fb,#bacbf8 50%,#a9bef4); }
+::-webkit-scrollbar-thumb:horizontal { background:linear-gradient(#c8d6fb,#bacbf8 50%,#a9bef4); }
+::-webkit-scrollbar-corner { background:var(--xp-face); }

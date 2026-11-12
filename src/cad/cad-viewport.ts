@@ -29,7 +29,7 @@ export function cadViewport(host:HTMLElement):Handle {
   let model:CADView|undefined,disposed=false,renderer:THREE.WebGLRenderer|null=null,controls:OrbitControls|null=null;
   let mesh:THREE.Mesh|null=null,edges:THREE.LineSegments|null=null,lastSolid:SolidPreview|null=null;
   let scale=PIXELS_PER_MM,origin:{x:number;y:number}|null=null;
-  const scene=new THREE.Scene();scene.background=new THREE.Color('#1a1d22');
+  const scene=new THREE.Scene();scene.background=new THREE.Color('#dfe6ef');
   const camera=new THREE.OrthographicCamera(-150,150,100,-100,0.01,1e8);camera.up.set(0,0,1);
   scene.add(new THREE.AmbientLight(0xffffff,1.6));const light=new THREE.DirectionalLight(0xffffff,3);light.position.set(100,-200,350);scene.add(light);
   const size=()=>({width:Math.max(1,host.clientWidth),height:Math.max(1,host.clientHeight)});
@@ -39,21 +39,21 @@ export function cadViewport(host:HTMLElement):Handle {
   function drawSketch(){
     if(!model)return;svg.replaceChildren();const {width,height}=size();svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
     const step=10**Math.ceil(Math.log10(24/(scale*model.view.zoom))),zero=screen([0,0]),pitch=step*scale*model.view.zoom;
-    for(let x=((zero.x%pitch)+pitch)%pitch;x<width;x+=pitch)svg.append(element('line',{x1:x,y1:0,x2:x,y2:height,stroke:'#232830'}));
-    for(let y=((zero.y%pitch)+pitch)%pitch;y<height;y+=pitch)svg.append(element('line',{x1:0,y1:y,x2:width,y2:y,stroke:'#232830'}));
-    svg.append(element('line',{x1:0,y1:zero.y,x2:width,y2:zero.y,stroke:'#7a3b40'}),element('line',{x1:zero.x,y1:0,x2:zero.x,y2:height,stroke:'#2f6a49'}));
-    const color=model.state==='error'?'#ef5d5d':model.state==='fully'?'#5fd39f':'#6aa5ff';
+    for(let x=((zero.x%pitch)+pitch)%pitch;x<width;x+=pitch)svg.append(element('line',{x1:x,y1:0,x2:x,y2:height,stroke:'#dfe5ee'}));
+    for(let y=((zero.y%pitch)+pitch)%pitch;y<height;y+=pitch)svg.append(element('line',{x1:0,y1:y,x2:width,y2:y,stroke:'#dfe5ee'}));
+    svg.append(element('line',{x1:0,y1:zero.y,x2:width,y2:zero.y,stroke:'#d79a9a'}),element('line',{x1:zero.x,y1:0,x2:zero.x,y2:height,stroke:'#8fbf9a'}));
+    const color=model.state==='error'?'#c50f0f':model.state==='fully'?'#1c7a1c':'#0b3fb5';
     for(const entity of [...model.entities,...model.preview])if(entity.kind==='segment'){
       const a=screen(entity.a),b=screen(entity.b),selected=model.selected.includes(entity.id),preview=model.preview.includes(entity);
       const group=element('g',{'data-entity-id':entity.id,'data-selected':String(selected)});
       const attrs={x1:a.x,y1:a.y,x2:b.x,y2:b.y};group.append(element('line',{...attrs,stroke:'transparent','stroke-width':14}));
-      group.append(element('line',{...attrs,stroke:selected?'#ffb347':color,'stroke-width':selected?3:2,'stroke-dasharray':preview?'5 4':'none','pointer-events':'none'}));
-      for(const p of [a,b])group.append(element('circle',{cx:p.x,cy:p.y,r:3,fill:'#14171c',stroke:color,'pointer-events':'none'}));svg.append(group);
+      group.append(element('line',{...attrs,stroke:selected?'#ff7a00':color,'stroke-width':selected?3:2,'stroke-dasharray':preview?'5 4':'none','pointer-events':'none'}));
+      for(const p of [a,b])group.append(element('circle',{cx:p.x,cy:p.y,r:3,fill:'#fff',stroke:color,'pointer-events':'none'}));svg.append(group);
     }else if(entity.kind==='circle'){
       const c=screen(entity.center),r=entity.radius*scale*model.view.zoom,selected=model.selected.includes(entity.id),preview=model.preview.includes(entity);
       const group=element('g',{'data-entity-id':entity.id,'data-selected':String(selected)});
       group.append(element('circle',{cx:c.x,cy:c.y,r,fill:'none',stroke:'transparent','stroke-width':14}));
-      group.append(element('circle',{cx:c.x,cy:c.y,r,fill:'none',stroke:selected?'#ffb347':color,'stroke-width':selected?3:2,'stroke-dasharray':preview?'5 4':'none','pointer-events':'none'}));
+      group.append(element('circle',{cx:c.x,cy:c.y,r,fill:'none',stroke:selected?'#ff7a00':color,'stroke-width':selected?3:2,'stroke-dasharray':preview?'5 4':'none','pointer-events':'none'}));
       group.append(element('path',{d:`M${c.x-4} ${c.y}h8M${c.x} ${c.y-4}v8`,stroke:color,'pointer-events':'none'}));svg.append(group);
     }
     const sketch=model.content?.graph.features[0].definition.sketch;
@@ -66,10 +66,10 @@ export function cadViewport(host:HTMLElement):Handle {
       const e=model.entities.find(e=>e.id===d.entityIds[0]);if(!e||e.kind==='point')continue;
       if(e.kind==='circle'){
         const p=screen([e.center[0]+e.radius*Math.SQRT1_2,e.center[1]+e.radius*Math.SQRT1_2]);
-        svg.append(element('text',{'data-dimension-id':d.id,role:'button',tabindex:0,'aria-label':`Edit dimension ${d.value.source}`,x:p.x+6,y:p.y-6,fill:'#e8e9ec','font-size':13,class:'cad-dimension'},`⌀ ${d.value.source}`));continue;
+        svg.append(element('text',{'data-dimension-id':d.id,role:'button',tabindex:0,'aria-label':`Edit dimension ${d.value.source}`,x:p.x+6,y:p.y-6,fill:'#000','font-size':13,class:'cad-dimension'},`⌀ ${d.value.source}`));continue;
       }
       const a=screen(e.a),b=screen(e.b),horizontal=Math.abs(b.x-a.x)>=Math.abs(b.y-a.y);
-      svg.append(element('text',{'data-dimension-id':d.id,role:'button',tabindex:0,'aria-label':`Edit dimension ${d.value.source}`,x:(a.x+b.x)/2+(horizontal?0:20),y:(a.y+b.y)/2+(horizontal?23:0),fill:'#e8e9ec','font-size':13,'text-anchor':'middle',class:'cad-dimension'},d.value.source));
+      svg.append(element('text',{'data-dimension-id':d.id,role:'button',tabindex:0,'aria-label':`Edit dimension ${d.value.source}`,x:(a.x+b.x)/2+(horizontal?0:20),y:(a.y+b.y)/2+(horizontal?23:0),fill:'#000','font-size':13,'text-anchor':'middle',class:'cad-dimension'},d.value.source));
     }
   }
   function clearSolid(){
@@ -106,8 +106,8 @@ export function cadViewport(host:HTMLElement):Handle {
       if(!startGL())return;
       if(value.solid!==lastSolid){clearSolid();if(value.solid){
         const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.BufferAttribute(value.solid.positions,3));geometry.setIndex(new THREE.BufferAttribute(value.solid.indices,1));geometry.computeVertexNormals();
-        mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:0x8fa3b8,metalness:.12,roughness:.55}));scene.add(mesh);
-        edges=new THREE.LineSegments(new THREE.EdgesGeometry(geometry),new THREE.LineBasicMaterial({color:0x0e1116}));scene.add(edges);lastSolid=value.solid;fit();
+        mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:0xa8bfd6,metalness:.08,roughness:.6}));scene.add(mesh);
+        edges=new THREE.LineSegments(new THREE.EdgesGeometry(geometry),new THREE.LineBasicMaterial({color:0x1d3b5c}));scene.add(edges);lastSolid=value.solid;fit();
       }}
       if(!value.solid)notice.textContent='No solid to display. Create a closed sketch, then extrude it.';drawSolid();
     },fit,

@@ -5,7 +5,8 @@
  *            OUT: SVGSVGElement with 24-unit viewBox, accessible label and local paths.
  *            RAISES: RangeError for unknown glyph or nonfinite/out-of-range size.
  * GUARANTEES No fetched imagery, Microsoft assets, markup injection or shared DOM nodes.
- * TUNING     PATHS is the original glyph catalog; STROKE_WIDTH controls optical weight.
+ * TUNING     PATHS is the original glyph catalog; STROKE_WIDTH controls optical weight. Glyphs render
+ *            with crisp (aliased) edges for the XP pixel look; colour per glyph comes from chrome.css.
  * DECISIONS  D1: Draw app-specific paths rather than ship a stock icon package, keeping
  *            the visual vocabulary original and locally available. Revisit if: the
  *            owner changes the original-assets requirement.
@@ -20,7 +21,8 @@ export const iconCatalog: readonly string[] = Object.freeze([
   'app', 'cad', 'image', 'photo', 'video', 'new', 'open', 'save', 'undo', 'redo', 'cut', 'copy', 'paste',
   'delete', 'select', 'hand', 'zoomIn', 'zoomOut', 'fit', 'history', 'properties', 'layers',
   'grid', 'ruler', 'line', 'rectangle', 'extrude',
-  'pencil', 'brush', 'eraser', 'fill', 'picker', 'ellipse', 'text', 'crop', 'rotate', 'flip', 'export', 'close', 'help', 'chevronRight', 'chevronDown',
+  'pencil', 'brush', 'eraser', 'fill', 'picker', 'ellipse', 'text', 'crop', 'rotate', 'flip',
+  'move', 'ellipseSelect', 'lasso', 'wand', 'airbrush', 'clone', 'blur', 'gradient', 'layerAdd', 'export', 'close', 'help', 'chevronRight', 'chevronDown',
 ]);
 
 const PATHS: Readonly<Record<string, string>> = {
@@ -61,13 +63,22 @@ const PATHS: Readonly<Record<string, string>> = {
   crop: 'M6 2v16h16M2 6h16v16',
   rotate: 'M4 12a8 8 0 1 0 3-6.2M4 3v4h4',
   flip: 'M12 2v20M9 6 3 18h6zM15 6l6 12h-6z',
+  move: 'M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3',
+  ellipseSelect: 'M12 4h3M19 6l1 2M21 12v1M19 17l-2 2M13 20h-3M6 19l-2-2M3 12v-1M5 7l2-2',
+  lasso: 'M6 15c-3-2-3-7 2-9s11-1 12 3-4 7-9 7c-2 0-3 1-3 3s2 3 2 3M6 15c1 1 3 1 3-1',
+  wand: 'M3 21 15 9M15 9l2 2M17 3v3M20 5h-3M21 9h-3M13 4l2 2',
+  airbrush: 'M4 20l7-7M11 13l3 3 6-6-3-3zM17 4h1M20 6h1M15 2h1M21 2h1',
+  clone: 'M8 3h8v6H8zM12 9v4M6 13h12v3H6zM8 16v5h8v-5',
+  blur: 'M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11M9 15h2M10 18h4',
+  gradient: 'M3 3h18v18H3zM7 3v18M11 3v18M15 3v18',
+  layerAdd: 'M12 3 22 8l-10 5L2 8zM2 13l10 5 4-2M19 15v6M16 18h6',
   extrude: 'M3 12l9-5 9 5v7l-9 4-9-4zM3 12l9 5 9-5M12 17v6M12 13V1M8 5l4-4 4 4',
   close: 'M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5',
   help: 'M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0M9 8a3 3 0 0 1 6 0c0 3-3 2-3 5M12 17h0',
   chevronRight: 'M8 4l8 8-8 8',
   chevronDown: 'M4 8l8 8 8-8',
 };
-const STROKE_WIDTH = 1.7;
+const STROKE_WIDTH = 1.5;
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 export function renderIcon({ document, name, label, size }: IconRequest): SVGSVGElement {
@@ -76,7 +87,7 @@ export function renderIcon({ document, name, label, size }: IconRequest): SVGSVG
   const svg = document.createElementNS(SVG_NAMESPACE, 'svg');
   const attributes = { viewBox: '0 0 24 24', width: String(size), height: String(size), role: 'img',
     'aria-label': label, focusable: 'false', fill: 'none', stroke: 'currentColor',
-    'stroke-width': String(STROKE_WIDTH), 'stroke-linecap': 'round', 'stroke-linejoin': 'round' };
+    'stroke-width': String(STROKE_WIDTH), 'stroke-linecap': 'square', 'stroke-linejoin': 'miter', 'shape-rendering': 'crispEdges', 'data-icon': name };
   for (const [key, value] of Object.entries(attributes)) svg.setAttribute(key, value);
   const title = document.createElementNS(SVG_NAMESPACE, 'title');
   title.textContent = label;

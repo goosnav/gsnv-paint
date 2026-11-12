@@ -186,3 +186,13 @@ The owner asked for a Lightroom-style editor that makes RAW pictures look profes
 RAW decoding uses `libraw-wasm` 1.6.0 (ISC wrapper, unmodified LibRaw under CDDL-1.0/LGPL-2.1, loaded as a separate wasm module; notice in [licenses](licenses/libraw-wasm-1.6.0.NOTICE.txt)). Alternatives: extracting the embedded JPEG preview (not real RAW development) or dcraw.js (GPL, unmaintained). Decode settings are gamma 1/1, 16 bit, camera white balance and no auto-brightening, giving linear sRGB for the pipeline.
 
 The pipeline (`src/photo/develop.ts`) is one pure function shared by preview and export. Its design is described in [PHOTO-WORKFLOW.md](PHOTO-WORKFLOW.md). Alternative: a WebGL shader preview with a CPU export path; rejected for now because two implementations would drift. Revisit if interactive speed on high-DPI screens becomes the main complaint. The project stores the original file so every edit stays re-renderable; the test fixture is a CC0 DNG from raw.pixls.us.
+
+## D24 — a better Windows XP design system (supersedes D22)
+
+The owner rejected D22's dark studio theme as "modern AI slop" and asked for an actually better Windows XP: Luna colours and framework, a slightly pixelly look everywhere, an XP cursor and slider-plus-number controls. The design is specified in [DESIGN-XP.md](DESIGN-XP.md), with World, Focus and Signature from the Goosnav anti-slop field guide. D22's cursors are kept; its tokens and dark palette are replaced.
+
+Pixel text: browsers smooth web fonts and ignore embedded bitmap strikes, so XP's crisp Tahoma 8 pt cannot be reproduced with Tahoma itself. `dev/fonts/build-pixel-tahoma.py` converts the 11 ppem bitmap strikes of Wine's Tahoma (regular and bold; WineTahoma is based on Bitstream Vera and renamed per the Vera licence; notice in [licenses](licenses/pixel-tahoma.NOTICE.txt)) into outline fonts whose glyphs are whole-pixel squares. At 11 px (or 22 px) every glyph edge falls on a device pixel. Alternatives were game pixel fonts (Pixelify, Tiny5, Silkscreen; OFL), which were rejected because none reads as XP, and the system Tahoma, which is absent on Linux/macOS and antialiased. The UI therefore uses only 11 px and 22 px text.
+
+Icons render with `shape-rendering: crispEdges`, square caps and per-glyph XP colours. The canvas well is the XP AppWorkspace grey. CAD returns to a light drafting sheet. Image and Photo keep neutral grey around the artwork.
+
+The skill's cleanup workflow (approval packet, local branch, no push) was not followed literally: the owner gave the direction directly and asked for continued work with pushes to main at checkpoints. Its field-guide rules (no glows, blobs, pillowing, emoji or vague copy) are applied within the XP World.

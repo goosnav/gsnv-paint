@@ -1,29 +1,43 @@
 /**
- * PURPOSE    Render the Image workspace colour and tool-option panel.
+ * PURPOSE    Render the Image workspace Colours and Tool Options panel.
  * KIND       SHELL
- * CONTRACT   IN: panel root and onChange callback. update(model) shows primary/secondary colours,
- *            the swatch palette, tool size, shape style and a read-only information line.
- *            OUT: {update,dispose}. Left-click a swatch sets primary, right-click sets secondary;
- *            the colour inputs edit either colour; size and style controls report exact values.
+ * CONTRACT   IN: panel root and onChange callback. update(model) shows primary/secondary colours, the swatch
+ *            palette and the active tool's options. Numeric options pair an XP trackbar with a typed number
+ *            box (applied on input for the trackbar, on Enter/blur for the box, clamped to range).
+ *            OUT: {update,dispose}. Left-click a swatch sets primary, right-click secondary.
  *            RAISES: TypeError for a missing root/callback.
  * GUARANTEES No document edits; every change routes through onChange. Listeners removed on dispose.
- * TUNING     SWATCHES is the default 28-colour palette; SIZES are the quick size choices.
- * DECISIONS  D1: Native colour inputs rather than a custom picker: accessible and exact.
- *            Revisit if: alpha editing is required (native inputs are opaque only).
- * LIMITS     Opaque colour editing; no saved custom palettes.
+ * TUNING     SWATCHES (28 colours) and OPTIONS (per-tool option list with ranges).
+ * DECISIONS  D1: Trackbar plus number box for every numeric option (owner direction): drag for feel,
+ *            type for exact values. Native colour inputs for exact colour entry.
+ * LIMITS     Opaque colour editing; no saved custom palettes or brush presets.
  * TESTBENCH  src/image/image-palette.test.ts -- run with: node --import tsx --test src/image/image-palette.test.ts
  */
 import type { RGBA } from './raster-ops.ts';
+import type { ImageTool } from './image-tool-input.ts';
 
-export type ShapeStyle = 'outline' | 'fill' | 'both';
-export type PaletteModel = { primary: RGBA; secondary: RGBA; size: number; style: ShapeStyle; info: string; enabled: boolean };
-export type PaletteChange = { kind: 'primary' | 'secondary'; color: RGBA } | { kind: 'size'; size: number } | { kind: 'style'; style: ShapeStyle } | { kind: 'swap' };
+export type ToolOptions = { size: number; hardness: number; opacity: number; flow: number; tolerance: number; contiguous: boolean; style: 'outline' | 'fill' | 'both'; gradient: 'linear' | 'radial'; gradientEnd: 'secondary' | 'transparent'; density: number };
+export const DEFAULT_OPTIONS: ToolOptions = { size: 8, hardness: 80, opacity: 100, flow: 100, tolerance: 32, contiguous: true, style: 'outline', gradient: 'linear', gradientEnd: 'secondary', density: 40 };
+export type PaletteModel = { primary: RGBA; secondary: RGBA; tool: ImageTool; options: ToolOptions; info: string; enabled: boolean };
+export type PaletteChange = { kind: 'primary' | 'secondary'; color: RGBA } | { kind: 'swap' } | { kind: 'option'; key: keyof ToolOptions; value: ToolOptions[keyof ToolOptions] };
+type NumberKey = 'size' | 'hardness' | 'opacity' | 'flow' | 'tolerance' | 'density';
+const RANGES: Record<NumberKey, { label: string; min: number; max: number; unit: string }> = {
+  size: { label: 'Size', min: 1, max: 500, unit: 'px' }, hardness: { label: 'Hardness', min: 0, max: 100, unit: '%' }, opacity: { label: 'Opacity', min: 1, max: 100, unit: '%' },
+  flow: { label: 'Flow', min: 1, max: 100, unit: '%' }, tolerance: { label: 'Tolerance', min: 0, max: 255, unit: '' }, density: { label: 'Density', min: 1, max: 200, unit: '' },
+};
+type Choice = { key: 'style' | 'gradient' | 'gradientEnd'; label: string; choices: [string, string][] };
+const STYLE: Choice = { key: 'style', label: 'Shapes', choices: [['outline', 'Outline'], ['fill', 'Fill'], ['both', 'Outline and fill']] };
+export const OPTIONS: Record<ImageTool, readonly (NumberKey | Choice | 'contiguous')[]> = {
+  move: [], select: [], ellipseSelect: [], lasso: [], wand: ['tolerance', 'contiguous'], picker: [], text: [],
+  pencil: ['size'], brush: ['size', 'hardness', 'opacity', 'flow'], airbrush: ['size', 'density', 'opacity'], eraser: ['size', 'hardness', 'opacity'],
+  clone: ['size', 'hardness', 'opacity'], blur: ['size', 'hardness', 'opacity'], fill: ['tolerance', 'contiguous', 'opacity'],
+  gradient: [{ key: 'gradient', label: 'Shape', choices: [['linear', 'Linear'], ['radial', 'Radial']] }, { key: 'gradientEnd', label: 'Ends at', choices: [['secondary', 'Secondary colour'], ['transparent', 'Transparent']] }, 'opacity'],
+  line: ['size'], rectangle: ['size', STYLE], ellipse: ['size', STYLE],
+};
 export const SWATCHES: readonly string[] = [
-  '#000000', '#7f7f7f', '#880015', '#ed1c24', '#ff7f27', '#fff200', '#22b14c', '#00a2e8', '#3f48cc', '#a349a4', '#5b3a1e', '#1f5f5b', '#2d2d6b', '#6b1f4f',
-  '#ffffff', '#c3c3c3', '#b97a57', '#ffaec9', '#ffc90e', '#efe4b0', '#b5e61d', '#99d9ea', '#7092be', '#c8bfe7', '#e8d3b0', '#a8e6cf', '#d0d8ff', '#f4c2e0',
+  '#000000', '#808080', '#800000', '#808000', '#008000', '#008080', '#000080', '#800080', '#808040', '#004040', '#0080ff', '#004080', '#8000ff', '#804000',
+  '#ffffff', '#c0c0c0', '#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#ffff80', '#00ff80', '#80ffff', '#8080ff', '#ff0080', '#ff8040',
 ];
-const SIZES = [1, 2, 3, 5, 8, 12, 20];
-
 export const hex = (c: RGBA) => `#${[c[0], c[1], c[2]].map(v => v.toString(16).padStart(2, '0')).join('')}`;
 export const parseHex = (value: string): RGBA => {
   if (!/^#[0-9a-f]{6}$/i.test(value)) throw new RangeError('Colours are #rrggbb.');
@@ -33,46 +47,68 @@ export const parseHex = (value: string): RGBA => {
 export function imagePalette({ root, onChange }: { root: HTMLElement; onChange: (change: PaletteChange) => void }) {
   if (!root?.ownerDocument || typeof onChange !== 'function') throw new TypeError('The palette needs a root and change callback.');
   const document = root.ownerDocument;
-  const make = <K extends keyof HTMLElementTagNameMap>(tag: K, className = '', text = '') => { const node = document.createElement(tag); if (className) node.className = className; if (text) node.textContent = text; return node; };
+  const make = <K extends keyof HTMLElementTagNameMap>(tag: K, className = '', text = '') => { const n = document.createElement(tag); if (className) n.className = className; if (text) n.textContent = text; return n; };
   root.className = 'image-palette'; root.replaceChildren();
-  const current = make('div', 'image-current'), primary = make('input', 'image-primary'), secondary = make('input', 'image-secondary'), swap = make('button', 'image-swap', '⇄');
+  const current = make('div', 'image-current'), primary = make('input', 'image-primary'), secondary = make('input', 'image-secondary'), swap = make('button', 'xp-button image-swap', '⇄');
   for (const [input, label] of [[primary, 'Primary colour'], [secondary, 'Secondary colour']] as const) { input.type = 'color'; input.setAttribute('aria-label', label); input.title = label; }
   swap.type = 'button'; swap.title = 'Swap colours (X)'; swap.setAttribute('aria-label', swap.title);
   current.append(primary, secondary, swap);
   const grid = make('div', 'image-swatches'); grid.setAttribute('role', 'group'); grid.setAttribute('aria-label', 'Colour palette. Click for primary, right-click for secondary.');
   for (const value of SWATCHES) { const b = make('button', 'image-swatch'); b.type = 'button'; b.dataset.color = value; b.style.background = value; b.title = `${value} — click: primary, right-click: secondary`; b.setAttribute('aria-label', value); grid.append(b); }
-  const sizeHeading = make('h3', '', 'Size'), sizes = make('div', 'image-sizes'); sizes.setAttribute('role', 'radiogroup'); sizes.setAttribute('aria-label', 'Tool size');
-  for (const size of SIZES) { const b = make('button', 'image-size'); b.type = 'button'; b.dataset.size = String(size); b.setAttribute('role', 'radio'); b.setAttribute('aria-label', `${size} px`); b.title = `${size} px`; const dot = make('span'); dot.style.width = dot.style.height = `${Math.min(size, 16)}px`; b.append(dot); sizes.append(b); }
-  const sizeInput = make('input', 'image-size-input'); sizeInput.type = 'number'; sizeInput.min = '1'; sizeInput.max = '512'; sizeInput.step = '1'; sizeInput.setAttribute('aria-label', 'Tool size in pixels');
-  const styleLabel = make('label', 'image-style-label', 'Shapes '), style = make('select', 'image-style');
-  for (const [value, label] of [['outline', 'Outline'], ['fill', 'Fill'], ['both', 'Outline and fill']]) { const o = make('option', '', label); o.value = value!; style.append(o); }
-  styleLabel.append(style);
-  const info = make('p', 'image-info'); info.setAttribute('aria-live', 'polite');
-  root.append(current, grid, sizeHeading, sizes, sizeInput, styleLabel, info);
+  const heading = make('h3', '', 'Tool options'), options = make('div', 'image-options'), info = make('p', 'image-info'); info.setAttribute('aria-live', 'polite');
+  root.append(current, grid, heading, options, info);
+  let shown = '', model: PaletteModel | null = null;
 
+  function build(tool: ImageTool) {
+    options.replaceChildren(); shown = tool;
+    if (!OPTIONS[tool].length) options.append(make('p', 'image-none', 'This tool has no options.'));
+    for (const option of OPTIONS[tool]) {
+      const row = make('div', 'image-option');
+      if (option === 'contiguous') { const label = make('label', 'image-check'), box = make('input'); box.type = 'checkbox'; box.dataset.option = 'contiguous'; label.append(box, document.createTextNode(' Contiguous')); row.append(label); }
+      else if (typeof option === 'object') {
+        const label = make('label', '', option.label), select = make('select', 'xp-field'); select.dataset.option = option.key; select.id = `image-option-${option.key}`; label.htmlFor = select.id;
+        for (const [value, text] of option.choices) { const o = make('option', '', text); o.value = value; select.append(o); } row.append(label, select);
+      } else {
+        const r = RANGES[option], label = make('label', '', r.label), range = make('input', 'xp-range'), number = make('input', 'xp-field');
+        range.type = 'range'; number.type = 'number'; for (const n of [range, number]) { n.min = String(r.min); n.max = String(r.max); n.step = '1'; n.dataset.option = option; }
+        range.id = `image-option-${option}`; label.htmlFor = range.id; number.setAttribute('aria-label', `${r.label}${r.unit ? ` (${r.unit})` : ''}`); row.append(label, range, number);
+      }
+      options.append(row);
+    }
+  }
   const click = (event: MouseEvent) => {
-    const target = event.target as HTMLElement, swatch = target.closest<HTMLElement>('[data-color]'), size = target.closest<HTMLElement>('[data-size]');
+    const target = event.target as HTMLElement, swatch = target.closest<HTMLElement>('[data-color]');
     if (swatch) onChange({ kind: event.type === 'contextmenu' ? 'secondary' : 'primary', color: parseHex(swatch.dataset.color!) });
-    else if (size && event.type === 'click') onChange({ kind: 'size', size: Number(size.dataset.size) });
     else if (target === swap && event.type === 'click') onChange({ kind: 'swap' });
     else return;
     event.preventDefault();
   };
   const input = (event: Event) => {
-    const target = event.target;
-    if (target === primary || target === secondary) onChange({ kind: target === primary ? 'primary' : 'secondary', color: parseHex((target as HTMLInputElement).value) });
-    else if (target === sizeInput) { const value = Number(sizeInput.value); if (Number.isInteger(value) && value >= 1 && value <= 512) onChange({ kind: 'size', size: value }); }
-    else if (target === style) onChange({ kind: 'style', style: style.value as ShapeStyle });
+    const target = event.target as HTMLInputElement | HTMLSelectElement;
+    if (target === primary || target === secondary) { onChange({ kind: target === primary ? 'primary' : 'secondary', color: parseHex(target.value) }); return; }
+    const key = target.dataset.option as keyof ToolOptions | undefined; if (!key) return;
+    if (target.tagName === 'SELECT') { if (event.type === 'change') onChange({ kind: 'option', key, value: target.value as never }); return; }
+    if (target.type === 'checkbox') { if (event.type === 'change') onChange({ kind: 'option', key, value: target.checked }); return; }
+    if (target.type === 'number' && event.type === 'input') return; // Typed numbers apply on Enter or blur.
+    const r = RANGES[key as NumberKey], value = Math.round(Number(target.value));
+    if (!Number.isFinite(value) || target.value === '') { render(); return; }
+    onChange({ kind: 'option', key, value: Math.min(r.max, Math.max(r.min, value)) });
   };
   root.addEventListener('click', click); root.addEventListener('contextmenu', click); root.addEventListener('input', input); root.addEventListener('change', input);
+  function render() {
+    if (!model) return;
+    if (model.tool !== shown) build(model.tool);
+    primary.value = hex(model.primary); secondary.value = hex(model.secondary);
+    for (const control of options.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-option]')) {
+      const value = model.options[control.dataset.option as keyof ToolOptions];
+      if (control.type === 'checkbox') (control as HTMLInputElement).checked = !!value;
+      else if (document.activeElement !== control) control.value = String(value);
+    }
+    for (const control of root.querySelectorAll<HTMLButtonElement | HTMLInputElement | HTMLSelectElement>('button,input,select')) control.disabled = !model.enabled;
+    info.textContent = model.info;
+  }
   return {
-    update(model: PaletteModel) {
-      primary.value = hex(model.primary); secondary.value = hex(model.secondary);
-      for (const control of root.querySelectorAll<HTMLButtonElement | HTMLInputElement | HTMLSelectElement>('button,input,select')) control.disabled = !model.enabled;
-      for (const b of sizes.children) (b as HTMLElement).setAttribute('aria-checked', String(Number((b as HTMLElement).dataset.size) === model.size));
-      if (document.activeElement !== sizeInput) sizeInput.value = String(model.size);
-      style.value = model.style; info.textContent = model.info;
-    },
+    update(next: PaletteModel) { model = next; render(); },
     dispose() { root.removeEventListener('click', click); root.removeEventListener('contextmenu', click); root.removeEventListener('input', input); root.removeEventListener('change', input); root.replaceChildren(); },
   };
 }

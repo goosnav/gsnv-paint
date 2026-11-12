@@ -2,7 +2,8 @@
  * PURPOSE    Render the Photo Develop inspector: histogram, Auto/profile/presets and slider sections.
  * KIND       SHELL
  * CONTRACT   IN: root and callbacks. update({settings,histogram,enabled,cropMode,before,aspect}) reflects state.
- *            OUT: {update,dispose}. Slider drags call onPreview(change); release/keyboard commit calls
+ *            OUT: {update,dispose}. Each slider pairs an XP trackbar with a typed number box (Enter/blur commits).
+ *            Slider drags call onPreview(change); release/keyboard commit calls
  *            onCommit(change,label); double-clicking a slider's label resets it; buttons call onAction(id).
  *            RAISES: TypeError for a missing root or callbacks.
  * GUARANTEES No document edits; values come from SLIDERS ranges; listeners removed on dispose.
@@ -26,7 +27,7 @@ const SECTIONS: readonly [string, readonly Scalar[]][] = [
 ];
 export const ASPECTS: Record<string, number | null> = { Free: null, Original: 0, '1 : 1': 1, '4 : 5': 4 / 5, '3 : 2': 3 / 2, '16 : 9': 16 / 9 };
 const BAND_COLOURS = ['#e5484d', '#f08c3a', '#e8c547', '#4cc26e', '#3fc1c9', '#4f7cff', '#9a63e8', '#d958b5'];
-const format = (key: Scalar, v: number) => key === 'exposure' ? `${v > 0 ? '+' : ''}${v.toFixed(2)}` : key === 'sharpenRadius' ? v.toFixed(1) : key === 'straighten' ? `${v.toFixed(1)}°` : `${v > 0 && SLIDERS[key].min < 0 ? '+' : ''}${Math.round(v)}`;
+const format = (key: Scalar, v: number) => key === 'exposure' ? v.toFixed(2) : key === 'sharpenRadius' || key === 'straighten' ? v.toFixed(1) : String(Math.round(v));
 
 export function photoControls({ root, onPreview, onCommit, onAction }: { root: HTMLElement } & Callbacks) {
   if (!root?.ownerDocument || ![onPreview, onCommit, onAction].every(f => typeof f === 'function')) throw new TypeError('Photo controls need a root and callbacks.');
@@ -35,20 +36,21 @@ export function photoControls({ root, onPreview, onCommit, onAction }: { root: H
   root.className = 'photo-controls'; root.replaceChildren();
   let state: ControlsState | null = null, mixerMode: 'hue' | 'sat' | 'lum' = 'hue';
   const histogram = make('canvas', 'photo-histogram'); histogram.width = 540; histogram.height = 160; histogram.setAttribute('aria-label', 'Histogram');
-  const button = (id: string, label: string, className = 'photo-button') => { const b = make('button', className, label); b.type = 'button'; b.dataset.action = id; return b; };
+  const button = (id: string, label: string, className = 'photo-button') => { const b = make('button', `xp-button ${className}`, label); b.type = 'button'; b.dataset.action = id; return b; };
   const top = make('div', 'photo-top'), profile = make('div', 'photo-segmented');
   profile.setAttribute('role', 'radiogroup'); profile.setAttribute('aria-label', 'Profile');
   for (const [value, label] of [['color', 'Colour'], ['mono', 'B&W']] as const) { const b = button(`profile.${value}`, label, 'photo-segment'); b.setAttribute('role', 'radio'); profile.append(b); }
   top.append(button('photo.auto', 'Auto', 'photo-button photo-primary'), profile, button('photo.reset', 'Reset'));
   const presets = make('div', 'photo-presets');
   for (const name of Object.keys(PRESETS)) presets.append(button(`preset.${name}`, name, 'photo-chip'));
-  const sliders = new Map<Scalar, { input: HTMLInputElement; value: HTMLOutputElement }>();
+  const sliders = new Map<Scalar, { input: HTMLInputElement; value: HTMLInputElement }>();
+  const numberBox = (min: number, max: number, step: number, label: string) => { const n = make('input', 'xp-field photo-number'); n.type = 'number'; n.min = String(min); n.max = String(max); n.step = String(step); n.setAttribute('aria-label', `${label} value`); return n; };
   const slider = (key: Scalar) => {
-    const range = SLIDERS[key], row = make('div', 'photo-slider'), head = make('div', 'photo-slider-head'), label = make('label', '', range.label), value = make('output');
-    const input = make('input'); input.type = 'range'; input.min = String(range.min); input.max = String(range.max); input.step = String(range.step); input.dataset.key = key;
+    const range = SLIDERS[key], row = make('div', 'photo-slider'), label = make('label', '', range.label), value = numberBox(range.min, range.max, range.step, range.label);
+    const input = make('input', 'xp-range'); input.type = 'range'; input.min = String(range.min); input.max = String(range.max); input.step = String(range.step); input.dataset.key = key; value.dataset.key = key;
     input.id = `photo-${key}`; label.htmlFor = input.id; label.title = 'Double-click to reset'; label.dataset.reset = key;
     if (key === 'temperature' || key === 'tint') input.dataset.track = key;
-    head.append(label, value); row.append(head, input); sliders.set(key, { input, value }); return row;
+    row.append(label, input, value); sliders.set(key, { input, value }); return row;
   };
   const sections: HTMLElement[] = [];
   for (const [title, keys] of SECTIONS) {
@@ -61,15 +63,15 @@ export function photoControls({ root, onPreview, onCommit, onAction }: { root: H
   mixer.append(make('summary', '', 'Colour mixer'), tabs, bands);
   for (const [mode, label] of [['hue', 'Hue'], ['sat', 'Saturation'], ['lum', 'Luminance']] as const) { const b = button(`mixer.${mode}`, label, 'photo-segment'); tabs.append(b); }
   const bandInputs = BANDS.map((band, i) => {
-    const row = make('div', 'photo-slider'), head = make('div', 'photo-slider-head'), label = make('label', '', band[0]!.toUpperCase() + band.slice(1)), value = make('output'), input = make('input');
-    input.type = 'range'; input.min = '-100'; input.max = '100'; input.step = '1'; input.id = `photo-band-${band}`; label.htmlFor = input.id; label.dataset.band = String(i); input.dataset.band = String(i);
-    input.style.setProperty('--band', BAND_COLOURS[i]!); head.append(label, value); row.append(head, input); bands.append(row); return { input, value };
+    const name = band[0]!.toUpperCase() + band.slice(1), row = make('div', 'photo-slider'), label = make('label', '', name), value = numberBox(-100, 100, 1, name), input = make('input', 'xp-range');
+    input.type = 'range'; input.min = '-100'; input.max = '100'; input.step = '1'; input.id = `photo-band-${band}`; label.htmlFor = input.id; label.dataset.band = String(i); input.dataset.band = String(i); value.dataset.band = String(i);
+    label.style.setProperty('--band', BAND_COLOURS[i]!); row.append(label, input, value); bands.append(row); return { input, value };
   });
   sections.splice(4, 0, mixer);
   const geometry = make('details', 'photo-section'), aspect = make('select', 'photo-aspect'), geometryRow = make('div', 'photo-row');
   for (const name of Object.keys(ASPECTS)) { const o = make('option', '', name); o.value = name; aspect.append(o); }
   aspect.setAttribute('aria-label', 'Crop aspect ratio');
-  geometryRow.append(button('photo.crop', 'Crop', 'photo-button'), aspect, button('photo.rotateLeft', '⟲', 'photo-icon'), button('photo.rotateRight', '⟳', 'photo-icon'), button('photo.flip', '⇋', 'photo-icon'));
+  aspect.className = 'xp-field photo-aspect'; geometryRow.append(button('photo.crop', 'Crop', 'photo-button'), aspect, button('photo.rotateLeft', '⟲', 'photo-icon'), button('photo.rotateRight', '⟳', 'photo-icon'), button('photo.flip', '⇋', 'photo-icon'));
   for (const b of geometryRow.querySelectorAll('.photo-icon')) b.setAttribute('aria-label', { 'photo.rotateLeft': 'Rotate left', 'photo.rotateRight': 'Rotate right', 'photo.flip': 'Flip horizontal' }[(b as HTMLElement).dataset.action!]!);
   geometry.open = true; geometry.append(make('summary', '', 'Crop & geometry'), geometryRow, slider('straighten'), button('photo.resetCrop', 'Reset crop'));
   sections.unshift(geometry);
@@ -79,6 +81,7 @@ export function photoControls({ root, onPreview, onCommit, onAction }: { root: H
   const input = (event: Event) => {
     const target = event.target as HTMLInputElement; if (!state) return;
     if ((target as Element) === aspect) { onAction(`aspect.${aspect.value}`); return; }
+    if (target.type === 'number' && (event.type === 'input' || target.value === '' || !Number.isFinite(Number(target.value)))) return; // Typed values apply on Enter or blur.
     const change = target.dataset.key ? { [target.dataset.key]: Number(target.value) } as Partial<DevelopSettings> : target.dataset.band ? mixerChange(target) : null;
     if (!change) return;
     const label = target.dataset.key ? SLIDERS[target.dataset.key as Scalar].label : `${mixerMode === 'hue' ? 'Hue' : mixerMode === 'sat' ? 'Saturation' : 'Luminance'}: ${BANDS[Number(target.dataset.band)]}`;
@@ -128,8 +131,8 @@ export function photoControls({ root, onPreview, onCommit, onAction }: { root: H
   }
   function render() {
     if (!state) return; const s = state.settings;
-    for (const [key, { input, value }] of sliders) { if (document.activeElement !== input) input.value = String(s[key]); value.textContent = format(key, s[key]); input.style.setProperty('--fill', `${(s[key] - SLIDERS[key].min) / (SLIDERS[key].max - SLIDERS[key].min) * 100}%`); }
-    bandInputs.forEach(({ input, value }, i) => { const v = s[mixerMode][i]!; if (document.activeElement !== input) input.value = String(v); value.textContent = `${v > 0 ? '+' : ''}${v}`; input.style.setProperty('--fill', `${(v + 100) / 2}%`); });
+    for (const [key, { input, value }] of sliders) { if (document.activeElement !== input) input.value = String(s[key]); if (document.activeElement !== value) value.value = format(key, s[key]); }
+    bandInputs.forEach(({ input, value }, i) => { const v = s[mixerMode][i]!; if (document.activeElement !== input) input.value = String(v); if (document.activeElement !== value) value.value = String(v); });
     for (const b of tabs.children) b.setAttribute('aria-checked', String((b as HTMLElement).dataset.action === `mixer.${mixerMode}`));
     for (const b of profile.children) b.setAttribute('aria-checked', String((b as HTMLElement).dataset.action === `profile.${s.profile}`));
     root.querySelector('[data-action="photo.crop"]')!.setAttribute('aria-pressed', String(state.cropMode));

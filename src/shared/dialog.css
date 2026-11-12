@@ -1,21 +1,16 @@
 @import "./theme.css";
-.gc-dialog { box-sizing:border-box; width:420px; max-width:calc(100vw - 32px); max-height:calc(100vh - 32px); padding:0; border:1px solid var(--line-strong); border-radius:12px; background:var(--surface-raised); color:var(--text-primary); box-shadow:var(--shadow-float); font:var(--font-size)/1.45 var(--font-ui); }
-.gc-dialog::backdrop { background:#0a0b0d99; backdrop-filter:blur(2px); }
+/* XP dialog: Luna title bar, beige body, default button with the heavier focus border. */
+.gc-dialog { box-sizing:border-box; width:380px; max-width:calc(100vw - 32px); max-height:calc(100vh - 32px); padding:0; border:1px solid var(--xp-title-edge); border-radius:7px 7px 0 0; background:var(--xp-face); color:var(--xp-text); box-shadow:4px 4px 0 #00000040; font:var(--text)/1.45 var(--font-ui); }
+.gc-dialog::backdrop { background:transparent; }
 .gc-dialog * { box-sizing:border-box; }
-.gc-dialog-title { margin:0; padding:16px 18px 4px; font-size:15px; font-weight:600; letter-spacing:-.01em; overflow-wrap:anywhere; }
-.gc-dialog-body { padding:12px 18px 18px; }
-.gc-dialog-field { display:grid; grid-template-columns:120px minmax(0,1fr); gap:12px; align-items:center; margin-bottom:10px; }
-.gc-dialog-field span { color:var(--text-secondary); overflow-wrap:anywhere; }
-.gc-dialog input,.gc-dialog select { font:inherit; width:100%; min-height:30px; padding:4px 9px; color:var(--text-primary); background:var(--surface-well); border:1px solid var(--line-strong); border-radius:var(--radius); }
-.gc-dialog input:focus,.gc-dialog select:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-subtle); }
-.gc-dialog input[type=checkbox] { width:16px; min-height:16px; margin:3px 0; accent-color:var(--accent); }
-.gc-dialog [aria-invalid=true] { border-color:var(--danger); }
-.gc-dialog-error { margin:0 0 12px; min-height:16px; color:var(--danger); line-height:1.4; overflow-wrap:anywhere; }
-.gc-dialog-buttons { display:flex; justify-content:flex-end; gap:8px; margin-top:6px; }
-.gc-dialog button { min-width:80px; height:30px; padding:0 14px; font:inherit; font-weight:500; color:var(--text-primary); background:var(--surface-control); border:1px solid var(--line-strong); border-radius:var(--radius); }
-.gc-dialog button:not(:disabled):hover { background:var(--surface-hover); }
-.gc-dialog-buttons button:first-child { background:var(--accent); border-color:var(--accent); color:var(--text-on-accent); }
-.gc-dialog-buttons button:first-child:not(:disabled):hover { background:var(--accent-hover); }
-.gc-dialog button:disabled { color:var(--text-muted); opacity:.6; }
-.gc-dialog button:focus-visible { outline:2px solid var(--line-focus); outline-offset:2px; }
+.gc-dialog-title { margin:0; padding:6px 8px; color:#fff; font-size:var(--text); font-weight:700; text-shadow:1px 1px 0 #0a1f7a; border-radius:6px 6px 0 0; background:linear-gradient(var(--xp-title-2),var(--xp-title-1) 18%,var(--xp-title-1) 72%,var(--xp-title-3)); overflow-wrap:anywhere; }
+.gc-dialog-body { padding:12px 12px 10px; border:3px solid var(--xp-title-1); border-top:0; }
+.gc-dialog-field { display:grid; grid-template-columns:120px minmax(0,1fr); gap:8px; align-items:center; margin-bottom:8px; }
+.gc-dialog-field span { overflow-wrap:anywhere; }
+.gc-dialog input[type=checkbox] { width:13px; min-height:13px; margin:3px 0; accent-color:var(--xp-ok); }
+.gc-dialog [aria-invalid=true] { border-color:var(--xp-error) !important; }
+.gc-dialog-error { margin:0 0 8px; min-height:16px; color:var(--xp-error); overflow-wrap:anywhere; }
+.gc-dialog-buttons { display:flex; justify-content:flex-end; gap:6px; }
+.gc-dialog button { min-width:75px; }
+.gc-dialog-buttons button:first-child { box-shadow:inset 0 0 0 1px #3c7fb1,inset 0 -1px 0 #c9c4b5; }
 @media (forced-colors:active) { .gc-dialog,.gc-dialog button { border:1px solid ButtonText; } }
