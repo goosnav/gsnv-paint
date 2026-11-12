@@ -24,7 +24,7 @@ function resource() {
   } };
 }
 function fixture(workspace: Workspace) {
-  let commits: ((width: number, baseIdentity?: string) => void) | undefined;
+  let commits: ((width: number, baseIdentity?: string) => void) | undefined; let invalidate = () => {}; let label = 'Change fixture';
   let identity = ''; let current: AppDocument | undefined; let encoded = 0; let disposed = 0;
   const gestures: Gesture[] = [];
   const adapter: WorkspaceAdapter = {
@@ -38,17 +38,17 @@ function fixture(workspace: Workspace) {
     mount(host) {
       const output = host.root.ownerDocument.createElement('output'); host.root.append(output);
       const change = (width: number, baseIdentity = identity) => { assert.ok(current); host.commit({ ...current, value: { width } }, 'Change fixture width', baseIdentity); };
-      commits = change;
+      commits = change; invalidate = () => host.invalidate();
       return {
         render(document, view) { current = document; identity = document?.identity ?? ''; output.textContent = JSON.stringify({ width: (document?.value as { width: number } | undefined)?.width ?? null, view }); },
-        model: () => ({ menus: [{ id: 'fixture', label: 'Fixture', items: [{ id: 'fixture.change', label: 'Change fixture', shortcut: '', enabled: !!current }] }], tools: [], panels: [] }),
+        model: () => ({ menus: [{ id: 'fixture', label: 'Fixture', items: [{ id: 'fixture.change', label, shortcut: '', enabled: !!current }] }], tools: [], panels: [] }),
         context: () => ({ viewRole: workspace === 'cad' ? 'sketch2d' : 'canvas2d', activeTool: 'fixture', status: 'Development fixture.' }),
         command() { change((current!.value as { width: number }).width + 1); },
         gesture(value) { gestures.push(value); }, dispose() { disposed++; },
       };
     },
   };
-  return { adapter, gestures, change: (width: number, baseIdentity?: string) => commits!(width, baseIdentity), get encoded() { return encoded; }, get disposed() { return disposed; } };
+  return { adapter, gestures, change: (width: number, baseIdentity?: string) => commits!(width, baseIdentity), relabel(next: string) { label = next; invalidate(); }, get encoded() { return encoded; }, get disposed() { return disposed; } };
 }
 function nativeHandle(value: File, close: () => Promise<void> = async () => {}) {
   const writes: Uint8Array[] = []; let permission = 'granted'; let requested = 0;
@@ -96,6 +96,16 @@ test('A-SHELL golden starts one empty CAD window with unavailable editing comman
   await s.app.dispatch('file.new'); await s.app.dispatch('edit.undo');
   assert.deepEqual(s.app.snapshot().documents, {});
   assert.match(s.root.textContent!, /browser notice/); s.close();
+});
+
+test('A-SHELL invalidate refreshes the active editor menus without committing or touching other workspaces', async () => {
+  const s = setup(); await s.app.ready; await s.app.dispatch('file.new');
+  const before = s.app.snapshot();
+  s.fixtures.cad.relabel('Relabelled fixture');
+  assert.match(s.root.querySelector('[data-command="fixture.change"]')!.textContent!, /Relabelled fixture/);
+  assert.equal(s.app.snapshot(), before);
+  s.fixtures.image.relabel('Hidden image label');
+  assert.doesNotMatch(s.root.textContent!, /Hidden image label/); s.close();
 });
 
 test('A-SHELL real sessions keep 100 edits, independent workspaces and exactly-once keyboard history', async () => {

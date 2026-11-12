@@ -59,6 +59,8 @@ export type WorkspaceAdapter = {
     root: HTMLElement;
     commit(document: AppDocument, label: string, baseIdentity: string): void;
     dialog(spec: DialogSpec): void;
+    /** Re-reads the editor's menus/tools after view-local state (tool, selection) changes. */
+    invalidate(): void;
   }): EditorView;
 };
 type Request = {
@@ -180,7 +182,8 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
     const workspace = state.workspace;
     if (!editors[workspace] && adapters[workspace]) {
       const pane = document.createElement('div'); pane.className = 'app-editor'; chrome.viewport.append(pane);
-      editors[workspace] = { root: pane, view: adapters[workspace]!.mount({ root: pane, commit: (value, label, base) => commit(workspace, value, label, base), dialog }) };
+      editors[workspace] = { root: pane, view: adapters[workspace]!.mount({ root: pane, commit: (value, label, base) => commit(workspace, value, label, base), dialog,
+        invalidate: () => { if (!disposed && !modalActive && state.workspace === workspace) chrome.update(model()); } }) };
     }
     for (const [name, editor] of Object.entries(editors)) editor.root.hidden = name !== workspace;
     empty.hidden = !!editors[workspace]; emptyDetail.textContent = `${NAMES[workspace]} editing is not available in this development build.`;

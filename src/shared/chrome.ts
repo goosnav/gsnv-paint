@@ -26,7 +26,7 @@ import { iconCatalog, renderIcon } from './icons.ts';
 type Workspace = 'cad' | 'image' | 'video';
 type MenuItem = { id: string; label: string; shortcut: string; enabled: boolean; icon?: string; toolbar?: boolean };
 type Menu = { id: string; label: string; items: readonly MenuItem[] };
-type Tool = { id: string; label: string; shortcut: string; icon: string; status: string; enabled: boolean };
+type Tool = { id: string; label: string; shortcut: string; icon: string; status: string; enabled: boolean; active?: boolean };
 type Panel = { id: string; title: string; content: HTMLElement };
 type Capability = { id: string; label: string; status: 'supported' | 'unavailable' | 'error'; message: string };
 export type ChromeModel = {
@@ -51,7 +51,7 @@ function validate(model: ChromeModel): void {
     }
   }
   for (const tool of model.tools) {
-    if (!tool || !id(tool.id) || ![tool.label, tool.shortcut, tool.status].every(text) || !glyph(tool.icon) || typeof tool.enabled !== 'boolean') throw new TypeError('Invalid tool.');
+    if (!tool || !id(tool.id) || ![tool.label, tool.shortcut, tool.status].every(text) || !glyph(tool.icon) || typeof tool.enabled !== 'boolean' || (tool.active !== undefined && typeof tool.active !== 'boolean')) throw new TypeError('Invalid tool.');
   }
   for (const panel of model.panels) {
     if (!panel || !id(panel.id) || !text(panel.title) || panel.content?.nodeType !== 1) throw new TypeError('Invalid panel.');
@@ -113,7 +113,7 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     button.disabled = !item.enabled; button.dataset.command = item.id; button.dataset.focusKey = `${surface}:${item.id}`;
     button.title = item.shortcut ? `${item.label} (${item.shortcut})` : item.label;
     button.setAttribute('aria-label', button.title);
-    if ('status' in item) button.dataset.status = item.status;
+    if ('status' in item) { button.dataset.status = item.status; if (item.active !== undefined) button.setAttribute('aria-pressed', String(item.active)); }
     if (item.icon) button.append(renderIcon({ document, name: item.icon, label: item.label, size: 18 }));
     if (surface === 'toolbar') button.append(make('span', 'gc-command-label', item.label));
     if (surface === 'menu') { button.setAttribute('role', 'menuitem'); button.append(make('span', 'gc-menu-label', item.label), make('span', 'gc-key', item.shortcut)); }

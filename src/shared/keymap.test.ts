@@ -67,17 +67,20 @@ test('S05 complete Video timeline table is limited to the focused timeline', () 
   for (const [key, command] of Object.entries(keys)) {
     assert.deepEqual(mapped(key, { workspace: 'video', viewRole: 'timeline' }), handled(command));
     assert.deepEqual(mapped(key, { workspace: 'video', viewRole: 'preview2d' }), unhandled);
-    assert.deepEqual(mapped(key, { workspace: 'image', viewRole: 'canvas2d' }), unhandled);
+    assert.notEqual(mapped(key, { workspace: 'image', viewRole: 'canvas2d' }).command, command);
   }
 });
 
-test('S05 Image color keys and CAD fit are workspace-specific', () => {
-  for (const [key, command] of [['x', 'color.swap'], ['d', 'color.reset']] as const) {
+test('S05 complete Image tool/color table is workspace-specific', () => {
+  const keys = { x: 'color.swap', d: 'color.reset', s: 'image.select', p: 'image.pencil', b: 'image.brush', e: 'image.eraser', g: 'image.fill',
+    i: 'image.picker', l: 'image.line', r: 'image.rectangle', o: 'image.ellipse', t: 'image.text', f: 'view.fit' };
+  for (const [key, command] of Object.entries(keys)) {
     assert.deepEqual(mapped(key, { workspace: 'image', viewRole: 'canvas2d' }), handled(command));
-    assert.deepEqual(mapped(key), unhandled);
+    if (key !== 'f') assert.notEqual(mapped(key).command, command);
   }
+  for (const key of ['x', 'd']) assert.deepEqual(mapped(key), unhandled);
   assert.deepEqual(mapped('f'), handled('view.fit'));
-  assert.deepEqual(mapped('f', { workspace: 'image', viewRole: 'canvas2d' }), unhandled);
+  assert.deepEqual(mapped('q', { workspace: 'image', viewRole: 'canvas2d' }), unhandled);
 });
 
 test('S05 unspecified modifier combinations and unknown keys are untouched', () => {

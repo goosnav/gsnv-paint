@@ -180,3 +180,13 @@ test('S10 rejects empty IDs from every view-model collection before updating DOM
     assert.equal(f.root.innerHTML, before);
   }
 });
+
+test('S10 palette tools expose their optional active state and reject non-boolean values', () => {
+  const f = fixture(); const chrome = createChrome(f.args);
+  assert.equal(button(f.root, '.gc-palette [data-command="view.panHold"]').hasAttribute('aria-pressed'), false);
+  chrome.update({ ...f.model, tools: [{ ...f.model.tools[0]!, active: true }, { ...f.model.tools[1]!, active: false }] });
+  assert.equal(button(f.root, '.gc-palette [data-command="view.panHold"]').getAttribute('aria-pressed'), 'true');
+  assert.equal(button(f.root, '.gc-palette [data-command="view.fit"]').getAttribute('aria-pressed'), 'false');
+  assert.throws(() => chrome.update({ ...f.model, tools: [{ ...f.model.tools[0]!, active: 'yes' as unknown as boolean }] }), TypeError);
+  chrome.dispose();
+});

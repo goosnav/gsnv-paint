@@ -7,7 +7,7 @@
  *            is limited to its timeline, while 2D views use Space to hold pan.
  *            RAISES: TypeError for invalid workspace, context, key or modifier types.
  * GUARANTEES Pure, deterministic, no input mutation, no browser-event side effects.
- * TUNING     COMMON, CAD_KEYS and VIDEO_KEYS are shortcut tables; change only with shortcut review.
+ * TUNING     COMMON, CAD_KEYS, IMAGE_KEYS and VIDEO_KEYS are shortcut tables; change only with shortcut review.
  * DECISIONS  D1: Resolve focus before workspace shortcuts. Alternative: global key-first
  *            routing; rejected because typing could edit the document or timeline.
  *            Revisit if the application adopts a different explicit focus model.
@@ -30,6 +30,10 @@ const COMMON: Readonly<Record<string, string>> = {
   c: 'edit.copy', x: 'edit.cut', v: 'edit.paste', a: 'edit.selectAll',
 };
 const CAD_KEYS: Readonly<Record<string, string>> = { f: 'view.fit', v: 'cad.select', l: 'cad.line', r: 'cad.rectangleTool', e: 'cad.extrude' };
+const IMAGE_KEYS: Readonly<Record<string, string>> = {
+  x: 'color.swap', d: 'color.reset', s: 'image.select', p: 'image.pencil', b: 'image.brush', e: 'image.eraser',
+  g: 'image.fill', i: 'image.picker', l: 'image.line', r: 'image.rectangle', o: 'image.ellipse', t: 'image.text', f: 'view.fit',
+};
 const VIDEO_KEYS: Readonly<Record<string, string>> = {
   s: 'video.split', j: 'video.shuttleReverse', k: 'video.pause', l: 'video.shuttleForward',
   ArrowLeft: 'video.stepBack', ArrowRight: 'video.stepForward',
@@ -69,6 +73,6 @@ export function keymap(event: CommandEvent): CommandResult {
   if (event.workspace === 'video' && event.viewRole === 'timeline') {
     return result(Object.hasOwn(VIDEO_KEYS, key) ? VIDEO_KEYS[key] : null);
   }
-  if (event.workspace === 'image') return result(key === 'x' ? 'color.swap' : key === 'd' ? 'color.reset' : null);
+  if (event.workspace === 'image') return result(Object.hasOwn(IMAGE_KEYS, key) ? IMAGE_KEYS[key] : null);
   return result(event.workspace === 'cad' && Object.hasOwn(CAD_KEYS, key) ? CAD_KEYS[key] : null);
 }
