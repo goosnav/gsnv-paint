@@ -2,14 +2,13 @@
 
 One creative suite with Image, Video and CAD workspaces. The same static browser build will run on the web and from a local launcher. Work stays on the device.
 
-Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MODULE_MAP.md). Two workspaces work today:
+Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MODULE_MAP.md). The interface is designed as a better Windows XP: Luna colours, pixel-crisp Tahoma text and XP-style cursors ([design](dev/DESIGN-XP.md)). Three workspaces work today:
 
-- **Image** — a paint-style editor: pencil, brush, eraser, fill, colour picker, line, rectangle, ellipse, text, rectangular selection with move/copy/paste/crop, resize, rotate/flip and PNG import/export ([details](dev/IMAGE-WORKFLOW.md)).
-- **CAD** — line/rectangle/circle sketches, driving dimensions, horizontal/vertical constraints and a real OpenCascade blind extrusion, including holes; STEP and STL export ([workflow](dev/CAD-WORKFLOW.md), [holes and STL](dev/CAD-HOLES-STL.md)).
+- **Image:** a layered Paint/Photoshop-style editor with brushes, selections (rectangle, ellipse, lasso, magic wand), clone and blur brushes, gradients, layers with blend modes, adjustments and filters ([details](dev/IMAGE-WORKFLOW.md)).
+- **Photo:** a Lightroom-style editor that develops camera RAW files (via LibRaw) or JPEGs: Auto, presets, light/colour/presence, tone curve, colour mixer, detail, effects, crop and full-size export ([details](dev/PHOTO-WORKFLOW.md)).
+- **CAD:** line/rectangle/circle sketches, driving dimensions, horizontal/vertical constraints and a real OpenCascade extrusion with holes; STEP and STL export ([workflow](dev/CAD-WORKFLOW.md), [holes and STL](dev/CAD-HOLES-STL.md)).
 
-Both have save/open, undo/redo and local recovery. Video editing, the remaining CAD features (cuts, fillets, other planes, drawings) and the packaged release are unfinished.
-
-The [decision record](dev/DECISIONS.md) documents dependency selection, distribution constraints and license obligations. Phase reports under `dev/` distinguish passed, failed and untested requirements. Only the owner accepts a release.
+All three have save/open, undo/redo and local recovery. Video editing, the remaining CAD features (cuts, fillets, other planes, drawings) and the packaged release are unfinished.
 
 ## Run it
 
@@ -59,4 +58,8 @@ V selects sketch edges, L draws lines, R draws a rectangle, C draws a circle, F 
 
 ## First image
 
-Switch to the Image tab and press Ctrl+N. Pick a tool from the palette (or press P, B, E, G, I, L, R, O, T, S), click a swatch for the primary colour or right-click for the secondary, and draw. Ctrl+Z undoes each stroke or shape. Image → Export PNG saves a picture; Ctrl+S saves an editable `.gsnv-image` project. See [Image workflow evidence](dev/IMAGE-WORKFLOW.md).
+Switch to the Image tab and press Ctrl+N. Pick a tool from the toolbox (B brush, P pencil, E eraser, G fill, N gradient, S/M/Q/W selections, V move, C clone), set size and opacity with the trackbars or by typing in the boxes, click a swatch for the primary colour or right-click for the secondary, and paint. Use the Layer, Adjustments and Filters menus for Photoshop-style work. Ctrl+Z undoes each step. Image → Export PNG saves a picture; Ctrl+S saves an editable `.gsnv-image` project. See [Image workflow evidence](dev/IMAGE-WORKFLOW.md).
+
+## First photo
+
+Switch to the Photo tab, choose Import photo… (or drop a RAW/JPEG file), press Auto or pick a preset, then refine with the sliders (type exact values in the boxes; double-click a label to reset). `\` compares before/after and R crops. Photo → Export… saves a full-size JPEG or PNG. See [Photo workflow](dev/PHOTO-WORKFLOW.md).

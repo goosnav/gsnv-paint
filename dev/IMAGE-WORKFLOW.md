@@ -1,29 +1,37 @@
-# Working Image increment — provisional GREEN
+# Image workspace (Paint + Photoshop/GIMP essentials) — provisional GREEN
 
-The production entry now registers an Image workspace beside CAD ([D20](DECISIONS.md#d20--deliver-a-working-paint-style-image-workspace-before-the-full-layer-roster)). I50–I53 and IMAGE-APP are GREEN component/assembly checkpoints; the full I01–I37 roster (layers, masks, blend modes, adjustments, freehand selections) remains PLANNED. No brick is human-ACCEPTED.
+[D20](DECISIONS.md#d20--deliver-a-working-paint-style-image-workspace-before-the-full-layer-roster) introduced a paint-style editor. The 2026-11-12 plan (item 2) extends it with the Photoshop/GIMP functionality people use most. The full I01–I37 roster stays planned; this working increment is I50–I57 plus IMAGE-APP. Nothing is human-ACCEPTED.
 
-## Supported workflow
+## Tools (shortcut)
 
-New creates an 800 × 600 white image (fitted to the window). Tools, with shortcuts: Select (S), Pencil (P, 1 px), Brush (B, round), Eraser (E, paints the secondary colour), Fill (G), Pick colour (I, returns to the previous tool), Line (L), Rectangle (R), Ellipse (O), Text (T). Left button uses the primary colour, right button the secondary. Shift draws squares/circles and snaps lines to 45°. X swaps colours, D restores black/white. The Colours panel holds the 28-swatch palette (click primary, right-click secondary), exact colour inputs, tool size (1–512 px) and the shape style (outline, fill, outline and fill).
+| Group | Tools |
+|---|---|
+| Move and select | Move (V), Rectangle select (S), Ellipse select (M), Lasso (Q), Magic wand (W). Shift adds to the selection, Ctrl subtracts. Selections are pixel masks shown with marching ants; dragging inside one moves its pixels. |
+| Paint | Pencil (P, hard pixels), Brush (B: size, hardness, opacity, flow), Airbrush (A: sprays while held), Eraser (E: to transparency; to the secondary colour on the bottom layer), Clone stamp (C: Ctrl-click sets the source), Blur brush (U), Fill (G: tolerance, contiguous), Gradient (N: linear/radial, to the secondary colour or transparent) |
+| Draw | Text (T), Line (L), Rectangle (R), Ellipse (O): outline, fill or both; Shift for squares, circles and 45° |
+| Colour | Pick colour (I), 28-colour XP palette, exact colour inputs, X swap, D defaults |
 
-Select drags a rectangle; dragging inside lifts and moves it (the vacated area becomes the secondary colour). The selection floats until Enter, a click outside it or a tool change places it; Esc discards it. Ctrl+A, Ctrl+C, Ctrl+X, Ctrl+V (system clipboard image when the browser allows it, otherwise the in-app clipboard), Delete and Crop to selection work on it. The Image menu adds Import image (PNG/JPEG/GIF/WebP/BMP), Export PNG, Resize, Canvas size, rotate, flip, invert, clear, zoom to fit (F) and actual pixels. Wheel zooms around the cursor; Space-drag or middle-drag pans.
+Every numeric option is an XP trackbar paired with a typed number box (applied on Enter or blur). `[` and `]` change brush size. All painting, fills, gradients, text and adjustments are clipped to the selection.
 
-Every completed action is one history entry; Ctrl+Z/Ctrl+Y and the History panel work as in CAD. Ctrl+S saves an editable `.gsnv-image` project (S15 container, one raw rgba8 asset); local recovery is automatic.
+## Layers, adjustments, filters
+
+- **Layers:** new, duplicate, delete, move up/down, visibility, rename (double-click), opacity, blend mode (normal, multiply, screen, overlay, darken, lighten, difference), merge down, flatten. Paste and Import as layer create new layers.
+- **Adjustments** (live preview, OK/Cancel): Brightness/Contrast, Hue/Saturation, Levels, Curves (outputs at 64/128/192 through a monotone curve), Colour balance, Desaturate, Invert, Sepia, Posterize, Threshold.
+- **Filters:** Gaussian blur, Unsharp mask, Add noise, Pixelate, Find edges, Emboss.
+- **Image:** Open image as a new document, Export PNG (flattened), Resize, Canvas size, Crop to selection, rotate, flip.
+- **Files:** `.gsnv-image` projects store each layer as its own asset; projects from the single-layer version still open.
 
 ## Verification — 2026-11-12
 
-Environment: Linux x64, Chrome 154.0.8037.97 headless at 1280 × 720.
-
-| Command | Result |
+| Check | Result |
 |---|---|
-| `npm test` | 537 tests, 537 pass (includes I50–I53 testbenches and the S05/S10/A-SHELL amendments) |
-| `npm run typecheck` | exit 0 |
-| `npm run test:browser` | 21 tests, 21 pass (two IMAGE-APP production tests) |
-
-The IMAGE-APP production test checks exact canvas pixels after pencil, rectangle outline, flood fill, right-click colour pick and a selection move; undo/redo; rotate and undo; native project download with the exact saved pixel bytes; PNG export (signature and 800 × 600 header); import of that PNG; reopening the project; and local recovery after reload. The second test covers text, Shift-circle with outline-and-fill, resize with kept aspect ratio, canvas size and crop, with the exact history labels. [Production screenshot](evidence/IMAGE-APP-production.png).
-
-During integration the browser tests found two defects that are now fixed: menu enablement (e.g. Crop) did not refresh after canvas gestures, which led to the shell `invalidate()` hook; and a test-harness timing issue where Chrome ignores a second file chooser opened within ~100 ms of the previous one (the test waits; users are unaffected).
+| `image-composite.test.ts` | Golden pixels for all seven blend modes, opacity, transparency, hidden layers; masked merge with soft edges |
+| `image-adjust.test.ts` | Identity settings, known values for brightness/contrast/levels/curves/threshold/posterize/hue/desaturate, monotone curves, premultiplied blur, unsharp edges, pixelate averages, seeded noise, region limits |
+| `image-brush.test.ts` | Soft falloff, flow accumulation, gap-free strokes, deterministic spray, paint/erase/clone/filter coverage, gradients, rectangle/ellipse/lasso masks, contiguous/global wand, mask algebra |
+| `image-content.test.ts` | Tile sharing per layer, stack edits reusing tiles, byte-exact layered round trip, legacy single-layer decode, rejection cases |
+| IMAGE-APP browser tests (production build, Chrome 154) | Pencil/rectangle/fill/pick/move pixels, undo/redo, two-layer project round trip with exact bytes per layer, PNG export, Open image, reopen, recovery. Second test: brush clipped to an ellipse selection, layer opacity 50 % (exact grey), screen blend, invert, Brightness/Contrast preview and cancel, Levels, Gaussian blur, merge down, text, resize, canvas size, crop, with the exact history labels |
+| `npm test` / `npm run test:browser` | 562 / 22 pass |
 
 ## Limits
 
-Single raster layer; rectangular selection only; opaque colour editing (imported transparency is preserved and composited); images up to 4096 × 4096 pixels; aliased drawing; text is rasterized on commit and is not re-editable. Pen pressure is not used. Native file-picker interaction, other browsers and other operating systems are untested for this increment.
+No smudge tool, layer masks, groups or editable text layers. Selections are hard-edged (no feather). Colour editing is opaque. Images are limited to 4096 × 4096 pixels. Pen pressure is not used. Other browsers and operating systems are untested.

@@ -296,6 +296,36 @@ OUT: swatch palette (click primary, right-click secondary), native colour inputs
 RAISES: `TypeError` for a missing root or callback.
 DEPS: none.
 
+### I54 `image/image-composite.ts` — CORE — GREEN
+Purpose: Composite image layers with blend modes and apply selection masks.
+IN: `{width,height,layers:[{raster,visible,opacity,blend}],rect,out}`; `maskedMerge({target,base,mask,rect})`.
+OUT: straight-alpha source-over composite with the seven W3C separable blend modes; masked merge restores base outside the selection, interpolating soft mask values.
+RAISES: `RangeError` for mismatched sizes, unknown blend modes or invalid opacity.
+DEPS: none.
+
+### I55 `image/image-adjust.ts` — CORE — GREEN
+Purpose: Apply Photoshop/GIMP-style adjustments and filters to an RGBA raster region.
+IN: Raster, `AdjustOp` (brightness/contrast, hue/saturation, levels, curves, colour balance, desaturate, invert, sepia, posterize, threshold, Gaussian blur, unsharp mask, noise, pixelate, find edges, emboss) and an optional rectangle.
+OUT: the raster mutated inside the rectangle only; neighbourhood filters read an unmodified copy; blur and pixelate average premultiplied colour.
+RAISES: `RangeError` for unknown operations or out-of-range parameters.
+DEPS: I50.
+
+### I56 `image/image-brush.ts` — CORE — GREEN
+Purpose: Soft-brush strokes, gradient fills and mask-based selections.
+IN: per-stroke coverage buffers, dab/line/spray requests, coverage modes (paint, erase, clone, filter), gradient endpoints, mask shapes (rectangle, ellipse, polygon), magic-wand seeds.
+OUT: coverage accumulation capped by stroke opacity; base→result blending for the dirty rectangle; 0/255 selection masks, combinations (replace/add/subtract/intersect) and bounds.
+RAISES: `RangeError` for invalid dabs, sizes or buffers.
+DEPS: I50.
+
+### I57 `image/image-layers-panel.ts` — SHELL — GREEN
+Purpose: Render the Image Layers panel and report layer actions.
+IN: root, callback; `update({layers,activeLayerId,thumbnails,enabled})`.
+OUT: top-first list with visibility, thumbnail, name and opacity/blend summary; new/duplicate/delete/up/down/merge actions; blend select; opacity trackbar plus number box.
+RAISES: `TypeError` for a missing root or callback.
+DEPS: I54.
+
+I51 is now layered (each layer's tiles shared between snapshots; layer stack edits reuse tiles; the original single-layer layout still decodes). I52 supports 18 tools with Shift/Ctrl selection modes and a Ctrl-click clone source. I53 shows per-tool options, each numeric option as an XP trackbar plus a typed number box.
+
 IMAGE-APP (`src/image/image-workspace.ts`) is the assembly: it wires I50–I53 to S07 file access, S11 dialogs and the A-SHELL host (history, recovery, files). Each completed stroke, shape, fill, text, move, paste or image command commits one history entry; drags and floating selections stay outside history. Browser codecs provide PNG export and PNG/JPEG/GIF/WebP/BMP import.
 
 ## Phase 4 — Video bricks, leaves first

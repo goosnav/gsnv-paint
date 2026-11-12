@@ -2,7 +2,7 @@
 
 ## What you get today
 
-The launcher opens gsnv-paint in your browser: menus, the CAD / Image / Video workspace tabs, and the History and Recovery panels. The Image tab is a paint-style editor. The CAD tab supports line/rectangle/circle sketches, dimensions, horizontal/vertical constraints and blind extrusion with holes. Video still displays its unavailable state. Nothing leaves your computer. There are no accounts and no API keys.
+The launcher opens gsnv-paint in your browser, styled as a better Windows XP: menus, the CAD / Image / Photo / Video workspace buttons, and the History and Recovery panels. The Image tab is a layered Paint/Photoshop-style editor and the Photo tab develops RAW photos. The CAD tab supports line/rectangle/circle sketches, dimensions, horizontal/vertical constraints and blind extrusion with holes. Video still displays its unavailable state. Nothing leaves your computer. There are no accounts and no API keys.
 
 ## Make a first CAD part
 
@@ -19,11 +19,20 @@ This is not the complete suite. In CAD, one XY sketch region (outline plus holes
 ## Paint a first image
 
 1. Choose the Image tab, then New (Ctrl+N). An 800 × 600 white canvas opens.
-2. Pick a tool in the left palette: Select (S), Pencil (P), Brush (B), Eraser (E), Fill (G), Pick colour (I), Line (L), Rectangle (R), Ellipse (O), Text (T).
-3. In the Colours panel, click a swatch for the primary colour (left button) or right-click one for the secondary colour (right button and eraser). Set the size and the shape style there. X swaps the colours; D resets them.
-4. Hold Shift for squares, circles and 45° lines. Scroll to zoom, hold Space and drag (or middle-drag) to pan, F to fit.
-5. Drag with Select, then drag inside the selection to move it; Enter places it, Esc cancels. Ctrl+C / Ctrl+X / Ctrl+V, Delete and Crop to selection work on it.
-6. Image → Export PNG saves a picture. Ctrl+S saves an editable `.gsnv-image` project. Image → Import image opens a PNG, JPEG, GIF, WebP or BMP.
+2. Pick a tool in the toolbox on the left. Hover a tool to see its name and shortcut: V move, S/M/Q/W selections, P pencil, B brush, A airbrush, E eraser, C clone, U blur, G fill, N gradient, I pick colour, T text, L/R/O shapes.
+3. In "Colours and tool options", click a swatch for the primary colour, or right-click one for the secondary. Set size, hardness, opacity and the other options with the trackbars, or type an exact value in the box beside each one and press Enter. `[` and `]` also change brush size.
+4. Hold Shift for squares, circles and 45° lines. With a selection tool, Shift adds to the selection and Ctrl subtracts. Painting stays inside the selection. Esc deselects.
+5. Layers: use the Layers panel or the Layer menu to add, duplicate, reorder, hide, rename, set opacity and blend mode, merge or flatten.
+6. Adjustments and Filters (menus) preview live; OK applies, Cancel restores.
+7. Image → Export PNG saves a flattened picture. Ctrl+S saves an editable `.gsnv-image` project with its layers.
+
+## Develop a photo
+
+1. Choose the Photo tab and Import photo… (or drop a file). Camera RAW files (DNG, CR2, CR3, NEF, ARW, RAF, ORF, RW2 …) and JPEG/PNG/WebP/HEIC work.
+2. Press Auto, or click a preset (Natural, Vivid, Portrait, Landscape, Black & White, Film Warm, Matte, High Key).
+3. Refine with the sliders in Light, Colour, Presence, Tone curve, Colour mixer, Detail and Effects. Type exact values in the boxes; double-click a label to reset it.
+4. `\` shows before/after. R (or Crop) shows the crop frame: choose an aspect, drag the frame or its handles, then press Enter.
+5. Photo → Export… saves a JPEG or PNG at full size or a chosen long edge. Ctrl+S saves a `.gsnv-photo` project that keeps the original file and your settings.
 
 ## Add holes to a CAD part
 
