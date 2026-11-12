@@ -4,7 +4,7 @@
 .image-stage[data-tool="picker"] { cursor:var(--cursor-picker); }
 .image-stage[data-tool="text"] { cursor:var(--cursor-text); }
 .image-stage[data-tool="move"] { cursor:var(--cursor-move); }
-.image-stage:is([data-tool="brush"],[data-tool="airbrush"],[data-tool="eraser"],[data-tool="clone"],[data-tool="blur"],[data-tool="gradient"],[data-tool="line"],[data-tool="rectangle"],[data-tool="ellipse"],[data-tool="select"],[data-tool="ellipseSelect"],[data-tool="lasso"],[data-tool="wand"]) { cursor:var(--cursor-cross); }
+.image-stage:is([data-tool="brush"],[data-tool="airbrush"],[data-tool="eraser"],[data-tool="clone"],[data-tool="blur"],[data-tool="smudge"],[data-tool="gradient"],[data-tool="line"],[data-tool="rectangle"],[data-tool="ellipse"],[data-tool="select"],[data-tool="ellipseSelect"],[data-tool="lasso"],[data-tool="wand"]) { cursor:var(--cursor-cross); }
 .image-stage[data-hover="selection"] { cursor:var(--cursor-move); }
 .image-stage[data-panning="true"] { cursor:var(--cursor-grabbing); }
 .image-surface { position:absolute; left:0; top:0; transform-origin:0 0; outline:1px solid #000; box-shadow:4px 4px 0 #0000004d; background:repeating-conic-gradient(#c0c0c0 0 25%,#fff 0 50%) 0 0/16px 16px; }
@@ -49,3 +49,6 @@
 .image-layer-detail { color:inherit; opacity:.8; }
 .image-layer-buttons { display:flex; flex-wrap:wrap; gap:3px; }
 .image-layer-buttons .xp-button { padding:0 6px; }
+.image-brush-ring { position:absolute; pointer-events:none; border-radius:50%; border:1px solid #000; box-shadow:0 0 0 1px #fff; }
+.image-brush-ring[hidden] { display:none; }
+.image-stage:not(:hover) .image-brush-ring { display:none; }

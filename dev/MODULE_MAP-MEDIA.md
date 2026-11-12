@@ -312,7 +312,7 @@ DEPS: I50.
 
 ### I56 `image/image-brush.ts` — CORE — GREEN
 Purpose: Soft-brush strokes, gradient fills and mask-based selections.
-IN: per-stroke coverage buffers, dab/line/spray requests, coverage modes (paint, erase, clone, filter), gradient endpoints, mask shapes (rectangle, ellipse, polygon), magic-wand seeds.
+IN: per-stroke coverage buffers, dab/line/spray/smudge requests, coverage modes (paint, erase, clone, filter), gradient endpoints, mask shapes (rectangle, ellipse, polygon), magic-wand seeds.
 OUT: coverage accumulation capped by stroke opacity; base→result blending for the dirty rectangle; 0/255 selection masks, combinations (replace/add/subtract/intersect) and bounds.
 RAISES: `RangeError` for invalid dabs, sizes or buffers.
 DEPS: I50.

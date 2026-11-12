@@ -22,7 +22,7 @@ export const iconCatalog: readonly string[] = Object.freeze([
   'delete', 'select', 'hand', 'zoomIn', 'zoomOut', 'fit', 'history', 'properties', 'layers',
   'grid', 'ruler', 'line', 'rectangle', 'extrude',
   'pencil', 'brush', 'eraser', 'fill', 'picker', 'ellipse', 'text', 'crop', 'rotate', 'flip',
-  'move', 'ellipseSelect', 'lasso', 'wand', 'airbrush', 'clone', 'blur', 'gradient', 'layerAdd', 'export', 'close', 'help', 'chevronRight', 'chevronDown',
+  'move', 'ellipseSelect', 'lasso', 'wand', 'airbrush', 'clone', 'blur', 'gradient', 'layerAdd', 'smudge', 'export', 'close', 'help', 'chevronRight', 'chevronDown',
 ]);
 
 const PATHS: Readonly<Record<string, string>> = {
@@ -71,6 +71,7 @@ const PATHS: Readonly<Record<string, string>> = {
   clone: 'M8 3h8v6H8zM12 9v4M6 13h12v3H6zM8 16v5h8v-5',
   blur: 'M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11M9 15h2M10 18h4',
   gradient: 'M3 3h18v18H3zM7 3v18M11 3v18M15 3v18',
+  smudge: 'M9 21v-9a2 2 0 0 1 4 0v-7a2 2 0 0 1 4 0v12l-3 4zM3 14h4M2 18h5M4 10h3',
   layerAdd: 'M12 3 22 8l-10 5L2 8zM2 13l10 5 4-2M19 15v6M16 18h6',
   extrude: 'M3 12l9-5 9 5v7l-9 4-9-4zM3 12l9 5 9-5M12 17v6M12 13V1M8 5l4-4 4 4',
   close: 'M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5',

@@ -12,7 +12,7 @@
  * DECISIONS  D1: One working raster per layer, mutated during a drag from a per-stroke base copy, committed
  *            as shared tiles. D2: A moved selection floats until placed (click outside, Enter, tool change);
  *            Esc cancels. D3: Paste creates a new layer, as in Photoshop and GIMP.
- * LIMITS     No layer masks, groups, editable text or smudge. Image import/export uses browser codecs.
+ * LIMITS     No layer masks, groups or editable text. Image import/export uses browser codecs.
  * TESTBENCH  src/image/image-workspace.browser.spec.ts -- run with: npm run test:browser -- src/image/image-workspace.browser.spec.ts
  */
 import type { WorkspaceAdapter } from '../app/app-shell.ts';
@@ -25,14 +25,14 @@ import { imageToolInput, IMAGE_TOOLS, type ImageTool, type ImageToolState, type 
 import { imagePalette, DEFAULT_OPTIONS, type ToolOptions } from './image-palette.ts';
 import { imageLayersPanel, type LayerAction } from './image-layers-panel.ts';
 import { compositeLayers, maskedMerge, type CompositeLayer } from './image-composite.ts';
-import { dabLine, dab, spray, applyCoverage, gradientFill, shapeMask, magicWand, combineMasks, maskBounds, type Coverage, type CoverageMode } from './image-brush.ts';
+import { dabLine, dab, spray, smudgeDab, applyCoverage, gradientFill, shapeMask, magicWand, combineMasks, maskBounds, type Coverage, type CoverageMode, type SmudgeCarry } from './image-brush.ts';
 import { adjustRaster, blurRaster, type AdjustOp } from './image-adjust.ts';
 import './image-workspace.css';
 
 type Snapshot = Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
 type Selection = { mask: Uint8Array; bounds: Rect };
 type Floating = { raster: Raster; x: number; y: number; origin: { x: number; y: number }; label: string };
-type Stroke = { base: Uint8ClampedArray; cov: Coverage; carry: number; mode: CoverageMode | 'pencil'; dirty: Rect | null; timer: number | null; last: [number, number]; seed: number };
+type Stroke = { base: Uint8ClampedArray; cov: Coverage; carry: number; mode: CoverageMode | 'pencil' | 'smudge'; dirty: Rect | null; timer: number | null; last: [number, number]; seed: number };
 const NEW_SIZE = { width: 800, height: 600 }, MARGIN = 24, SPRAY_INTERVAL_MS = 40;
 const BLACK: RGBA = [0, 0, 0, 255], WHITE: RGBA = [255, 255, 255, 255];
 const IMAGE_TYPES = { 'image/png': ['.png'], 'image/jpeg': ['.jpg', '.jpeg'], 'image/gif': ['.gif'], 'image/webp': ['.webp'], 'image/bmp': ['.bmp'] };
@@ -48,6 +48,7 @@ const TOOLS: Record<ImageTool, { label: string; icon: string; key: string; hint:
   eraser: { label: 'Eraser', icon: 'eraser', key: 'E', hint: 'Erases to transparency (to the secondary colour on the bottom layer).' },
   clone: { label: 'Clone stamp', icon: 'clone', key: 'C', hint: 'Ctrl-click to choose the source, then paint to copy from it.' },
   blur: { label: 'Blur brush', icon: 'blur', key: 'U', hint: 'Paint to soften detail.' },
+  smudge: { label: 'Smudge', icon: 'smudge', key: 'K', hint: 'Drag to push colour along the stroke · Strength sets how far it carries.' },
   fill: { label: 'Fill', icon: 'fill', key: 'G', hint: 'Click to fill similar colours · Tolerance and Contiguous are in Tool options.' },
   gradient: { label: 'Gradient', icon: 'gradient', key: 'N', hint: 'Drag to draw a gradient from the primary colour · Shift snaps to 45°.' },
   picker: { label: 'Pick colour', icon: 'picker', key: 'I', hint: 'Click to pick the primary colour · right-click picks the secondary colour.' },
@@ -78,14 +79,14 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       const document = host.root.ownerDocument, window = document.defaultView!;
       const make = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string) => { const node = document.createElement(tag); node.className = className; return node; };
       const stage = make('div', 'image-stage'), surface = make('div', 'image-surface'), canvas = make('canvas', 'image-canvas'), float = make('canvas', 'image-floating'), overlay = make('canvas', 'image-overlay');
-      const hint = make('div', 'image-tool-hint'), notice = make('div', 'image-empty'), optionsPanel = document.createElement('div'), layersPanel = document.createElement('div');
+      const ring = make('div', 'image-brush-ring'), hint = make('div', 'image-tool-hint'), notice = make('div', 'image-empty'), optionsPanel = document.createElement('div'), layersPanel = document.createElement('div');
       stage.tabIndex = -1; canvas.setAttribute('aria-label', 'Image canvas'); notice.textContent = 'Choose New (Ctrl+N) to start an image, or Open (Ctrl+O) a .gsnv-image project.';
-      surface.append(canvas, float, overlay); stage.append(surface, notice); host.root.append(stage, hint);
+      surface.append(canvas, float, overlay); stage.append(surface, ring, notice); host.root.append(stage, hint);
       const context = canvas.getContext('2d'), floatContext = float.getContext('2d'), overlayContext = overlay.getContext('2d');
       let current: Snapshot, source: ImageContent | null = null, rasters = new Map<string, Raster>(), display: ImageData | null = null, view: View2D = { zoom: 1, pan: { x: 0, y: 0 } };
       let tool: ImageToolState = { tool: 'brush', drag: null }, previousTool: ImageTool = 'brush', primary = BLACK, secondary = WHITE, options: ToolOptions = { ...DEFAULT_OPTIONS };
       let selection: Selection | null = null, floating: Floating | null = null, stroke: Stroke | null = null, shapeBase: Uint8ClampedArray | null = null, shapeDirty: Rect | null = null;
-      let cloneSource: [number, number] | null = null, opacityPreview: number | null = null, edges: Int32Array | null = null, phase = 0;
+      let smudge: SmudgeCarry | null = null, cloneSource: [number, number] | null = null, opacityPreview: number | null = null, edges: Int32Array | null = null, phase = 0;
       let scale = 1, offset = { x: 0, y: 0 }, panning: { x: number; y: number } | null = null, cursor: [number, number] | null = null, message = '', disposed = false, marquee: { shape: string; points: [number, number][] } | null = null;
       const palette = imagePalette({ root: optionsPanel, onChange(change) {
         if (change.kind === 'primary') primary = change.color; else if (change.kind === 'secondary') secondary = change.color;
@@ -217,7 +218,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       function strokeApply(rect: Rect | null) {
         if (!stroke || !rect || !source) return; const raster = active();
-        if (stroke.mode !== 'pencil') applyCoverage({ raster, base: stroke.base, cov: stroke.cov, rect, mode: stroke.mode, opacity: options.opacity / 100 });
+        if (stroke.mode !== 'pencil' && stroke.mode !== 'smudge') applyCoverage({ raster, base: stroke.base, cov: stroke.cov, rect, mode: stroke.mode, opacity: options.opacity / 100 });
         if (selection) maskedMerge({ target: raster, base: stroke.base, mask: selection.mask, rect });
         stroke.dirty = union(stroke.dirty, rect); composite(rect);
       }
@@ -231,6 +232,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           if (t === 'brush' || t === 'airbrush') mode = { kind: 'paint', color: fore };
           else if (t === 'eraser') mode = isBottom() ? { kind: 'paint', color: back } : { kind: 'erase' };
           else if (t === 'clone') mode = { kind: 'clone', source: base, dx: Math.round(cloneSource![0] - points[0]![0]), dy: Math.round(cloneSource![1] - points[0]![1]) };
+          else if (t === 'smudge') { mode = 'smudge'; smudge = null; }
           else if (t === 'blur') mode = { kind: 'filter', filtered: blurRaster({ width: raster.width, height: raster.height, data: base }, Math.max(2, options.size / 6)) };
           stroke = { base, cov: { width: raster.width, height: raster.height, data: new Float32Array(raster.width * raster.height) }, carry: 0, mode, dirty: null, timer: null, last: points[0]!, seed: Date.now() & 0xffff };
           if (t === 'airbrush') stroke.timer = window.setInterval(() => { if (stroke) strokeApply(spray(stroke.cov, stroke.last[0], stroke.last[1], options.size / 2, Math.ceil(options.density / 4), ++stroke.seed)); }, SPRAY_INTERVAL_MS);
@@ -238,6 +240,12 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         if (!stroke) return;
         const s = stroke, last = points[points.length - 1]!; s.last = last;
         if (s.mode === 'pencil') { strokeApply(paintRaster(raster, { kind: 'stroke', points, size: options.size, color: colors(button)[0], tip: 'square' })); return; }
+        if (s.mode === 'smudge') {
+          const from = points[0]!, length = Math.hypot(last[0] - from[0], last[1] - from[1]), step = Math.max(1, options.size * 0.1); let rect: Rect | null = null;
+          if (!smudge) smudge = smudgeDab(raster, null, from, options.size, options.hardness / 100, options.strength / 100).carry;
+          for (let d = step; d <= length + 0.001; d += step) { const r = smudgeDab(raster, smudge, [from[0] + (last[0] - from[0]) * d / length, from[1] + (last[1] - from[1]) * d / length], options.size, options.hardness / 100, options.strength / 100); smudge = r.carry; rect = union(rect, r.rect); }
+          strokeApply(rect); return;
+        }
         if (t === 'airbrush') { strokeApply(spray(s.cov, last[0], last[1], options.size / 2, Math.ceil(options.density / 4), ++s.seed)); return; }
         const hardness = options.hardness / 100, flow = t === 'brush' ? options.flow / 100 : 1;
         if (points.length === 1) strokeApply(dab(s.cov, last[0], last[1], options.size, hardness, flow));
@@ -279,6 +287,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           return !!selection && x >= 0 && y >= 0 && x < source!.width && y < source!.height && !!selection.mask[y * source!.width + x];
         };
         const next = imageToolInput({ state: tool, event, inside, floating: !!floating }); tool = next.state; const intent = next.intent;
+        if (intent.kind === 'hover' || intent.kind === 'stroke') showRing(intent.kind === 'hover' ? intent.point : intent.points[intent.points.length - 1]!);
         if (intent.kind === 'hover') { stage.dataset.hover = (tool.tool === 'move' || ['select', 'ellipseSelect', 'lasso'].includes(tool.tool)) && inside(intent.point) ? 'selection' : ''; cursor = intent.point; refresh(); return; }
         if (intent.kind === 'stroke') strokeTo(intent.points, intent.button, intent.first);
         else if (intent.kind === 'stroke-end') finishStroke();
@@ -306,6 +315,12 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           if (stroke) { if (stroke.timer !== null) window.clearInterval(stroke.timer); active().data.set(stroke.base); stroke = null; composite(); }
         }
         refresh();
+      }
+      /** Photoshop-style outline of the brush footprint, so size is visible before and while painting. */
+      function showRing(point: [number, number]) {
+        const t = placement(), d = options.size * t.z, sized = ['brush', 'airbrush', 'eraser', 'clone', 'blur', 'smudge', 'pencil'].includes(tool.tool);
+        ring.hidden = !sized || d < 5;
+        if (!ring.hidden) Object.assign(ring.style, { width: `${Math.round(d)}px`, height: `${Math.round(d)}px`, left: `${Math.round(t.x + point[0] * t.z - d / 2)}px`, top: `${Math.round(t.y + point[1] * t.z - d / 2)}px` });
       }
       function rasterizeText(value: string, fontSize: number, family: string, bold: boolean, color: RGBA): Raster | null {
         const lines = value.split('\n'), measure = document.createElement('canvas').getContext('2d'); if (!measure || !value.trim()) return null;
@@ -536,7 +551,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           }
           try {
             const point = toDocument(gesture.point); cursor = point;
-            if (gesture.phase === 'cancel') pointer({ kind: 'cancel' });
+            if (gesture.phase === 'cancel') { pointer({ kind: 'cancel' }); ring.hidden = true; }
             else pointer({ kind: gesture.phase, point, button: gesture.button, shift: gesture.shift, ctrl: gesture.ctrl });
           } catch (cause) { fail(cause); }
           if (gesture.phase !== 'move') host.invalidate();

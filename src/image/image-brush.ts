@@ -72,6 +72,28 @@ export function applyCoverage({ raster, base, cov, rect, mode, opacity }: { rast
   }
 }
 
+export type SmudgeCarry = { size: number; data: Float32Array };
+/** Smudge: the brush carries picked-up colour (RGBA patch) and lays it down under a soft footprint at `at`.
+ *  Pass null to pick up at the stroke start. Strength 0…1 sets how much colour the brush keeps between dabs. */
+export function smudgeDab(raster: Raster, carry: SmudgeCarry | null, at: P, size: number, hardness: number, strength: number): { rect: Rect | null; carry: SmudgeCarry } {
+  if (!(size > 0) || !(strength >= 0 && strength <= 1) || !at.every(Number.isFinite)) throw new RangeError('Invalid smudge.');
+  const { width: w, height: h, data } = raster, n = Math.max(1, Math.ceil(size)), r = size / 2, ox = Math.round(at[0] - n / 2), oy = Math.round(at[1] - n / 2), core = Math.min(hardness, 0.999);
+  const sample = (px: number, py: number, c: number) => data[(Math.min(h - 1, Math.max(0, py)) * w + Math.min(w - 1, Math.max(0, px))) * 4 + c]!;
+  if (!carry || carry.size !== n) { const patch = new Float32Array(n * n * 4); for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) for (let c = 0; c < 4; c++) patch[(y * n + x) * 4 + c] = sample(ox + x, oy + y, c); return { rect: null, carry: { size: n, data: patch } }; }
+  let x0 = Infinity, y0 = Infinity, x1 = -1, y1 = -1;
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const px = ox + x, py = oy + y; if (px < 0 || py < 0 || px >= w || py >= h) continue;
+    const d = Math.hypot(px + 0.5 - at[0], py + 0.5 - at[1]) / r, a = (d <= core ? 1 : d >= 1 ? 0 : 0.5 + 0.5 * Math.cos(Math.PI * (d - core) / (1 - core))) * strength;
+    const i = (py * w + px) * 4, k = (y * n + x) * 4;
+    for (let c = 0; c < 4; c++) {
+      const laid = data[i + c]! + (carry.data[k + c]! - data[i + c]!) * a; data[i + c] = Math.round(laid);
+      carry.data[k + c] = carry.data[k + c]! + (laid - carry.data[k + c]!) * (1 - strength); // The brush mixes with what it touches.
+    }
+    if (a > 0) { if (px < x0) x0 = px; if (py < y0) y0 = py; if (px > x1) x1 = px; if (py > y1) y1 = py; }
+  }
+  return { rect: x1 < 0 ? null : { x: x0, y: y0, width: x1 - x0 + 1, height: y1 - y0 + 1 }, carry };
+}
+
 /** Linear or radial gradient from colour a (at p0) to colour b (at p1), source-over onto the raster. */
 export function gradientFill(raster: Raster, p0: P, p1: P, shape: 'linear' | 'radial', a: RGBA, b: RGBA): Rect {
   const { width: w, height: h, data } = raster, dx = p1[0] - p0[0], dy = p1[1] - p0[1], len2 = dx * dx + dy * dy || 1, len = Math.sqrt(len2);

@@ -7,14 +7,14 @@ const run = (state: ImageToolState, event: Parameters<typeof imageToolInput>[0][
 const tool = (t: ImageTool): ImageToolState => ({ tool: t, drag: null });
 
 test('I-TOOLS freehand tools emit incremental segments and exactly one end', () => {
-  for (const t of ['pencil', 'brush', 'airbrush', 'eraser', 'clone', 'blur'] as const) {
+  for (const t of ['pencil', 'brush', 'airbrush', 'eraser', 'clone', 'blur', 'smudge'] as const) {
     let s = tool(t), r = run(s, at('down', [1, 1], 2)); assert.deepEqual(r.intent, { kind: 'stroke', points: [[1, 1]], button: 2, first: true }); s = r.state;
     r = run(s, at('move', [3, 1])); assert.deepEqual(r.intent, { kind: 'stroke', points: [[1, 1], [3, 1]], button: 2, first: false }); s = r.state;
     r = run(s, at('up', [3, 1])); assert.deepEqual(r.intent, { kind: 'stroke-end' }); assert.equal(r.state.drag, null);
   }
   assert.deepEqual(run(tool('brush'), at('move', [5, 5])).intent, { kind: 'hover', point: [5, 5] });
   assert.deepEqual(run(tool('brush'), at('down', [5, 5], 1)).intent, { kind: 'none' }, 'middle button is reserved for navigation');
-  assert.equal(IMAGE_TOOLS.length, 18);
+  assert.equal(IMAGE_TOOLS.length, 19);
 });
 
 test('I-TOOLS shapes and gradients preview, constrain with Shift and commit on release', () => {

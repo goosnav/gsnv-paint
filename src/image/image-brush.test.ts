@@ -1,5 +1,5 @@
 import { test } from 'node:test'; import assert from 'node:assert/strict';
-import { dab, dabLine, spray, applyCoverage, gradientFill, shapeMask, magicWand, combineMasks, maskBounds, type Coverage } from './image-brush.ts';
+import { dab, dabLine, spray, smudgeDab, applyCoverage, gradientFill, shapeMask, magicWand, combineMasks, maskBounds, type Coverage } from './image-brush.ts';
 import { createRaster } from './raster-ops.ts';
 
 const cov = (w: number, h: number): Coverage => ({ width: w, height: h, data: new Float32Array(w * h) });
@@ -40,4 +40,13 @@ test('I-BRUSH selection masks: shapes, lasso, wand and combination', () => {
   assert.deepEqual([...combineMasks(a, b, 'add')], [255, 255, 255, 0]); assert.deepEqual([...combineMasks(a, b, 'subtract')], [255, 0, 0, 0]);
   assert.deepEqual([...combineMasks(a, b, 'intersect')], [0, 255, 0, 0]); assert.equal(combineMasks(a, b, 'replace'), b);
   assert.deepEqual(maskBounds(new Uint8Array([0, 0, 0, 255, 255, 0]), 3), { x: 0, y: 1, width: 2, height: 1 }); assert.equal(maskBounds(new Uint8Array(4), 2), null);
+});
+
+test('I-BRUSH smudge carries picked-up colour along the stroke and fades with distance', () => {
+  const r = createRaster(40, 5, [255, 255, 255, 255]); for (let x = 0; x < 5; x++) for (let y = 0; y < 5; y++) r.data.set([0, 0, 0, 255], (y * 40 + x) * 4);
+  let { rect, carry } = smudgeDab(r, null, [2.5, 2.5], 4, 1, 0.8); assert.equal(rect, null);
+  for (let x = 4; x <= 30; x += 1) ({ carry } = smudgeDab(r, carry, [x + 0.5, 2.5], 4, 1, 0.8));
+  const at = (x: number) => r.data[(2 * 40 + x) * 4]!;
+  assert.ok(at(8) < 80, 'colour carried well past the source'); assert.ok(at(8) <= at(20) && at(20) <= at(30), 'and fades along the stroke'); assert.equal(at(38), 255);
+  assert.throws(() => smudgeDab(r, carry, [0, 0], 4, 1, 2), RangeError);
 });

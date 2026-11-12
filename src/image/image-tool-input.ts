@@ -18,7 +18,7 @@
  */
 import type { Rect } from './raster-ops.ts';
 
-export const IMAGE_TOOLS = ['move', 'select', 'ellipseSelect', 'lasso', 'wand', 'pencil', 'brush', 'airbrush', 'eraser', 'clone', 'blur', 'fill', 'gradient', 'picker', 'text', 'line', 'rectangle', 'ellipse'] as const;
+export const IMAGE_TOOLS = ['move', 'select', 'ellipseSelect', 'lasso', 'wand', 'pencil', 'brush', 'airbrush', 'eraser', 'clone', 'blur', 'smudge', 'fill', 'gradient', 'picker', 'text', 'line', 'rectangle', 'ellipse'] as const;
 export type ImageTool = typeof IMAGE_TOOLS[number];
 export type SelectMode = 'replace' | 'add' | 'subtract';
 type Point = [number, number];
@@ -38,7 +38,7 @@ type Request = {
   event: { kind: 'down' | 'move' | 'up'; point: Point; button: 0 | 1 | 2; shift: boolean; ctrl?: boolean } | { kind: 'cancel' } | { kind: 'tool'; tool: ImageTool };
   inside: (point: Point) => boolean; floating: boolean;
 };
-const STROKE = new Set<ImageTool>(['pencil', 'brush', 'airbrush', 'eraser', 'clone', 'blur']);
+const STROKE = new Set<ImageTool>(['pencil', 'brush', 'airbrush', 'eraser', 'clone', 'blur', 'smudge']);
 const SHAPE = new Set<ImageTool>(['line', 'rectangle', 'ellipse', 'gradient']);
 const MARQUEE = new Set<ImageTool>(['select', 'ellipseSelect', 'lasso']);
 

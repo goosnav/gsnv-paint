@@ -16,21 +16,21 @@
 import type { RGBA } from './raster-ops.ts';
 import type { ImageTool } from './image-tool-input.ts';
 
-export type ToolOptions = { size: number; hardness: number; opacity: number; flow: number; tolerance: number; contiguous: boolean; style: 'outline' | 'fill' | 'both'; gradient: 'linear' | 'radial'; gradientEnd: 'secondary' | 'transparent'; density: number };
-export const DEFAULT_OPTIONS: ToolOptions = { size: 8, hardness: 80, opacity: 100, flow: 100, tolerance: 32, contiguous: true, style: 'outline', gradient: 'linear', gradientEnd: 'secondary', density: 40 };
+export type ToolOptions = { size: number; hardness: number; opacity: number; flow: number; strength: number; tolerance: number; contiguous: boolean; style: 'outline' | 'fill' | 'both'; gradient: 'linear' | 'radial'; gradientEnd: 'secondary' | 'transparent'; density: number };
+export const DEFAULT_OPTIONS: ToolOptions = { size: 8, hardness: 80, opacity: 100, flow: 100, strength: 50, tolerance: 32, contiguous: true, style: 'outline', gradient: 'linear', gradientEnd: 'secondary', density: 40 };
 export type PaletteModel = { primary: RGBA; secondary: RGBA; tool: ImageTool; options: ToolOptions; info: string; enabled: boolean };
 export type PaletteChange = { kind: 'primary' | 'secondary'; color: RGBA } | { kind: 'swap' } | { kind: 'option'; key: keyof ToolOptions; value: ToolOptions[keyof ToolOptions] };
-type NumberKey = 'size' | 'hardness' | 'opacity' | 'flow' | 'tolerance' | 'density';
+type NumberKey = 'size' | 'hardness' | 'opacity' | 'flow' | 'strength' | 'tolerance' | 'density';
 const RANGES: Record<NumberKey, { label: string; min: number; max: number; unit: string }> = {
   size: { label: 'Size', min: 1, max: 500, unit: 'px' }, hardness: { label: 'Hardness', min: 0, max: 100, unit: '%' }, opacity: { label: 'Opacity', min: 1, max: 100, unit: '%' },
-  flow: { label: 'Flow', min: 1, max: 100, unit: '%' }, tolerance: { label: 'Tolerance', min: 0, max: 255, unit: '' }, density: { label: 'Density', min: 1, max: 200, unit: '' },
+  flow: { label: 'Flow', min: 1, max: 100, unit: '%' }, strength: { label: 'Strength', min: 1, max: 100, unit: '%' }, tolerance: { label: 'Tolerance', min: 0, max: 255, unit: '' }, density: { label: 'Density', min: 1, max: 200, unit: '' },
 };
 type Choice = { key: 'style' | 'gradient' | 'gradientEnd'; label: string; choices: [string, string][] };
 const STYLE: Choice = { key: 'style', label: 'Shapes', choices: [['outline', 'Outline'], ['fill', 'Fill'], ['both', 'Outline and fill']] };
 export const OPTIONS: Record<ImageTool, readonly (NumberKey | Choice | 'contiguous')[]> = {
   move: [], select: [], ellipseSelect: [], lasso: [], wand: ['tolerance', 'contiguous'], picker: [], text: [],
   pencil: ['size'], brush: ['size', 'hardness', 'opacity', 'flow'], airbrush: ['size', 'density', 'opacity'], eraser: ['size', 'hardness', 'opacity'],
-  clone: ['size', 'hardness', 'opacity'], blur: ['size', 'hardness', 'opacity'], fill: ['tolerance', 'contiguous', 'opacity'],
+  clone: ['size', 'hardness', 'opacity'], blur: ['size', 'hardness', 'opacity'], smudge: ['size', 'hardness', 'strength'], fill: ['tolerance', 'contiguous', 'opacity'],
   gradient: [{ key: 'gradient', label: 'Shape', choices: [['linear', 'Linear'], ['radial', 'Radial']] }, { key: 'gradientEnd', label: 'Ends at', choices: [['secondary', 'Secondary colour'], ['transparent', 'Transparent']] }, 'opacity'],
   line: ['size'], rectangle: ['size', STYLE], ellipse: ['size', STYLE],
 };
