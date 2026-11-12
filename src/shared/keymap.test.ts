@@ -111,7 +111,7 @@ for (const [index, patch] of [
 });
 
 test('S05 production CAD tool shortcuts stay native while typing',()=>{
- for(const [key,command] of Object.entries({v:'cad.select',l:'cad.line',r:'cad.rectangleTool',e:'cad.extrude'})){
+ for(const [key,command] of Object.entries({v:'cad.select',l:'cad.line',r:'cad.rectangleTool',c:'cad.circleTool',e:'cad.extrude'})){
   assert.deepEqual(mapped(key),handled(command));assert.deepEqual(mapped(key,{target:'text'}),unhandled);
  }
 });

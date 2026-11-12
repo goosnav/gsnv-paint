@@ -44,9 +44,9 @@ test('S10 XP-inspired web shell fits 1280×720 and preserves focus, menus and wo
   const regressionFile = page.getByRole('menuitem', { name: 'File', exact: true });
   await regressionFile.focus(); await page.keyboard.press('ArrowDown');
   await expect(page.getByRole('menuitem', { name: 'Open (Ctrl+O)', exact: true })).toBeFocused();
-  await page.locator('#app').dispatchEvent('fixture-update');
-  await expect(regressionFile).toBeFocused();
-  await expect(regressionFile).toHaveAttribute('aria-expanded', 'false');
+  await page.locator('#app').dispatchEvent('fixture-update'); // A background update keeps the open menu and focused command.
+  await expect(page.getByRole('menuitem', { name: 'Open (Ctrl+O)', exact: true })).toBeFocused();
+  await expect(regressionFile).toHaveAttribute('aria-expanded', 'true');
   await page.keyboard.press('ArrowDown'); await page.keyboard.press('Tab');
   await expect(regressionFile).toHaveAttribute('aria-expanded', 'false');
   const input = page.getByRole('textbox', { name: 'Panel value', exact: true });

@@ -5,7 +5,7 @@ import { editableCADContent } from './editable-cad-content.ts';
 import { evaluateVariables } from './named-variables.ts';
 import { evaluateDimension } from './dimension-expressions.ts';
 import { linearSketchProgram } from './linear-sketch-program.ts';
-import { linearProfile } from './linear-profile.ts';
+import { sketchRegions } from './sketch-regions.ts';
 import { extrudePreview } from './extrude-preview.ts';
 import type { CADProtocol, CADBuild } from './cad-worker-client.ts';
 const port=globalThis as unknown as {onmessage:(event:MessageEvent<CADProtocol['request']>)=>void;postMessage(reply:CADProtocol['reply']):void};
@@ -22,10 +22,10 @@ async function rebuild(request:CADProtocol['request']):Promise<CADBuild>{
  const entities=program.accept(solver.snapshot()),extrusion=content.graph.features[1];
  if(!extrusion)return{entities,dof,solid:null};
  try{
-  const polygon=linearProfile({entities,tolerance:content.tolerance.linearMm}),depth=evaluateDimension({expression:extrusion.definition.extent.distance,context}).value;
+  const region=sketchRegions({entities,tolerance:content.tolerance.linearMm}),depth=evaluateDimension({expression:extrusion.definition.extent.distance,context}).value;
   if(Math.abs(depth)<=content.tolerance.linearMm)throw new Error('Depth must be nonzero and exceed the document tolerance.');
   if(!kernel){const loaded=await kernelRuntime({action:'open',config:{moduleUrl:request.assets.kernelModule,wasmUrl:request.assets.kernelWasm,mode:'single',tolerance:content.tolerance}});kernel=loaded.session;if(!kernel)throw new Error(loaded.status.diagnostics.map(d=>d.message).join(' '));}
-  return{entities,dof,solid:extrudePreview({session:kernel,polygon,depth})};
+  return{entities,dof,solid:extrudePreview({session:kernel,region,depth})};
  }catch(cause){throw new Error(`Extrude: ${cause instanceof Error?cause.message:String(cause)}`);}
 }
 port.onmessage=event=>{void rebuild(event.data).then(value=>port.postMessage({id:event.data.id,ok:true,value}),cause=>port.postMessage({id:event.data.id,ok:false,message:cause instanceof Error?cause.message:String(cause)}));};

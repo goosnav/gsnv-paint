@@ -2,7 +2,7 @@
 
 ## What you get today
 
-The launcher opens the gsnv-paint application shell in your browser: menus, the CAD / Image / Video workspace tabs, and the History and Recovery panels. The CAD tab supports line/rectangle sketches, dimensions, horizontal/vertical constraints and blind extrusion. Image and Video still display their unavailable state. Nothing leaves your computer. There are no accounts and no API keys.
+The launcher opens gsnv-paint in your browser: menus, the CAD / Image / Video workspace tabs, and the History and Recovery panels. The Image tab is a paint-style editor. The CAD tab supports line/rectangle/circle sketches, dimensions, horizontal/vertical constraints and blind extrusion with holes. Video still displays its unavailable state. Nothing leaves your computer. There are no accounts and no API keys.
 
 ## Make a first CAD part
 
@@ -14,7 +14,20 @@ The launcher opens the gsnv-paint application shell in your browser: menus, the 
 
 Use V to select, L for a two-click line, R for a two-click rectangle, F to fit. The rectangle tool replaces the sketch and can be undone. Select an edge to add or remove H/V constraints. Scroll to zoom, hold Space while dragging to pan the sketch, and middle-drag to orbit the solid (Shift+middle-drag pans). Failed sketches and extrusions display a reason in the Part panel.
 
-This is the first CAD increment, not the complete suite. One XY sketch, one blind boss and STEP output are supported. The remaining CAD tools and exports, Image, Video and the packaged release are still under development.
+This is not the complete suite. In CAD, one XY sketch region (outline plus holes), one blind boss and STEP/STL output are supported. The Image editor has one layer. The remaining CAD tools and exports, layers, Video and the packaged release are still under development.
+
+## Paint a first image
+
+1. Choose the Image tab, then New (Ctrl+N). An 800 × 600 white canvas opens.
+2. Pick a tool in the left palette: Select (S), Pencil (P), Brush (B), Eraser (E), Fill (G), Pick colour (I), Line (L), Rectangle (R), Ellipse (O), Text (T).
+3. In the Colours panel, click a swatch for the primary colour (left button) or right-click one for the secondary colour (right button and eraser). Set the size and the shape style there. X swaps the colours; D resets them.
+4. Hold Shift for squares, circles and 45° lines. Scroll to zoom, hold Space and drag (or middle-drag) to pan, F to fit.
+5. Drag with Select, then drag inside the selection to move it; Enter places it, Esc cancels. Ctrl+C / Ctrl+X / Ctrl+V, Delete and Crop to selection work on it.
+6. Image → Export PNG saves a picture. Ctrl+S saves an editable `.gsnv-image` project. Image → Import image opens a PNG, JPEG, GIF, WebP or BMP.
+
+## Add holes to a CAD part
+
+After creating the rectangle in the steps above, choose Sketch → Circle dimensions… and enter a diameter and center, or press C and click a center and then a point on the circle. Circles inside the outline become holes when you extrude. Solid → Export STL (3D printing) saves the part for a slicer.
 
 ## Start
 

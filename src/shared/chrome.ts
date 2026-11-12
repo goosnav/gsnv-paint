@@ -5,7 +5,8 @@
  *            marked toolbar=true supply their glyph; tools populate the left palette.
  *            OUT: update/dispose plus a stable viewport element; XP-inspired application header/menu/
  *            toolbar/palette/panels/status, workspace switcher and accessible controls.
- *            update preserves viewport and caller-owned panel content identities;
+ *            update preserves viewport and caller-owned panel content identities, an open
+ *            menu and its focused command (focus returns to the trigger if it vanished);
  *            dispose is idempotent and removes all installed event listeners.
  *            RAISES: TypeError for invalid root/model/callbacks.
  * GUARANTEES No domain decisions or fake tool actions; supplied strings are text;
@@ -123,8 +124,9 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     validate(next); if (disposed) return;
     const focused = document.activeElement as HTMLElement | null;
     let focusKey = focused?.dataset.focusKey;
-    // Updates close popups, so their focused command must return to a visible trigger.
-    if (activeMenu >= 0 && menuNodes[activeMenu]!.popup.contains(focused)) focusKey = menuNodes[activeMenu]!.button.dataset.focusKey;
+    // Background updates (worker results, autosave) keep an open menu open with the same focused command.
+    const openId = activeMenu >= 0 ? menuNodes[activeMenu]!.button.dataset.menu : undefined;
+    const popupFocused = activeMenu >= 0 && menuNodes[activeMenu]!.popup.contains(focused);
     closeMenu(); current = next;
     get<HTMLElement>('[data-window-title]').textContent = `${next.title || 'Untitled'}${next.dirty ? ' *' : ''}`;
     viewport.setAttribute('aria-label', `${workspaceNames[next.workspace]} workspace view`);
@@ -155,6 +157,10 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     get<HTMLElement>('.gc-capabilities summary').textContent = unavailable ? `${unavailable} browser notice${unavailable === 1 ? '' : 's'}` : next.capabilities.length ? 'Browser support' : 'Browser support not checked';
     const list = get<HTMLElement>('.gc-capability-list'); list.replaceChildren();
     for (const capability of next.capabilities) { const row = make('p', 'gc-capability', `${capability.label}: ${capability.message}`); row.dataset.state = capability.status; list.append(row); }
+    const reopen = openId === undefined ? -1 : menuNodes.findIndex(item => item.button.dataset.menu === openId);
+    if (reopen >= 0) openMenu(reopen);
+    // A focused command that is gone or now disabled hands focus back to its visible trigger.
+    if (popupFocused && (reopen < 0 || ![...menuNodes[reopen]!.popup.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')].some(item => item.dataset.focusKey === focusKey))) focusKey = reopen >= 0 ? menuNodes[reopen]!.button.dataset.focusKey : `menu:${openId}`;
     if (focusKey) {
       const replacement = [...frame.querySelectorAll<HTMLElement>('[data-focus-key]')].find(element => element.dataset.focusKey === focusKey);
       replacement?.focus();

@@ -2,7 +2,12 @@
 
 One creative suite with Image, Video and CAD workspaces. The same static browser build will run on the web and from a local launcher. Work stays on the device.
 
-Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MODULE_MAP.md). CAD now has a working first workflow: line/rectangle sketches, driving dimensions, horizontal/vertical constraints and a real OpenCascade blind extrusion. Save/open, undo/redo, local recovery and STEP export are connected. Image and Video editing, the remaining CAD features and the packaged release are unfinished.
+Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MODULE_MAP.md). Two workspaces work today:
+
+- **Image** — a paint-style editor: pencil, brush, eraser, fill, colour picker, line, rectangle, ellipse, text, rectangular selection with move/copy/paste/crop, resize, rotate/flip and PNG import/export ([details](dev/IMAGE-WORKFLOW.md)).
+- **CAD** — line/rectangle/circle sketches, driving dimensions, horizontal/vertical constraints and a real OpenCascade blind extrusion, including holes; STEP and STL export ([workflow](dev/CAD-WORKFLOW.md), [holes and STL](dev/CAD-HOLES-STL.md)).
+
+Both have save/open, undo/redo and local recovery. Video editing, the remaining CAD features (cuts, fillets, other planes, drawings) and the packaged release are unfinished.
 
 The [decision record](dev/DECISIONS.md) documents dependency selection, distribution constraints and license obligations. Phase reports under `dev/` distinguish passed, failed and untested requirements. Only the owner accepts a release.
 
@@ -50,4 +55,8 @@ C07 constructs points, lines, corner/center rectangles and regular polygons as p
 4. Use Ctrl+Z/Ctrl+Y for history and Ctrl+S/Ctrl+O for editable `.gsnv-cad` files. On reload, choose Restore recovery if needed.
 5. Choose **Export STEP** to save the solid for other CAD software. Esc cancels an export that is still running.
 
-V selects sketch edges, L draws lines, R draws a rectangle, F fits the view. Rectangle drawing replaces the current sketch; Undo restores it. Sketch coordinates use millimetres internally. A single closed linear XY profile and a blind boss are supported in this increment. Holes, cuts, fillets, other planes, STEP import, STL/3MF/DXF export and drawing sheets remain unfinished. See [CAD workflow evidence](dev/CAD-WORKFLOW.md) and [STEP export evidence](dev/CAD-STEP-EXPORT.md) for exact tests and limits.
+V selects sketch edges, L draws lines, R draws a rectangle, C draws a circle, F fits the view. Rectangle drawing replaces the current outline and keeps circles; Undo restores it. Circles inside the outline become holes; Sketch → Circle dimensions… places an exact hole. Solid → Export STL saves a file for 3D printing. Sketch coordinates use millimetres internally. One XY sketch region (outline plus holes) and a blind boss are supported. Cuts, fillets, other planes, STEP import, 3MF/DXF export and drawing sheets remain unfinished. See [CAD workflow evidence](dev/CAD-WORKFLOW.md), [holes and STL](dev/CAD-HOLES-STL.md) and [STEP export evidence](dev/CAD-STEP-EXPORT.md) for exact tests and limits.
+
+## First image
+
+Switch to the Image tab and press Ctrl+N. Pick a tool from the palette (or press P, B, E, G, I, L, R, O, T, S), click a swatch for the primary colour or right-click for the secondary, and draw. Ctrl+Z undoes each stroke or shape. Image → Export PNG saves a picture; Ctrl+S saves an editable `.gsnv-image` project. See [Image workflow evidence](dev/IMAGE-WORKFLOW.md).

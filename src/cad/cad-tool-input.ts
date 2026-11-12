@@ -3,17 +3,18 @@
  * KIND       CORE
  * CONTRACT   IN: tool/anchor/selection state, finite mm event, endpoints, positive snap
  *            tolerance. OUT: owned state plus line/rectangle/select/none intent.
- *            Two clicks commit; move previews; Escape cancels; Shift aligns lines.
+ *            Two clicks commit (circle: center then a point on the circle); move previews;
+ *            Escape cancels; Shift aligns lines.
  *            RAISES: TypeError for invalid finite coordinates/tolerance.
  * GUARANTEES Pure, no IDs or side effects; selected IDs remain unique.
  * TUNING     Caller converts screen snap distance to document millimetres.
  * DECISIONS  D1: Commit on clicks rather than drag release for deliberate CAD placement.
  *            Alternative: freehand drag; Revisit if: the tool's interaction contract changes.
- * LIMITS     Selection, line and corner rectangle only; no curve or constraint policy.
+ * LIMITS     Selection, line, corner rectangle and center circle; no arcs or constraint policy.
  * TESTBENCH  src/cad/cad-tool-input.test.ts -- run with: node --import tsx --test src/cad/cad-tool-input.test.ts
  */
-export type CADToolState={tool:'select'|'line'|'rectangle';anchor:[number,number]|null;cursor:[number,number]|null;selected:string[]};
-type Intent={kind:'none'}|{kind:'select'}|{kind:'line';a:[number,number];b:[number,number]}|{kind:'rectangle';origin:[number,number];width:number;height:number};
+export type CADToolState={tool:'select'|'line'|'rectangle'|'circle';anchor:[number,number]|null;cursor:[number,number]|null;selected:string[]};
+type Intent={kind:'none'}|{kind:'select'}|{kind:'line';a:[number,number];b:[number,number]}|{kind:'rectangle';origin:[number,number];width:number;height:number}|{kind:'circle';center:[number,number];radius:number};
 type Request={state:CADToolState;event:{kind:'click'|'move';point:[number,number];hit:string|null;ctrl:boolean;shift:boolean}|{kind:'cancel'}|{kind:'tool';tool:CADToolState['tool']};endpoints:readonly(readonly[number,number])[];tolerance:number};
 export function cadToolInput(request:Request):{state:CADToolState;intent:Intent}{
  const {event,endpoints,tolerance}=request;
@@ -32,5 +33,6 @@ export function cadToolInput(request:Request):{state:CADToolState;intent:Intent}
  if(!state.anchor){state.anchor=p;return{state,intent:none};}
  const a=state.anchor;state.anchor=null;
  if(state.tool==='line')return{state,intent:{kind:'line',a,b:p}};
+ if(state.tool==='circle')return{state,intent:{kind:'circle',center:a,radius:Math.hypot(p[0]-a[0],p[1]-a[1])}};
  return{state,intent:{kind:'rectangle',origin:[Math.min(a[0],p[0]),Math.min(a[1],p[1])],width:Math.abs(p[0]-a[0]),height:Math.abs(p[1]-a[1])}};
 }

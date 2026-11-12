@@ -13,11 +13,12 @@
  */
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import type { CADContent } from './editable-cad-content.ts';
+import type { CADContent, SketchEntity } from './editable-cad-content.ts';
 import type { SolidPreview } from './extrude-preview.ts';
 import type { View2D } from '../shared/view-transform.ts';
 import type { LinearEntity } from './sketch-linear-primitives.ts';
-export type CADView = {content:CADContent|null;entities:readonly LinearEntity[];view:View2D;selected:string[];preview:readonly LinearEntity[];solid:SolidPreview|null;mode:'sketch'|'solid';state:'under'|'fully'|'error'};
+type Drawn = LinearEntity|SketchEntity;
+export type CADView = {content:CADContent|null;entities:readonly Drawn[];view:View2D;selected:string[];preview:readonly Drawn[];solid:SolidPreview|null;mode:'sketch'|'solid';state:'under'|'fully'|'error'};
 type Handle={update(model:CADView):void;fit():void;point(point:{x:number;y:number}):[number,number];hit(point:{x:number;y:number}):string|null;dispose():void};
 export function cadViewport(host:HTMLElement):Handle {
   if(!host?.ownerDocument)throw new TypeError('CAD viewport needs a live DOM host.');
@@ -48,14 +49,25 @@ export function cadViewport(host:HTMLElement):Handle {
       const attrs={x1:a.x,y1:a.y,x2:b.x,y2:b.y};group.append(element('line',{...attrs,stroke:'transparent','stroke-width':14}));
       group.append(element('line',{...attrs,stroke:selected?'#d97413':color,'stroke-width':selected?3:2,'stroke-dasharray':preview?'5 4':'none','pointer-events':'none'}));
       for(const p of [a,b])group.append(element('circle',{cx:p.x,cy:p.y,r:3,fill:'#fff',stroke:color,'pointer-events':'none'}));svg.append(group);
+    }else if(entity.kind==='circle'){
+      const c=screen(entity.center),r=entity.radius*scale*model.view.zoom,selected=model.selected.includes(entity.id),preview=model.preview.includes(entity);
+      const group=element('g',{'data-entity-id':entity.id,'data-selected':String(selected)});
+      group.append(element('circle',{cx:c.x,cy:c.y,r,fill:'none',stroke:'transparent','stroke-width':14}));
+      group.append(element('circle',{cx:c.x,cy:c.y,r,fill:'none',stroke:selected?'#d97413':color,'stroke-width':selected?3:2,'stroke-dasharray':preview?'5 4':'none','pointer-events':'none'}));
+      group.append(element('path',{d:`M${c.x-4} ${c.y}h8M${c.x} ${c.y-4}v8`,stroke:color,'pointer-events':'none'}));svg.append(group);
     }
     const sketch=model.content?.graph.features[0].definition.sketch;
     for(const c of sketch?.constraints??[]){
-      const e=model.entities.find(e=>e.id===c.entityIds[0]);if(!e||e.kind!=='segment')continue;
+      const e=model.entities.find(e=>e.id===c.entityIds[0]);if(!e||e.kind==='point')continue;
+      if(e.kind==='circle'){const p=screen(e.center);svg.append(element('text',{x:p.x+6,y:p.y-6,fill:color,'font-size':11},'⌖'));continue;}
       const a=screen(e.a),b=screen(e.b);svg.append(element('text',{x:(a.x+b.x)/2+7,y:(a.y+b.y)/2-7,fill:color,'font-size':11},c.kind==='horizontal'?'H':c.kind==='vertical'?'V':'⌖'));
     }
     for(const d of sketch?.dimensions??[]){
-      const e=model.entities.find(e=>e.id===d.entityIds[0]);if(!e||e.kind!=='segment')continue;
+      const e=model.entities.find(e=>e.id===d.entityIds[0]);if(!e||e.kind==='point')continue;
+      if(e.kind==='circle'){
+        const p=screen([e.center[0]+e.radius*Math.SQRT1_2,e.center[1]+e.radius*Math.SQRT1_2]);
+        svg.append(element('text',{'data-dimension-id':d.id,role:'button',tabindex:0,'aria-label':`Edit dimension ${d.value.source}`,x:p.x+6,y:p.y-6,fill:'#23384f','font-size':13,class:'cad-dimension'},`⌀ ${d.value.source}`));continue;
+      }
       const a=screen(e.a),b=screen(e.b),horizontal=Math.abs(b.x-a.x)>=Math.abs(b.y-a.y);
       svg.append(element('text',{'data-dimension-id':d.id,role:'button',tabindex:0,'aria-label':`Edit dimension ${d.value.source}`,x:(a.x+b.x)/2+(horizontal?0:20),y:(a.y+b.y)/2+(horizontal?23:0),fill:'#23384f','font-size':13,'text-anchor':'middle',class:'cad-dimension'},d.value.source));
     }
@@ -80,7 +92,7 @@ export function cadViewport(host:HTMLElement):Handle {
       const bounds=new THREE.Box3().setFromObject(mesh),center=bounds.getCenter(new THREE.Vector3()),extent=bounds.getSize(new THREE.Vector3());
       const radius=Math.max(extent.length(),1),{width,height}=size();camera.top=radius*.65*Math.max(1,height/width);camera.bottom=-camera.top;camera.zoom=1;camera.position.copy(center).add(new THREE.Vector3(radius,-radius,radius*.85));controls.target.copy(center);controls.update();resize();
     }else if(model){
-      const points=model.entities.flatMap(e=>e.kind==='segment'?[e.a,e.b]:[e.p]);if(!points.length)return;
+      const points=model.entities.flatMap(e=>e.kind==='segment'?[e.a,e.b]:e.kind==='circle'?[[e.center[0]-e.radius,e.center[1]-e.radius] as const,[e.center[0]+e.radius,e.center[1]+e.radius] as const]:[e.p]);if(!points.length)return;
       const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]),minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys),{width,height}=size();
       scale=Math.max(.001,Math.min((width-100)/Math.max(1,maxX-minX),(height-100)/Math.max(1,maxY-minY)))/model.view.zoom;
       origin={x:(width/2-model.view.pan.x)/model.view.zoom-(maxX+minX)/2*scale,y:(height/2-model.view.pan.y)/model.view.zoom+(maxY+minY)/2*scale};drawSketch();

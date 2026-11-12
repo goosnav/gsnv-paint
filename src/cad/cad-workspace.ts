@@ -8,7 +8,8 @@
  * TUNING     Starting document title, tool labels and transaction defaults below.
  * DECISIONS  D1: Keep geometry previews outside history. Alternative: commit then undo
  *            cancel; that pollutes history/recovery. Revisit if: the shell transaction API changes.
- * LIMITS     C50 supported CAD subset; all other feature families remain planned.
+ * LIMITS     C50 supported CAD subset; all other feature families remain planned. STL export
+ *            writes the displayed B-rep triangulation (0.1 mm deflection), not a separate export mesh.
  * TESTBENCH  src/cad/cad-workspace.browser.spec.ts -- run with: npm run test:browser -- src/cad/cad-workspace.browser.spec.ts
  */
 import type { WorkspaceAdapter, AppDocument } from '../app/app-shell.ts';
@@ -25,6 +26,9 @@ import { cadViewport } from './cad-viewport.ts';
 import { cadToolInput, type CADToolState } from './cad-tool-input.ts';
 import { cadProperties, type PropertyEdit } from './cad-properties.ts';
 import { cadSTEPExport } from './cad-step-export.ts';
+import { writeSTL } from './stl-serialization.ts';
+import { fileAccess } from '../shared/file-access.ts';
+import type { SketchEntity } from './editable-cad-content.ts';
 import kernelModule from 'replicad-opencascadejs?url';
 import kernelWasm from 'replicad-opencascadejs/wasm?url';
 import solverModule from '@salusoft89/planegcs/dist/planegcs_dist/planegcs.js?url';
@@ -32,6 +36,7 @@ import solverWasm from '@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm?ur
 import './cad-workspace.css';
 
 type Snapshot=Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
+const firstSegment=(entities:readonly SketchEntity[])=>entities.find((e):e is Extract<SketchEntity,{kind:'segment'}>=>e.kind==='segment');
 export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
  const value=(document:AppDocument)=>editableCADContent({operation:'read',value:document.value});
  return{
@@ -49,16 +54,17 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
    const assets={kernelModule:new URL(kernelModule,location.href).href,kernelWasm:new URL(kernelWasm,location.href).href,solverModule:new URL(solverModule,location.href).href,solverWasm:new URL(solverWasm,location.href).href};
    const exporter=cadSTEPExport({files,assets,createWorker:()=>new Worker(new URL('./cad-step-export.worker.ts',import.meta.url),{type:'module'}),onStatus(state,text){exportMessage=text;hint.dataset.exportState=state;refresh(false);}});
    const worker=cadWorkerClient({assets,createWorker:()=>new Worker(new URL('./cad-workspace.worker.ts',import.meta.url),{type:'module'}),
-    onResult(identity,output){if(disposed||identity!==jobIdentity)return;result=output;status='ready';message=output.dof===0?'Sketch is fully defined.':`Sketch has ${output.dof} degrees of freedom.`;refresh();},
-    onError(identity,error){if(disposed||identity!==jobIdentity)return;result=null;status='error';message=error;refresh();},
+    onResult(identity,output){if(disposed||identity!==jobIdentity)return;result=output;status='ready';message=output.dof===0?'Sketch is fully defined.':`Sketch has ${output.dof} degrees of freedom.`;refresh();host.invalidate();},
+    onError(identity,error){if(disposed||identity!==jobIdentity)return;result=null;status='error';message=error;refresh();host.invalidate();},
    });
    const effective=()=>preview??content;
    const entities=()=>result?.entities??effective()?.graph.features[0].definition.sketch.entities??[];
    const uid=()=>crypto.randomUUID();
-   function toolStatus(){return !current?'New (Ctrl+N) starts a part.':mode==='solid'?'Middle-drag to orbit · Shift+middle-drag to pan · wheel to zoom · F to fit.':tool.tool==='select'?'Click an edge to select · Ctrl-click adds to selection · double-click a dimension to edit.':tool.anchor?'Click the next corner to finish · Shift aligns a line · Esc cancels.':tool.tool==='line'?'Click the first endpoint · endpoints snap · Esc cancels.':'Click the first corner. This replaces the current sketch with a dimensioned rectangle.';}
+   function toolStatus(){return !current?'New (Ctrl+N) starts a part.':mode==='solid'?'Middle-drag to orbit · Shift+middle-drag to pan · wheel to zoom · F to fit.':tool.tool==='select'?'Click an edge to select · Ctrl-click adds to selection · double-click a dimension to edit.':tool.anchor?(tool.tool==='circle'?'Click a point on the circle to set its size · Esc cancels.':'Click the next corner to finish · Shift aligns a line · Esc cancels.'):tool.tool==='circle'?'Click the circle center · inside an outline it becomes a hole when extruded.':tool.tool==='line'?'Click the first endpoint · endpoints snap · Esc cancels.':'Click the first corner. This replaces the current sketch with a dimensioned rectangle.';}
    function refresh(includePanel=true){
-    if(disposed)return;const shown=effective();let ghost:LinearEntity[]=[];
-    if(shown&&tool.anchor&&tool.cursor&&tool.tool!=='select')try{ghost=makeLinearEntities({tool:tool.tool==='line'?'line':'corner-rectangle',anchors:[tool.anchor,tool.cursor],ids:tool.tool==='line'?['preview']:['preview1','preview2','preview3','preview4'],construction:false,tolerance:shown.tolerance});}catch{/* A zero-length hover is a preview, never a committed segment. */}
+    if(disposed)return;const shown=effective();let ghost:(LinearEntity|SketchEntity)[]=[];
+    if(shown&&tool.anchor&&tool.cursor&&tool.tool==='circle'){const radius=Math.hypot(tool.cursor[0]-tool.anchor[0],tool.cursor[1]-tool.anchor[1]);if(radius>shown.tolerance.linearMm)ghost=[{id:'preview',kind:'circle',center:tool.anchor,radius,construction:false}];}
+    else if(shown&&tool.anchor&&tool.cursor&&tool.tool!=='select')try{ghost=makeLinearEntities({tool:tool.tool==='line'?'line':'corner-rectangle',anchors:[tool.anchor,tool.cursor],ids:tool.tool==='line'?['preview']:['preview1','preview2','preview3','preview4'],construction:false,tolerance:shown.tolerance});}catch{/* A zero-length hover is a preview, never a committed segment. */}
     viewport.update({content:shown,entities:entities(),view,selected:tool.selected,preview:ghost,solid:result?.solid??null,mode,state:status==='error'?'error':result?.dof===0?'fully':'under'});
     hint.textContent=exportMessage||toolStatus();hint.dataset.tool=tool.tool;
     if(includePanel)properties.update({content:shown,selected:tool.selected,state:status,message,result});
@@ -95,7 +101,12 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
     if(id==='tool.cancel'){exporter.cancel();worker.cancel();preview=null;tool=cadToolInput({state:tool,event:{kind:'cancel'},endpoints:[],tolerance:content.tolerance.linearMm}).state;build(content,current!.identity);return;}
     if(id==='cad.exportSTEP'){void exporter.run({content,name:`${current?.title.trim()||'part'}.step`});return;}
     if(id==='tool.confirm'){if(tool.anchor&&tool.cursor)pointer(tool.cursor,null,false,false);return;}
-    if(['cad.select','cad.line','cad.rectangleTool'].includes(id)){mode='sketch';tool=cadToolInput({state:tool,event:{kind:'tool',tool:id==='cad.select'?'select':id==='cad.line'?'line':'rectangle'},endpoints:[],tolerance:content.tolerance.linearMm}).state;refresh();return;}
+    if(['cad.select','cad.line','cad.rectangleTool','cad.circleTool'].includes(id)){mode='sketch';tool=cadToolInput({state:tool,event:{kind:'tool',tool:id==='cad.select'?'select':id==='cad.line'?'line':id==='cad.circleTool'?'circle':'rectangle'},endpoints:[],tolerance:content.tolerance.linearMm}).state;refresh();host.invalidate();return;}
+    if(id==='cad.exportSTL'){void exportSTL();return;}
+    if(id==='cad.circle'){
+     const prefix=uid();
+     transaction('Circle dimensions',[{key:'diameter',label:`Diameter (${content.units} or expression)`,type:'text'},{key:'x',label:'Center X (mm)',type:'number'},{key:'y',label:'Center Y (mm)',type:'number'}],{diameter:'10',x:0,y:0},v=>({kind:'circle',prefix,diameter:String(v.diameter),center:[Number(v.x),Number(v.y)]}));return;
+    }
     if(id==='cad.sketch'||id==='cad.solid'){mode=id==='cad.sketch'?'sketch':'solid';refresh();return;}
     if(id==='view.fit'){viewport.fit();return;}
     if(id==='edit.selectAll'){tool={...tool,selected:content.graph.features[0].definition.sketch.entities.map(e=>e.id)};refresh();return;}
@@ -108,18 +119,27 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
     }
     if(id==='cad.rectangle'){
      const prefix=uid(),sketch=content.graph.features[0].definition.sketch;
-     transaction('Rectangle dimensions',[{key:'width',label:`Width (${content.units})`,type:'text'},{key:'height',label:`Height (${content.units})`,type:'text'},{key:'x',label:'Corner X (mm)',type:'number'},{key:'y',label:'Corner Y (mm)',type:'number'}],{width:sketch.dimensions[0]?.value.source??'100',height:sketch.dimensions[1]?.value.source??'60',x:sketch.entities[0]?.a[0]??0,y:sketch.entities[0]?.a[1]??0},v=>({kind:'rectangle',prefix,width:String(v.width),height:String(v.height),origin:[Number(v.x),Number(v.y)]}));return;
+     transaction('Rectangle dimensions',[{key:'width',label:`Width (${content.units})`,type:'text'},{key:'height',label:`Height (${content.units})`,type:'text'},{key:'x',label:'Corner X (mm)',type:'number'},{key:'y',label:'Corner Y (mm)',type:'number'}],{width:sketch.dimensions[0]?.value.source??'100',height:sketch.dimensions[1]?.value.source??'60',x:firstSegment(sketch.entities)?.a[0]??0,y:firstSegment(sketch.entities)?.a[1]??0},v=>({kind:'rectangle',prefix,width:String(v.width),height:String(v.height),origin:[Number(v.x),Number(v.y)]}));return;
     }
     if(id==='cad.lineCoordinates'){
      const id=uid();transaction('Line coordinates',['x1','y1','x2','y2'].map(key=>({key,label:`${key.toUpperCase()} (${content!.units})`,type:'text'})),{x1:'0',y1:'0',x2:'40',y2:'0'},v=>({kind:'line',id,a:[length(v.x1),length(v.y1)],b:[length(v.x2),length(v.y2)]}));
     }
    }
    function pointer(point:[number,number],hit:string|null,ctrl:boolean,shift:boolean,move=false){
-    if(!content)return;const endpoints=entities().flatMap(e=>e.kind==='segment'?[e.a,e.b]:[]),a=viewport.point({x:0,y:0}),b=viewport.point({x:8,y:0});
+    if(!content)return;const endpoints=entities().flatMap(e=>e.kind==='segment'?[e.a,e.b]:e.kind==='circle'?[e.center]:[]),a=viewport.point({x:0,y:0}),b=viewport.point({x:8,y:0});
     const next=cadToolInput({state:tool,event:{kind:move?'move':'click',point,hit,ctrl,shift},endpoints,tolerance:Math.max(content.tolerance.linearMm,Math.abs(b[0]-a[0]))});tool=next.state;
     if(next.intent.kind==='line')commit({kind:'line',id:uid(),a:next.intent.a,b:next.intent.b},'Draw line');
+    else if(next.intent.kind==='circle'){if(next.intent.radius>content.tolerance.linearMm)commit({kind:'circle',prefix:uid(),diameter:`${+(next.intent.radius*2).toFixed(3)} mm`,center:next.intent.center},'Draw circle');else refresh();}
     else if(next.intent.kind==='rectangle')commit({kind:'rectangle',prefix:uid(),width:`${next.intent.width} mm`,height:`${next.intent.height} mm`,origin:next.intent.origin},'Draw rectangle');
     else refresh(!move);
+   }
+   async function exportSTL(){
+    const solid=result?.solid;if(!solid||!current)return;
+    try{
+     const file=writeSTL({name:current.title,meshes:[solid],unitScaleToMm:1}),saved=await fileAccess({op:'save',name:`${current.title.trim()||'part'}.stl`,mime:file.mime,bytes:file.bytes},files);
+     if('cancelled' in saved)return;exportMessage=saved.ok?`Exported ${saved.value.name}.`:`${saved.error.code}: ${saved.error.message}`;hint.dataset.exportState=saved.ok?'done':'error';
+    }catch(cause){exportMessage=`STL export failed: ${cause instanceof Error?cause.message:String(cause)}`;hint.dataset.exportState='error';}
+    refresh(false);
    }
    const dimensionEdit=(event:Event)=>{if(event.type==='keydown'&&!['Enter',' '].includes((event as KeyboardEvent).key))return;const target=event.target as Element;const id=target.closest('[data-dimension-id]')?.getAttribute('data-dimension-id');if(id){event.preventDefault();event.stopPropagation();edit({command:'cad.dimension',id});}};stage.addEventListener('dblclick',dimensionEdit);stage.addEventListener('keydown',dimensionEdit);
    return{
@@ -129,8 +149,8 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
     },
     model(){
      const enabled=!!current,item=(id:string,label:string,icon:string,shortcut='',toolbar=false)=>({id,label,icon,shortcut,toolbar,enabled});
-     return{menus:[{id:'sketch',label:'Sketch',items:[item('cad.rectangle','Rectangle dimensions…','rectangle','',true),item('cad.lineCoordinates','Line coordinates…','line'),item('cad.sketch','Edit sketch','grid'),item('cad.horizontal','Horizontal constraint','ruler'),item('cad.vertical','Vertical constraint','ruler'),item('edit.selectAll','Select all','select','Ctrl+A'),item('edit.delete','Delete selected','delete','Delete')]},{id:'solid',label:'Solid',items:[item('cad.extrude','Extrude…','extrude','E',true),item('cad.solid','Solid view','cad','',true),item('cad.removeExtrude','Delete extrusion','delete'),item('view.fit','Zoom to fit','fit','F',true),{...item('cad.exportSTEP','Export STEP','export','',true),enabled:enabled&&!!content?.graph.features[1]}]}],
-     tools:[{id:'cad.select',label:'Select',icon:'select',shortcut:'V',enabled,status:'Click an edge to select it.'},{id:'cad.line',label:'Line',icon:'line',shortcut:'L',enabled,status:'Click two endpoints to draw a line.'},{id:'cad.rectangleTool',label:'Rectangle',icon:'rectangle',shortcut:'R',enabled,status:'Click two corners to replace the sketch with a rectangle.'}],panels:[{id:'cad-properties',title:'Part',content:panel}]};
+     return{menus:[{id:'sketch',label:'Sketch',items:[item('cad.rectangle','Rectangle dimensions…','rectangle','',true),item('cad.lineCoordinates','Line coordinates…','line'),item('cad.circle','Circle dimensions…','ellipse'),item('cad.sketch','Edit sketch','grid'),item('cad.horizontal','Horizontal constraint','ruler'),item('cad.vertical','Vertical constraint','ruler'),item('edit.selectAll','Select all','select','Ctrl+A'),item('edit.delete','Delete selected','delete','Delete')]},{id:'solid',label:'Solid',items:[item('cad.extrude','Extrude…','extrude','E',true),item('cad.solid','Solid view','cad','',true),item('cad.removeExtrude','Delete extrusion','delete'),item('view.fit','Zoom to fit','fit','F',true),{...item('cad.exportSTEP','Export STEP','export','',true),enabled:enabled&&!!content?.graph.features[1]},{...item('cad.exportSTL','Export STL (3D printing)','export'),enabled:enabled&&!!result?.solid}]}],
+     tools:[{active:enabled&&tool.tool==='select',id:'cad.select',label:'Select',icon:'select',shortcut:'V',enabled,status:'Click an edge to select it.'},{active:enabled&&tool.tool==='line',id:'cad.line',label:'Line',icon:'line',shortcut:'L',enabled,status:'Click two endpoints to draw a line.'},{active:enabled&&tool.tool==='rectangle',id:'cad.rectangleTool',label:'Rectangle',icon:'rectangle',shortcut:'R',enabled,status:'Click two corners to replace the outline with a rectangle.'},{active:enabled&&tool.tool==='circle',id:'cad.circleTool',label:'Circle',icon:'ellipse',shortcut:'C',enabled,status:'Click the center, then a point on the circle.'}],panels:[{id:'cad-properties',title:'Part',content:panel}]};
     },context:()=>({viewRole:mode==='sketch'?'sketch2d':'cad3d',activeTool:tool.tool,status:exportMessage||toolStatus()}),command,
     gesture(gesture){if(mode!=='sketch'||gesture.type!=='pointer')return;if(gesture.phase==='cancel'){tool={...tool,anchor:null,cursor:null};refresh();}else if(gesture.phase==='down'&&gesture.button===0)pointer(viewport.point(gesture.point),viewport.hit(gesture.point),gesture.ctrl,gesture.shift);else if(gesture.phase==='move')pointer(viewport.point(gesture.point),null,gesture.ctrl,gesture.shift,true);},
     dispose(){if(disposed)return;disposed=true;exporter.dispose();worker.dispose();stage.removeEventListener('dblclick',dimensionEdit);stage.removeEventListener('keydown',dimensionEdit);viewport.dispose();properties.dispose();host.root.replaceChildren();},

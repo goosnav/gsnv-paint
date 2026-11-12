@@ -64,3 +64,29 @@ test('CAD-APP exact sketch tools, H/V solving and displayed dimension editing',a
  await page.locator('[data-dimension-id]').first().dblclick();await expect(page.getByRole('dialog')).toBeVisible();await page.getByRole('dialog').getByLabel('Length (mm or expression)').fill('40');await page.keyboard.press('Enter');await volume(page,'8000.000');
  }finally{await page.close();await server.close();}
 });
+
+test('CAD-APP plate with circular holes extrudes exact B-rep volume and exports STL',async({page,context})=>{
+ test.setTimeout(60000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await context.addInitScript(()=>{Object.defineProperty(window,'showSaveFilePicker',{value:undefined});Object.defineProperty(window,'showOpenFilePicker',{value:undefined});});
+ try{
+ await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
+ const dialog=page.getByRole('dialog');await tool(page,'cad.rectangle');await dialog.getByRole('button',{name:'OK',exact:true}).click();await ready(page);
+ await page.getByRole('menuitem',{name:'Sketch',exact:true}).click();await page.getByRole('menuitem',{name:'Circle dimensions…'}).click();
+ await dialog.getByLabel('Diameter (mm or expression)').fill('10');await dialog.getByLabel('Center X (mm)').fill('20');await dialog.getByLabel('Center Y (mm)').fill('30');await dialog.getByRole('button',{name:'OK',exact:true}).click();await ready(page);
+ await expect(page.locator('.cad-properties')).toContainText('Diameter: 10');await expect(page.locator('.cad-properties')).toContainText('fully defined');
+ await page.keyboard.press('e');await volume(page,(60000-250*Math.PI).toFixed(3));await dialog.getByRole('button',{name:'OK',exact:true}).click();
+ await page.getByRole('menuitem',{name:'Sketch',exact:true}).click();await page.getByRole('menuitem',{name:'Edit sketch'}).click();await page.keyboard.press('c');await expect(page.locator('.gc-palette button[data-command="cad.circleTool"]')).toHaveAttribute('aria-pressed','true');
+ const {cx,cy,pitch}=await page.locator('[data-entity-id$="-circle"] circle').nth(1).evaluate(c=>{const box=(c as unknown as SVGCircleElement).ownerSVGElement!.getBoundingClientRect(),n=(k:string)=>Number(c.getAttribute(k));return{cx:box.x+n('cx'),cy:box.y+n('cy'),pitch:n('r')/5};});
+ await page.mouse.click(cx+50*pitch,cy);await page.mouse.click(cx+50*pitch+4*pitch,cy);await ready(page);
+ await expect(page.locator('[data-entity-id$="-circle"]')).toHaveCount(2);
+ const diameters=await page.locator('.cad-properties button[data-edit-id$="-diameter"]').allTextContents();expect(diameters).toHaveLength(2);
+ const drawn=Number(/Diameter: ([\d.]+) mm/.exec(diameters[1]!)![1]);expect(Math.abs(drawn-8)).toBeLessThan(0.2);
+ await volume(page,((6000-25*Math.PI-Math.PI*(drawn/2)**2)*10).toFixed(3));
+ await page.getByRole('menuitem',{name:'Solid',exact:true}).click();const downloading=page.waitForEvent('download');await page.getByRole('menuitem',{name:'Export STL (3D printing)'}).click();
+ const download=await downloading,bytes=await readFile((await download.path())!);expect(download.suggestedFilename()).toBe('Untitled part.stl');
+ const triangles=bytes.readUInt32LE(80);expect(triangles).toBeGreaterThan(100);expect(bytes.length).toBe(84+50*triangles);expect(bytes.subarray(0,14).toString()).toBe('gsnv-paint STL');
+ const z=new Set<number>();for(let t=0;t<triangles;t++)for(let v=0;v<3;v++)z.add(Math.round(bytes.readFloatLE(84+t*50+12+v*12+8)*1000)/1000);expect([...z].sort((a,b)=>a-b)).toEqual([0,10]);
+ await page.keyboard.press('Control+z');await volume(page,(60000-250*Math.PI).toFixed(3));
+ expect(errors).toEqual([]);
+ }finally{await page.close();await server.close();}
+});

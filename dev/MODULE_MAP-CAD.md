@@ -1,6 +1,6 @@
 # Module map: CAD, phase 2
 
-Mode A baseline, maintained during Mode B. **C01–C04, C07–C08, C37, C50–C61, CAD-A1, CAD-APP and STEP-APP are GREEN; C05–C06, C09–C36, C38–C49 and C62–C63 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
+Mode A baseline, maintained during Mode B. **C01–C04, C07–C08, C37–C38, C50–C61, C64, CAD-A1, CAD-APP and STEP-APP are GREEN; C05–C06, C09–C36, C39–C49 and C62–C63 remain PLANNED**. The owner alone grants ACCEPTED. The committed phase map and explicit BATCH authorization govern progression; an unresolved contract, failed gate, unexpected dependency, or size-cap breach halts the affected batch.
 
 For a desktop user, CAD turns constrained sketches and ordered feature definitions into editable, validated B-rep solids, measurements, exchange files, and dimensioned drawings. Completion requires the CAD golden cases, error cases, complete feature-family coverage, and measured performance from `05-VERIFICATION.md`.
 
@@ -418,14 +418,14 @@ DEPS: C01.
 Real acceptance disposes original B-rep before importing exported STEP and remeasuring.
 The current brick returns one token per valid imported solid with empty topology/operand metadata; the document assembly retains source bytes and assigns document-local feature IDs. Native import UI and full CAD-A7 remain pending. Canonical kernel geometry is mm regardless of document display units. The pinned writer needs both model units and a temporarily set/restored `write.step.unit` to label inch output correctly (D17).
 
-### C38 stl-serialization — CORE — PLANNED
+### C38 stl-serialization — CORE — GREEN
 File `src/cad/stl-serialization.ts`; public `writeSTL(request)`.
 Purpose: Serialize validated display-independent export meshes to binary STL.
 IN: `{name:string,meshes:MeshPacket[],unitScaleToMm:number}`; positive scale and closed export triangulation.
 OUT: `ExchangeBytes`; deterministic triangle count, outward normals and millimetre coordinates.
 RAISES: `InvalidExportMeshError`, `STLSizeOverflowError`, `InvalidUnitScaleError`.
 DEPS: none.
-Export tessellation is requested explicitly; current low-resolution viewport mesh is not silently reused.
+Export tessellation is requested explicitly; current low-resolution viewport mesh is not silently reused. Working-editor amendment (D21): `writeSTL` is GREEN as a pure serializer; the production CAD adapter currently passes the displayed B-rep triangulation (C54, 0.1 mm linear / 0.5 rad deflection) as the export mesh and documents that limit. A dedicated export tessellation request remains part of C28. Degenerate triangles are written with a zero normal and reported as a diagnostic.
 
 ### C39 threemf-serialization — CORE — PLANNED
 File `src/cad/threemf-serialization.ts`; public `write3MF(request)`.
@@ -654,8 +654,8 @@ The CAD-APP increment is provisionally GREEN on Linux/Chrome. Its exact evidence
 C37 is now a GREEN independent exchange leaf. Build C59, then C60, then connect the production STEP export assembly. This continues D16: make each feature available through the working editor without changing the full CAD gate or C05's pending contract. The owner's standing phase BATCH applies after this map commit.
 
 ### C59 kernel-linear-prism — SHELL — GREEN
-Purpose: Construct one validated linear B-rep prism.
-IN: `{session:KernelSession,polygon:readonly Vec2[],depth:number}`; polygon is C53's simple CCW boundary in canonical mm; depth is finite and nonzero; session is live and worker-local.
+Purpose: Construct one validated B-rep prism from a polygon or a region with holes.
+IN: `{session:KernelSession,depth:number} & ({polygon:readonly Vec2[]} | {region:ProfileRegion})`; polygon is C53's simple CCW boundary in canonical mm; region is C64's outer loop plus CW/clockwise-circle holes (D21); depth is finite and nonzero; session is live and worker-local.
 OUT: `ShapeToken` owned by C01, representing a valid solid. Caller releases the token. Temporary builders, points, wire and face wrappers are disposed on normal completion. No source mutation.
 RAISES: `ExtrusionError` for unsuccessful wire/face/prism construction or invalid solid; `DisposedSessionError` for a closed session. Vendor faults propagate and require worker termination.
 DEPS: C01.
@@ -704,3 +704,16 @@ OUT: `Constraint[]` with deterministic proposal IDs, source IDs/point roles and 
 RAISES: `MissingEntityError`, `UnsupportedConstraintPairError` for invalid proposal sources.
 DEPS: none.
 The exact suggestion ordering/proximity policy closes at CONTRACTED with representative drawing fixtures. C09 remains responsible for action dispatch; C49/C44 remain responsible for applying only explicit user-visible intent. This leaf does not decide mathematical consistency; C16 reports the real solver result.
+
+## Circles, holes and STL from the working editor (D21)
+
+D21 widens the working CAD path so the classic first part, a plate with holes, is buildable and printable: C50 accepts circle entities (`{id,kind:'circle',center,radius,construction}`), center-fix constraints and `diameter` dimensions; C51 gains a `circle` action and the rectangle action now replaces only the outline segments, keeping circles and their relations; C52 maps circles to PlaneGCS circles with `circle_diameter`; C56 draws circles and diameter labels; C57 adds a two-click center/radius circle tool. C64 replaces C53 at the worker seams; C53 remains its per-loop validator. Arcs, slots, trims and multi-region sketches remain C08/C09/C11/C15 work.
+
+### C64 sketch-regions — CORE — GREEN
+File `src/cad/sketch-regions.ts`; public `sketchRegions(request)`.
+Purpose: Turn a solved sketch into one extrudable region: an outer boundary plus holes.
+IN: `{entities:readonly SketchEntity[],tolerance:number}`; finite solved segments/circles in canonical mm and positive linear tolerance. Construction geometry is ignored.
+OUT: `ProfileRegion = {outer:ProfileLoop,holes:ProfileLoop[]}` with `ProfileLoop = {kind:'polygon',points:Vec2[]} | {kind:'circle',center:Vec2,radius:number}`. The outer loop strictly contains every other loop; the outer polygon is CCW and polygon holes are CW. Independent of entity order.
+RAISES: `ProfileError` for no closed loop, open/branched outlines (via C53), more than one outer boundary, holes touching or crossing the outline or each other, and holes nested in holes.
+DEPS: C53.
+Separation uses the document linear tolerance. Loops are grouped by shared endpoints within tolerance and each group is validated by C53. Testbench `src/cad/sketch-regions.test.ts`; the real-kernel seam is exercised by C59's testbench (exact plate-with-holes volume and STEP round trip). [CAD-HOLES-STL.md](CAD-HOLES-STL.md) records evidence and limits.

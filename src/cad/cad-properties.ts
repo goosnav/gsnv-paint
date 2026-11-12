@@ -35,8 +35,8 @@ export function cadProperties(ports:{root:HTMLElement;onEdit(edit:PropertyEdit):
     item.append(node('small',f.kind==='sketch'?'XY plane':`${f.definition.extent.distance.source} ${content.units}`));tree.append(item);
    }root.append(tree);
    root.append(node('h3','Dimensions'));
-   if(!sketch.dimensions.length)root.append(node('p','Use Rectangle dimensions to create a driven profile.'));
-   for(const d of sketch.dimensions){const b=button(`${d.id.endsWith('width')?'Width':d.id.endsWith('height')?'Height':'Length'}: ${d.value.source}`,{command:'cad.dimension',id:d.id});b.dataset.editId=d.id;root.append(b);}
+   if(!sketch.dimensions.length)root.append(node('p','Use Rectangle dimensions or Circle dimensions to create a driven profile.'));
+   for(const d of sketch.dimensions){const b=button(`${d.kind==='diameter'?'Diameter':d.id.endsWith('width')?'Width':d.id.endsWith('height')?'Height':'Length'}: ${d.value.source}`,{command:'cad.dimension',id:d.id});b.dataset.editId=d.id;root.append(b);}
    root.append(button(content.graph.features[1]?'Edit extrusion…':'Extrude…',{command:'cad.extrude'},sketch.entities.length>0));
    root.append(node('h3',model.selected.length?`Selection (${model.selected.length})`:'Selection'));
    root.append(button('Horizontal',{command:'cad.horizontal'},model.selected.length===1),button('Vertical',{command:'cad.vertical'},model.selected.length===1),button('Delete selected',{command:'edit.delete'},model.selected.length>0));

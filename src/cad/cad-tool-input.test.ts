@@ -18,3 +18,8 @@ test('C57 rectangle direction, previews and multi-selection are deterministic',(
  assert.throws(()=>run(state,click([Infinity,0])),TypeError);
  assert.throws(()=>cadToolInput({state,event:{kind:'cancel'},endpoints:[],tolerance:0}),TypeError);
 });
+test('C57 circle tool commits center and snapped radius point',()=>{
+ let s=run(state,{kind:'tool',tool:'circle'}).state;s=run(s,click([5,5])).state;assert.deepEqual(s.anchor,[5,5]);
+ assert.deepEqual(run(s,click([10.05,0])).intent,{kind:'circle',center:[5,5],radius:Math.hypot(5,5)});
+ assert.deepEqual(run(s,click([5,9])).intent,{kind:'circle',center:[5,5],radius:4});
+});

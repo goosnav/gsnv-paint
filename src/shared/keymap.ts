@@ -29,7 +29,7 @@ const COMMON: Readonly<Record<string, string>> = {
   n: 'file.new', o: 'file.open', s: 'file.save', z: 'edit.undo', y: 'edit.redo',
   c: 'edit.copy', x: 'edit.cut', v: 'edit.paste', a: 'edit.selectAll',
 };
-const CAD_KEYS: Readonly<Record<string, string>> = { f: 'view.fit', v: 'cad.select', l: 'cad.line', r: 'cad.rectangleTool', e: 'cad.extrude' };
+const CAD_KEYS: Readonly<Record<string, string>> = { f: 'view.fit', v: 'cad.select', l: 'cad.line', r: 'cad.rectangleTool', c: 'cad.circleTool', e: 'cad.extrude' };
 const IMAGE_KEYS: Readonly<Record<string, string>> = {
   x: 'color.swap', d: 'color.reset', s: 'image.select', p: 'image.pencil', b: 'image.brush', e: 'image.eraser',
   g: 'image.fill', i: 'image.picker', l: 'image.line', r: 'image.rectangle', o: 'image.ellipse', t: 'image.text', f: 'view.fit',

@@ -1,6 +1,6 @@
 # Module map: Image, Video, workspace transfer and distribution
 
-Mode A only. This document fixes contracts; it creates no application modules, stubs, tests or build configuration. All listed bricks are **PLANNED**. Implementation is authorized only in the current phase after the main map is committed, under the user's BATCH instruction. GREEN is evidence, not user acceptance.
+Mode A only. This document fixes contracts; it creates no application modules, stubs, tests or build configuration. All listed bricks are **PLANNED** except the D20 working Image increment (I50–I53, IMAGE-APP), which is GREEN. Implementation is authorized only in the current phase after the main map is committed, under the user's BATCH instruction. GREEN is evidence, not user acceptance.
 
 ## Rules and component association
 
@@ -263,6 +263,40 @@ Purpose: Transport bounded pixel-operation jobs and cancellation across a worker
 IN: `PixelWorkerRequest{tag:'run'|'cancel'|'dispose',jobId,revision,operation?:PixelOperationRequest,transferables?:ArrayBuffer[]}`; operation tags name the exact I03/I04/I06/I09–I16/I18–I25 entry contracts.
 OUT: `Promise<{jobId,revision,result?:PixelOperationResult,cancelled:boolean}>`; buffer ownership and worker failure are explicit; a stale result never applies itself to the active document.
 RAISES: `PixelWorkerUnavailableError`, `PixelWorkerProtocolError`, `PixelWorkerCrashedError`, `PixelWorkerCancelled`. DEPS: none; the worker entry assembly only wires the explicitly listed GREEN CORE handlers.
+
+## Working Image increment (D20)
+
+D20 delivers a usable paint-style Image workspace before the full I01–I37 layer/selection/adjustment roster, in the same way D16 delivered the working CAD path. I01–I37 remain PLANNED and keep their contracts; the bricks below are a single-layer subset behind the same workspace adapter seam. Evidence and limits are in [IMAGE-WORKFLOW.md](IMAGE-WORKFLOW.md). No brick is human-ACCEPTED.
+
+### I50 `image/raster-ops.ts` — CORE — GREEN
+Purpose: Draw and transform straight-alpha RGBA rasters for the Image workspace.
+IN: `Raster{width,height,data:Uint8ClampedArray}` plus `PaintOp` (stroke, rectangle, ellipse, fill, clear, blit) or `TransformOp` (flip, rotate, invert, crop, resize, canvas); colours are byte RGBA, points are document pixels.
+OUT: `paintRaster` mutates the caller-owned working raster and returns the changed rectangle or null; `transformRaster` returns a new raster. Aliased deterministic pixels; flood fill is iterative scanline with 4-connectivity.
+RAISES: `RangeError` for invalid sizes (over 4096² pixels), colours, rectangles, tool sizes or nonfinite points.
+DEPS: none.
+
+### I51 `image/image-content.ts` — CORE — GREEN
+Purpose: Hold immutable Image documents as shared pixel tiles and map them to native files.
+IN: `new{width,height,fill}`, `raster{value}`, `update{previous,raster}`, `encode{value}` or `decode{content,bytes}`.
+OUT: `ImageContent{width,height,tiles}` of 256-pixel tiles; update reuses unchanged tiles so undo history memory grows with edited area; encode yields `{content:{width,height,encoding:'rgba8',asset:'pixels'},bytes}` for one S15 asset.
+RAISES: `RangeError` for invalid documents/rasters; `ImageContentError` for malformed project content or incomplete pixel data.
+DEPS: I50.
+
+### I52 `image/image-tool-input.ts` — CORE — GREEN
+Purpose: Interpret Image canvas pointer input as paint intents.
+IN: tool state, pointer event in document pixels (button 0 primary, 2 secondary, Shift), current rectangular selection and floating flag.
+OUT: owned state plus one intent: incremental stroke segments and one stroke end; shape preview/commit with Shift square/circle/45°; fill/pick/text clicks; marquee or move/lift of the selection; cancel.
+RAISES: `TypeError` for unknown tools or nonfinite points.
+DEPS: none.
+
+### I53 `image/image-palette.ts` — SHELL — GREEN
+Purpose: Render the Image workspace colour and tool-option panel.
+IN: panel root and change callback; `update({primary,secondary,size,style,info,enabled})`.
+OUT: swatch palette (click primary, right-click secondary), native colour inputs, swap, size choices and shape style; all changes route through the callback; dispose removes listeners.
+RAISES: `TypeError` for a missing root or callback.
+DEPS: none.
+
+IMAGE-APP (`src/image/image-workspace.ts`) is the assembly: it wires I50–I53 to S07 file access, S11 dialogs and the A-SHELL host (history, recovery, files). Each completed stroke, shape, fill, text, move, paste or image command commits one history entry; drags and floating selections stay outside history. Browser codecs provide PNG export and PNG/JPEG/GIF/WebP/BMP import.
 
 ## Phase 4 — Video bricks, leaves first
 

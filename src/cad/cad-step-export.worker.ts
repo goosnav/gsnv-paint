@@ -5,7 +5,7 @@ import {editableCADContent} from './editable-cad-content.ts';
 import {evaluateVariables} from './named-variables.ts';
 import {evaluateDimension} from './dimension-expressions.ts';
 import {linearSketchProgram} from './linear-sketch-program.ts';
-import {linearProfile} from './linear-profile.ts';
+import {sketchRegions} from './sketch-regions.ts';
 import {buildLinearPrism} from './kernel-linear-prism.ts';
 import {stepExchange} from './step-exchange.ts';
 import type {CADProtocol} from './cad-worker-client.ts';
@@ -21,12 +21,12 @@ async function exportSource(request:Request){
  solver.engine.clear_data();solver.engine.push_primitives_and_params(program.primitives);
  if(solver.engine.solve()!==0||solver.dof()<0||solver.engine.get_gcs_conflicting_constraints().length)throw new Error('Sketch constraints could not be satisfied. Fix the flagged sketch before exporting STEP.');
  solver.engine.apply_solution();
- const polygon=linearProfile({entities:program.accept(solver.snapshot()),tolerance:content.tolerance.linearMm});
+ const region=sketchRegions({entities:program.accept(solver.snapshot()),tolerance:content.tolerance.linearMm});
  const depth=evaluateDimension({expression:extrusion.definition.extent.distance,context}).value;
  if(Math.abs(depth)<=content.tolerance.linearMm)throw new Error('Extrusion depth must exceed the document tolerance.');
  const loaded=await kernelRuntime({action:'open',config:{moduleUrl:request.assets.kernelModule,wasmUrl:request.assets.kernelWasm,mode:'single',tolerance:content.tolerance}}),session=loaded.session;
  if(!session)throw new Error(loaded.status.diagnostics.map(d=>d.message).join(' '));
- const token=buildLinearPrism({session,polygon,depth});
+ const token=buildLinearPrism({session,region,depth});
  const file=stepExchange({action:'export',session,units:content.units,bodies:{shapes:[{bodyId:extrusion.id,token}],topology:[],operands:[],diagnostics:[]}}).file!;
  session.release(token);return file;
 }

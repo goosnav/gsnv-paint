@@ -156,14 +156,21 @@ test('S10 focus departure closes menus and preserves panel text navigation', () 
   assert.equal(file.getAttribute('aria-expanded'), 'false');
 });
 
-test('S10 updates restore the visible trigger when a focused popup closes', () => {
+test('S10 background updates keep an open menu and its focused command; vanished commands return focus to the trigger', () => {
   const f = fixture(); const chrome = createChrome(f.args);
   const file = button(f.root, '[data-menu="file"]'); file.focus();
   file.dispatchEvent(new f.dom.window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
   assert.equal((f.document.activeElement as HTMLElement).dataset.command, 'file.open');
   chrome.update({ ...f.model, status: 'Autosaved' });
+  assert.equal(button(f.root, '[data-menu="file"]').getAttribute('aria-expanded'), 'true');
+  assert.equal((f.document.activeElement as HTMLElement).dataset.command, 'file.open');
+  const items = f.model.menus[0]!.items.map(item => item.id === 'file.open' ? { ...item, enabled: false } : item);
+  chrome.update({ ...f.model, menus: [{ ...f.model.menus[0]!, items }, f.model.menus[1]!] });
   assert.equal(f.document.activeElement, button(f.root, '[data-menu="file"]'));
-  assert.equal(button(f.root, '[data-menu="file"]').getAttribute('aria-expanded'), 'false');
+  assert.equal(button(f.root, '[data-menu="file"]').getAttribute('aria-expanded'), 'true');
+  chrome.update({ ...f.model, menus: [f.model.menus[1]!] });
+  assert.equal(f.root.querySelector('[data-menu="file"]'), null); assert.ok(f.root.querySelectorAll('[aria-expanded="true"]').length === 0);
+  chrome.dispose();
 });
 
 test('S10 rejects empty IDs from every view-model collection before updating DOM', () => {

@@ -18,6 +18,7 @@ import { makeLinearEntities } from './sketch-linear-primitives.ts';
 export type CADAction =
   | { kind: 'line'; id: string; a: [number,number]; b: [number,number] }
   | { kind: 'rectangle'; prefix: string; width: string; height: string; origin?: [number,number] }
+  | { kind: 'circle'; prefix: string; diameter: string; center: [number,number] }
   | { kind: 'dimension'; id: string; source: string }
   | { kind: 'extrude'; id: string; depth: string }
   | { kind: 'remove-extrude' } | { kind: 'clear' }
@@ -44,13 +45,24 @@ export function editCADContent({ content, action }: { content: CADContent; actio
     const width = length(action.width), height = length(action.height), origin = action.origin ?? [0,0];
     if (!origin.every(Number.isFinite)) fail('Rectangle origin must be finite.');
     const entityIds = Array.from({ length: 4 }, (_, i) => unique(`${action.prefix}-edge-${i}`));
-    sketch.entities = makeLinearEntities({ tool: 'corner-rectangle', anchors: [origin as [number,number],[origin[0]!+width,origin[1]!+height]], ids: entityIds, construction: false, tolerance: value.tolerance }) as typeof sketch.entities;
-    sketch.constraints = entityIds.map((entity, i) => ({ id: unique(`${action.prefix}-axis-${i}`), kind: i % 2 === 0 ? 'horizontal' : 'vertical', entityIds: [entity], pointRoles: [], inferred: true }));
-    sketch.constraints.push({ id: unique(`${action.prefix}-origin`), kind: 'fix', entityIds: [entityIds[0]!], pointRoles: ['a'], inferred: true });
-    sketch.dimensions = [action.width, action.height].map((source, i) => {
-      const edge = sketch.entities[i]!;
-      return { id: unique(`${action.prefix}-${i === 0 ? 'width' : 'height'}`), kind: 'linear', entityIds: [edge.id], anchors: [[...edge.a],[...edge.b]], value: { source, kind: 'length' }, label: i === 0 ? [width / 2,-8] : [width + 8,height / 2] };
-    });
+    // The rectangle replaces the outline (segments); circles and their relations are kept as holes.
+    const circles = new Set(sketch.entities.filter(e => e.kind === 'circle').map(e => e.id)), kept = (ids: string[]) => ids.every(id => circles.has(id));
+    const edges = makeLinearEntities({ tool: 'corner-rectangle', anchors: [origin as [number,number],[origin[0]!+width,origin[1]!+height]], ids: entityIds, construction: false, tolerance: value.tolerance }) as Extract<typeof sketch.entities[number], { kind: 'segment' }>[];
+    sketch.entities = [...edges, ...sketch.entities.filter(e => circles.has(e.id))];
+    sketch.constraints = [...entityIds.map((entity, i) => ({ id: unique(`${action.prefix}-axis-${i}`), kind: i % 2 === 0 ? 'horizontal' as const : 'vertical' as const, entityIds: [entity], pointRoles: [], inferred: true })),
+      { id: unique(`${action.prefix}-origin`), kind: 'fix', entityIds: [entityIds[0]!], pointRoles: ['a'], inferred: true }, ...sketch.constraints.filter(c => kept(c.entityIds))];
+    sketch.dimensions = [...[action.width, action.height].map((source, i) => {
+      const edge = edges[i]!;
+      return { id: unique(`${action.prefix}-${i === 0 ? 'width' : 'height'}`), kind: 'linear' as const, entityIds: [edge.id], anchors: [[...edge.a],[...edge.b]] as [number,number][], value: { source, kind: 'length' as const }, label: (i === 0 ? [origin[0]! + width / 2,origin[1]! - 8] : [origin[0]! + width + 8,origin[1]! + height / 2]) as [number,number] };
+    }), ...sketch.dimensions.filter(d => kept(d.entityIds))];
+  } else if (action.kind === 'circle') {
+    const diameter = length(action.diameter), center = action.center;
+    if (!center.every(Number.isFinite)) fail('Circle center must be finite.');
+    const id = unique(`${action.prefix}-circle`), radius = diameter / 2;
+    if (!center.every(v => Number.isFinite(Math.abs(v) + radius))) fail('The circle is too large.');
+    sketch.entities.push({ id, kind: 'circle', center: [center[0], center[1]], radius, construction: false });
+    sketch.constraints.push({ id: unique(`${action.prefix}-center`), kind: 'fix', entityIds: [id], pointRoles: ['center'], inferred: true });
+    sketch.dimensions.push({ id: unique(`${action.prefix}-diameter`), kind: 'diameter', entityIds: [id], anchors: [[center[0] - radius, center[1]], [center[0] + radius, center[1]]], value: { source: action.diameter, kind: 'length' }, label: [center[0] + radius * 0.75 + 4, center[1] + radius * 0.75 + 4] });
   } else if (action.kind === 'dimension') {
     const target = sketch.dimensions.find(d => d.id === action.id); if (!target) fail('Select an existing dimension.');
     length(action.source); target!.value.source = action.source;
@@ -68,7 +80,7 @@ export function editCADContent({ content, action }: { content: CADContent; actio
     sketch.constraints = sketch.constraints.filter(c => c.entityIds.every(id => !removed.has(id)));
     sketch.dimensions = sketch.dimensions.filter(d => d.entityIds.every(id => !removed.has(id)));
   } else if (action.kind === 'constraint') {
-    if (!sketch.entities.some(e => e.id === action.entity)) fail('Select a line before adding a constraint.');
+    if (!sketch.entities.some(e => e.id === action.entity && e.kind === 'segment')) fail('Select a line before adding a constraint.');
     if (sketch.constraints.some(c => c.entityIds[0] === action.entity && c.kind === action.axis)) fail('That constraint already exists.');
     sketch.constraints.push({ id: unique(action.id), kind: action.axis, entityIds: [action.entity], pointRoles: [], inferred: false });
   } else if (action.kind === 'remove-constraint') {

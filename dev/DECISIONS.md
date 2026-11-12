@@ -153,3 +153,20 @@ Before implementing the full C09 roster, separate its three independent decision
 C61 keeps coincident source points distinct. Alternative: merge equal coordinates as C52's limited linear workflow does; rejected for the full sketcher because coincidence must be an explicit, deletable relationship. Every solver-only point and ArcRules ID maps back to its source entity and avoids supplied reserved IDs. Construction geometry remains in the solver input. Source direction is retained in native arc start/end angles. An installed PlaneGCS 1.3.0 probe accepted clockwise/counterclockwise quarter and major arcs, each with Success, five DOF and no conflicts; the committed C61 tests must repeat this with the actual mapping output. This reconnaissance is not a product requirement pass.
 
 C61 review requires present coordinate slots and reserved IDs: Array.every skips sparse holes, so explicit coordinate checks and iteration reject malformed input before producing a program. Arc extrema use the start's trigonometric direction for membership while retaining original native angles. Alternative: reduce the source angle modulo 2π; rejected because large representable starts lose phase relative to sin/cos and can hide an overflowing interior extremum. The focused suite includes the reported overflow and a valid inward large-angle arc. Revisit if the source model explicitly restricts its angle range. No tolerance, public contract or error family changed.
+
+## D20 — deliver a working paint-style Image workspace before the full layer roster
+
+The owner asked for the "MS Paint" workspace to be in a good spot. Following D16's reasoning, deliver a usable single-layer Image editor now (I50–I53 plus IMAGE-APP in [MODULE_MAP-MEDIA.md](MODULE_MAP-MEDIA.md)) and keep I01–I37 planned. Tools: pencil, brush, eraser (paints the secondary colour), fill, colour picker, line, rectangle, ellipse, text, rectangular select with move/copy/cut/paste/delete/crop; image commands: resize, canvas size, rotate, flip, invert, clear; PNG export and browser-decoded import.
+
+Documents are 256-pixel tile snapshots; an edit copies only changed tiles, so 100 undo steps do not hold 100 full copies. Alternative: whole-raster snapshots; rejected because a 1920×1080 image would need about 800 MB of history. The project stores raw rgba8 in one S15 asset because the adapter encode seam is synchronous and browser PNG encoding is not. Revisit if: the shell gains asynchronous encode, or file size becomes a problem.
+
+Painting is aliased (classic paint behaviour) so fills stay closed and results are identical in Node tests and browsers. A lifted or pasted selection floats until placed (click outside, Enter or tool change); Esc discards it. Drags and floats never enter history; one completed action is one history entry.
+
+Shell changes: S10 tools gain an optional `active` flag; the A-SHELL host gains `invalidate()` so view-local state (active tool, selection, asynchronous worker results) refreshes menus; S10 `update` keeps an open menu open. The last item was found when CAD's worker results arrived while a menu was open and closed it.
+
+## D21 — circles, holes and STL in the working CAD path
+
+A plate with holes is the most common first CAD part and was not buildable. Widen C50/C51/C52/C56/C57 for circle entities, center fixes and diameter dimensions; add C64 to compute one region (outer loop plus holes) and let C59 build face holes from clockwise wires (circles use a −Z axis). Alternative: boolean-cut hole prisms from the boss; rejected because a face with inner wires gives the exact B-rep directly and keeps STEP output identical to display. The rectangle tool now replaces only the outline segments, keeping circles, so a user can resize the plate without losing holes.
+
+STL export uses C38 with the displayed B-rep triangulation (0.1 mm / 0.5 rad). This is adequate for printing typical parts; a separate export tessellation (C28) remains planned and is recorded as a limit rather than hidden.
+

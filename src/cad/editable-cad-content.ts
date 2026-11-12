@@ -2,7 +2,9 @@
  * PURPOSE    Validate the supported editable CAD document subset.
  * KIND       CORE
  * CONTRACT   IN: new request or read with untrusted JSON value. OUT: owned CADContent
- *            with one XY segment sketch and optional blind boss, exact persisted keys.
+ *            with one XY sketch of segments and circles and an optional blind boss, exact
+ *            persisted keys. Circles carry center/radius, may be fixed by their center and
+ *            dimensioned by diameter; H/V and linear dimensions target segments only.
  *            RAISES: CADContentError with field/reason for malformed or unsupported input.
  * GUARANTEES Pure, deterministic, no mutation; no native handles or silent data loss.
  * TUNING     New document tolerance: 1e-7 mm, 1e-9 rad, 1e-9 relative.
@@ -14,9 +16,11 @@
 import type { LinearEntity } from './sketch-linear-primitives.ts';
 type DimensionValue = { source: string; kind: 'length' | 'angle' | 'scalar' };
 type Segment = Extract<LinearEntity, { kind: 'segment' }>;
+export type Circle = { id: string; kind: 'circle'; center: [number, number]; radius: number; construction: boolean };
+export type SketchEntity = Segment | Circle;
 type Constraint = { id: string; kind: 'horizontal' | 'vertical' | 'fix'; entityIds: string[]; pointRoles: string[]; inferred: boolean };
-type Dimension = { id: string; kind: 'linear' | 'aligned'; entityIds: string[]; anchors: [number, number][]; value: DimensionValue; label: [number, number] };
-type Sketch = { id: string; name: string; plane: 'XY'; entities: Segment[]; constraints: Constraint[]; dimensions: Dimension[]; projected: [] };
+type Dimension = { id: string; kind: 'linear' | 'aligned' | 'diameter'; entityIds: string[]; anchors: [number, number][]; value: DimensionValue; label: [number, number] };
+type Sketch = { id: string; name: string; plane: 'XY'; entities: SketchEntity[]; constraints: Constraint[]; dimensions: Dimension[]; projected: [] };
 type BaseFeature = { id: string; name: string; dependsOn: string[]; suppressed: false };
 type SketchFeature = BaseFeature & { kind: 'sketch'; definition: { kind: 'sketch'; sketch: Sketch } };
 type ExtrudeFeature = BaseFeature & { kind: 'extrude'; definition: { kind: 'extrude'; operation: 'boss'; sketchId: string; profileLoopIds: []; extent: { kind: 'blind'; distance: DimensionValue }; targetBodyIds: [] } };
@@ -86,25 +90,36 @@ export function editableCADContent(request: { operation: 'new' } | { operation: 
   if (sketch.id !== first.id) bad('sketch ID', 'must match feature ID'); text(sketch.name, 'sketch name');
   if (sketch.plane !== 'XY') bad('plane', 'only XY is supported in this CAD build');
   empty(sketch.projected, 'projected edges'); array(sketch.entities, 'entities'); const entities = new Set<string>();
+  const kinds = new Map<string, SketchEntity['kind']>();
   for (const entity of sketch.entities) {
-    keys(entity, 'id kind a b construction', 'entity'); id(entity.id, 'entity ID'); entities.add(entity.id);
-    if (entity.kind !== 'segment' || typeof entity.construction !== 'boolean') bad(entity.id, 'only segments are supported');
+    if (entity?.kind === 'circle') {
+      keys(entity, 'id kind center radius construction', 'entity'); id(entity.id, 'entity ID'); entities.add(entity.id); kinds.set(entity.id, 'circle');
+      if (typeof entity.construction !== 'boolean') bad(entity.id, 'construction must be true or false');
+      vec(entity.center, entity.id);
+      if (typeof entity.radius !== 'number' || !Number.isFinite(entity.radius) || entity.radius <= value.tolerance.linearMm || !entity.center.every(v => Number.isFinite(Math.abs(v) + entity.radius))) bad(entity.id, 'collapsed or overflowing circle');
+      continue;
+    }
+    keys(entity, 'id kind a b construction', 'entity'); id(entity.id, 'entity ID'); entities.add(entity.id); kinds.set(entity.id, 'segment');
+    if (entity.kind !== 'segment' || typeof entity.construction !== 'boolean') bad(entity.id, 'only segments and circles are supported');
     vec(entity.a, entity.id); vec(entity.b, entity.id);
     const length = Math.hypot(entity.b[0] - entity.a[0], entity.b[1] - entity.a[1]);
     if (!Number.isFinite(length) || length <= value.tolerance.linearMm) bad(entity.id, 'collapsed or overflowing segment');
   }
-  const target = (v: string[], where: string) => { if (!Array.isArray(v) || v.length !== 1 || !entities.has(v[0]!)) bad(where, 'expected one existing segment'); };
+  const target = (v: string[], where: string, kind: SketchEntity['kind'] = 'segment') => { if (!Array.isArray(v) || v.length !== 1 || kinds.get(v[0]!) !== kind) bad(where, `expected one existing ${kind}`); };
+  const targetKind = (v: string[]) => Array.isArray(v) && v.length === 1 ? kinds.get(v[0]!) : undefined;
   array(sketch.constraints, 'constraints');
   for (const c of sketch.constraints) {
-    keys(c, 'id kind entityIds pointRoles inferred', 'constraint'); id(c.id, 'constraint ID'); target(c.entityIds, c.id);
+    keys(c, 'id kind entityIds pointRoles inferred', 'constraint'); id(c.id, 'constraint ID');
     if (!['horizontal','vertical','fix'].includes(c.kind) || typeof c.inferred !== 'boolean') bad(c.id, 'unsupported constraint');
-    if (c.kind === 'fix') { if (!Array.isArray(c.pointRoles) || c.pointRoles.length !== 1 || !['a','b'].includes(c.pointRoles[0]!)) bad(c.id, 'fix needs endpoint a or b'); }
+    const circle = c.kind === 'fix' && targetKind(c.entityIds) === 'circle'; target(c.entityIds, c.id, circle ? 'circle' : 'segment');
+    if (c.kind === 'fix') { if (!Array.isArray(c.pointRoles) || c.pointRoles.length !== 1 || !(circle ? ['center'] : ['a','b']).includes(c.pointRoles[0]!)) bad(c.id, circle ? 'circle fix needs its center' : 'fix needs endpoint a or b'); }
     else empty(c.pointRoles, c.id);
   }
   array(sketch.dimensions, 'dimensions');
   for (const d of sketch.dimensions) {
-    keys(d, 'id kind entityIds anchors value label', 'dimension'); id(d.id, 'dimension ID'); target(d.entityIds, d.id);
-    if (!['linear','aligned'].includes(d.kind)) bad(d.id, 'only segment lengths are supported');
+    keys(d, 'id kind entityIds anchors value label', 'dimension'); id(d.id, 'dimension ID');
+    if (!['linear','aligned','diameter'].includes(d.kind)) bad(d.id, 'only segment lengths and circle diameters are supported');
+    target(d.entityIds, d.id, d.kind === 'diameter' ? 'circle' : 'segment');
     array(d.anchors, d.id); if (d.anchors.length !== 2) bad(d.id, 'expected two anchors'); d.anchors.forEach(v => vec(v,d.id)); vec(d.label,d.id); dim(d.value,d.id,true);
   }
   const extrusion = value.graph.features[1];

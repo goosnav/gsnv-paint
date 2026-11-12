@@ -23,11 +23,31 @@ test('C52 rectangle shared endpoints, fixed origin and expressions survive the r
   assert.deepEqual(p.primitives.filter(v=>v.type==='p2p_distance').map(v=>v.distance),[100,60]);
   assert.deepEqual(p.accept(p.primitives),sketch.entities); assert.equal(JSON.stringify(sketch),before);
   const shifted=p.primitives.map(v=>v.type==='point'?{...v,x:v.x+3,y:v.y+4}:v);
-  const result=p.accept(shifted); assert.deepEqual(result[0]!.a,[3,4]); assert.deepEqual(result[0]!.b,result[1]!.a);
+  const result=p.accept(shifted) as unknown as {a:number[];b:number[]}[]; assert.deepEqual(result[0]!.a,[3,4]); assert.deepEqual(result[0]!.b,result[1]!.a);
   sketch.dimensions[0]!.value.source='-1'; assert.throws(()=>linearSketchProgram({sketch,context,tolerance:1e-7}), /positive/);
 });
 test('C52 a collapsed solved edge is rejected instead of publishing unusable sketch geometry',()=>{
  const content=editCADContent({content:editableCADContent({operation:'new'}),action:{kind:'line',id:'e',a:[0,0],b:[10,0]}});
  const p=linearSketchProgram({sketch:content.graph.features[0].definition.sketch,context,tolerance:1e-7});
  assert.throws(()=>p.accept(p.primitives.map(v=>v.type==='point'?{...v,x:0,y:0}:v)),/collapsed/);
+});
+test('C52 circles map to a fixed center and diameter that the real PlaneGCS solver satisfies', async () => {
+  const { make_gcs_wrapper } = await import('@salusoft89/planegcs');
+  let content = editCADContent({content:editableCADContent({operation:'new'}),action:{kind:'rectangle',prefix:'r',width:'100',height:'60'}});
+  content = editCADContent({content,action:{kind:'circle',prefix:'h',diameter:'10',center:[20,30]}});
+  const sketch = content.graph.features[0].definition.sketch;
+  sketch.entities[4] = { ...sketch.entities[4]!, radius: 3, center: [20, 30] } as typeof sketch.entities[4]; // Drawn size differs from the driving diameter.
+  sketch.dimensions[2]!.value.source = '2 * 7';
+  const p = linearSketchProgram({sketch,context,tolerance:1e-7});
+  const circle = p.primitives.find(v=>v.type==='circle')!; assert.equal(circle.id,'h-circle');
+  assert.deepEqual(p.primitives.find(v=>v.type==='circle_diameter'),{id:'h-diameter',type:'circle_diameter',c_id:'h-circle',diameter:14});
+  assert.equal(p.primitives.filter(v=>v.type==='point'&&v.fixed).length,2);
+  const gcs = await make_gcs_wrapper(new URL('../../node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm', import.meta.url).pathname);
+  try {
+    gcs.push_primitives_and_params(p.primitives); assert.equal(gcs.solve(),0); gcs.apply_solution();
+    assert.equal(gcs.gcs.dof(),0);
+    const solved = p.accept(gcs.sketch_index.get_primitives()).at(-1) as { center:[number,number]; radius:number };
+    assert.deepEqual(solved.center,[20,30]); assert.ok(Math.abs(solved.radius-7)<1e-9);
+    assert.throws(()=>p.accept(gcs.sketch_index.get_primitives().map(v=>v.type==='circle'?{...v,radius:0}:v)),/collapsed circle/);
+  } finally { gcs.destroy_gcs_module(); }
 });

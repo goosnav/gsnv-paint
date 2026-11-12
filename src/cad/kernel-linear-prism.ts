@@ -1,5 +1,5 @@
 /**
- * PURPOSE    Construct one validated linear B-rep prism.
+ * PURPOSE    Construct one validated B-rep prism from a polygon or a region with holes.
  * KIND       SHELL
  * CONTRACT   IN: live C01 session, C53 simple CCW polygon in mm, finite nonzero
  *            signed depth. OUT: C01-owned solid token; caller must release it.
@@ -14,22 +14,34 @@
  * TESTBENCH  src/cad/kernel-linear-prism.test.ts -- run with: node --import tsx --test src/cad/kernel-linear-prism.test.ts
  */
 import type { KernelSession } from './kernel-runtime.ts';
-export type LinearPrismRequest={session:KernelSession;polygon:readonly(readonly[number,number])[];depth:number};
-export function buildLinearPrism({session,polygon,depth}:LinearPrismRequest):ReturnType<KernelSession['retain']>{
+import type { ProfileRegion, ProfileLoop } from './sketch-regions.ts';
+/** A bare polygon is the original C59 request; a region adds holes (C64 orientation: CCW outer, CW holes). */
+export type LinearPrismRequest={session:KernelSession;depth:number}&({polygon:readonly(readonly[number,number])[]}|{region:ProfileRegion});
+export function buildLinearPrism(request:LinearPrismRequest):ReturnType<KernelSession['retain']>{
+  const {session,depth}=request,region:ProfileRegion='region'in request?request.region:{outer:{kind:'polygon',points:request.polygon.map(p=>[p[0],p[1]])},holes:[]};
   const fail=(message:string):never=>{throw Object.assign(new Error(message),{name:'ExtrusionError'});};
   if(session.isClosed())throw Object.assign(new Error('The CAD kernel session is closed. Rebuild before creating a solid.'),{name:'DisposedSessionError'});
   const oc=session.library,temporary=new Set<{delete():void}>();let faulted=false;
   const own=<T extends{delete():void}>(value:T):T=>{temporary.add(value);return value;};
   try{
-    const wireBuilder=own(new oc.BRepBuilderAPI_MakeWire());
-    for(let i=0;i<polygon.length;i++){
-      const a=polygon[i]!,b=polygon[(i+1)%polygon.length]!;
-      const pa=own(new oc.gp_Pnt(a[0],a[1],0)),pb=own(new oc.gp_Pnt(b[0],b[1],0));
-      const builder=own(new oc.BRepBuilderAPI_MakeEdge(pa,pb));wireBuilder.Add(own(builder.Edge()));
-    }
-    if(!wireBuilder.IsDone())fail('Extrude: the outline could not be connected into a wire.');
-    const wire=own(wireBuilder.Wire()),faceBuilder=own(new oc.BRepBuilderAPI_MakeFace(wire,true));
+    const wireOf=(loop:ProfileLoop,hole:boolean)=>{
+      const wireBuilder=own(new oc.BRepBuilderAPI_MakeWire());
+      if(loop.kind==='circle'){
+        // A clockwise (−Z axis) circle bounds a hole; counterclockwise bounds the outer face.
+        const axis=own(new oc.gp_Ax2(own(new oc.gp_Pnt(loop.center[0],loop.center[1],0)),own(new oc.gp_Dir(0,0,hole?-1:1))));
+        const builder=own(new oc.BRepBuilderAPI_MakeEdge(own(new oc.gp_Circ(axis,loop.radius))));wireBuilder.Add(own(builder.Edge()));
+      }else for(let i=0;i<loop.points.length;i++){
+        const a=loop.points[i]!,b=loop.points[(i+1)%loop.points.length]!;
+        const pa=own(new oc.gp_Pnt(a[0],a[1],0)),pb=own(new oc.gp_Pnt(b[0],b[1],0));
+        const builder=own(new oc.BRepBuilderAPI_MakeEdge(pa,pb));wireBuilder.Add(own(builder.Edge()));
+      }
+      if(!wireBuilder.IsDone())fail(`Extrude: ${hole?'a hole':'the outline'} could not be connected into a wire.`);
+      return own(wireBuilder.Wire());
+    };
+    const faceBuilder=own(new oc.BRepBuilderAPI_MakeFace(wireOf(region.outer,false),true));
     if(!faceBuilder.IsDone())fail('Extrude: the sketch did not form a planar face.');
+    for(const hole of region.holes)faceBuilder.Add(wireOf(hole,true));
+    if(!faceBuilder.IsDone())fail('Extrude: a hole could not be added to the face.');
     const face=own(faceBuilder.Face()),vector=own(new oc.gp_Vec(0,0,depth)),builder=own(new oc.BRepPrimAPI_MakePrism(face,vector,false,true));
     if(!builder.IsDone())fail('Extrude: OpenCascade could not construct this solid.');
     const shape=own(builder.Shape()),check=own(new oc.BRepCheck_Analyzer(shape,true,false));
