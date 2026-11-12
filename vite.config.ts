@@ -8,6 +8,8 @@ const headers = {
 };
 
 export default defineConfig({
+  // LibRaw-WASM resolves its worker and .wasm relative to its own module; pre-bundling would break those URLs.
+  optimizeDeps: { exclude: ['libraw-wasm'] },
   server: { strictPort: true, headers },
   // The local launcher serves dist/ with these settings. Loopback only, no cross-origin access.
   preview: { host: '127.0.0.1', strictPort: true, cors: false, headers },

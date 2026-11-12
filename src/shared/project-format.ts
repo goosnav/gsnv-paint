@@ -19,7 +19,7 @@
 
 type Json = null | boolean | number | string | readonly Json[] | { readonly [key: string]: Json };
 export type ProjectEnvelope = {
-  readonly format: 'gsnv-cad' | 'gsnv-image' | 'gsnv-video';
+  readonly format: 'gsnv-cad' | 'gsnv-image' | 'gsnv-photo' | 'gsnv-video';
   readonly version: 1;
   readonly id: string;
   readonly title: string;
@@ -105,7 +105,7 @@ function validateEnvelope(value: unknown): asserts value is ProjectEnvelope {
     reject('Project envelope must have exactly content, format, id, title and version.');
   }
   const envelope = value as Record<string, unknown>;
-  if (!['gsnv-cad', 'gsnv-image', 'gsnv-video'].includes(envelope.format as string)) reject('Unsupported project format.');
+  if (!['gsnv-cad', 'gsnv-image', 'gsnv-photo', 'gsnv-video'].includes(envelope.format as string)) reject('Unsupported project format.');
   if (envelope.version !== 1) reject('Unsupported project version.');
   if (typeof envelope.id !== 'string' || envelope.id.length === 0) reject('Project ID must be a nonempty string.');
   if (typeof envelope.title !== 'string') reject('Project title must be a string.');

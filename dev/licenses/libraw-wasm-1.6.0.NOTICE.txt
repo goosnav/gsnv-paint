@@ -1,0 +1,10 @@
+libraw-wasm 1.6.0 — https://github.com/ybouane/LibRaw-Wasm
+Wrapper licence: ISC (see the package's package.json).
+
+It bundles an unmodified WebAssembly build of LibRaw (https://www.libraw.org/), which is dual-licensed
+under the GNU Lesser General Public License 2.1 or the Common Development and Distribution License 1.0.
+gsnv-paint uses LibRaw under CDDL 1.0 / LGPL 2.1 without modification, as a separately loaded module
+(libraw.wasm), so it can be replaced by the user. LibRaw source: https://github.com/LibRaw/LibRaw
+The wasm also contains Little CMS (MIT licence): https://github.com/mm2/Little-CMS
+
+Release builds must ship this notice with the application and offer the corresponding LibRaw source.

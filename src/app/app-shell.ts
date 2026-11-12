@@ -61,6 +61,8 @@ export type WorkspaceAdapter = {
     dialog(spec: DialogSpec): void;
     /** Re-reads the editor's menus/tools after view-local state (tool, selection) changes. */
     invalidate(): void;
+    /** Opens a new unsaved document in this workspace after the usual replacement consent; resolves true if opened. */
+    open(document: AppDocument): Promise<boolean>;
   }): EditorView;
 };
 type Request = {
@@ -78,8 +80,8 @@ type Handle = {
   dispose(): void;
 };
 
-const WORKSPACES = ['cad', 'image', 'video'] as const;
-const NAMES = { cad: 'CAD', image: 'Image', video: 'Video' } as const;
+const WORKSPACES = ['cad', 'image', 'photo', 'video'] as const;
+const NAMES = { cad: 'CAD', image: 'Image', photo: 'Photo', video: 'Video' } as const;
 const RANGE = { min: 0.01, max: 64 };
 const TWO_DIMENSIONAL = new Set(['sketch2d', 'canvas2d', 'preview2d']);
 function reason(cause: unknown): string {
@@ -94,17 +96,17 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
   let modal: { close(): void } | null = null; let modalActive = false;
   let capabilities: Capability[] = []; let viewInput = () => {};
   const pending = new Set<Promise<unknown>>();
-  const epochs = { cad: 0, image: 0, video: 0 };
-  const saving = { cad: false, image: false, video: false };
-  const observed = { cad: 0, image: 0, video: 0 };
-  const issued = { cad: 0, image: 0, video: 0 };
-  const queues: Record<Workspace, Promise<void>> = { cad: Promise.resolve(), image: Promise.resolve(), video: Promise.resolve() };
-  const stored = { cad: false, image: false, video: false };
-  const recoveryBlocked = { cad: false, image: false, video: false };
+  const epochs = { cad: 0, image: 0, photo: 0, video: 0 };
+  const saving = { cad: false, image: false, photo: false, video: false };
+  const observed = { cad: 0, image: 0, photo: 0, video: 0 };
+  const issued = { cad: 0, image: 0, photo: 0, video: 0 };
+  const queues: Record<Workspace, Promise<void>> = { cad: Promise.resolve(), image: Promise.resolve(), photo: Promise.resolve(), video: Promise.resolve() };
+  const stored = { cad: false, image: false, photo: false, video: false };
+  const recoveryBlocked = { cad: false, image: false, photo: false, video: false };
   const recoveryErrors: Partial<Record<Workspace, string>> = {};
   const candidates: Partial<Record<Workspace, { package?: Package; error?: string }>> = {};
   const handles: Partial<Record<Workspace, FileSystemFileHandle>> = {};
-  const views: Record<Workspace, View2D> = { cad: { zoom: 1, pan: { x: 0, y: 0 } }, image: { zoom: 1, pan: { x: 0, y: 0 } }, video: { zoom: 1, pan: { x: 0, y: 0 } } };
+  const views: Record<Workspace, View2D> = { cad: { zoom: 1, pan: { x: 0, y: 0 } }, image: { zoom: 1, pan: { x: 0, y: 0 } }, photo: { zoom: 1, pan: { x: 0, y: 0 } }, video: { zoom: 1, pan: { x: 0, y: 0 } } };
   const editors: Partial<Record<Workspace, { root: HTMLElement; view: EditorView }>> = {};
   const historyPanel = document.createElement('div'); historyPanel.dataset.panelHistory = '';
   const recoveryPanel = document.createElement('div'); recoveryPanel.dataset.panelRecovery = '';
@@ -183,7 +185,12 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
     if (!editors[workspace] && adapters[workspace]) {
       const pane = document.createElement('div'); pane.className = 'app-editor'; chrome.viewport.append(pane);
       editors[workspace] = { root: pane, view: adapters[workspace]!.mount({ root: pane, commit: (value, label, base) => commit(workspace, value, label, base), dialog,
-        invalidate: () => { if (!disposed && !modalActive && state.workspace === workspace) chrome.update(model()); } }) };
+        invalidate: () => { if (!disposed && !modalActive && state.workspace === workspace) chrome.update(model()); },
+        open: async value => {
+          if (disposed || candidates[workspace]) return false;
+          if (!await mayReplace(workspace) || disposed || modalActive) return false;
+          replace(workspace, value, false); return true;
+        } }) };
     }
     for (const [name, editor] of Object.entries(editors)) editor.root.hidden = name !== workspace;
     empty.hidden = !!editors[workspace]; emptyDetail.textContent = `${NAMES[workspace]} editing is not available in this development build.`;

@@ -115,3 +115,9 @@ test('S05 production CAD tool shortcuts stay native while typing',()=>{
   assert.deepEqual(mapped(key),handled(command));assert.deepEqual(mapped(key,{target:'text'}),unhandled);
  }
 });
+
+test('S05 Photo before/after and crop keys are limited to the Photo workspace', () => {
+  assert.deepEqual(mapped('\\', { workspace: 'photo', viewRole: 'preview2d' }), handled('photo.beforeAfter'));
+  assert.deepEqual(mapped('r', { workspace: 'photo', viewRole: 'preview2d' }), handled('photo.crop'));
+  assert.deepEqual(mapped('\\'), unhandled); assert.deepEqual(mapped('b', { workspace: 'photo', viewRole: 'preview2d' }), unhandled);
+});

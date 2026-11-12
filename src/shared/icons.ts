@@ -17,7 +17,7 @@
 
 export type IconRequest = { document: Document; name: string; label: string; size: number };
 export const iconCatalog: readonly string[] = Object.freeze([
-  'app', 'cad', 'image', 'video', 'new', 'open', 'save', 'undo', 'redo', 'cut', 'copy', 'paste',
+  'app', 'cad', 'image', 'photo', 'video', 'new', 'open', 'save', 'undo', 'redo', 'cut', 'copy', 'paste',
   'delete', 'select', 'hand', 'zoomIn', 'zoomOut', 'fit', 'history', 'properties', 'layers',
   'grid', 'ruler', 'line', 'rectangle', 'extrude',
   'pencil', 'brush', 'eraser', 'fill', 'picker', 'ellipse', 'text', 'crop', 'rotate', 'flip', 'export', 'close', 'help', 'chevronRight', 'chevronDown',
@@ -27,6 +27,7 @@ const PATHS: Readonly<Record<string, string>> = {
   app: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM17.5 13l4.5 4.5-4.5 4.5-4.5-4.5z',
   cad: 'M12 2.5 21 7.5v10L12 22l-9-4.5v-10zM3 7.5l9 5 9-5M12 12.5V22M7.5 5l9 5',
   image: 'M3 4h18v16H3zM3 16l5-6 5 6 3-3 5 5M15 8a1.5 1.5 0 1 0 3 0 1.5 1.5 0 1 0-3 0',
+  photo: 'M2.5 7h4l2-3h7l2 3h4v13h-19zM8 13.5a4 4 0 1 0 8 0 4 4 0 1 0-8 0M18 9.5h1',
   video: 'M3 4h18v16H3zM7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4M10 9l5 3-5 3z',
   new: 'M5 2.5h10l5 5V21H5zM15 2.5v5h5M9 14h7M12.5 10.5v7',
   open: 'M2.5 8V5h7l3 3H21v3M2.5 8v12H20l3-9H7l-4.5 9',

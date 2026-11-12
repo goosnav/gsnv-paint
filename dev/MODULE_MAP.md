@@ -169,6 +169,10 @@ Wire S02, S04, S06, S10–S14 and existing built workspace adapters. S01/S03/S05
 
 Implemented in `src/app/app-shell.ts`, with a production entry and a separate marked development fixture. The [integration contract](APP-SHELL.md) documents adapter ownership, document epochs, native-handle capture, serialized recovery and modal/input lifecycle. The production CAD adapter supports the verified sketch/extrusion path (circles and holes, D21) with STEP and STL output. The production Image adapter (D20) supports single-layer painting. The Video adapter remains unbuilt. The mount host also provides `invalidate()`, which re-reads the active editor's menus/tools after view-local state changes (tool, selection, worker results) without touching history.
 
+## Photo workspace (D23)
+
+Working increment, provisional GREEN: `src/photo/develop-settings.ts` (CORE settings, ranges, presets), `develop.ts` (CORE develop pipeline), `auto-tone.ts` (CORE), `photo-content.ts` (CORE document/codec), `photo-controls.ts` (SHELL Develop panel), `photo-develop.worker.ts` and `photo-workspace.ts` (PHOTO-APP assembly). Evidence and limits: [PHOTO-WORKFLOW.md](PHOTO-WORKFLOW.md).
+
 ## Assembly ladder and acceptance
 
 Rung 1: S01 history → S02 session; S03 metadata codec is verified independently before S15. Rung 2: S03 → S15 + S07 → S13 file seam. Rung 3: S03 → S15 + S08 → S14 recovery seam. Rung 4: S05 → S12 → A-SHELL and S09 → S10, with S11 preview transactions. Later phase sections define their cumulative seams.

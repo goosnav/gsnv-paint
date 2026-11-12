@@ -24,7 +24,7 @@ function resource() {
   } };
 }
 function fixture(workspace: Workspace) {
-  let commits: ((width: number, baseIdentity?: string) => void) | undefined; let invalidate = () => {}; let label = 'Change fixture';
+  let commits: ((width: number, baseIdentity?: string) => void) | undefined; let invalidate = () => {}; let label = 'Change fixture'; let opener: ((value: AppDocument) => Promise<boolean>) | undefined;
   let identity = ''; let current: AppDocument | undefined; let encoded = 0; let disposed = 0;
   const gestures: Gesture[] = [];
   const adapter: WorkspaceAdapter = {
@@ -38,7 +38,7 @@ function fixture(workspace: Workspace) {
     mount(host) {
       const output = host.root.ownerDocument.createElement('output'); host.root.append(output);
       const change = (width: number, baseIdentity = identity) => { assert.ok(current); host.commit({ ...current, value: { width } }, 'Change fixture width', baseIdentity); };
-      commits = change; invalidate = () => host.invalidate();
+      commits = change; invalidate = () => host.invalidate(); opener = value => host.open(value);
       return {
         render(document, view) { current = document; identity = document?.identity ?? ''; output.textContent = JSON.stringify({ width: (document?.value as { width: number } | undefined)?.width ?? null, view }); },
         model: () => ({ menus: [{ id: 'fixture', label: 'Fixture', items: [{ id: 'fixture.change', label, shortcut: '', enabled: !!current }] }], tools: [], panels: [] }),
@@ -48,7 +48,7 @@ function fixture(workspace: Workspace) {
       };
     },
   };
-  return { adapter, gestures, change: (width: number, baseIdentity?: string) => commits!(width, baseIdentity), relabel(next: string) { label = next; invalidate(); }, get encoded() { return encoded; }, get disposed() { return disposed; } };
+  return { adapter, gestures, change: (width: number, baseIdentity?: string) => commits!(width, baseIdentity), relabel(next: string) { label = next; invalidate(); }, open: (value: AppDocument) => opener!(value), get encoded() { return encoded; }, get disposed() { return disposed; } };
 }
 function nativeHandle(value: File, close: () => Promise<void> = async () => {}) {
   const writes: Uint8Array[] = []; let permission = 'granted'; let requested = 0;
@@ -91,7 +91,7 @@ test('A-SHELL golden starts one empty CAD window with unavailable editing comman
   const s = setup({ available: [] }); await s.app.ready;
   assert.deepEqual(s.app.snapshot(), { workspace: 'cad', documents: {}, histories: {}, saved: {}, dirty: {}, message: 'CAD editing is not available in this development build.' });
   assert.equal(s.root.querySelectorAll('.gc-window').length, 1);
-  assert.equal(s.root.querySelectorAll('[role="tab"]').length, 3);
+  assert.equal(s.root.querySelectorAll('[role="tab"]').length, 4);
   assert.equal(s.root.querySelector<HTMLButtonElement>('[data-command="file.new"]')!.disabled, true);
   await s.app.dispatch('file.new'); await s.app.dispatch('edit.undo');
   assert.deepEqual(s.app.snapshot().documents, {});
@@ -106,6 +106,16 @@ test('A-SHELL invalidate refreshes the active editor menus without committing or
   assert.equal(s.app.snapshot(), before);
   s.fixtures.image.relabel('Hidden image label');
   assert.doesNotMatch(s.root.textContent!, /Hidden image label/); s.close();
+});
+
+test('A-SHELL editor open creates an unsaved document only after replacement consent', async () => {
+  const s = setup(); await s.app.ready; await s.app.dispatch('file.new'); await s.app.dispatch('edit.undo');
+  const first = s.fixtures.cad.open({ id: 'imported', title: 'Imported', format: 'gsnv-cad', version: 1, value: { width: 77 } });
+  await turn(); confirm(s.root, 'replace'); assert.equal(await first, true);
+  assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 77 }); assert.equal(s.app.snapshot().dirty.cad, true);
+  const pending = s.fixtures.cad.open({ id: 'second', title: 'Second', format: 'gsnv-cad', version: 1, value: { width: 5 } });
+  await new Promise(resolve => setTimeout(resolve, 0)); confirm(s.root, 'keep');
+  assert.equal(await pending, false); assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 77 }); s.close();
 });
 
 test('A-SHELL real sessions keep 100 edits, independent workspaces and exactly-once keyboard history', async () => {
