@@ -96,7 +96,9 @@ svg[data-icon=crop],svg[data-icon=rotate],svg[data-icon=flip] { color:#0b6a6a; }
 @media (max-width:500px) {
   .gc-main,.gc-main:not(:has(.gc-palette button)) { grid-template-columns:62px minmax(0,1fr); grid-template-rows:minmax(0,1fr) 170px; }
   .gc-main:not(:has(.gc-palette button)) { grid-template-columns:minmax(0,1fr); }
-  .gc-panels { grid-column:1/-1; flex-direction:row; padding:8px; }
-  .gc-panel { min-width:220px; }
+  .gc-main,.gc-main:not(:has(.gc-palette button)) { grid-template-rows:minmax(0,1fr) 210px; }
+  .gc-panels { grid-column:1/-1; flex-direction:row; align-items:stretch; padding:8px; overflow-x:auto; overflow-y:hidden; }
+  .gc-panel { flex:0 0 260px; min-height:0; }
+  .gc-panel-content { flex:1; min-height:0; overflow:auto; }
 }
 @media (forced-colors:active) { .gc-window,.gc-icon-button,.gc-workspace,.gc-menu-item { border:1px solid ButtonText; } }
