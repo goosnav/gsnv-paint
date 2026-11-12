@@ -66,7 +66,7 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
     if(shown&&tool.anchor&&tool.cursor&&tool.tool==='circle'){const radius=Math.hypot(tool.cursor[0]-tool.anchor[0],tool.cursor[1]-tool.anchor[1]);if(radius>shown.tolerance.linearMm)ghost=[{id:'preview',kind:'circle',center:tool.anchor,radius,construction:false}];}
     else if(shown&&tool.anchor&&tool.cursor&&tool.tool!=='select')try{ghost=makeLinearEntities({tool:tool.tool==='line'?'line':'corner-rectangle',anchors:[tool.anchor,tool.cursor],ids:tool.tool==='line'?['preview']:['preview1','preview2','preview3','preview4'],construction:false,tolerance:shown.tolerance});}catch{/* A zero-length hover is a preview, never a committed segment. */}
     viewport.update({content:shown,entities:entities(),view,selected:tool.selected,preview:ghost,solid:result?.solid??null,mode,state:status==='error'?'error':result?.dof===0?'fully':'under'});
-    hint.textContent=exportMessage||toolStatus();hint.dataset.tool=tool.tool;
+    hint.textContent=exportMessage||toolStatus();hint.dataset.tool=tool.tool;stage.dataset.tool=mode==='sketch'?tool.tool:'orbit';
     if(includePanel)properties.update({content:shown,selected:tool.selected,state:status,message,result});
     if(current&&document.activeElement===document.body&&!document.querySelector('dialog[open]'))stage.focus();
    }

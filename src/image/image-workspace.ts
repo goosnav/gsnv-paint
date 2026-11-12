@@ -151,7 +151,11 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         if (!raster) return;
         const next = imageToolInput({ state: tool, event, selection: floating ? { x: floating.x, y: floating.y, width: floating.raster.width, height: floating.raster.height } : selection, floating: !!floating });
         tool = next.state; const intent = next.intent;
-        if (intent.kind === 'hover') { cursor = intent.point; refresh(); return; }
+        if (intent.kind === 'hover') {
+          const r = floating ? { x: floating.x, y: floating.y, width: floating.raster.width, height: floating.raster.height } : selection, [hx, hy] = intent.point;
+          stage.dataset.hover = tool.tool === 'select' && r && hx >= r.x && hy >= r.y && hx < r.x + r.width && hy < r.y + r.height ? 'selection' : '';
+          cursor = intent.point; refresh(); return;
+        }
         if (intent.kind === 'stroke') {
           if (intent.first) { message = ''; strokeDirty = false; }
           const [fore, back] = colors(intent.button), eraser = tool.tool === 'eraser';
@@ -335,9 +339,9 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         gesture(gesture) {
           if (!raster || gesture.type !== 'pointer') return;
           if (gesture.button === 1 || panning) {
-            if (gesture.phase === 'down' && gesture.button === 1) panning = { ...gesture.point };
+            if (gesture.phase === 'down' && gesture.button === 1) { panning = { ...gesture.point }; stage.dataset.panning = 'true'; }
             else if (panning && gesture.phase === 'move') { offset = { x: offset.x + (gesture.point.x - panning.x) / view.zoom, y: offset.y + (gesture.point.y - panning.y) / view.zoom }; panning = { ...gesture.point }; layout(); }
-            else if (gesture.phase === 'up' || gesture.phase === 'cancel') panning = null;
+            else if (gesture.phase === 'up' || gesture.phase === 'cancel') { panning = null; delete stage.dataset.panning; }
             return;
           }
           try {

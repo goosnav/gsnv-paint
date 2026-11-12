@@ -1,0 +1,47 @@
+/*
+ * gsnv-paint design tokens. Neutral dark "studio" surfaces keep colour judgement unbiased and let the
+ * artwork be the brightest thing on screen; one accent marks state (active, selected, focus, primary).
+ * Every workspace stylesheet uses these properties instead of literal colours. See dev/PLAN-2026-11-12.md.
+ */
+:root {
+  color-scheme: dark;
+  --surface-app:#16171a; --surface-panel:#1e1f23; --surface-raised:#26282d; --surface-control:#2d2f35;
+  --surface-hover:#363941; --surface-pressed:#40444d; --surface-well:#111214; --surface-menu:#25272c;
+  --text-primary:#e8e9ec; --text-secondary:#a3a7b0; --text-muted:#7c808a; --text-on-accent:#fff;
+  --line:#2f3137; --line-strong:#3b3e46; --line-focus:#4f8cff;
+  --accent:#4f8cff; --accent-hover:#6a9dff; --accent-subtle:#4f8cff26; --accent-strong:#3a74e0;
+  --success:#3fb68b; --warning:#e0a43b; --danger:#ef5d5d; --danger-subtle:#ef5d5d1f;
+  --radius-s:4px; --radius:6px; --radius-l:10px;
+  --shadow-float:0 12px 32px #00000073,0 2px 6px #00000052;
+  --font-ui:"Inter","Segoe UI Variable Text","Segoe UI","SF Pro Text",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --font-size:12.5px; --font-size-s:11px;
+  --ease:cubic-bezier(.2,.7,.2,1); --fast:120ms;
+
+  /* Original XP-style cursors (src/shared/cursors). Hotspots match each drawing's working point. */
+  --cursor-arrow:url("./cursors/arrow.svg") 2 2, default;
+  --cursor-hand:url("./cursors/hand.svg") 11 2, pointer;
+  --cursor-text:url("./cursors/text.svg") 16 16, text;
+  --cursor-cross:url("./cursors/cross.svg") 16 16, crosshair;
+  --cursor-move:url("./cursors/move.svg") 16 16, move;
+  --cursor-grab:url("./cursors/grab.svg") 15 12, grab;
+  --cursor-grabbing:url("./cursors/grabbing.svg") 15 14, grabbing;
+  --cursor-busy:url("./cursors/busy.svg") 16 16, wait;
+  --cursor-ns:url("./cursors/ns.svg") 16 16, ns-resize;
+  --cursor-ew:url("./cursors/ew.svg") 16 16, ew-resize;
+  --cursor-nwse:url("./cursors/nwse.svg") 16 16, nwse-resize;
+  --cursor-nesw:url("./cursors/nesw.svg") 16 16, nesw-resize;
+  --cursor-pencil:url("./cursors/pencil.svg") 2 30, crosshair;
+  --cursor-bucket:url("./cursors/bucket.svg") 26 28, crosshair;
+  --cursor-picker:url("./cursors/picker.svg") 2 30, crosshair;
+  --cursor-zoom:url("./cursors/zoom.svg") 12 12, zoom-in;
+}
+html { cursor:var(--cursor-arrow); }
+html,body { background:var(--surface-app); color:var(--text-primary); font-family:var(--font-ui); font-size:var(--font-size); -webkit-font-smoothing:antialiased; }
+/* XP convention: controls keep the arrow; links and link-like targets show the hand. */
+button,select,summary,[role=tab],[role=button],input[type=checkbox],input[type=radio],input[type=range],input[type=color] { cursor:var(--cursor-arrow); }
+a[href],[data-cursor=hand] { cursor:var(--cursor-hand); }
+input:not([type=checkbox],[type=radio],[type=range],[type=color],[type=button]),textarea,[contenteditable=true] { cursor:var(--cursor-text); }
+:disabled { cursor:var(--cursor-arrow); }
+[aria-busy=true],[aria-busy=true] * { cursor:var(--cursor-busy) !important; }
+::selection { background:#4f8cff59; }
+* { scrollbar-width:thin; scrollbar-color:#454953 transparent; }

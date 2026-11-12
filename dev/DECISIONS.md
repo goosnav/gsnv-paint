@@ -170,3 +170,11 @@ A plate with holes is the most common first CAD part and was not buildable. Wide
 
 STL export uses C38 with the displayed B-rep triangulation (0.1 mm / 0.5 rad). This is adequate for printing typical parts; a separate export tessellation (C28) remains planned and is recorded as a limit rather than hidden.
 
+
+## D22 — dark studio design system and XP-style cursors
+
+The owner judged the XP-inspired chrome a cheap knockoff (saturated blue bars, beige faces, bevels, square corners) and asked for a considered design plus a Windows XP-style cursor. This supersedes the visual direction in [UI-REFRESH.md](UI-REFRESH.md); S10's structure, roles and behaviour are unchanged.
+
+Direction: neutral dark surfaces with one accent, the convention of professional creative tools. Neutral grey does not bias colour judgement in Image/Photo, the artwork is the brightest element, and an accent reserved for state makes "what is active" readable at a glance. Hierarchy comes from three surface levels, spacing and type weight rather than borders or gradients. Tokens live in `src/shared/theme.css` (surfaces, text, lines, accent, status colours, radii, shadow, type stack, motion); every stylesheet uses them. CAD's sketch and 3D views move to a dark blueprint palette so all workspaces share one look. Alternative: a light theme; rejected because canvases and photos read better on a dark surround, and supporting two themes doubles visual verification.
+
+Cursors are original 32 px SVG drawings in the XP visual language (white body, black outline, soft shadow): arrow, link hand, I-beam, crosshair, move, resize, busy, grab, and MS Paint-style pencil, bucket, eyedropper and zoom. Following XP, controls keep the arrow and links show the hand. Tools set matching cursors. They are not copies of Microsoft bitmaps, which the licence rules exclude. Each has a standard CSS fallback keyword.
