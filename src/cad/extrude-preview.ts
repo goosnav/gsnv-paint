@@ -14,13 +14,13 @@
 import type { KernelSession } from './kernel-runtime.ts';
 import { buildLinearPrism, type LinearPrismRequest } from './kernel-linear-prism.ts';
 export type SolidPreview = { positions: Float32Array; indices: Uint32Array; volume: number; area: number; center: [number,number,number] };
-export function extrudePreview(request: LinearPrismRequest): SolidPreview {
+export function extrudePreview(request: LinearPrismRequest | { session: KernelSession; token: ReturnType<KernelSession['retain']> }): SolidPreview {
   const {session}=request;
   const oc=session.library, owned:{delete():void}[]=[];
   const own=<T extends {delete():void}>(v:T):T=>{owned.push(v);return v;};
   const release=()=>{for(const object of owned.reverse())object.delete();session.release(token);};
   const fail=(message:string):never=>{release();throw Object.assign(new Error(message),{name:'ExtrusionError'});};
-  const token=buildLinearPrism(request),shape=session.resolve(token);
+  const token='token' in request?request.token:buildLinearPrism(request),shape=session.resolve(token);
   const volumeProps=own(new oc.GProp_GProps()),areaProps=own(new oc.GProp_GProps());
   oc.BRepGProp.VolumeProperties(shape,volumeProps,true,false,false);oc.BRepGProp.SurfaceProperties(shape,areaProps,false,false);
   const massCenter=own(volumeProps.CentreOfMass()),volume=volumeProps.Mass(),area=areaProps.Mass();

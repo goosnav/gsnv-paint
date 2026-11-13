@@ -14,7 +14,7 @@
  */
 import type { CADContent } from './editable-cad-content.ts';
 import type { SolidPreview } from './extrude-preview.ts';
-export type CADBuild = { entities: CADContent['graph']['features'][0]['definition']['sketch']['entities']; dof: number; solid: SolidPreview | null };
+export type CADBuild = { entities: CADContent['graph']['features'][0]['definition']['sketch']['entities']; sketches?: Record<string, CADContent['graph']['features'][0]['definition']['sketch']['entities']>; dof: number; solid: SolidPreview | null };
 export type CADProtocol = {
   assets: { kernelModule: string; kernelWasm: string; solverModule: string; solverWasm: string };
   request: { id: number; content: CADContent; assets: CADProtocol['assets'] };

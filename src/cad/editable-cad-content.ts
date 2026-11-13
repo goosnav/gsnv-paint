@@ -18,19 +18,28 @@ type DimensionValue = { source: string; kind: 'length' | 'angle' | 'scalar' };
 type Segment = Extract<LinearEntity, { kind: 'segment' }>;
 export type Circle = { id: string; kind: 'circle'; center: [number, number]; radius: number; construction: boolean };
 export type SketchEntity = Segment | Circle;
-type Constraint = { id: string; kind: 'horizontal' | 'vertical' | 'fix'; entityIds: string[]; pointRoles: string[]; inferred: boolean };
+export type ConstraintKind = 'horizontal' | 'vertical' | 'fix' | 'parallel' | 'perpendicular' | 'equal' | 'coincident';
+type Constraint = { id: string; kind: ConstraintKind; entityIds: string[]; pointRoles: string[]; inferred: boolean };
 type Dimension = { id: string; kind: 'linear' | 'aligned' | 'diameter'; entityIds: string[]; anchors: [number, number][]; value: DimensionValue; label: [number, number] };
-type Sketch = { id: string; name: string; plane: 'XY'; entities: SketchEntity[]; constraints: Constraint[]; dimensions: Dimension[]; projected: [] };
+export type Sketch = { id: string; name: string; plane: 'XY'; entities: SketchEntity[]; constraints: Constraint[]; dimensions: Dimension[]; projected: [] };
 type BaseFeature = { id: string; name: string; dependsOn: string[]; suppressed: false };
 type SketchFeature = BaseFeature & { kind: 'sketch'; definition: { kind: 'sketch'; sketch: Sketch } };
 type ExtrudeFeature = BaseFeature & { kind: 'extrude'; definition: { kind: 'extrude'; operation: 'boss'; sketchId: string; profileLoopIds: []; extent: { kind: 'blind'; distance: DimensionValue }; targetBodyIds: [] } };
+export type PocketFeature = BaseFeature & { kind: 'pocket'; definition: { kind: 'pocket'; sketch: Sketch; extent: { kind: 'blind'; distance: DimensionValue } | { kind: 'through' } } };
+export type EdgeSet = 'vertical' | 'top' | 'bottom' | 'all';
+export type EdgeFeature = BaseFeature & { kind: 'fillet' | 'chamfer'; definition: { kind: 'fillet' | 'chamfer'; edges: EdgeSet; size: DimensionValue } };
+export type LaterFeature = PocketFeature | EdgeFeature;
 type Frame = { origin: number[]; x: number[]; y: number[]; normal: number[] };
 export type CADContent = {
   units: 'mm' | 'inch'; tolerance: { linearMm: number; angularRad: number; relative: number };
   variables: { name: string; expression: DimensionValue }[];
-  graph: { features: [SketchFeature, ...ExtrudeFeature[]]; rollback: number; revision: number };
+  graph: { features: [SketchFeature, ...(ExtrudeFeature | LaterFeature)[]]; rollback: number; revision: number };
   assets: []; appearance: { mode: 'shaded-edges'; bodyColors: Record<string, never>; faceColors: []; section: { enabled: false; frame: Frame; offsetMm: 0 } }; drawing: null;
 };
+/** The boss extrusion (second feature), when present. */
+export const bossOf = (content: CADContent): ExtrudeFeature | undefined => { const f = content.graph.features[1]; return f?.kind === 'extrude' ? f : undefined; };
+/** Cuts, fillets and chamfers that follow the boss, in order. */
+export const laterOf = (content: CADContent): LaterFeature[] => content.graph.features.slice(2) as LaterFeature[];
 export function editableCADContent(request: { operation: 'new' } | { operation: 'read'; value: unknown }): CADContent {
   const frame = { origin: [0,0,0], x: [1,0,0], y: [0,1,0], normal: [0,0,1] };
   const appearance: CADContent['appearance'] = { mode: 'shaded-edges', bodyColors: {}, faceColors: [], section: { enabled: false, frame, offsetMm: 0 } };
@@ -72,7 +81,7 @@ export function editableCADContent(request: { operation: 'new' } | { operation: 
   };
   if (!equal(value.appearance, appearance)) bad('appearance', 'custom display settings are not supported in this CAD build');
   keys(value.graph, 'features rollback revision', 'graph'); array(value.graph.features, 'features');
-  if (value.graph.features.length < 1 || value.graph.features.length > 2) bad('features', 'expected one sketch and at most one extrusion');
+  if (value.graph.features.length < 1 || value.graph.features.length > 64) bad('features', 'expected one sketch, an extrusion and at most 62 further features');
   if (!Number.isSafeInteger(value.graph.revision) || value.graph.revision < 0) bad('revision', 'expected a nonnegative safe integer');
   if (value.graph.rollback !== value.graph.features.length) bad('rollback', 'partial rollback is not supported in this CAD build');
   const ids = new Set<string>();
@@ -85,50 +94,71 @@ export function editableCADContent(request: { operation: 'new' } | { operation: 
   if (first.kind !== 'sketch') bad('first feature', 'expected an XY sketch');
   empty(first.dependsOn, 'sketch dependencies'); keys(first.definition, 'kind sketch', 'sketch definition');
   if (first.definition.kind !== 'sketch') bad('sketch definition', 'wrong kind');
-  const sketch = first.definition.sketch;
-  keys(sketch, 'id name plane entities constraints dimensions projected', 'sketch');
-  if (sketch.id !== first.id) bad('sketch ID', 'must match feature ID'); text(sketch.name, 'sketch name');
-  if (sketch.plane !== 'XY') bad('plane', 'only XY is supported in this CAD build');
-  empty(sketch.projected, 'projected edges'); array(sketch.entities, 'entities'); const entities = new Set<string>();
-  const kinds = new Map<string, SketchEntity['kind']>();
-  for (const entity of sketch.entities) {
-    if (entity?.kind === 'circle') {
-      keys(entity, 'id kind center radius construction', 'entity'); id(entity.id, 'entity ID'); entities.add(entity.id); kinds.set(entity.id, 'circle');
-      if (typeof entity.construction !== 'boolean') bad(entity.id, 'construction must be true or false');
-      vec(entity.center, entity.id);
-      if (typeof entity.radius !== 'number' || !Number.isFinite(entity.radius) || entity.radius <= value.tolerance.linearMm || !entity.center.every(v => Number.isFinite(Math.abs(v) + entity.radius))) bad(entity.id, 'collapsed or overflowing circle');
-      continue;
+  const checkSketch = (sketch: Sketch, owner: string) => {
+    keys(sketch, 'id name plane entities constraints dimensions projected', 'sketch');
+    if (sketch.id !== owner) bad('sketch ID', 'must match feature ID'); text(sketch.name, 'sketch name');
+    if (sketch.plane !== 'XY') bad('plane', 'only XY is supported in this CAD build');
+    empty(sketch.projected, 'projected edges'); array(sketch.entities, 'entities'); const entities = new Set<string>();
+    const kinds = new Map<string, SketchEntity['kind']>();
+    for (const entity of sketch.entities) {
+      if (entity?.kind === 'circle') {
+        keys(entity, 'id kind center radius construction', 'entity'); id(entity.id, 'entity ID'); entities.add(entity.id); kinds.set(entity.id, 'circle');
+        if (typeof entity.construction !== 'boolean') bad(entity.id, 'construction must be true or false');
+        vec(entity.center, entity.id);
+        if (typeof entity.radius !== 'number' || !Number.isFinite(entity.radius) || entity.radius <= value.tolerance.linearMm || !entity.center.every(v => Number.isFinite(Math.abs(v) + entity.radius))) bad(entity.id, 'collapsed or overflowing circle');
+        continue;
+      }
+      keys(entity, 'id kind a b construction', 'entity'); id(entity.id, 'entity ID'); entities.add(entity.id); kinds.set(entity.id, 'segment');
+      if (entity.kind !== 'segment' || typeof entity.construction !== 'boolean') bad(entity.id, 'only segments and circles are supported');
+      vec(entity.a, entity.id); vec(entity.b, entity.id);
+      const length = Math.hypot(entity.b[0] - entity.a[0], entity.b[1] - entity.a[1]);
+      if (!Number.isFinite(length) || length <= value.tolerance.linearMm) bad(entity.id, 'collapsed or overflowing segment');
     }
-    keys(entity, 'id kind a b construction', 'entity'); id(entity.id, 'entity ID'); entities.add(entity.id); kinds.set(entity.id, 'segment');
-    if (entity.kind !== 'segment' || typeof entity.construction !== 'boolean') bad(entity.id, 'only segments and circles are supported');
-    vec(entity.a, entity.id); vec(entity.b, entity.id);
-    const length = Math.hypot(entity.b[0] - entity.a[0], entity.b[1] - entity.a[1]);
-    if (!Number.isFinite(length) || length <= value.tolerance.linearMm) bad(entity.id, 'collapsed or overflowing segment');
-  }
-  const target = (v: string[], where: string, kind: SketchEntity['kind'] = 'segment') => { if (!Array.isArray(v) || v.length !== 1 || kinds.get(v[0]!) !== kind) bad(where, `expected one existing ${kind}`); };
-  const targetKind = (v: string[]) => Array.isArray(v) && v.length === 1 ? kinds.get(v[0]!) : undefined;
-  array(sketch.constraints, 'constraints');
-  for (const c of sketch.constraints) {
-    keys(c, 'id kind entityIds pointRoles inferred', 'constraint'); id(c.id, 'constraint ID');
-    if (!['horizontal','vertical','fix'].includes(c.kind) || typeof c.inferred !== 'boolean') bad(c.id, 'unsupported constraint');
-    const circle = c.kind === 'fix' && targetKind(c.entityIds) === 'circle'; target(c.entityIds, c.id, circle ? 'circle' : 'segment');
-    if (c.kind === 'fix') { if (!Array.isArray(c.pointRoles) || c.pointRoles.length !== 1 || !(circle ? ['center'] : ['a','b']).includes(c.pointRoles[0]!)) bad(c.id, circle ? 'circle fix needs its center' : 'fix needs endpoint a or b'); }
-    else empty(c.pointRoles, c.id);
-  }
-  array(sketch.dimensions, 'dimensions');
-  for (const d of sketch.dimensions) {
-    keys(d, 'id kind entityIds anchors value label', 'dimension'); id(d.id, 'dimension ID');
-    if (!['linear','aligned','diameter'].includes(d.kind)) bad(d.id, 'only segment lengths and circle diameters are supported');
-    target(d.entityIds, d.id, d.kind === 'diameter' ? 'circle' : 'segment');
-    array(d.anchors, d.id); if (d.anchors.length !== 2) bad(d.id, 'expected two anchors'); d.anchors.forEach(v => vec(v,d.id)); vec(d.label,d.id); dim(d.value,d.id,true);
-  }
-  const extrusion = value.graph.features[1];
+    const target = (v: string[], where: string, kind: SketchEntity['kind'] = 'segment') => { if (!Array.isArray(v) || v.length !== 1 || kinds.get(v[0]!) !== kind) bad(where, `expected one existing ${kind}`); };
+    const targetKind = (v: string[]) => Array.isArray(v) && v.length === 1 ? kinds.get(v[0]!) : undefined;
+    array(sketch.constraints, 'constraints');
+    for (const c of sketch.constraints) {
+      keys(c, 'id kind entityIds pointRoles inferred', 'constraint'); id(c.id, 'constraint ID');
+      if (!['horizontal','vertical','fix','parallel','perpendicular','equal','coincident'].includes(c.kind) || typeof c.inferred !== 'boolean') bad(c.id, 'unsupported constraint');
+      if (['parallel','perpendicular','equal','coincident'].includes(c.kind)) {
+        if (!Array.isArray(c.entityIds) || c.entityIds.length !== 2 || c.entityIds[0] === c.entityIds[1] || !c.entityIds.every(e => kinds.has(e))) bad(c.id, 'expected two different existing entities');
+        if (c.kind !== 'coincident' && !c.entityIds.every(e => kinds.get(e) === 'segment')) bad(c.id, 'expected two segments');
+        if (c.kind === 'coincident') { if (!Array.isArray(c.pointRoles) || c.pointRoles.length !== 2 || !c.pointRoles.every((r, i) => (kinds.get(c.entityIds[i]!) === 'circle' ? ['center'] : ['a','b']).includes(r))) bad(c.id, 'coincident needs one point role per entity'); }
+        else empty(c.pointRoles, c.id);
+        continue;
+      }
+      const circle = c.kind === 'fix' && targetKind(c.entityIds) === 'circle'; target(c.entityIds, c.id, circle ? 'circle' : 'segment');
+      if (c.kind === 'fix') { if (!Array.isArray(c.pointRoles) || c.pointRoles.length !== 1 || !(circle ? ['center'] : ['a','b']).includes(c.pointRoles[0]!)) bad(c.id, circle ? 'circle fix needs its center' : 'fix needs endpoint a or b'); }
+      else empty(c.pointRoles, c.id);
+    }
+    array(sketch.dimensions, 'dimensions');
+    for (const d of sketch.dimensions) {
+      keys(d, 'id kind entityIds anchors value label', 'dimension'); id(d.id, 'dimension ID');
+      if (!['linear','aligned','diameter'].includes(d.kind)) bad(d.id, 'only segment lengths and circle diameters are supported');
+      target(d.entityIds, d.id, d.kind === 'diameter' ? 'circle' : 'segment');
+      array(d.anchors, d.id); if (d.anchors.length !== 2) bad(d.id, 'expected two anchors'); d.anchors.forEach(v => vec(v,d.id)); vec(d.label,d.id); dim(d.value,d.id,true);
+    }
+
+  };
+  checkSketch(first.definition.sketch, first.id);
+  const extrusion = value.graph.features[1] as ExtrudeFeature | undefined;
   if (extrusion) {
     if (extrusion.kind !== 'extrude' || extrusion.dependsOn.length !== 1 || extrusion.dependsOn[0] !== first.id) bad('extrusion', 'must depend on the sketch');
     const d = extrusion.definition; keys(d, 'kind operation sketchId profileLoopIds extent targetBodyIds', 'extrusion definition');
     if (d.kind !== 'extrude' || d.operation !== 'boss' || d.sketchId !== first.id) bad('extrusion', 'only a boss from the first sketch is supported');
     empty(d.profileLoopIds, 'profile selection'); empty(d.targetBodyIds, 'target bodies'); keys(d.extent, 'kind distance', 'extent');
     if (d.extent.kind !== 'blind') bad('extent', 'only blind extrusion is supported'); dim(d.extent.distance, 'depth', true);
+  }
+  for (const feature of laterOf(value)) {
+    if (!extrusion) bad(feature.name, 'needs an extrusion first');
+    if (feature.kind === 'pocket') {
+      const d = feature.definition; keys(d, 'kind sketch extent', 'cut definition'); if (d.kind !== 'pocket') bad(feature.name, 'wrong kind');
+      empty(feature.dependsOn, `${feature.name} dependencies`); checkSketch(d.sketch, feature.id);
+      if (d.extent?.kind === 'through') keys(d.extent, 'kind', 'cut extent'); else { keys(d.extent, 'kind distance', 'cut extent'); if (d.extent.kind !== 'blind') bad(feature.name, 'cut extent is blind or through'); dim(d.extent.distance, `${feature.name} depth`, true); }
+    } else if (feature.kind === 'fillet' || feature.kind === 'chamfer') {
+      const d = feature.definition; keys(d, 'kind edges size', `${feature.kind} definition`); empty(feature.dependsOn, `${feature.name} dependencies`);
+      if (d.kind !== feature.kind || !['vertical','top','bottom','all'].includes(d.edges)) bad(feature.name, 'edges are vertical, top, bottom or all'); dim(d.size, `${feature.name} size`, true);
+    } else bad((feature as { name?: string }).name ?? 'feature', 'unsupported feature');
   }
   // Validation above rejects unsupported members before this ownership copy.
   return JSON.parse(JSON.stringify(value)) as CADContent;

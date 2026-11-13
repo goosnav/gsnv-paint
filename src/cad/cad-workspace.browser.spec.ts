@@ -90,3 +90,36 @@ test('CAD-APP plate with circular holes extrudes exact B-rep volume and exports 
  expect(errors).toEqual([]);
  }finally{await page.close();await server.close();}
 });
+
+test('CAD-APP cut, fillet, chamfer, imperial units and parallel/perpendicular/equal constraints',async({page})=>{
+ test.setTimeout(90000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ try{
+ await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
+ const dialog=page.getByRole('dialog'),props=page.locator('.cad-properties');
+ await tool(page,'cad.rectangle');await dialog.getByRole('button',{name:'OK',exact:true}).click();await ready(page);
+ await page.keyboard.press('e');await dialog.getByRole('button',{name:'OK',exact:true}).click();await volume(page,'60000.000');
+ await props.getByRole('button',{name:'Cut…',exact:true}).click();await ready(page);await expect(props).toContainText('Cut 1');
+ await page.getByRole('menuitem',{name:'Sketch',exact:true}).click();await page.getByRole('menuitem',{name:'Circle dimensions…'}).click();
+ await dialog.getByLabel('Diameter (mm or expression)').fill('10');await dialog.getByLabel('Center X (mm)').fill('20');await dialog.getByLabel('Center Y (mm)').fill('30');await dialog.getByRole('button',{name:'OK',exact:true}).click();
+ await volume(page,(60000-250*Math.PI).toFixed(3));
+ await props.getByRole('button',{name:'Depth…'}).click();await dialog.getByLabel('Extent').selectOption('blind');await dialog.getByLabel('Depth (mm or expression)').fill('4');await dialog.getByRole('button',{name:'OK',exact:true}).click();
+ await volume(page,(60000-100*Math.PI).toFixed(3));
+ await props.getByRole('button',{name:'Fillet…',exact:true}).click();await dialog.getByLabel('Radius (mm or expression)').fill('5');await dialog.getByRole('button',{name:'OK',exact:true}).click();
+ await volume(page,(60000-100*Math.PI-(4-Math.PI)*250).toFixed(3));await expect(props).toContainText('Fillet 1');
+ await props.getByRole('button',{name:'Chamfer…',exact:true}).click();await dialog.getByLabel('Edges').selectOption('top');await dialog.getByLabel('Distance (mm or expression)').fill('1');await dialog.getByRole('button',{name:'OK',exact:true}).click();
+ await expect(page.locator('.cad-build-status')).toHaveAttribute('data-state','ready',{timeout:30000});await expect(props).toContainText('Chamfer 1');
+ await props.getByRole('button',{name:'Delete',exact:true}).last().click();await volume(page,(60000-100*Math.PI-(4-Math.PI)*250).toFixed(3));
+ await props.getByRole('button',{name:'Imperial (in)'}).click();await expect(props.getByRole('button',{name:'Imperial (in)'})).toHaveAttribute('aria-pressed','true');
+ await page.keyboard.press('Control+n');await expect(page.locator('.cad-properties').getByRole('button',{name:'Imperial (in)'})).toHaveAttribute('aria-pressed','true'); // New parts remember the choice.
+ await page.keyboard.press('l');const box=(await page.locator('.cad-stage').boundingBox())!;
+ await page.mouse.click(box.x+100,box.y+300);await page.mouse.click(box.x+300,box.y+300);await page.mouse.click(box.x+400,box.y+250);await page.mouse.click(box.x+450,box.y+100);await ready(page);
+ await page.keyboard.press('v');const lines=page.locator('[data-entity-id]');await expect(lines).toHaveCount(2);
+ const first=(await lines.nth(0).boundingBox())!,second=(await lines.nth(1).boundingBox())!;
+ await page.mouse.click(first.x+first.width/2,first.y+first.height/2);await page.keyboard.down('Control');await page.mouse.click(second.x+second.width/2,second.y+second.height/2);await page.keyboard.up('Control');
+ await props.getByRole('button',{name:'Perpendicular',exact:true}).click();await ready(page);await props.getByRole('button',{name:'Equal',exact:true}).click();await ready(page);
+ await expect(props).toContainText('Perpendicular');await expect(props).toContainText('Equal length');
+ await page.mouse.click(first.x+first.width/2,first.y+first.height/2);await props.getByRole('button',{name:'Vertical',exact:true}).click();
+ await expect(page.locator('.cad-build-status')).toHaveAttribute('data-state','error');await expect(page.locator('.cad-build-status')).toContainText(/contradict each other \(.*(Vertical|Perpendicular|Equal length)/);
+ expect(errors).toEqual([]);
+ }finally{await page.close();await server.close();}
+});

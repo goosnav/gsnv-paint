@@ -13,12 +13,12 @@
  */
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import type { CADContent, SketchEntity } from './editable-cad-content.ts';
+import type { CADContent, SketchEntity, Sketch } from './editable-cad-content.ts';
 import type { SolidPreview } from './extrude-preview.ts';
 import type { View2D } from '../shared/view-transform.ts';
 import type { LinearEntity } from './sketch-linear-primitives.ts';
 type Drawn = LinearEntity|SketchEntity;
-export type CADView = {content:CADContent|null;entities:readonly Drawn[];view:View2D;selected:string[];preview:readonly Drawn[];solid:SolidPreview|null;mode:'sketch'|'solid';state:'under'|'fully'|'error'};
+export type CADView = {content:CADContent|null;sketch?:Sketch|undefined;context?:readonly Drawn[];entities:readonly Drawn[];view:View2D;selected:string[];preview:readonly Drawn[];solid:SolidPreview|null;mode:'sketch'|'solid';state:'under'|'fully'|'error'};
 type Handle={update(model:CADView):void;fit():void;point(point:{x:number;y:number}):[number,number];hit(point:{x:number;y:number}):string|null;dispose():void};
 export function cadViewport(host:HTMLElement):Handle {
   if(!host?.ownerDocument)throw new TypeError('CAD viewport needs a live DOM host.');
@@ -43,6 +43,11 @@ export function cadViewport(host:HTMLElement):Handle {
     for(let y=((zero.y%pitch)+pitch)%pitch;y<height;y+=pitch)svg.append(element('line',{x1:0,y1:y,x2:width,y2:y,stroke:'#dfe5ee'}));
     svg.append(element('line',{x1:0,y1:zero.y,x2:width,y2:zero.y,stroke:'#d79a9a'}),element('line',{x1:zero.x,y1:0,x2:zero.x,y2:height,stroke:'#8fbf9a'}));
     const color=model.state==='error'?'#c50f0f':model.state==='fully'?'#1c7a1c':'#0b3fb5';
+    // When a cut sketch is active, the base outline is shown faintly for reference (not selectable).
+    for(const entity of model.context??[]){
+      if(entity.kind==='segment'){const a=screen(entity.a),b=screen(entity.b);svg.append(element('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:'#a9b4c2','stroke-dasharray':'3 3','pointer-events':'none'}));}
+      else if(entity.kind==='circle'){const c=screen(entity.center);svg.append(element('circle',{cx:c.x,cy:c.y,r:entity.radius*scale*model.view.zoom,fill:'none',stroke:'#a9b4c2','stroke-dasharray':'3 3','pointer-events':'none'}));}
+    }
     for(const entity of [...model.entities,...model.preview])if(entity.kind==='segment'){
       const a=screen(entity.a),b=screen(entity.b),selected=model.selected.includes(entity.id),preview=model.preview.includes(entity);
       const group=element('g',{'data-entity-id':entity.id,'data-selected':String(selected)});
@@ -56,7 +61,7 @@ export function cadViewport(host:HTMLElement):Handle {
       group.append(element('circle',{cx:c.x,cy:c.y,r,fill:'none',stroke:selected?'#ff7a00':color,'stroke-width':selected?3:2,'stroke-dasharray':preview?'5 4':'none','pointer-events':'none'}));
       group.append(element('path',{d:`M${c.x-4} ${c.y}h8M${c.x} ${c.y-4}v8`,stroke:color,'pointer-events':'none'}));svg.append(group);
     }
-    const sketch=model.content?.graph.features[0].definition.sketch;
+    const sketch=model.sketch??model.content?.graph.features[0].definition.sketch;
     for(const c of sketch?.constraints??[]){
       const e=model.entities.find(e=>e.id===c.entityIds[0]);if(!e||e.kind==='point')continue;
       if(e.kind==='circle'){const p=screen(e.center);svg.append(element('text',{x:p.x+6,y:p.y-6,fill:color,'font-size':11},'⌖'));continue;}

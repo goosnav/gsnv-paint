@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { editableCADContent } from './editable-cad-content.ts';
+import { editableCADContent, bossOf } from './editable-cad-content.ts';
 import { editCADContent, type CADAction } from './edit-cad-content.ts';
 const fresh = () => editableCADContent({ operation: 'new' });
 const seg = (e: unknown) => e as { a: [number, number]; b: [number, number] };
@@ -16,7 +16,7 @@ test('C51 rectangle stores real driving constraints and edits preserve source ex
   assert.deepEqual(s.dimensions.map(d => d.value.source), ['100','60']);
   value = edit(value, { kind: 'extrude', id: 'boss', depth: '5 * 2' });
   value = edit(value, { kind: 'dimension', id: s.dimensions[0]!.id, source: '120' });
-  assert.equal(value.graph.revision, 3); assert.equal(value.graph.features[1]!.definition.extent.distance.source, '5 * 2');
+  assert.equal(value.graph.revision, 3); assert.equal(bossOf(value)!.definition.extent.distance.source, '5 * 2');
   value = edit(value, { kind: 'remove', ids: [s.entities[0]!.id] });
   assert.equal(value.graph.features[0].definition.sketch.entities.length, 3);
   assert.ok(value.graph.features[0].definition.sketch.constraints.every(c => c.entityIds[0] !== s.entities[0]!.id));

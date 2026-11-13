@@ -196,3 +196,9 @@ Pixel text: browsers smooth web fonts and ignore embedded bitmap strikes, so XP'
 Icons render with `shape-rendering: crispEdges`, square caps and per-glyph XP colours. The canvas well is the XP AppWorkspace grey. CAD returns to a light drafting sheet. Image and Photo keep neutral grey around the artwork.
 
 The skill's cleanup workflow (approval packet, local branch, no push) was not followed literally: the owner gave the direction directly and asked for continued work with pushes to main at checkpoints. Its field-guide rules (no glows, blobs, pillowing, emoji or vague copy) are applied within the XP World.
+
+## D25 — CAD cuts, fillets, chamfers, units and relationship constraints
+
+Owner request: the ability to cut, rounded edges and chamfers, metric or imperial defaults, and constraints that work better. C50 now allows any number of features after the boss: cut features, each with its own XY sketch and a through-all or blind extent, plus fillets and chamfers on an edge set. Alternative: full face picking and per-edge selection (C06/C30); rejected for now because it needs the topological-naming work, and edge sets by geometry are robust across rebuilds and cover the common cases (round the corners, soften the top). One worker-side part builder serves both display and STEP so exports match the screen. Detail and evidence: [CAD-FEATURES.md](CAD-FEATURES.md).
+
+Constraint messages name constraints in words. PlaneGCS does not always report which constraints conflict; then the message names the most recently added one and suggests Ctrl+Z.

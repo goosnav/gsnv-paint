@@ -65,7 +65,8 @@ function disjoint(a: ProfileLoop, b: ProfileLoop, tolerance: number): boolean {
   return pa.every((p, i) => pb.every((q, j) => !crosses(p, pa[(i + 1) % pa.length]!, q, pb[(j + 1) % pb.length]!, tolerance)));
 }
 
-export function sketchRegions({ entities, tolerance }: { entities: readonly SketchEntity[]; tolerance: number }): ProfileRegion {
+/** Every closed loop in the sketch (each circle, and each connected group of segments), without nesting rules. */
+export function sketchLoops({ entities, tolerance }: { entities: readonly SketchEntity[]; tolerance: number }): ProfileLoop[] {
   if (!Number.isFinite(tolerance) || tolerance <= 0) fail('The document tolerance must be positive.');
   const loops: ProfileLoop[] = [];
   for (const e of entities) if (e.kind === 'circle' && !e.construction) {
@@ -82,6 +83,11 @@ export function sketchRegions({ entities, tolerance }: { entities: readonly Sket
   const groups = new Map<number, typeof segments>();
   segments.forEach((s, i) => groups.set(find(i), [...(groups.get(find(i)) ?? []), s]));
   for (const group of groups.values()) loops.push({ kind: 'polygon', points: linearProfile({ entities: group, tolerance }) });
+  return loops;
+}
+
+export function sketchRegions({ entities, tolerance }: { entities: readonly SketchEntity[]; tolerance: number }): ProfileRegion {
+  const loops = sketchLoops({ entities, tolerance });
   if (!loops.length) fail('Extrude needs a closed profile: draw a closed outline or a circle.');
   loops.sort((a, b) => area(b) - area(a));
   const [outer, ...holes] = loops as [ProfileLoop, ...ProfileLoop[]];

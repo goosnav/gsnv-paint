@@ -34,6 +34,17 @@ export function linearSketchProgram(request: Request): { primitives: SketchPrimi
   const circle = (id: string) => circles.find(v=>v.id===id) ?? fail(`Missing circle ${id}.`);
   for (const c of sketch.constraints) {
     if (c.kind === 'fix' && c.pointRoles[0] === 'center') { const center = circle(c.entityIds[0]!).c_id; points.find(p=>p.id===center)!.fixed = true; continue; }
+    if (c.kind === 'parallel' || c.kind === 'perpendicular' || c.kind === 'equal') {
+      const [l1, l2] = [line(c.entityIds[0]!).id, line(c.entityIds[1]!).id];
+      relations.push(c.kind === 'parallel' ? { id:c.id, type:'parallel', l1_id:l1, l2_id:l2 } : c.kind === 'perpendicular' ? { id:c.id, type:'perpendicular_ll', l1_id:l1, l2_id:l2 } : { id:c.id, type:'equal_length', l1_id:l1, l2_id:l2 });
+      continue;
+    }
+    if (c.kind === 'coincident') {
+      const pointOf = (entity: string, role: string) => role === 'center' ? circle(entity).c_id : role === 'a' ? line(entity).p1_id : line(entity).p2_id;
+      const p1 = pointOf(c.entityIds[0]!, c.pointRoles[0]!), p2 = pointOf(c.entityIds[1]!, c.pointRoles[1]!);
+      if (p1 !== p2) relations.push({ id:c.id, type:'p2p_coincident', p1_id:p1, p2_id:p2 });
+      continue;
+    }
     const l = line(c.entityIds[0]!);
     if (c.kind === 'fix') points.find(p=>p.id===(c.pointRoles[0]==='a'?l.p1_id:l.p2_id))!.fixed = true;
     else relations.push({ id:c.id, type:c.kind==='horizontal'?'horizontal_l':'vertical_l', l_id:l.id });

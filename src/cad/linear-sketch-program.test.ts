@@ -51,3 +51,21 @@ test('C52 circles map to a fixed center and diameter that the real PlaneGCS solv
     assert.throws(()=>p.accept(gcs.sketch_index.get_primitives().map(v=>v.type==='circle'?{...v,radius:0}:v)),/collapsed circle/);
   } finally { gcs.destroy_gcs_module(); }
 });
+
+test('C52 parallel, perpendicular, equal and coincident constraints solve with the real PlaneGCS solver', async () => {
+  const { make_gcs_wrapper } = await import('@salusoft89/planegcs');
+  let content = editCADContent({content:editableCADContent({operation:'new'}),action:{kind:'line',id:'a',a:[0,0],b:[10,0]}});
+  content = editCADContent({content,action:{kind:'line',id:'b',a:[12,1],b:[20,9]}});
+  content = editCADContent({content,action:{kind:'constraint',id:'h',entity:'a',axis:'horizontal'}});
+  for (const [id, relation] of [['p', 'perpendicular'], ['e', 'equal'], ['c', 'coincident']] as const) content = editCADContent({content,action:{kind:'relation',id,relation,entities:['a','b']}});
+  const sketch = content.graph.features[0].definition.sketch; assert.deepEqual(sketch.constraints.at(-1)!.pointRoles, ['b','a']);
+  const p = linearSketchProgram({sketch,context,tolerance:1e-7}); assert.deepEqual(p.primitives.filter(v=>['perpendicular_ll','equal_length','p2p_coincident'].includes(v.type)).map(v=>v.type), ['perpendicular_ll','equal_length','p2p_coincident']);
+  const gcs = await make_gcs_wrapper(new URL('../../node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm', import.meta.url).pathname);
+  try {
+    gcs.push_primitives_and_params(p.primitives); assert.equal(gcs.solve(), 0); gcs.apply_solution();
+    const [a, b] = p.accept(gcs.sketch_index.get_primitives()) as unknown as { a: [number, number]; b: [number, number] }[];
+    const da = [a!.b[0]-a!.a[0], a!.b[1]-a!.a[1]], db = [b!.b[0]-b!.a[0], b!.b[1]-b!.a[1]];
+    assert.ok(Math.abs(da[1]!) < 1e-6, 'a stays horizontal'); assert.ok(Math.abs(da[0]!*db[0]! + da[1]!*db[1]!) < 1e-6, 'perpendicular');
+    assert.ok(Math.abs(Math.hypot(...da) - Math.hypot(...db)) < 1e-6, 'equal length'); assert.ok(Math.hypot(a!.b[0]-b!.a[0], a!.b[1]-b!.a[1]) < 1e-6, 'coincident');
+  } finally { gcs.destroy_gcs_module(); }
+});
