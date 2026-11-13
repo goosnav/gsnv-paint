@@ -45,7 +45,7 @@ const WHEEL_PIXELS_PER_DOUBLE = 400;
 const LINE_PIXELS = 16;
 const MAX_EXPONENT = 4;
 const TWO_DIMENSIONAL = new Set(['preview2d', 'canvas2d', 'sketch2d']);
-const REPEATABLE = new Set(['edit.undo', 'edit.redo', 'edit.delete', 'video.stepBack', 'video.stepForward', 'image.sizeDown', 'image.sizeUp']);
+const REPEATABLE = new Set(['edit.undo', 'edit.redo', 'edit.delete', 'video.stepBack', 'video.stepForward', 'image.sizeDown', 'image.sizeUp', 'image.nudgeLeft', 'image.nudgeRight', 'image.nudgeUp', 'image.nudgeDown']);
 type PointerState = { id: number; button: 0 | 1 | 2; point: Point; ctrl: boolean; shift: boolean; pan: boolean };
 
 export function bindInput({ root, context, onCommand, onGesture }: InputRequest): () => void {

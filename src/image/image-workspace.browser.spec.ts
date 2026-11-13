@@ -98,15 +98,19 @@ test('IMAGE-APP layers, soft brush clipped to a selection, opacity/blend, adjust
     const blurred = await pixel(page, 650, 296); expect(blurred[0]).toBeGreaterThan(20); expect(blurred[0]).toBeLessThan(200);
     await page.locator('[data-layer-id]').first().click(); await menu(page, 'Layer', 'Merge down'); await expect(page.locator('.image-layer')).toHaveCount(1);
 
-    await page.keyboard.press('t'); await page.mouse.click(...p(50, 450)); await dialog.getByLabel('Text', { exact: true }).fill('Hello'); await dialog.getByLabel('Size (px)').fill('40');
+    await page.keyboard.press('t'); await page.mouse.click(...p(50, 450)); await dialog.getByLabel('Text (Enter for a new line)').fill('Hello'); await dialog.getByLabel('Size (px)').fill('40');
     await expect(page.locator('.image-floating')).toBeVisible(); await dialog.getByRole('button', { name: 'OK', exact: true }).click();
     const inked = await page.evaluate(() => { const c = document.querySelector<HTMLCanvasElement>('.image-canvas')!, d = c.getContext('2d')!.getImageData(50, 450, 120, 50).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i]! < 100) n++; return n; });
     expect(inked).toBeGreaterThan(100);
+    await expect(page.locator('.image-layer[aria-selected=true] .image-layer-name')).toHaveText('Text: Hello');
+    await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight'); await page.keyboard.press('Enter'); // Nudge the selected text 2 px.
+    await page.keyboard.press('Control+t'); await dialog.getByLabel('Rotate (degrees)').fill('90'); await dialog.getByRole('button', { name: 'OK', exact: true }).click(); await page.keyboard.press('Enter');
+    await menu(page, 'Image', 'Flatten image');
     await menu(page, 'Image', 'Resize…'); await dialog.getByLabel('Width (px)').fill('400'); await dialog.getByRole('button', { name: 'OK', exact: true }).click(); expect(await size(page)).toEqual({ width: 400, height: 300 });
     await menu(page, 'Image', 'Canvas size…'); await dialog.getByLabel('Width (px)').fill('500'); await dialog.getByRole('button', { name: 'OK', exact: true }).click(); expect(await size(page)).toEqual({ width: 500, height: 300 });
     const box = (await page.locator('.image-canvas').boundingBox())!, d2 = await size(page);
     await page.keyboard.press('s'); await drag(page, at(box, d2, 10, 10), at(box, d2, 109, 59)); await page.locator('.gc-standard button[data-command="image.crop"]').click(); expect(await size(page)).toEqual({ width: 100, height: 50 });
-    expect(await history(page)).toEqual(['New layer', 'Brush', 'Layer opacity', 'Blend mode', 'Blend mode', 'Invert colours', 'Select layer', 'Levels', 'Pencil', 'Gaussian blur', 'Select layer', 'Merge down', 'Text', 'Resize image', 'Canvas size', 'Crop', 'Current state']);
+    expect(await history(page)).toEqual(['New layer', 'Brush', 'Layer opacity', 'Blend mode', 'Blend mode', 'Invert colours', 'Select layer', 'Levels', 'Pencil', 'Gaussian blur', 'Select layer', 'Merge down', 'Text', 'Move', 'Transform', 'Flatten image', 'Resize image', 'Canvas size', 'Crop', 'Current state']);
     expect(errors).toEqual([]);
   } finally { await page.close(); await server.close(); }
 });

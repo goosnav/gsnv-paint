@@ -74,7 +74,8 @@ test('S05 complete Video timeline table is limited to the focused timeline', () 
 test('S05 complete Image tool/color table is workspace-specific', () => {
   const keys = { x: 'color.swap', d: 'color.reset', s: 'image.select', p: 'image.pencil', b: 'image.brush', e: 'image.eraser', g: 'image.fill',
     i: 'image.picker', l: 'image.line', r: 'image.rectangle', o: 'image.ellipse', t: 'image.text', f: 'view.fit',
-    v: 'image.move', m: 'image.ellipseSelect', q: 'image.lasso', w: 'image.wand', a: 'image.airbrush', c: 'image.clone', u: 'image.blur', k: 'image.smudge', n: 'image.gradient', '[': 'image.sizeDown', ']': 'image.sizeUp' };
+    v: 'image.move', m: 'image.ellipseSelect', q: 'image.lasso', w: 'image.wand', a: 'image.airbrush', c: 'image.clone', u: 'image.blur', k: 'image.smudge', n: 'image.gradient', '[': 'image.sizeDown', ']': 'image.sizeUp', ArrowLeft: 'image.nudgeLeft', ArrowUp: 'image.nudgeUp' };
+  assert.deepEqual(mapped('t', { workspace: 'image', viewRole: 'canvas2d', ctrl: true }), handled('image.transform')); assert.deepEqual(mapped('t', { ctrl: true }), unhandled);
   for (const [key, command] of Object.entries(keys)) {
     assert.deepEqual(mapped(key, { workspace: 'image', viewRole: 'canvas2d' }), handled(command));
     if (key !== 'f' && key !== 'v') assert.notEqual(mapped(key).command, command);

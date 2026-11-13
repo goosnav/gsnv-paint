@@ -34,7 +34,7 @@ const IMAGE_KEYS: Readonly<Record<string, string>> = {
   x: 'color.swap', d: 'color.reset', s: 'image.select', p: 'image.pencil', b: 'image.brush', e: 'image.eraser',
   g: 'image.fill', i: 'image.picker', l: 'image.line', r: 'image.rectangle', o: 'image.ellipse', t: 'image.text', f: 'view.fit',
   v: 'image.move', m: 'image.ellipseSelect', q: 'image.lasso', w: 'image.wand', a: 'image.airbrush', c: 'image.clone', u: 'image.blur', k: 'image.smudge', n: 'image.gradient',
-  '[': 'image.sizeDown', ']': 'image.sizeUp',
+  '[': 'image.sizeDown', ']': 'image.sizeUp', ArrowLeft: 'image.nudgeLeft', ArrowRight: 'image.nudgeRight', ArrowUp: 'image.nudgeUp', ArrowDown: 'image.nudgeDown',
 };
 const PHOTO_KEYS: Readonly<Record<string, string>> = { '\\': 'photo.beforeAfter', r: 'photo.crop' };
 const VIDEO_KEYS: Readonly<Record<string, string>> = {
@@ -63,6 +63,7 @@ export function keymap(event: CommandEvent): CommandResult {
     return result(primary && !event.shift && ['s', 'o', 'n'].includes(key) ? COMMON[key] : null);
   }
   if (primary) {
+    if (event.workspace === 'image' && !event.shift && key === 't') return result('image.transform');
     return result(event.shift ? key === 'z' ? 'edit.redo' : null : Object.hasOwn(COMMON, key) ? COMMON[key] : null);
   }
   if (event.shift) return result();

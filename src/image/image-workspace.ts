@@ -20,7 +20,7 @@ import type { View2D } from '../shared/view-transform.ts';
 import type { DialogSpec } from '../shared/dialog.ts';
 import { fileAccess, type FilePorts } from '../shared/file-access.ts';
 import { imageContent, type ImageContent, type LayerMeta } from './image-content.ts';
-import { paintRaster, transformRaster, clip, createRaster, MAX_PIXELS, type Raster, type RGBA, type Rect, type TransformOp } from './raster-ops.ts';
+import { paintRaster, transformRaster, affineRaster, clip, createRaster, MAX_PIXELS, type Raster, type RGBA, type Rect, type TransformOp } from './raster-ops.ts';
 import { imageToolInput, IMAGE_TOOLS, type ImageTool, type ImageToolState, type SelectMode } from './image-tool-input.ts';
 import { imagePalette, DEFAULT_OPTIONS, type ToolOptions } from './image-palette.ts';
 import { imageLayersPanel, type LayerAction } from './image-layers-panel.ts';
@@ -86,7 +86,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       let current: Snapshot, source: ImageContent | null = null, rasters = new Map<string, Raster>(), display: ImageData | null = null, view: View2D = { zoom: 1, pan: { x: 0, y: 0 } };
       let tool: ImageToolState = { tool: 'brush', drag: null }, previousTool: ImageTool = 'brush', primary = BLACK, secondary = WHITE, options: ToolOptions = { ...DEFAULT_OPTIONS };
       let selection: Selection | null = null, floating: Floating | null = null, stroke: Stroke | null = null, shapeBase: Uint8ClampedArray | null = null, shapeDirty: Rect | null = null;
-      let smudge: SmudgeCarry | null = null, cloneSource: [number, number] | null = null, opacityPreview: number | null = null, edges: Int32Array | null = null, phase = 0;
+      let pendingSelect: { x: number; y: number; raster: Raster } | null = null, smudge: SmudgeCarry | null = null, cloneSource: [number, number] | null = null, opacityPreview: number | null = null, edges: Int32Array | null = null, phase = 0;
       let scale = 1, offset = { x: 0, y: 0 }, panning: { x: number; y: number } | null = null, cursor: [number, number] | null = null, message = '', disposed = false, marquee: { shape: string; points: [number, number][] } | null = null;
       const palette = imagePalette({ root: optionsPanel, onChange(change) {
         if (change.kind === 'primary') primary = change.color; else if (change.kind === 'secondary') secondary = change.color;
@@ -322,25 +322,54 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         ring.hidden = !sized || d < 5;
         if (!ring.hidden) Object.assign(ring.style, { width: `${Math.round(d)}px`, height: `${Math.round(d)}px`, left: `${Math.round(t.x + point[0] * t.z - d / 2)}px`, top: `${Math.round(t.y + point[1] * t.z - d / 2)}px` });
       }
-      function rasterizeText(value: string, fontSize: number, family: string, bold: boolean, color: RGBA): Raster | null {
-        const lines = value.split('\n'), measure = document.createElement('canvas').getContext('2d'); if (!measure || !value.trim()) return null;
-        const font = `${bold ? 'bold ' : ''}${fontSize}px ${family}`; measure.font = font;
-        const width = Math.ceil(Math.max(...lines.map(line => measure.measureText(line).width))) + 2, lineHeight = Math.ceil(fontSize * 1.25), height = lineHeight * lines.length;
+      type TextStyle = { text: string; size: number; font: string; bold: boolean; italic: boolean; align: 'left' | 'center' | 'right'; spacing: number };
+      function rasterizeText(style: TextStyle, color: RGBA): Raster | null {
+        const lines = style.text.split('\n'), measure = document.createElement('canvas').getContext('2d'); if (!measure || !style.text.trim()) return null;
+        const font = `${style.italic ? 'italic ' : ''}${style.bold ? 'bold ' : ''}${style.size}px ${style.font}`; measure.font = font;
+        const widths = lines.map(line => measure.measureText(line).width), width = Math.ceil(Math.max(...widths)) + Math.ceil(style.size * 0.3) + 2, lineHeight = Math.ceil(style.size * style.spacing), height = lineHeight * (lines.length - 1) + Math.ceil(style.size * 1.3);
         if (width * height > MAX_PIXELS) throw new RangeError('The text is too large.');
         const out = document.createElement('canvas'); out.width = width; out.height = height; const ctx = out.getContext('2d')!;
-        ctx.font = font; ctx.textBaseline = 'top'; ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`; lines.forEach((line, i) => ctx.fillText(line, 1, i * lineHeight + Math.round(fontSize * 0.1)));
+        ctx.font = font; ctx.textBaseline = 'top'; ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
+        lines.forEach((line, i) => ctx.fillText(line, 1 + (style.align === 'left' ? 0 : (width - 2 - widths[i]!) * (style.align === 'center' ? 0.5 : 1)), i * lineHeight + Math.round(style.size * 0.1)));
         return { width, height, data: ctx.getImageData(0, 0, width, height).data };
       }
       function text(point: [number, number], color: RGBA) {
         if (!source) return; const at = { x: Math.floor(point[0]), y: Math.floor(point[1]) };
         const show = (r: Raster | null) => { if (r) { float.width = r.width; float.height = r.height; floatContext?.putImageData(new ImageData(new Uint8ClampedArray(r.data), r.width, r.height), 0, 0); float.style.left = `${at.x}px`; float.style.top = `${at.y}px`; float.hidden = false; } else float.hidden = true; };
-        host.dialog({ title: 'Text', fields: [{ key: 'text', label: 'Text', type: 'text' }, { key: 'size', label: 'Size (px)', type: 'number', min: 4, max: 400, step: 1 },
-          { key: 'font', label: 'Font', type: 'select', choices: [{ value: 'Tahoma, Verdana, sans-serif', label: 'Tahoma' }, { value: 'Verdana, sans-serif', label: 'Verdana' }, { value: '"Times New Roman", serif', label: 'Times New Roman' }, { value: '"Courier New", monospace', label: 'Courier New' }, { value: '"Comic Sans MS", cursive', label: 'Comic Sans' }, { value: '"Pixel Tahoma"', label: 'Pixel Tahoma (11 / 22 px)' }] }, { key: 'bold', label: 'Bold', type: 'checkbox' }],
-          initial: { text: '', size: 24, font: 'Tahoma, Verdana, sans-serif', bold: false },
+        const style = (v: Record<string, unknown>): TextStyle => ({ text: String(v.text), size: Number(v.size), font: String(v.font), bold: !!v.bold, italic: !!v.italic, align: v.align as TextStyle['align'], spacing: Number(v.spacing) });
+        host.dialog({ title: 'Text', fields: [{ key: 'text', label: 'Text (Enter for a new line)', type: 'text', multiline: true }, { key: 'size', label: 'Size (px)', type: 'number', min: 4, max: 400, step: 1 },
+          { key: 'font', label: 'Font', type: 'select', choices: [{ value: 'Tahoma, Verdana, sans-serif', label: 'Tahoma' }, { value: 'Verdana, sans-serif', label: 'Verdana' }, { value: 'Arial, Helvetica, sans-serif', label: 'Arial' }, { value: '"Times New Roman", Times, serif', label: 'Times New Roman' }, { value: 'Georgia, serif', label: 'Georgia' }, { value: '"Courier New", monospace', label: 'Courier New' }, { value: '"Comic Sans MS", cursive', label: 'Comic Sans' }, { value: 'Impact, sans-serif', label: 'Impact' }, { value: '"Pixel Tahoma"', label: 'Pixel Tahoma (11 / 22 px)' }] },
+          { key: 'bold', label: 'Bold', type: 'checkbox' }, { key: 'italic', label: 'Italic', type: 'checkbox' },
+          { key: 'align', label: 'Alignment', type: 'select', choices: [{ value: 'left', label: 'Left' }, { value: 'center', label: 'Centre' }, { value: 'right', label: 'Right' }] },
+          { key: 'spacing', label: 'Line spacing', type: 'number', min: 0.8, max: 3, step: 0.05 }],
+          initial: { text: '', size: 24, font: 'Tahoma, Verdana, sans-serif', bold: false, italic: false, align: 'left', spacing: 1.2 },
           validate(values) { const s = Number(values.size); if (!String(values.text).trim()) return { ok: false, error: { code: 'image.text', message: 'Type some text.' } }; if (!Number.isInteger(s) || s < 4 || s > 400) return { ok: false, error: { code: 'image.text', message: 'Size is a whole number from 4 to 400.' } }; return { ok: true, value: values }; },
-          preview(value) { const v = value as Record<string, unknown>; try { show(rasterizeText(String(v.text), Number(v.size), String(v.font), !!v.bold, color)); } catch { show(null); } },
-          commit(value) { const v = value as Record<string, unknown>; show(null); try { const r = rasterizeText(String(v.text), Number(v.size), String(v.font), !!v.bold, color); if (r && source) { const raster = active(), base = new Uint8ClampedArray(raster.data); paintRaster(raster, { kind: 'blit', source: r, x: at.x, y: at.y, mode: 'over' }); if (selection) maskedMerge({ target: raster, base, mask: selection.mask, rect: fullRect() }); composite(); commitActive('Text'); } } catch (cause) { fail(cause); } },
+          preview(value) { try { show(rasterizeText(style(value as Record<string, unknown>), color)); } catch { show(null); } },
+          commit(value) {
+            show(null);
+            try {
+              const v = style(value as Record<string, unknown>), r = rasterizeText(v, color); if (!r || !source) return;
+              // Text goes on its own layer and stays selected, so the Move tool can drag it straight away.
+              pendingSelect = { x: at.x, y: at.y, raster: r }; tool = { tool: 'move', drag: null }; addLayer(r, `Text: ${v.text.split('\n')[0]!.slice(0, 24)}`, 'Text', at.x, at.y);
+            } catch (cause) { fail(cause); }
+          },
           cancel() { show(null); },
+        });
+      }
+      /** Free transform: scale and rotate the selection (or the whole layer) with live preview; the result floats so it can be moved. */
+      function freeTransform() {
+        if (!source) return;
+        if (!floating) lift(); if (!floating) return;
+        const f = floating, original = copyRaster(f.raster), cx = f.x + original.width / 2, cy = f.y + original.height / 2;
+        const apply = (v: Record<string, unknown>) => { const sx = Number(v.scaleX), sy = v.keep ? sx : Number(v.scaleY), r = affineRaster(original, { scaleX: sx, scaleY: sy, angle: Number(v.angle) });
+          f.raster = r; f.x = Math.round(cx - r.width / 2); f.y = Math.round(cy - r.height / 2); f.origin = { x: f.x, y: f.y };
+          float.width = r.width; float.height = r.height; floatContext?.putImageData(new ImageData(new Uint8ClampedArray(r.data), r.width, r.height), 0, 0); layout(); };
+        host.dialog({ title: 'Free transform', fields: [{ key: 'scaleX', label: 'Width (%)', type: 'number', min: 1, max: 1000, step: 1 }, { key: 'scaleY', label: 'Height (%)', type: 'number', min: 1, max: 1000, step: 1 }, { key: 'keep', label: 'Keep proportions', type: 'checkbox' }, { key: 'angle', label: 'Rotate (degrees)', type: 'number', min: -360, max: 360, step: 0.5 }],
+          initial: { scaleX: 100, scaleY: 100, keep: true, angle: 0 },
+          validate(values) { const nums = [values.scaleX, values.scaleY, values.angle].map(Number); return nums.every(Number.isFinite) && nums[0]! > 0 && nums[1]! > 0 ? { ok: true, value: values } : { ok: false, error: { code: 'image.transform', message: 'Use positive sizes and a finite angle.' } }; },
+          preview(value) { apply(value as Record<string, unknown>); },
+          commit(value) { apply(value as Record<string, unknown>); f.label = 'Transform'; tool = { tool: 'move', drag: null }; message = 'Drag to position, then press Enter (or pick another tool) to place it.'; refresh(); host.invalidate(); },
+          cancel() { floating = null; resync(); refresh(); },
         });
       }
       function transformAll(op: TransformOp, label: string) {
@@ -459,6 +488,11 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         message = '';
         const toolId = id.startsWith('image.') ? id.slice(6) as ImageTool : null;
         if (toolId && (IMAGE_TOOLS as readonly string[]).includes(toolId)) { if (!['select', 'ellipseSelect', 'lasso', 'move'].includes(toolId)) placeFloating(); if (toolId === 'picker' && tool.tool !== 'picker') previousTool = tool.tool; tool = imageToolInput({ state: tool, event: { kind: 'tool', tool: toolId }, inside: () => false, floating: !!floating }).state; refresh(); return; }
+        if (id === 'image.transform') { freeTransform(); return; }
+        if (id.startsWith('image.nudge')) {
+          if (!floating && selection) lift(); if (!floating) return;
+          const d = { nudgeLeft: [-1, 0], nudgeRight: [1, 0], nudgeUp: [0, -1], nudgeDown: [0, 1] }[id.slice(6) as 'nudgeLeft']!; floating.x += d[0]!; floating.y += d[1]!; floating.origin = { x: floating.x, y: floating.y }; refresh(); return;
+        }
         if (id === 'image.sizeUp' || id === 'image.sizeDown') { options = { ...options, size: Math.min(500, Math.max(1, id === 'image.sizeUp' ? Math.ceil(options.size * 1.2 + 0.5) : Math.floor(options.size / 1.2))) }; refresh(); return; }
         if (id === 'tool.cancel') { pointer({ kind: 'cancel' }); if (floating) { floating = null; resync(); } else { selection = null; selectionChanged(); } refresh(); return; }
         if (id === 'tool.confirm') { placeFloating(); refresh(); return; }
@@ -519,6 +553,11 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
             floating = null; if (!sameSize) selection = null; resync();
           }
           if (opened && source) { selection = null; selectionChanged(); message = ''; fitView('fit'); }
+          if (pendingSelect && source) {
+            const { x, y, raster } = pendingSelect, mask = new Uint8Array(source.width * source.height); pendingSelect = null;
+            for (let py = 0; py < raster.height; py++) for (let px = 0; px < raster.width; px++) { const tx = px + x, ty = py + y; if (tx >= 0 && ty >= 0 && tx < source.width && ty < source.height && raster.data[(py * raster.width + px) * 4 + 3]) mask[ty * source.width + tx] = 255; }
+            const bounds = maskBounds(mask, source.width); selection = bounds ? { mask, bounds } : null; selectionChanged();
+          }
           refresh();
         },
         model() {
@@ -527,10 +566,10 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           const index = source?.layers.findIndex(l => l.id === activeId()) ?? -1, count = source?.layers.length ?? 0;
           return {
             menus: [
-              { id: 'select', label: 'Select', items: [item('edit.selectAll', 'Select all', 'select', 'Ctrl+A'), item('image.deselect', 'Deselect', undefined, '', false, has), item('image.invertSelection', 'Invert selection'), item('edit.copy', 'Copy', 'copy', 'Ctrl+C', false, has), item('edit.cut', 'Cut', 'cut', 'Ctrl+X', false, has), item('edit.paste', 'Paste as new layer', 'paste', 'Ctrl+V'), item('edit.delete', 'Delete', 'delete', 'Delete', false, has), item('image.crop', 'Crop to selection', 'crop', '', true, has)] },
+              { id: 'select', label: 'Select', items: [item('edit.selectAll', 'Select all', 'select', 'Ctrl+A'), item('image.deselect', 'Deselect', undefined, '', false, has), item('image.invertSelection', 'Invert selection'), item('edit.copy', 'Copy', 'copy', 'Ctrl+C', false, has), item('edit.cut', 'Cut', 'cut', 'Ctrl+X', false, has), item('edit.paste', 'Paste as new layer', 'paste', 'Ctrl+V'), item('edit.delete', 'Delete', 'delete', 'Delete', false, has), item('image.crop', 'Crop to selection', 'crop', '', true, has), item('image.transform', 'Free transform…', 'rotate', 'Ctrl+T'), item('image.nudgeLeft', 'Nudge left', undefined, '←', false, has), item('image.nudgeRight', 'Nudge right', undefined, '→', false, has), item('image.nudgeUp', 'Nudge up', undefined, '↑', false, has), item('image.nudgeDown', 'Nudge down', undefined, '↓', false, has)] },
               { id: 'image', label: 'Image', items: [item('image.import', 'Open image…', 'open'), item('image.importLayer', 'Import as layer…', 'layerAdd'), item('image.exportPNG', 'Export PNG…', 'export', '', true), item('image.resize', 'Resize…', 'fit'), item('image.canvasSize', 'Canvas size…', 'grid'),
                 item('image.rotateRight', 'Rotate right', 'rotate', '', true), item('image.rotateLeft', 'Rotate left', 'rotate'), item('image.rotate180', 'Rotate 180°', 'rotate'), item('image.flipH', 'Flip horizontal', 'flip', '', true), item('image.flipV', 'Flip vertical', 'flip'),
-                item('image.flatten', 'Flatten image', 'layers', '', false, enabled && count > 1), item('view.fit', 'Zoom to fit', 'fit', 'F'), item('image.actualSize', 'Actual pixels', 'zoomIn'), item('color.swap', 'Swap colours', undefined, 'X'), item('color.reset', 'Default colours', undefined, 'D')] },
+                item('image.flatten', 'Flatten image', 'layers', '', false, enabled && count > 1), item('view.fit', 'Zoom to fit', 'fit', 'F'), item('image.actualSize', 'Actual pixels', 'zoomIn'), item('image.sizeUp', 'Larger brush', undefined, ']'), item('image.sizeDown', 'Smaller brush', undefined, '['), item('color.swap', 'Swap colours', undefined, 'X'), item('color.reset', 'Default colours', undefined, 'D')] },
               { id: 'layer', label: 'Layer', items: [item('layer.new', 'New layer', 'layerAdd', '', true), item('layer.duplicate', 'Duplicate layer', 'copy'), item('layer.delete', 'Delete layer', 'delete', '', false, enabled && count > 1), item('layer.up', 'Move up', undefined, '', false, enabled && index < count - 1), item('layer.down', 'Move down', undefined, '', false, enabled && index > 0), item('layer.mergeDown', 'Merge down', 'layers', '', false, enabled && index > 0)] },
               { id: 'adjust', label: 'Adjustments', items: [item('adjust.brightnessContrast', 'Brightness/Contrast…'), item('adjust.hueSaturation', 'Hue/Saturation…'), item('adjust.levels', 'Levels…'), item('adjust.curves', 'Curves…'), item('adjust.colorBalance', 'Colour balance…'), item('adjust.desaturate', 'Desaturate'), item('adjust.invert', 'Invert colours'), item('adjust.sepia', 'Sepia'), item('adjust.posterize', 'Posterize…'), item('adjust.threshold', 'Threshold…')] },
               { id: 'filter', label: 'Filters', items: [item('filter.gaussianBlur', 'Gaussian blur…'), item('filter.unsharpMask', 'Unsharp mask…'), item('filter.addNoise', 'Add noise…'), item('filter.pixelate', 'Pixelate…'), item('filter.findEdges', 'Find edges'), item('filter.emboss', 'Emboss')] },
