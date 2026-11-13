@@ -57,7 +57,7 @@ Starting the launcher again while it is running reopens the same copy.
 | Finds Node.js 22.12 or newer. If none is installed, downloads Node.js 24.22.3 from nodejs.org and checks it against a pinned SHA-256. | only when downloading | the data folder below |
 | Installs the locked dependencies with `npm ci`. | yes | `node_modules/` in this folder |
 | Builds the application. | no | `dist/` in this folder |
-| Serves `dist/` to this computer only and opens the browser. | no | — |
+| Serves `dist/` to this computer only and opens the browser. | no | - |
 
 Later starts skip every step whose inputs did not change, and work offline.
 
