@@ -21,6 +21,7 @@
 .gc-brand { font-weight:700; text-shadow:1px 1px 0 #0a1f7a; }
 [data-window-title] { order:1; display:flex; align-items:center; gap:6px; min-width:0; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:1px 1px 0 #0a1f7a; }
 [data-window-title]::before { content:""; flex:0 0 16px; height:16px; background:url("./app-icon.svg") center/16px 16px no-repeat; image-rendering:pixelated; }
+.gc-app-header::after { content:""; order:4; flex:0 0 18px; height:20px; margin-left:4px; background:url("./goosnav-mark-white.svg") center/contain no-repeat; opacity:.95; }
 .gc-workspaces { order:3; margin-left:auto; display:flex; gap:3px; align-self:center; }
 .gc-window .gc-workspace { display:flex; align-items:center; gap:5px; height:22px; min-width:72px; padding:0 9px 0 6px; color:#fff; border:1px solid var(--xp-task-edge); border-radius:3px;
   background:linear-gradient(#5b9bfa,var(--xp-task-1) 12%,var(--xp-task-2) 88%,#1a4fc0); box-shadow:inset 1px 1px 0 #8fbcff; text-shadow:1px 1px 0 #0a1f7a; }

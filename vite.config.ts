@@ -7,7 +7,11 @@ const headers = {
   'Cross-Origin-Resource-Policy': 'same-origin',
 };
 
+// Link previews need absolute URLs: set SITE_URL (for example https://paint.example.com) in the deploy build.
+const siteUrl = (process.env.SITE_URL ?? '').replace(/\/$/, '');
+
 export default defineConfig({
+  plugins: [{ name: 'site-url', transformIndexHtml: html => html.replaceAll('%SITE_URL%', siteUrl) }],
   // LibRaw-WASM resolves its worker and .wasm relative to its own module; pre-bundling would break those URLs.
   optimizeDeps: { exclude: ['libraw-wasm'] },
   server: { strictPort: true, headers },

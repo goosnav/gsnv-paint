@@ -90,3 +90,12 @@ test('I-RASTER flips, rotations, crop, resize, canvas and invert never alias the
   const inv = transformRaster(r, { kind: 'invert' }); assert.deepEqual(picture(inv)[0], '.##'); assert.deepEqual([...inv.data.slice(20, 24)], [0, 255, 255, 255]);
   assert.deepEqual(picture(r), ['#..', '..r']);
 });
+
+test('I-RASTER free transform scales and rotates about the centre into rotated bounds', async () => {
+  const { affineRaster } = await import('./raster-ops.ts');
+  const r = createRaster(10, 4, [255, 0, 0, 255]);
+  const big = affineRaster(r, { scaleX: 200, scaleY: 50, angle: 0 }); assert.deepEqual([big.width, big.height], [20, 2]); assert.deepEqual([...big.data.slice(4 * 21, 4 * 22)], [255, 0, 0, 255]);
+  const turned = affineRaster(r, { scaleX: 100, scaleY: 100, angle: 90 }); assert.deepEqual([turned.width, turned.height], [4, 10]); assert.equal(turned.data[(5 * 4 + 2) * 4 + 3], 255);
+  const diamond = affineRaster(createRaster(10, 10, [0, 0, 255, 255]), { scaleX: 100, scaleY: 100, angle: 45 }); assert.equal(diamond.width, 14); assert.equal(diamond.data[3], 0, 'corners are transparent'); assert.equal(diamond.data[(7 * 14 + 7) * 4 + 3], 255);
+  assert.throws(() => affineRaster(r, { scaleX: 0, scaleY: 100, angle: 0 }), RangeError);
+});

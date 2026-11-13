@@ -27,7 +27,7 @@
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 type Values = Record<string, string | number | boolean>;
 type FieldBase = { key: string; label: string };
-type Field = FieldBase & ({ type: 'text'; placeholder?: string } | { type: 'number'; min?: number; max?: number; step?: number } | { type: 'checkbox' } | { type: 'select'; choices: readonly { value: string; label: string }[] });
+type Field = FieldBase & ({ type: 'text'; placeholder?: string; multiline?: boolean } | { type: 'number'; min?: number; max?: number; step?: number } | { type: 'checkbox' } | { type: 'select'; choices: readonly { value: string; label: string }[] });
 export type DialogSpec = {
   title: string; fields: readonly Field[]; initial: Values;
   validate(values: Values): { ok: true; value: Json } | { ok: false; error: { code: string; message: string } };
@@ -74,13 +74,13 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   for (const field of spec.fields) {
     const label = document.createElement('label'); label.className = 'gc-dialog-field';
     const caption = document.createElement('span'); caption.textContent = field.label; label.append(caption);
-    const control = document.createElement(field.type === 'select' ? 'select' : 'input'); control.name = field.key;
+    const control = document.createElement(field.type === 'select' ? 'select' : field.type === 'text' && field.multiline ? 'textarea' : 'input') as HTMLInputElement | HTMLSelectElement; control.name = field.key;
     control.setAttribute('aria-label', field.label);
     if (field.type === 'select') {
       for (const choice of field.choices) { const option = document.createElement('option'); option.value = choice.value; option.textContent = choice.label; control.append(option); }
       control.value = String(spec.initial[field.key]);
     } else {
-      const input = control as HTMLInputElement; input.type = field.type;
+      const input = control as HTMLInputElement; if (input.tagName !== 'TEXTAREA') input.type = field.type; else (input as unknown as HTMLTextAreaElement).rows = 3;
       if (field.type === 'checkbox') input.checked = spec.initial[field.key] as boolean;
       else input.value = String(spec.initial[field.key]);
       if (field.type === 'number') {
@@ -135,6 +135,7 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   const keydown = (event: KeyboardEvent) => {
     if (event.defaultPrevented || event.isComposing) return;
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); dismiss(); }
+    else if (event.key === 'Enter' && (event.target as Element).tagName === 'TEXTAREA' && !(event.ctrlKey || event.metaKey)) return; // New line; Ctrl+Enter confirms.
     else if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); event.target === cancel ? dismiss() : commit(); }
     else if (event.key === 'Tab') {
       const focusable = [...controls.values(), ok, cancel].filter(control => !control.disabled);

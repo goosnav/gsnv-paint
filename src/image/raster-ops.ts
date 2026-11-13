@@ -188,3 +188,23 @@ export function transformRaster(raster: Raster, op: TransformOp): Raster {
   }
   throw new RangeError('Unknown image transform.');
 }
+
+/** Scales (percent) and rotates (degrees, clockwise) a raster about its centre into a new raster sized to the
+ *  rotated bounds. Bilinear sampling on premultiplied alpha; pixels outside the source are transparent. */
+export function affineRaster(raster: Raster, { scaleX, scaleY, angle }: { scaleX: number; scaleY: number; angle: number }): Raster {
+  checkRaster(raster);
+  if (![scaleX, scaleY, angle].every(Number.isFinite) || scaleX <= 0 || scaleY <= 0) throw new RangeError('Scale must be positive and the angle finite.');
+  const sx = scaleX / 100, sy = scaleY / 100, t = angle * Math.PI / 180, cos = Math.cos(t), sin = Math.sin(t), w = raster.width * sx, h = raster.height * sy;
+  const W = Math.max(1, Math.round(Math.abs(w * cos) + Math.abs(h * sin))), H = Math.max(1, Math.round(Math.abs(w * sin) + Math.abs(h * cos)));
+  const out = createRaster(W, H, [0, 0, 0, 0]), src = raster.data, rw = raster.width, rh = raster.height;
+  const at = (x: number, y: number, c: number) => { if (x < 0 || y < 0 || x >= rw || y >= rh) return 0; const i = (y * rw + x) * 4; return c === 3 ? src[i + 3]! : src[i + c]! * src[i + 3]! / 255; };
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const dx = x + 0.5 - W / 2, dy = y + 0.5 - H / 2, u = (cos * dx + sin * dy) / sx + rw / 2 - 0.5, v = (-sin * dx + cos * dy) / sy + rh / 2 - 0.5;
+    if (u < -1 || v < -1 || u > rw || v > rh) continue;
+    const x0 = Math.floor(u), y0 = Math.floor(v), fx = u - x0, fy = v - y0, px: number[] = [];
+    for (let c = 0; c < 4; c++) px.push((at(x0, y0, c) * (1 - fx) + at(x0 + 1, y0, c) * fx) * (1 - fy) + (at(x0, y0 + 1, c) * (1 - fx) + at(x0 + 1, y0 + 1, c) * fx) * fy);
+    const o = (y * W + x) * 4, a = px[3]!; if (a <= 0) continue;
+    out.data[o] = Math.round(px[0]! * 255 / a); out.data[o + 1] = Math.round(px[1]! * 255 / a); out.data[o + 2] = Math.round(px[2]! * 255 / a); out.data[o + 3] = Math.round(a);
+  }
+  return out;
+}
