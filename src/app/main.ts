@@ -2,6 +2,7 @@ import { createCADWorkspace } from '../cad/cad-workspace.ts';
 import { createImageWorkspace } from '../image/image-workspace.ts';
 import { createPhotoWorkspace } from '../photo/photo-workspace.ts';
 import { mountApp } from './app-shell.ts';
+import { recentProjects } from '../shared/recent-projects.ts';
 import type { FilePorts } from '../shared/file-access.ts';
 import type { RecoveryPorts } from '../shared/recovery-store.ts';
 import '../shared/chrome.css';
@@ -20,7 +21,7 @@ try {
     ...(browser.showOpenFilePicker ? { showOpenFilePicker: browser.showOpenFilePicker.bind(window) } : {}),
     ...(browser.showSaveFilePicker ? { showSaveFilePicker: browser.showSaveFilePicker.bind(window) } : {}),
   };
-  const app = mountApp({ root, adapters: { cad: createCADWorkspace(files), image: createImageWorkspace(files), photo: createPhotoWorkspace(files) }, recovery, probe: { environment: window, codecRequests: [] }, files });
+  const app = mountApp({ root, adapters: { cad: createCADWorkspace(files), image: createImageWorkspace(files), photo: createPhotoWorkspace(files) }, recovery, recent: recentProjects(recovery.indexedDB), probe: { environment: window, codecRequests: [] }, files });
   root.tabIndex = -1;
   void app.ready.then(() => { if (document.activeElement === document.body) root.focus(); });
   window.addEventListener('pagehide', () => app.dispose(), { once: true });

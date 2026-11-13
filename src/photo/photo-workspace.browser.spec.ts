@@ -64,7 +64,6 @@ test('PHOTO-APP RAW develop: LibRaw decode, Auto, preset, sliders, undo, before/
         await expect(page.locator('[data-window-title]')).toContainText('export'); await settled(page); expect((await size(page))[0]).toBeGreaterThan(100);
         await page.waitForTimeout(1000);
         const reopening = page.waitForEvent('filechooser'); await page.keyboard.press('Control+o'); await (await reopening).setFiles({ name: project.suggestedFilename(), mimeType: 'application/octet-stream', buffer: bytes });
-        await page.getByRole('dialog').getByLabel('Unsaved changes').selectOption('replace'); await page.getByRole('dialog').getByRole('button', { name: 'OK', exact: true }).click();
         await expect(page.locator('[data-window-title]')).toContainText('canon-eos-5d-mark-iii'); await settled(page); const [rw, rh] = await size(page); expect(Math.abs(rw - rh)).toBeLessThanOrEqual(2);
       }
     }

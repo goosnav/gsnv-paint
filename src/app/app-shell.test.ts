@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { IDBFactory as FakeFactory } from 'fake-indexeddb';
+import { recentProjects, type RecentPort } from '../shared/recent-projects.ts';
 import { JSDOM } from 'jsdom';
 import { IDBFactory } from 'fake-indexeddb';
 import { mountApp, type AppDocument, type WorkspaceAdapter } from './app-shell.ts';
@@ -59,7 +61,7 @@ function nativeHandle(value: File, close: () => Promise<void> = async () => {}) 
   } as unknown as FileSystemFileHandle;
   return { handle, writes, deny() { permission = 'denied'; }, get requested() { return requested; } };
 }
-function setup(options: { storage?: ReturnType<typeof resource>; available?: Workspace[] } = {}) {
+function setup(options: { storage?: ReturnType<typeof resource>; available?: Workspace[]; recent?: RecentPort } = {}) {
   const dom = new JSDOM('<!doctype html><body><div id="app"></div></body>', { url: 'https://fixture.test' });
   const window = dom.window;
   const captures = new WeakMap<HTMLElement, Set<number>>();
@@ -75,7 +77,7 @@ function setup(options: { storage?: ReturnType<typeof resource>; available?: Wor
   const files: FilePorts = { document: window.document, URL: { createObjectURL: () => 'blob:fixture', revokeObjectURL() {} }, setTimeout: callback => { callback(); } };
   const storage = options.storage ?? resource();
   const adapters = Object.fromEntries((options.available ?? ['cad', 'image', 'video']).map(workspace => [workspace, fixtures[workspace].adapter]));
-  const app = mountApp({ root, adapters, files, recovery: storage, probe: { environment: {}, codecRequests: [] } });
+  const app = mountApp({ root, adapters, files, recovery: storage, probe: { environment: {}, codecRequests: [] }, ...(options.recent ? { recent: options.recent } : {}) });
   return { app, root, dom, window, files, storage, fixtures, close: () => { app.dispose(); dom.window.close(); } };
 }
 function status(root: HTMLElement) { return root.querySelector('[role="status"]')!.textContent!; }
@@ -116,6 +118,18 @@ test('A-SHELL editor open creates an unsaved document only after replacement con
   const pending = s.fixtures.cad.open({ id: 'second', title: 'Second', format: 'gsnv-cad', version: 1, value: { width: 5 } });
   await new Promise(resolve => setTimeout(resolve, 0)); confirm(s.root, 'keep');
   assert.equal(await pending, false); assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 77 }); s.close();
+});
+
+test('A-SHELL with recent projects: New never prompts, edits autosave to File > Recent and reopen from there', async () => {
+  const recent = recentProjects(new FakeFactory()), s = setup({ recent }); await s.app.ready;
+  await s.app.dispatch('file.new'); s.fixtures.cad.change(55); await new Promise(resolve => setTimeout(resolve, 800));
+  const first = s.app.snapshot().documents.cad!;
+  assert.equal(await s.fixtures.cad.open({ id: 'second', title: 'Second', format: 'gsnv-cad', version: 1, value: { width: 10 } }), true);
+  assert.equal(s.root.querySelector('dialog'), null, 'no replacement prompt'); assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 10 });
+  assert.deepEqual((await recent.list()).map(e => [e.id, e.workspace, e.title]), [[first.id, 'cad', 'cad fixture']]);
+  s.app.snapshot(); await s.app.dispatch('file.recent.0'); assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 55 });
+  assert.match(s.root.querySelector('[data-command="file.recent.0"]')!.textContent!, /cad fixture \(CAD\)/);
+  await s.app.dispatch('file.clearRecent'); assert.deepEqual(await recent.list(), []); s.close();
 });
 
 test('A-SHELL real sessions keep 100 edits, independent workspaces and exactly-once keyboard history', async () => {
@@ -219,8 +233,9 @@ test('A-SHELL recovery is offered explicitly and restores editable data as dirty
   await first.app.idle(); first.close();
   const second = setup({ storage }); await second.app.ready;
   assert.equal(second.app.snapshot().documents.cad, undefined); assert.match(second.root.textContent!, /recovery/i);
-  await second.app.dispatch('file.new'); assert.equal(second.app.snapshot().documents.cad, undefined, 'pending recovery is not overwritten');
-  await second.app.dispatch('recovery.restore'); assert.deepEqual(second.app.snapshot().documents.cad!.value, { width: 37 });
+  await second.app.dispatch('file.new'); assert.deepEqual(second.app.snapshot().documents.cad!.value, { width: 10 }, 'New is never blocked by a pending recovery');
+  assert.match(second.root.textContent!, /Recovery available/, 'and the recovery stays restorable');
+  const restoring = second.app.dispatch('recovery.restore'); await turn(); confirm(second.root, 'replace'); await restoring; assert.deepEqual(second.app.snapshot().documents.cad!.value, { width: 37 });
   assert.equal(second.app.snapshot().dirty.cad, true); second.fixtures.cad.change(38); await second.app.idle();
   const record = await recoveryStore({ op: 'read', workspace: 'cad' }, storage); assert.ok(record.ok && record.value);
   assert.equal((nativeContainer({ op: 'decode', parts: record.value.payload }).project.content as { width: number }).width, 38);

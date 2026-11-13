@@ -55,13 +55,14 @@ test('IMAGE-APP production: paint tools, selection move, undo, layered native fi
     await expect(page.locator('[data-window-title]')).toContainText('photo'); await expect.poll(() => pixel(page, 450, 340)).toEqual([0, 0, 255, 255]);
     await expect(page.locator('.image-layer')).toHaveCount(1);
     await page.waitForTimeout(1000); const opening = page.waitForEvent('filechooser'); await page.keyboard.press('Control+o'); await (await opening).setFiles({ name: download.suggestedFilename(), mimeType: 'application/octet-stream', buffer: bytes });
-    await page.getByRole('dialog').getByLabel('Unsaved changes').selectOption('replace'); await page.getByRole('dialog').getByRole('button', { name: 'OK', exact: true }).click();
     await expect(page.locator('[data-window-title]')).toContainText('Untitled image'); await expect(page.locator('.image-layer')).toHaveCount(2); await expect.poll(() => pixel(page, 20, 20)).toEqual([0, 0, 0, 255]);
 
     await page.locator('[data-layer-id="background"]').click(); await page.keyboard.press('b'); await page.locator('input[type=number][data-option=size]').fill('12'); await page.keyboard.press('Enter');
     const fitted = (await page.locator('.image-canvas').boundingBox())!; await drag(page, at(fitted, dims, 300, 500), at(fitted, dims, 500, 500));
     await expect(page.locator('.gc-panel').filter({ has: page.getByRole('heading', { name: 'Recovery', exact: true }) })).toContainText('Local recovery enabled');
-    await page.reload(); await page.getByRole('tab', { name: 'Image', exact: true }).click(); await page.getByRole('button', { name: 'Restore recovery', exact: true }).last().click();
+    await page.waitForTimeout(1500); // Let autosave finish, as a person would before closing.
+    await page.reload(); await page.getByRole('tab', { name: 'Image', exact: true }).click(); // The last session reopens by itself.
+    await expect(page.locator('[data-command^="file.recent."]')).not.toHaveCount(0);
     await expect(page.locator('.image-canvas')).toBeVisible(); await expect.poll(() => pixel(page, 400, 500)).toEqual([0, 0, 255, 255]);
     expect(await page.evaluate(() => document.body.scrollWidth <= innerWidth && document.body.scrollHeight <= innerHeight)).toBe(true);
     await page.screenshot({ path: 'dev/evidence/IMAGE-APP-production.png' }); await testInfo.attach('Image production', { path: 'dev/evidence/IMAGE-APP-production.png', contentType: 'image/png' });

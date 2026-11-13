@@ -38,6 +38,8 @@ import { recoveryStore, type RecoveryPorts } from '../shared/recovery-store.ts';
 import { capabilityProbe, type ProbeRequest, type Capability } from '../shared/capability-probe.ts';
 import { projectFiles, type ProjectFileRequest } from '../shared/project-files.ts';
 import { recoverySession, type RecoveryPort } from '../shared/recovery-session.ts';
+import { nativeContainer } from '../shared/native-container.ts';
+import type { RecentEntry, RecentPort } from '../shared/recent-projects.ts';
 
 type Workspace = Session<unknown>['workspace'];
 type Package = Extract<ProjectFileRequest, { operation: 'save' }>['package'];
@@ -71,6 +73,8 @@ type Request = {
   files: FilePorts;
   recovery: RecoveryPorts;
   probe: ProbeRequest;
+  /** Optional autosave store: every edited project is kept in File > Recent and replacing a document never prompts. */
+  recent?: RecentPort;
 };
 type Handle = {
   ready: Promise<void>;
@@ -88,13 +92,14 @@ function reason(cause: unknown): string {
   try { return String(cause instanceof Error ? cause.message : cause); } catch { return 'Operation failed.'; }
 }
 
-export function mountApp({ root, adapters, files, recovery, probe }: Request): Handle {
+export function mountApp({ root, adapters, files, recovery, probe, recent }: Request): Handle {
   if (!root?.isConnected || !root.ownerDocument.defaultView) throw new TypeError('A live application root is required.');
   const document = root.ownerDocument; const window = document.defaultView!;
   let state: Session<unknown> = { workspace: 'cad', documents: {}, histories: {}, saved: {}, dirty: {}, message: adapters.cad ? 'Ready. Create or open a project.' : 'CAD editing is not available in this development build.' };
   let disposed = false; let initialized = false; let opening = false; let sequence = 0;
   let modal: { close(): void } | null = null; let modalActive = false;
   let capabilities: Capability[] = []; let viewInput = () => {};
+  let recentEntries: RecentEntry[] = []; const rememberTimers: Partial<Record<Workspace, ReturnType<typeof setTimeout>>> = {};
   const pending = new Set<Promise<unknown>>();
   const epochs = { cad: 0, image: 0, photo: 0, video: 0 };
   const saving = { cad: false, image: false, photo: false, video: false };
@@ -151,7 +156,7 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
     if (!current || current.identity !== baseIdentity) { status('The document changed before this edit completed.'); return; }
     try {
       validate(workspace, value); if (value.id !== current.id) throw new Error('An edit cannot replace the document identity.');
-      mark({ type: 'commit', workspace, snapshot: { ...value, identity: `revision-${++sequence}` }, label }); backup(workspace); render();
+      mark({ type: 'commit', workspace, snapshot: { ...value, identity: `revision-${++sequence}` }, label }); backup(workspace); scheduleRemember(workspace); render();
     } catch (cause) { status(reason(cause)); }
   }
   function dialog(spec: DialogSpec) {
@@ -167,9 +172,12 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
     return { title: current?.title ?? 'No document', workspace, dirty: state.dirty[workspace] ?? false, capabilities, status: state.message,
       menus: [
         { id: 'file', label: 'File', items: [
-          item('file.new', 'New', 'Ctrl+N', initialized && !!adapters[workspace]?.create && !candidates[workspace], 'new'),
+          item('file.new', 'New', 'Ctrl+N', initialized && !!adapters[workspace]?.create, 'new'),
           item('file.open', 'Open', 'Ctrl+O', initialized && Object.keys(adapters).length > 0 && !opening, 'open'),
           item('file.save', 'Save', 'Ctrl+S', !!current && !saving[workspace], 'save'),
+          ...(recent ? [item('file.rename', 'Rename…', '', !!current),
+            ...recentEntries.map((entry, index) => item(`file.recent.${index}`, `${index + 1}  ${entry.title} (${NAMES[entry.workspace]})`, '', initialized)),
+            item('file.clearRecent', 'Clear recent projects', '', recentEntries.length > 0)] : []),
           item('recovery.restore', 'Restore recovery', '', !!candidates[workspace]?.package),
           item('recovery.discard', 'Discard recovery', '', stored[workspace] || !!candidates[workspace]),
         ] },
@@ -187,7 +195,7 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
       editors[workspace] = { root: pane, view: adapters[workspace]!.mount({ root: pane, commit: (value, label, base) => commit(workspace, value, label, base), dialog,
         invalidate: () => { if (!disposed && !modalActive && state.workspace === workspace) chrome.update(model()); },
         open: async value => {
-          if (disposed || candidates[workspace]) return false;
+          if (disposed) return false; delete candidates[workspace];
           if (!await mayReplace(workspace) || disposed || modalActive) return false;
           replace(workspace, value, false); return true;
         } }) };
@@ -237,8 +245,26 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
       return false;
     } finally { saving[workspace] = false; render(); }
   }
+  async function remember(workspace: Workspace) {
+    const snapshot = state.documents[workspace]; if (!recent || !snapshot || disposed) return;
+    try {
+      const parts = nativeContainer({ op: 'encode', package: adapters[workspace]!.encode(snapshot) }).parts;
+      await recent.save({ id: snapshot.id, workspace, title: snapshot.title || 'Untitled', updated: Date.now(), parts });
+      recentEntries = await recent.list(); if (!disposed) render();
+    } catch (cause) { status(`Recent projects: ${reason(cause)}`); }
+  }
+  function scheduleRemember(workspace: Workspace) {
+    if (!recent) return; clearTimeout(rememberTimers[workspace]);
+    rememberTimers[workspace] = setTimeout(() => { delete rememberTimers[workspace]; void remember(workspace); }, 700);
+  }
+  async function flushRemember(workspace: Workspace) {
+    if (rememberTimers[workspace] === undefined) return;
+    clearTimeout(rememberTimers[workspace]); delete rememberTimers[workspace]; await remember(workspace);
+  }
   function mayReplace(workspace: Workspace): Promise<boolean> {
     if (modalActive) { status('Close the current dialog, then try opening the document again.'); return Promise.resolve(false); }
+    // With the recent-projects store every edit is already kept, so replacing never asks.
+    if (recent) return flushRemember(workspace).then(() => true);
     if (!state.dirty[workspace]) return Promise.resolve(true);
     const protectedDocument = state.documents[workspace];
     return new Promise(resolve => dialog({
@@ -256,7 +282,7 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
     validate(workspace, value); epochs[workspace]++;
     if (handle) handles[workspace] = handle; else delete handles[workspace];
     mark({ type: 'open', workspace, snapshot: { ...value, identity: `revision-${++sequence}` }, isSaved });
-    changeWorkspace(workspace); backup(workspace);
+    changeWorkspace(workspace); backup(workspace); if (isSaved) scheduleRemember(workspace);
   }
   async function open() {
     opening = true; let selected: FileSystemFileHandle | undefined;
@@ -295,6 +321,23 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
     if (id === 'file.open') return open();
     if (id === 'file.save') { await save(workspace); return; }
     if (id === 'file.new') { if (await mayReplace(workspace) && !disposed && !modalActive) replace(workspace, adapters[workspace]!.create!(), false); return; }
+    if (id === 'file.rename') {
+      const current = state.documents[workspace]!;
+      dialog({ title: 'Rename project', fields: [{ key: 'title', label: 'Name', type: 'text' }], initial: { title: current.title },
+        validate: values => String(values.title).trim() ? { ok: true, value: String(values.title).trim() } : { ok: false, error: { code: 'file.title', message: 'Type a name.' } },
+        preview() {}, cancel() {}, commit: value => { const latest = state.documents[workspace]; if (latest) commit(workspace, { ...latest, title: value as string }, 'Rename', latest.identity); } });
+      return;
+    }
+    if (id === 'file.clearRecent') { await recent?.clear(); recentEntries = []; render(); return; }
+    if (id.startsWith('file.recent.')) {
+      const entry = recentEntries[Number(id.slice(12))]; if (!entry || !recent) return;
+      const target = entry.workspace;
+      if (!adapters[target]) throw new Error(`${NAMES[target]} editing is not available in this build.`);
+      if (state.documents[target]?.id === entry.id) { changeWorkspace(target); return; }
+      const packageValue = nativeContainer({ op: 'decode', parts: await recent.load(entry.id) }), value = adapters[target]!.decode(packageValue);
+      if (await mayReplace(target) && !disposed && !modalActive) replace(target, value, true);
+      return;
+    }
     if (id === 'edit.undo' || id === 'edit.redo') { mark({ type: id === 'edit.undo' ? 'undo' : 'redo', workspace }); backup(workspace); render(); return; }
     if (id === 'view.settings') { viewSettings(); return; }
     if (id === 'recovery.restore') {
@@ -339,7 +382,7 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
   const chrome = createChrome({ root, model: model(), onCommand: id => { void dispatch(id); }, onWorkspace: changeWorkspace });
   chrome.viewport.append(empty); render(); bindView();
   const globalInput = bindInput({ root, context: () => ({ workspace: state.workspace, target: 'view', viewRole: 'none', activeTool: 'none', status: state.message }), onCommand: id => { void dispatch(id); }, onGesture() {} });
-  const beforeUnload = (event: BeforeUnloadEvent) => { if (Object.values(state.dirty).some(Boolean)) { event.preventDefault(); event.returnValue = ''; } };
+  const beforeUnload = (event: BeforeUnloadEvent) => { for (const w of WORKSPACES) if (rememberTimers[w] !== undefined) void flushRemember(w); if (!recent && Object.values(state.dirty).some(Boolean)) { event.preventDefault(); event.returnValue = ''; } };
   window.addEventListener('beforeunload', beforeUnload);
   const ready = Promise.all([
     capabilityProbe(probe).then(value => { capabilities = value; }),
@@ -355,10 +398,16 @@ export function mountApp({ root, adapters, files, recovery, probe }: Request): H
       }
       if (result.value) {
         stored[workspace] = true;
-        try { validate(workspace, adapters[workspace]!.decode(result.value)); candidates[workspace] = { package: result.value }; }
+        try {
+          const value = adapters[workspace]!.decode(result.value); validate(workspace, value);
+          // With recent projects, the last session simply reopens (and is kept in File > Recent) instead of blocking.
+          if (recent) { epochs[workspace]++; mark({ type: 'open', workspace, snapshot: { ...value, identity: `revision-${++sequence}` }, isSaved: false }); void remember(workspace); }
+          else candidates[workspace] = { package: result.value };
+        }
         catch (cause) { candidates[workspace] = { error: `Recovery content: ${reason(cause)}` }; }
       }
     }),
+    recent?.list().then(entries => { recentEntries = entries; }, () => { recentEntries = []; }),
   ]).then(() => { initialized = true; render(); }).catch(cause => { status(reason(cause)); });
   return { ready, dispatch, snapshot: () => state,
     async idle() { await ready; do { await Promise.all([...pending, ...Object.values(queues)]); } while (pending.size); await Promise.all(Object.values(queues)); },
