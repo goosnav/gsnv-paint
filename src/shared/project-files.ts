@@ -46,7 +46,7 @@ export type ProjectFileOutcome<T extends ProjectFileRequest = ProjectFileRequest
 
 const MAX_STEM_BYTES = 180;
 const MIME = 'application/octet-stream';
-const EXTENSIONS = { 'gsnv-cad': '.gsnv-cad', 'gsnv-image': '.gsnv-image', 'gsnv-photo': '.gsnv-photo', 'gsnv-video': '.gsnv-video' } as const;
+const EXTENSIONS = { 'gsnv-cad': '.gsnv-cad', 'gsnv-image': '.gsnv-image', 'gsnv-photo': '.gsnv-photo', 'gsnv-video': '.gsnv-video', 'gsnv-document': '.gsnv-document', 'gsnv-slides': '.gsnv-slides', 'gsnv-audio': '.gsnv-audio' } as const;
 
 function failure(code: string, message: string): Failure { return { ok: false, error: { code, message } }; }
 function boundedStem(stem: string, limit: number): string {

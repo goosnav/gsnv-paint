@@ -1,0 +1,41 @@
+.video-stage { position:absolute; inset:0; display:grid; grid-template-rows:minmax(0,1fr) auto 132px; background:var(--xp-workspace); outline:none; }
+.video-stage[aria-busy=true] .video-monitor::after { content:"Exporting…"; position:absolute; top:8px; right:8px; padding:1px 6px; background:#ffffe1; border:1px solid #000; }
+.video-monitor { position:relative; min-height:0; display:grid; place-items:center; padding:12px; }
+.video-canvas { display:block; background:#000; border:1px solid #000; box-shadow:3px 3px 0 #00000059; }
+.video-empty { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(380px,calc(100% - 32px)); background:var(--xp-face); border:1px solid var(--xp-title-edge); border-radius:7px 7px 0 0; box-shadow:4px 4px 0 #00000040; }
+.video-empty[hidden] { display:none; }
+.video-empty h2 { margin:0; padding:6px 8px; color:#fff; font-size:var(--text); font-weight:700; text-shadow:1px 1px 0 #0a1f7a; border-radius:6px 6px 0 0; background:linear-gradient(var(--xp-title-2),var(--xp-title-1) 18%,var(--xp-title-1) 72%,var(--xp-title-3)); }
+.video-empty p { margin:0; padding:12px 12px 8px; }
+.video-empty .xp-button { display:block; margin:0 12px 12px auto; }
+.video-transport { display:flex; align-items:center; gap:4px; padding:4px 8px; background:var(--xp-face); border-top:1px solid #fff; border-bottom:1px solid var(--xp-shadow); }
+.video-play { min-width:58px; }
+.video-time { min-width:118px; padding:2px 4px; font-variant-numeric:tabular-nums; background:#000; color:#7cfc00; border:1px solid; border-color:var(--xp-shadow) #fff #fff var(--xp-shadow); text-align:center; }
+.video-scrub { flex:1; min-width:0; }
+.video-timeline { position:relative; overflow-x:auto; overflow-y:hidden; background:var(--xp-face-light); border-top:1px solid var(--xp-dark); cursor:var(--cursor-arrow); }
+.video-ruler { position:relative; height:18px; background:var(--xp-face); border-bottom:1px solid var(--xp-shadow); }
+.video-tick { position:absolute; top:10px; height:8px; border-left:1px solid var(--xp-shadow); }
+.video-tick[data-major] { top:0; height:18px; padding-left:3px; border-left-color:var(--xp-dark); color:var(--xp-text-muted); line-height:14px; }
+.video-track,.video-titletrack { position:relative; }
+.video-track { height:58px; margin-top:4px; }
+.video-titletrack { height:24px; margin-top:4px; }
+.video-clip,.video-title-block { position:absolute; top:0; height:100%; padding:2px 4px; overflow:hidden; text-align:left; white-space:nowrap; text-overflow:ellipsis; border:1px solid var(--xp-button-edge); border-radius:2px; color:#fff; cursor:var(--cursor-hand); }
+.video-clip { display:flex; flex-direction:column; justify-content:space-between; background:linear-gradient(#5b8ff0,#2c5fd0); text-shadow:1px 1px 0 #0a1f7a; }
+.video-clip[data-kind=image] { background:linear-gradient(#5fbf5f,#2f8a2f); border-color:#1d561d; text-shadow:1px 1px 0 #123812; }
+.video-clip span,.video-clip small { overflow:hidden; text-overflow:ellipsis; font-size:var(--text); }
+.video-clip[aria-pressed=true] { outline:2px solid var(--xp-hover); outline-offset:-2px; }
+.video-title-block { background:linear-gradient(#ffe7a2,#f8b330); color:#000; border-color:#8a5a00; }
+.video-playhead { position:absolute; top:0; bottom:0; width:0; border-left:1px solid #c50f0f; pointer-events:none; }
+.video-playhead::before { content:""; position:absolute; top:0; left:-5px; border:5px solid transparent; border-top:6px solid #c50f0f; }
+.video-hint { position:absolute; left:8px; bottom:4px; max-width:70%; padding:2px 6px; background:#ffffe1; border:1px solid #000; pointer-events:none; }
+.video-hint[hidden] { display:none; }
+.video-panel { padding:6px 10px 10px; }
+.video-panel h3 { margin:8px 0 4px; color:var(--xp-group-text); font-size:var(--text); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.video-panel h3:first-child { margin-top:0; }
+.video-none { margin:2px 0 6px; color:var(--xp-text-muted); }
+.video-row { display:grid; grid-template-columns:78px minmax(0,1fr) 52px; align-items:center; gap:4px; margin:2px 0; }
+label.video-row { grid-template-columns:78px 72px; }
+.video-row .xp-field { width:100%; min-width:0; }
+.video-buttons { display:flex; flex-wrap:wrap; gap:3px; margin-top:6px; }
+.video-title-row { display:grid; grid-template-columns:minmax(0,1fr) auto auto; align-items:center; gap:3px; margin:2px 0; }
+.video-title-row span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.video-panel > .xp-button { margin-top:4px; }

@@ -52,7 +52,7 @@ export async function recoverySession(request: RecoverySessionRequest, port: Rec
     const op = field(request, 'operation'); const ws = field(request, 'workspace'); const generation = field(request, 'generation');
     if (op !== 'save' && op !== 'recover' && op !== 'discard') return fail('recovery.request', 'Choose save, recover or discard.');
     operation = op;
-    if (ws !== 'cad' && ws !== 'image' && ws !== 'photo' && ws !== 'video') return fail('recovery.request', 'Choose a valid workspace.');
+    if (ws !== 'cad' && ws !== 'image' && ws !== 'photo' && ws !== 'video' && ws !== 'document' && ws !== 'slides' && ws !== 'audio') return fail('recovery.request', 'Choose a valid workspace.');
     workspace = ws;
     if (typeof generation !== 'number' || !Number.isSafeInteger(generation) || typeof port !== 'function') return fail('recovery.request', 'A safe integer generation and recovery port are required.');
     let storageRequest: Parameters<RecoveryPort>[0];

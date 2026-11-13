@@ -328,6 +328,19 @@ I51 is now layered (each layer's tiles shared between snapshots; layer stack edi
 
 IMAGE-APP (`src/image/image-workspace.ts`) is the assembly: it wires I50–I53 to S07 file access, S11 dialogs and the A-SHELL host (history, recovery, files). Each completed stroke, shape, fill, text, move, paste or image command commits one history entry; drags and floating selections stay outside history. Browser codecs provide PNG export and PNG/JPEG/GIF/WebP/BMP import.
 
+## Working Video increment (D26)
+
+The full Phase 4 plan below (multi-track, keyframes, WebCodecs, muxers) stays the long-term target. The owner asked for a basic editor first, so two bricks ship now:
+
+### VW1 `video/video-timeline.ts` — CORE — GREEN
+Purpose: One sequence track of clips (video or still) plus titles; trim, split, move, delete, fades, volume, frame size; locate a sequence time; native encode/decode.
+IN: `videoTimeline({operation:'new'|'edit'|'locate'|'encode'|'decode'})`. OUT: frozen `VideoContent`, a located clip `{index,clip,media,offset,source,fade}`, or `{content,assets}`.
+RAISES: `VideoEditError`, `VideoContentError`. TESTBENCH: `video-timeline.test.ts`.
+
+### VW2 `video/video-workspace.ts` — SHELL — provisional GREEN
+Purpose: WorkspaceAdapter for `gsnv-video`: canvas preview, transport, timeline, clip/title/export panel, Web Audio gain per clip, MediaRecorder export.
+TESTBENCH: `video-workspace.browser.spec.ts`. Detail: [VIDEO-WORKFLOW.md](VIDEO-WORKFLOW.md).
+
 ## Phase 4 — Video bricks, leaves first
 
 ### V01 `video/time-project.ts` — CORE — PLANNED

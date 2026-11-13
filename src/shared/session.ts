@@ -21,7 +21,7 @@
 
 import { history, type History } from './history.ts';
 
-type Workspace = 'cad' | 'image' | 'photo' | 'video';
+type Workspace = 'cad' | 'image' | 'photo' | 'video' | 'document' | 'slides' | 'audio';
 type Snapshot<T> = {
   readonly id: string; readonly title: string; readonly format: string;
   readonly version: number; readonly identity: string; readonly value: T;
@@ -62,7 +62,7 @@ function validateEvent<T>(event: SessionEvent<T>): void {
     if (typeof event.message !== 'string') throw new TypeError('Status message must be a string.');
     return;
   }
-  if (!['cad', 'image', 'photo', 'video'].includes(event.workspace)) throw new TypeError('Unknown workspace.');
+  if (!['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio'].includes(event.workspace)) throw new TypeError('Unknown workspace.');
   if ((event.type === 'open' || event.type === 'commit') && !validSnapshot(event.snapshot)) {
     throw new TypeError('Document snapshot metadata is invalid.');
   }
@@ -82,7 +82,7 @@ export function session<T>({ state, event }: SessionRequest<T>): SessionResult<T
   if (event.type === 'status') return result({ ...state, message: event.message });
   const workspace = event.workspace;
   if (event.type === 'switch') {
-    const label = { cad: 'CAD', image: 'Image', photo: 'Photo', video: 'Video' }[workspace];
+    const label = { cad: 'CAD', image: 'Image', photo: 'Photo', video: 'Video', document: 'Document', slides: 'Slides', audio: 'Audio' }[workspace];
     return result({ ...state, workspace, message: `${label} workspace.` });
   }
   if (event.type === 'open') {

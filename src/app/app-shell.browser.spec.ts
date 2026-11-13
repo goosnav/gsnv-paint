@@ -112,7 +112,7 @@ test('A-SHELL actual window composes fixture editing, history, project files and
         await expect(capabilityRows.nth(index)).toHaveText(new RegExp(`^${label}: \\S.+`));
       }
       console.log('A-SHELL emitted production capability results:', await capabilityRows.evaluateAll(rows => rows.map(row => ({ state: (row as HTMLElement).dataset.state, text: row.textContent }))));
-      for (const workspace of ['CAD', 'Image', 'Video']) {
+      for (const workspace of ['CAD', 'Image', 'Video', 'Audio']) {
         await production.getByRole('tab', { name: workspace, exact: true }).click();
         await expect(production.locator('.gc-window')).toHaveCount(1);
         await expect(production.locator('button[data-command="fixture.edit"]')).toHaveCount(0);
@@ -122,6 +122,9 @@ test('A-SHELL actual window composes fixture editing, history, project files and
         } else if (workspace === 'Image') {
           await expect(production.locator('button[data-command="file.new"]').first()).toBeEnabled();
           await expect(production.locator('.image-stage')).toBeVisible();
+        } else if (workspace === 'Video') {
+          await expect(production.locator('button[data-command="file.new"]').first()).toBeEnabled();
+          await expect(production.locator('.video-stage')).toBeVisible();
         } else {
           await expect(production.locator('button[data-command="file.new"]').first()).toBeDisabled();
           await expect(production.locator('.gc-viewport')).toContainText(`${workspace} editing is not available`);

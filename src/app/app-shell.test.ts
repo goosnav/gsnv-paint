@@ -93,7 +93,7 @@ test('A-SHELL golden starts one empty CAD window with unavailable editing comman
   const s = setup({ available: [] }); await s.app.ready;
   assert.deepEqual(s.app.snapshot(), { workspace: 'cad', documents: {}, histories: {}, saved: {}, dirty: {}, message: 'CAD editing is not available in this development build.' });
   assert.equal(s.root.querySelectorAll('.gc-window').length, 1);
-  assert.equal(s.root.querySelectorAll('[role="tab"]').length, 4);
+  assert.equal(s.root.querySelectorAll('[role="tab"]').length, 7);
   assert.equal(s.root.querySelector<HTMLButtonElement>('[data-command="file.new"]')!.disabled, true);
   await s.app.dispatch('file.new'); await s.app.dispatch('edit.undo');
   assert.deepEqual(s.app.snapshot().documents, {});

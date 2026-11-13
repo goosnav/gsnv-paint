@@ -2,13 +2,14 @@
 
 One creative suite with Image, Video and CAD workspaces. The same static browser build will run on the web and from a local launcher. Work stays on the device.
 
-Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MODULE_MAP.md). The interface is designed as a better Windows XP: Luna colours, pixel-crisp Tahoma text and XP-style cursors ([design](dev/DESIGN-XP.md)). Three workspaces work today:
+Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MODULE_MAP.md). The interface is designed as a better Windows XP: Luna colours, pixel-crisp Tahoma text and XP-style cursors ([design](dev/DESIGN-XP.md)). Four workspaces work today:
 
 - **Image:** a layered Paint/Photoshop-style editor with brushes, selections (rectangle, ellipse, lasso, magic wand), clone and blur brushes, gradients, layers with blend modes, adjustments and filters ([details](dev/IMAGE-WORKFLOW.md)).
 - **Photo:** a Lightroom-style editor that develops camera RAW files (via LibRaw) or JPEGs: Auto, presets, light/colour/presence, tone curve, colour mixer, detail, effects, crop and full-size export ([details](dev/PHOTO-WORKFLOW.md)).
-- **CAD:** line/rectangle/circle sketches, driving dimensions, horizontal/vertical constraints and a real OpenCascade extrusion with holes; STEP and STL export ([workflow](dev/CAD-WORKFLOW.md), [holes and STL](dev/CAD-HOLES-STL.md)).
+- **Video:** a basic editor: clips and stills in sequence, trim, split, reorder, fades, volume, titles and export to MP4 or WebM ([details](dev/VIDEO-WORKFLOW.md)).
+- **CAD:** line/rectangle/circle sketches, driving dimensions and relationship constraints, OpenCascade extrusions with holes, cuts, fillets and chamfers, metric or imperial units; STEP and STL export ([workflow](dev/CAD-WORKFLOW.md), [features](dev/CAD-FEATURES.md)).
 
-All three have save/open, undo/redo and local recovery. Video editing, the remaining CAD features (cuts, fillets, other planes, drawings) and the packaged release are unfinished.
+All of them have save/open, undo/redo, File > Recent and local recovery. Document, Slides and Audio workspaces are in progress; CAD sketch planes other than XY, drawings and the packaged release are unfinished.
 
 ## Run it
 

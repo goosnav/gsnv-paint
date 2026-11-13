@@ -8,6 +8,7 @@ const panels = {
   cad: [panel('document', 'Document', 'No document open.'), panel('history', 'History', 'Document edits will appear here.')],
   image: [panel('layers', 'Layers', 'No image document open.'), panel('history', 'History', 'Document edits will appear here.')],
   photo: [panel('develop', 'Develop', 'No photo open.'), panel('history', 'History', 'Document edits will appear here.')],
+  document: [panel('format', 'Format', 'No document open.')], slides: [panel('slide', 'Slide', 'No deck open.')], audio: [panel('audio', 'Audio', 'No audio open.')],
   video: [panel('media', 'Media', 'No Video project open.'), panel('properties', 'Properties', 'Nothing selected.')],
 };
 let model: ChromeModel = {
@@ -31,7 +32,7 @@ let model: ChromeModel = {
 };
 const chrome = createChrome({ root: document.querySelector<HTMLElement>('#app')!, model,
   onCommand: id => { model = { ...model, status: `Command received: ${id}.` }; chrome.update(model); },
-  onWorkspace: workspace => { model = { ...model, workspace, panels: panels[workspace], status: `${workspace === 'cad' ? 'CAD' : workspace === 'image' ? 'Image' : workspace === 'photo' ? 'Photo' : 'Video'} workspace selected.` }; chrome.update(model); },
+  onWorkspace: workspace => { model = { ...model, workspace, panels: panels[workspace], status: `${workspace === 'cad' ? 'CAD' : workspace === 'image' ? 'Image' : workspace === 'photo' ? 'Photo' : workspace === 'video' ? 'Video' : workspace === 'document' ? 'Document' : workspace === 'slides' ? 'Slides' : 'Audio'} workspace selected.` }; chrome.update(model); },
 });
 const notice = document.createElement('div'); notice.className = 'fixture-viewport-notice';
 const heading = document.createElement('strong'); heading.textContent = 'Shared window shell';

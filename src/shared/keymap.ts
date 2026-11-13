@@ -20,7 +20,7 @@
 
 export type CommandEvent = {
   key: string; ctrl: boolean; meta: boolean; shift: boolean; alt: boolean;
-  target: 'text' | 'view' | 'dialog'; workspace: 'cad' | 'image' | 'photo' | 'video';
+  target: 'text' | 'view' | 'dialog'; workspace: 'cad' | 'image' | 'photo' | 'video' | 'document' | 'slides' | 'audio';
   viewRole: 'timeline' | 'preview2d' | 'canvas2d' | 'cad3d' | 'sketch2d' | 'none';
 };
 export type CommandResult = { command: string | null; preventDefault: boolean };
@@ -45,7 +45,7 @@ const VIDEO_KEYS: Readonly<Record<string, string>> = {
 
 export function keymap(event: CommandEvent): CommandResult {
   if (!event || typeof event !== 'object' || typeof event.key !== 'string' || !event.key ||
-      !['cad', 'image', 'photo', 'video'].includes(event.workspace) ||
+      !['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio'].includes(event.workspace) ||
       !['text', 'view', 'dialog'].includes(event.target) ||
       !['timeline', 'preview2d', 'canvas2d', 'cad3d', 'sketch2d', 'none'].includes(event.viewRole) ||
       [event.ctrl, event.meta, event.shift, event.alt].some(value => typeof value !== 'boolean')) {

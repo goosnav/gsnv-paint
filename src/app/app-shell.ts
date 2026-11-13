@@ -84,8 +84,8 @@ type Handle = {
   dispose(): void;
 };
 
-const WORKSPACES = ['cad', 'image', 'photo', 'video'] as const;
-const NAMES = { cad: 'CAD', image: 'Image', photo: 'Photo', video: 'Video' } as const;
+const WORKSPACES = ['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio'] as const;
+const NAMES = { cad: 'CAD', image: 'Image', photo: 'Photo', video: 'Video', document: 'Document', slides: 'Slides', audio: 'Audio' } as const;
 const RANGE = { min: 0.01, max: 64 };
 const TWO_DIMENSIONAL = new Set(['sketch2d', 'canvas2d', 'preview2d']);
 function reason(cause: unknown): string {
@@ -101,17 +101,17 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
   let capabilities: Capability[] = []; let viewInput = () => {};
   let recentEntries: RecentEntry[] = []; const rememberTimers: Partial<Record<Workspace, ReturnType<typeof setTimeout>>> = {};
   const pending = new Set<Promise<unknown>>();
-  const epochs = { cad: 0, image: 0, photo: 0, video: 0 };
-  const saving = { cad: false, image: false, photo: false, video: false };
-  const observed = { cad: 0, image: 0, photo: 0, video: 0 };
-  const issued = { cad: 0, image: 0, photo: 0, video: 0 };
-  const queues: Record<Workspace, Promise<void>> = { cad: Promise.resolve(), image: Promise.resolve(), photo: Promise.resolve(), video: Promise.resolve() };
-  const stored = { cad: false, image: false, photo: false, video: false };
-  const recoveryBlocked = { cad: false, image: false, photo: false, video: false };
+  const epochs = { cad: 0, image: 0, photo: 0, video: 0, document: 0, slides: 0, audio: 0 };
+  const saving = { cad: false, image: false, photo: false, video: false, document: false, slides: false, audio: false };
+  const observed = { cad: 0, image: 0, photo: 0, video: 0, document: 0, slides: 0, audio: 0 };
+  const issued = { cad: 0, image: 0, photo: 0, video: 0, document: 0, slides: 0, audio: 0 };
+  const queues: Record<Workspace, Promise<void>> = { cad: Promise.resolve(), image: Promise.resolve(), photo: Promise.resolve(), video: Promise.resolve(), document: Promise.resolve(), slides: Promise.resolve(), audio: Promise.resolve() };
+  const stored = { cad: false, image: false, photo: false, video: false, document: false, slides: false, audio: false };
+  const recoveryBlocked = { cad: false, image: false, photo: false, video: false, document: false, slides: false, audio: false };
   const recoveryErrors: Partial<Record<Workspace, string>> = {};
   const candidates: Partial<Record<Workspace, { package?: Package; error?: string }>> = {};
   const handles: Partial<Record<Workspace, FileSystemFileHandle>> = {};
-  const views: Record<Workspace, View2D> = { cad: { zoom: 1, pan: { x: 0, y: 0 } }, image: { zoom: 1, pan: { x: 0, y: 0 } }, photo: { zoom: 1, pan: { x: 0, y: 0 } }, video: { zoom: 1, pan: { x: 0, y: 0 } } };
+  const views: Record<Workspace, View2D> = { cad: { zoom: 1, pan: { x: 0, y: 0 } }, image: { zoom: 1, pan: { x: 0, y: 0 } }, photo: { zoom: 1, pan: { x: 0, y: 0 } }, video: { zoom: 1, pan: { x: 0, y: 0 } }, document: { zoom: 1, pan: { x: 0, y: 0 } }, slides: { zoom: 1, pan: { x: 0, y: 0 } }, audio: { zoom: 1, pan: { x: 0, y: 0 } } };
   const editors: Partial<Record<Workspace, { root: HTMLElement; view: EditorView }>> = {};
   const historyPanel = document.createElement('div'); historyPanel.dataset.panelHistory = '';
   const recoveryPanel = document.createElement('div'); recoveryPanel.dataset.panelRecovery = '';

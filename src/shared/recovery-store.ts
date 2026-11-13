@@ -21,7 +21,7 @@
  * TESTBENCH  src/shared/recovery-store.test.ts -- run with: node --import tsx --test src/shared/recovery-store.test.ts
  */
 
-type Workspace = 'cad' | 'image' | 'photo' | 'video';
+type Workspace = 'cad' | 'image' | 'photo' | 'video' | 'document' | 'slides' | 'audio';
 export type RecoveryRecord = { workspace: Workspace; generation: number; payload: readonly Uint8Array[]; title: string };
 type RecoveryRequest = { op: 'write'; record: RecoveryRecord } | { op: 'read' | 'remove'; workspace: Workspace };
 export type RecoveryPorts = { indexedDB?: IDBFactory; localStorage?: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> };
@@ -36,7 +36,7 @@ class CorruptRecovery extends Error {}
 function checkRecord(value: unknown, kind: 'bytes' | 'blobs'): void {
   if (!value || typeof value !== 'object') throw new CorruptRecovery('Recovery record is missing.');
   const record = value as Record<string, unknown>;
-  if (!['cad', 'image', 'photo', 'video'].includes(record.workspace as string) ||
+  if (!['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio'].includes(record.workspace as string) ||
       !Number.isSafeInteger(record.generation) || typeof record.title !== 'string' ||
       !Array.isArray(record.payload)) {
     throw new CorruptRecovery('Recovery metadata or payload is invalid.');
@@ -108,7 +108,7 @@ export async function recoveryStore(request: RecoveryRequest, ports: RecoveryPor
       throw new DOMException('Browser recovery storage is unavailable.', 'NotSupportedError');
     }
     const workspace = request.op === 'write' ? request.record.workspace : request.workspace;
-    if (!['cad', 'image', 'photo', 'video'].includes(workspace)) throw new CorruptRecovery('Unknown recovery workspace.');
+    if (!['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio'].includes(workspace)) throw new CorruptRecovery('Unknown recovery workspace.');
     let next: Stored | undefined;
     if (request.op === 'write') {
       checkRecord(request.record, 'bytes');
