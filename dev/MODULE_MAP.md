@@ -254,6 +254,14 @@ Rung 1: S01 history → S02 session; S03 metadata codec is verified independentl
 
 Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rungs 1–4 pass cumulatively, including S05→S12→A-SHELL, S09→S10 and S11 preview transactions. S01–S15 and A-SHELL are GREEN with evidence in PHASE-1.md. Phase 1's shared-component scope is complete; full workspace requirements remain open. Its checkpoint halted before Phase 2 after repairing assembly lifecycle findings and build typing. Phase 2 has since reached C01–C04, independent C07–C08, C37, C50–C61, CAD-A1, CAD-APP and STEP-APP GREEN; the CAD provisional ladder is 3. C08 and C61 remain geometry leaves awaiting full sketch integration; C62/C63 are planned under D19. The C61 checkpoint stops after repaired review findings under the retained batch halt rule. C05 is next on the feature-history path. BATCH is halted before C05 pending the explicit revision-exhaustion contract amendment in PHASE-2.md. Current evidence is in PHASE-2.md and MODULE_MAP-CAD.md. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
 
+## S22 save-choices — CORE — CONTRACTED
+Purpose: Describe the available save formats for a workspace.
+IN: `{workspace,projectEnabled,commands:readonly {id:string,enabled:boolean}[]}`; known workspace and unique command IDs.
+OUT: Owned ordered `{id,label,description,shortcut,icon,enabled}[]`, native project then existing supported exports; no invented capabilities or command-label inference.
+RAISES: TypeError for unknown workspace, invalid booleans/commands or duplicate IDs.
+DEPS: none.
+The [Save/export UX contract](SAVE-EXPORT-UX.md) amends S09/S10/S11 and A-SHELL under the owner's explicit request. Implement S22, S11, S10, then assembly and icon presentation; tests precede each behavior change. Existing persistence/export contracts remain.
+
 ## Shared conceptual bindings
 
 | Design owner | Contracts |
