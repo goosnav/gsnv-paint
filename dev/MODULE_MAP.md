@@ -285,3 +285,9 @@ modules. Status: specified, not yet GREEN.
 The owner-requested [Paint navigator contract](IMAGE-NAVIGATOR.md) adds a compact
 view-only corner control and uses the existing original arrow cursor. Dependencies:
 DOM/Canvas ports only; IMAGE-APP composes S05 for zoom and its existing local view.
+
+## IMAGE-XFORM / IMAGE-XFORM-VIEW — CORE / SHELL — SPECIFIED
+
+[Graphical transform contract](IMAGE-FREE-TRANSFORM.md) declares pure geometry,
+DOM pointer/numeric controls and the IMAGE-APP seam. Existing raster-ops performs
+final sampling; CSS previews reuse the original pixels. Tests precede each brick.
