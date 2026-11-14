@@ -2,6 +2,8 @@
 
 Parent review (2026-11-13): this map is approved for the owner-authorized BATCH after commit. Every implementation and acceptance gate remains unverified until its named tests run. No acceptance is delegated.
 
+Execution update (2026-11-13): S16–S21 and the launcher freshness seam are component GREEN; exact contracts/status are indexed in [MODULE_MAP.md](MODULE_MAP.md), and RED→GREEN commands/results are recorded in [OFFLINE-WORKFLOW.md](OFFLINE-WORKFLOW.md). The approved [root-route amendment](OFFLINE-ROOT-ROUTE.md), committed as `d1ba0be` before its implementation, changes only the index installation fetch alias. The PLANNED/baseline wording below records the original pre-implementation review; production acceptance remains a separate Task 6 gate.
+
 > **For agentic workers:** Use `superpowers:executing-plans` for the authorized BATCH, with the repository's testbench-before-implementation and review gates. Steps below are checkboxes. This document is a Mode A contract/map only; it does not authorize implementation or change any acceptance status.
 
 **Goal:** After one complete online installation, reopen the same production build offline and use every implemented workspace, including previously unopened CAD, Photo RAW and Python runtimes.
@@ -63,6 +65,11 @@ The compact status control says **“Preparing offline…”**, **“Ready offli
 Error codes: `offline.unsupported`, `offline.network`, `offline.integrity`, `offline.headers`, `offline.limit`, `offline.quota`, `offline.storage`, `offline.incomplete`, `offline.version`, `offline.cancelled`. Retry uses only the embedded manifest, never user input URLs. Browser storage can be cleared or evicted externally; the product detects this when it can run and requires reconnection/reinstallation, rather than promising permanent storage.
 
 ## Boundary types and modules
+
+S18/S20 repair amendment: [OFFLINE-RETAIN-REPAIR.md](OFFLINE-RETAIN-REPAIR.md)
+adds digest-bound historical manifests for verified fallback selection, explicit
+conservative legacy retention, and update-error separation during Retry. It is
+CONTRACTED pending fresh focused and production verification.
 
 `OfflineAsset = { url: string; bytes: number; sha256: string; mime: string }`. URLs are unique canonical root-relative static paths without query/hash, traversal, backslash, NUL or encoded separators; `/index.html` is required. `OfflineManifest = { schema: 1; build: string; assets: readonly OfflineAsset[] }`. Byte counts are nonnegative safe integers; SHA-256/build IDs are 64 lowercase hex characters; assets are sorted by URL and total at most 128 MiB.
 
