@@ -118,6 +118,12 @@ DEPS: S09.
 TEST: fake DOM contracts and one real Chromium layout/menu/focus/tooltip/switch smoke with screenshot. Requirement group AppShell.
 Amendment (D20): tools may carry an optional boolean `active`, rendered as `aria-pressed`; `update` keeps an open menu and its focused command open across background updates (focus returns to the trigger only when that command vanished or became disabled).
 
+Offline assembly amendment (S21, CONTRACTED): S10 returns a stable empty
+`offlineSlot:HTMLElement` beside browser capabilities. `update` preserves its
+caller-owned content and focus; A-SHELL forwards it without owning offline
+policy. Production main mounts S20/S21 there and disposes them with the app.
+A unit seam must prove identity/focus across workspace/chrome updates.
+
 ## S11 dialog — SHELL — GREEN
 
 Purpose: Present a transactional live-preview modal.
@@ -135,6 +141,13 @@ OUT: disposer; pointer capture normalizes left/middle/right, modifiers and press
 RAISES: `TypeError` for invalid ports.
 DEPS: S05.
 TEST: event normalization/focus exceptions, cancellation/pointer capture plus actual Chromium wheel/pan/context menu. Requirement group AppShell.
+
+Offline keyboard amendment (CONTRACTED): native `summary` controls have the
+same activation/focus exceptions as native buttons: Enter and Space remain
+native, pointer/wheel input does not become a drawing gesture, and moving
+focus into the control cancels a captured drawing gesture. Document shortcuts
+retain their existing scope. Verify with a failing unit regression and a
+production keyboard-open/close check of the offline footer.
 
 ## S13 project-files — SHELL — GREEN
 
