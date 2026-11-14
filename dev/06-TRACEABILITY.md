@@ -68,9 +68,9 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-003 | CAD-012 | 2 | 2 | CADModel | V-CAD-012 | T | UNTESTED |
 | N-003 | CAD-013 | 2 | 2 | CADModel | V-CAD-013 | T | UNTESTED |
 | N-003 | CAD-014 | 2 | 2 | CADModel | V-CAD-014 | T | UNTESTED |
-| N-003 | CAD-015 | 2 | 2 | CADModel | V-CAD-015 | T | UNTESTED |
+| N-003 | CAD-015 | 2 | 2 | CADModel | V-CAD-015 | T | PASS |
 | N-003 | CAD-016 | 2 | 2 | CADModel | V-CAD-016 | T | UNTESTED |
-| N-003 | CAD-017 | 2 | 2 | CADModel | V-CAD-017 | T | UNTESTED |
+| N-003 | CAD-017 | 2 | 2 | CADModel | V-CAD-017 | T | PASS |
 | N-003 | CAD-018 | 2 | 2 | CADModel | V-CAD-018 | T | UNTESTED |
 | N-003 | CAD-019 | 2 | 2 | CADModel | V-CAD-019 | T | UNTESTED |
 | N-003 | CAD-020 | 2 | 2 | CADSketch | V-CAD-020 | T | UNTESTED |
@@ -175,9 +175,9 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-003 | CAD-119 | 2 | 2 | CADExchange | V-CAD-119 | T | UNTESTED |
 | N-003 | CAD-120 | 2 | 2 | CADExchange | V-CAD-120 | T | UNTESTED |
 | N-003 | CAD-121 | 2 | 2 | CADExchange | V-CAD-121 | T | UNTESTED |
-| N-003 | CAD-122 | 2 | 2 | CADKernel | V-CAD-122 | T | UNTESTED |
-| N-003 | CAD-123 | 2 | 2 | CADKernel | V-CAD-123 | T | UNTESTED |
-| N-003 | CAD-124 | 2 | 2 | CADKernel | V-CAD-124 | T | UNTESTED |
+| N-003 | CAD-122 | 2 | 2 | CADKernel | V-CAD-122 | T | PASS |
+| N-003 | CAD-123 | 2 | 2 | CADKernel | V-CAD-123 | T | PASS |
+| N-003 | CAD-124 | 2 | 2 | CADKernel | V-CAD-124 | T | PASS |
 | N-004 | IMG-001 | 3 | 3 | ImageDocument | V-IMG-001 | T | UNTESTED |
 | N-004 | IMG-002 | 3 | 3 | ImageDocument | V-IMG-002 | T | UNTESTED |
 | N-004 | IMG-003 | 3 | 3 | ImageDocument | V-IMG-003 | T | UNTESTED |

@@ -87,17 +87,24 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
    }
    function transaction(title:string,fields:DialogSpec['fields'],initial:DialogSpec['initial'],action:(values:DialogSpec['initial'])=>CADAction,solid=false){
     if(!current||!content)return;const original=current,source=content,previousMode=mode;
+    const focused=document.activeElement,focusKey=focused&&stage.contains(focused)?focused.getAttribute('data-dimension-id')??focused.getAttribute('data-entity-id'):null;
+    const restoreFocus=()=>{if(focusKey&&mode==='sketch'){const replacement=[...stage.querySelectorAll<SVGElement>('[data-dimension-id],[data-entity-id]')].find(node=>node.getAttribute('data-dimension-id')===focusKey||node.getAttribute('data-entity-id')===focusKey);replacement?.focus();}};
     if(solid)mode='solid';tool={...tool,anchor:null,cursor:null};
     host.dialog({title,fields,initial,validate(values){try{return{ok:true,value:JSON.parse(JSON.stringify(editCADContent({content:source,action:action(values),sketch:activeSketch||undefined})))}}catch(cause){return{ok:false,error:{code:'cad.input',message:cause instanceof Error?cause.message:String(cause)}};}},
      preview(value){preview=value as unknown as CADContent;build(preview,`preview-${++previewSequence}`);},
-     commit(value){preview=null;host.commit({...original,value},title,original.identity);},
-     cancel(){preview=null;mode=previousMode;build(source,original.identity);},
+     commit(value){preview=null;host.commit({...original,value},title,original.identity);restoreFocus();},
+     cancel(){preview=null;mode=previousMode;build(source,original.identity);restoreFocus();},
     });
    }
    function length(source:unknown){if(!content)throw new Error('Create a part first.');return evaluateDimension({expression:{source:String(source),kind:'length'},context:evaluateVariables({variables:content.variables,units:content.units}).context}).value;}
    function edit(request:PropertyEdit){
     if(disposed||!content)return;const sketch=sketchOf(content)!;
-    if(request.command==='cad.dimension'){
+    if(request.command==='cad.editVariable'&&request.id){variableDialog(request.id);}
+    else if(request.command==='cad.removeVariable'&&request.id){commit({kind:'remove-variable',name:request.id},'Delete variable');}
+    else if(request.command==='cad.editPosition'&&request.id){
+     const constraint=sketch.constraints.find(c=>c.id===request.id);if(!constraint?.position)return;
+     transaction('Edit position',[{key:'x',label:`X (${content.units} or expression)`,type:'text'},{key:'y',label:`Y (${content.units} or expression)`,type:'text'}],{x:constraint.position.x.source,y:constraint.position.y.source},v=>({kind:'edit-position',id:constraint.id,x:String(v.x),y:String(v.y)}));
+    }else if(request.command==='cad.dimension'){
      const d=sketch.dimensions.find(d=>d.id===request.id);if(d)transaction('Edit dimension',[{key:'source',label:`Length (${content.units} or expression)`,type:'text'}],{source:d.value.source},v=>({kind:'dimension',id:d.id,source:String(v.source)}));
     }else if(request.command==='cad.removeConstraint'&&request.id)commit({kind:'remove-constraint',id:request.id},'Remove constraint');
     else if(request.command==='cad.editSketch'&&request.id){activeSketch=request.id===content.graph.features[0].id?'':request.id;mode='sketch';tool={...tool,anchor:null,cursor:null,selected:[]};refresh();host.invalidate();}
@@ -109,6 +116,11 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
     }
     else if(request.command==='cad.editEdges'&&request.id){const f=laterOf(content).find(f=>f.id===request.id);if(f&&f.kind!=='pocket')edgeDialog(f.kind,f.id,f.definition.edges,f.definition.size.source);}
     else command(request.command);
+   }
+   function variableDialog(name?:string){
+    if(!content)return;const variable=content.variables.find(v=>v.name===name);
+    const fields:DialogSpec['fields']=[...(!variable?[{key:'name',label:'Name',type:'text' as const}]:[]),{key:'source',label:'Value or expression',type:'text'},{key:'kind',label:'Type',type:'select',choices:[{value:'length',label:`Length (${content.units})`},{value:'angle',label:'Angle (degrees)'},{value:'scalar',label:'Number'}]}];
+    transaction(variable?`Edit variable ${variable.name}`:'Add variable',fields,{...(!variable?{name:''}:{}),source:variable?.expression.source??'10',kind:variable?.expression.kind??'length'},v=>({kind:'variable',name:variable?.name??String(v.name).trim(),source:String(v.source),dimensionKind:v.kind as 'length'|'angle'|'scalar'}));
    }
    function edgeDialog(feature:'fillet'|'chamfer',id:string,edges:EdgeSet,size:string){
     if(!content)return;
@@ -122,9 +134,10 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
     if(id==='tool.confirm'){if(tool.anchor&&tool.cursor)pointer(tool.cursor,null,false,false);return;}
     if(['cad.select','cad.line','cad.rectangleTool','cad.circleTool'].includes(id)){mode='sketch';tool=cadToolInput({state:tool,event:{kind:'tool',tool:id==='cad.select'?'select':id==='cad.line'?'line':id==='cad.circleTool'?'circle':'rectangle'},endpoints:[],tolerance:content.tolerance.linearMm}).state;refresh();host.invalidate();return;}
     if(id==='cad.exportSTL'){void exportSTL();return;}
+    if(id==='cad.addVariable'){variableDialog();return;}
     if(id==='cad.circle'){
      const prefix=uid();
-     transaction('Circle dimensions',[{key:'diameter',label:`Diameter (${content.units} or expression)`,type:'text'},{key:'x',label:'Center X (mm)',type:'number'},{key:'y',label:'Center Y (mm)',type:'number'}],{diameter:'10',x:0,y:0},v=>({kind:'circle',prefix,diameter:String(v.diameter),center:[Number(v.x),Number(v.y)]}));return;
+     transaction('Circle dimensions',[{key:'diameter',label:`Diameter (${content.units} or expression)`,type:'text'},{key:'x',label:`Center X (${content.units})`,type:'text',placeholder:'A number or expression, such as width - 10'},{key:'y',label:`Center Y (${content.units})`,type:'text'}],{diameter:'10',x:'0',y:'0'},v=>({kind:'circle',prefix,diameter:String(v.diameter),center:[String(v.x),String(v.y)]}));return;
     }
     if(id==='cad.sketch'||id==='cad.solid'){mode=id==='cad.sketch'?'sketch':'solid';refresh();return;}
     if(id==='view.fit'){viewport.fit();return;}
@@ -142,7 +155,8 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
     }
     if(id==='cad.rectangle'){
      const prefix=uid(),sketch=sketchOf(content)!;
-     transaction('Rectangle dimensions',[{key:'width',label:`Width (${content.units})`,type:'text'},{key:'height',label:`Height (${content.units})`,type:'text'},{key:'x',label:'Corner X (mm)',type:'number'},{key:'y',label:'Corner Y (mm)',type:'number'}],{width:sketch.dimensions[0]?.value.source??'100',height:sketch.dimensions[1]?.value.source??'60',x:firstSegment(sketch.entities)?.a[0]??0,y:firstSegment(sketch.entities)?.a[1]??0},v=>({kind:'rectangle',prefix,width:String(v.width),height:String(v.height),origin:[Number(v.x),Number(v.y)]}));return;
+     const first=firstSegment(sketch.entities),position=sketch.constraints.find(c=>c.entityIds[0]===first?.id&&c.position)?.position;
+     transaction('Rectangle dimensions',[{key:'width',label:`Width (${content.units})`,type:'text'},{key:'height',label:`Height (${content.units})`,type:'text'},{key:'x',label:`Corner X (${content.units})`,type:'text'},{key:'y',label:`Corner Y (${content.units})`,type:'text'}],{width:sketch.dimensions[0]?.value.source??'100',height:sketch.dimensions[1]?.value.source??'60',x:position?.x.source??`${first?.a[0]??0} mm`,y:position?.y.source??`${first?.a[1]??0} mm`},v=>({kind:'rectangle',prefix,width:String(v.width),height:String(v.height),origin:[String(v.x),String(v.y)]}));return;
     }
     if(id==='cad.lineCoordinates'){
      const id=uid();transaction('Line coordinates',['x1','y1','x2','y2'].map(key=>({key,label:`${key.toUpperCase()} (${content!.units})`,type:'text'})),{x1:'0',y1:'0',x2:'40',y2:'0'},v=>({kind:'line',id,a:[length(v.x1),length(v.y1)],b:[length(v.x2),length(v.y2)]}));
@@ -164,7 +178,16 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
     }catch(cause){exportMessage=`STL export failed: ${cause instanceof Error?cause.message:String(cause)}`;hint.dataset.exportState='error';}
     refresh(false);
    }
-   const dimensionEdit=(event:Event)=>{if(event.type==='keydown'&&!['Enter',' '].includes((event as KeyboardEvent).key))return;const target=event.target as Element;const id=target.closest('[data-dimension-id]')?.getAttribute('data-dimension-id');if(id){event.preventDefault();event.stopPropagation();edit({command:'cad.dimension',id});}};stage.addEventListener('dblclick',dimensionEdit);stage.addEventListener('keydown',dimensionEdit);
+   const dimensionEdit=(event:Event)=>{
+    if(event.type==='keydown'&&!['Enter',' '].includes((event as KeyboardEvent).key))return;
+    const target=event.target as Element,id=target.closest('[data-dimension-id]')?.getAttribute('data-dimension-id');
+    if(id){event.preventDefault();event.stopPropagation();edit({command:'cad.dimension',id});return;}
+    const entity=target.closest('[data-entity-id][role="button"]')?.getAttribute('data-entity-id');
+    if(event.type==='keydown'&&mode==='sketch'&&entity){
+     event.preventDefault();event.stopPropagation();const multi=(event as KeyboardEvent).ctrlKey||(event as KeyboardEvent).metaKey;
+     tool={...tool,tool:'select',anchor:null,cursor:null,selected:multi?(tool.selected.includes(entity)?tool.selected.filter(id=>id!==entity):[...tool.selected,entity]):[entity]};refresh();host.invalidate();
+    }
+   };stage.addEventListener('dblclick',dimensionEdit);stage.addEventListener('keydown',dimensionEdit);
    return{
     render(snapshot,nextView){
      const changed=snapshot?.identity!==current?.identity;current=snapshot;view=nextView;

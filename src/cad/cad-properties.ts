@@ -13,6 +13,8 @@
  * TESTBENCH  src/cad/cad-properties.test.ts -- run with: node --import tsx --test src/cad/cad-properties.test.ts
  */
 import { bossOf, laterOf, type CADContent } from './editable-cad-content.ts';
+import { evaluateDimension } from './dimension-expressions.ts';
+import { evaluateVariables } from './named-variables.ts';
 const NAMES: Record<string, string> = { horizontal: 'Horizontal', vertical: 'Vertical', fix: 'Fixed point', parallel: 'Parallel', perpendicular: 'Perpendicular', equal: 'Equal length', coincident: 'Coincident' };
 import type { CADBuild } from './cad-worker-client.ts';
 export type CADProperties = { content:CADContent|null;activeSketch?:string;selected:string[];state:'idle'|'busy'|'ready'|'error';message:string;result:CADBuild|null };
@@ -28,8 +30,11 @@ export function cadProperties(ports:{root:HTMLElement;onEdit(edit:PropertyEdit):
    const status=node('p',model.message);status.className='cad-build-status';status.dataset.state=model.state;status.setAttribute('role','status');root.append(status);
    if(!model.content){root.append(node('p','Choose New (Ctrl+N) to start a part. Draw a closed sketch, then extrude it.'));return;}
    const {content}=model,active=laterOf(content).find(f=>f.id===model.activeSketch&&f.kind==='pocket'),sketch=active&&active.kind==='pocket'?active.definition.sketch:content.graph.features[0].definition.sketch,boss=bossOf(content);
+   const display=(source:string,suffix=false)=>{try{const value=evaluateDimension({expression:{source,kind:'length'},context:evaluateVariables({variables:content.variables,units:content.units}).context}).value/(content.units==='inch'?25.4:1);return `${+value.toPrecision(8)}${content.units==='inch'?' in':suffix?' mm':''}`;}catch{return source;}};
    const units=node('div');units.className='cad-units';units.append(node('span','Units '));
    for(const u of ['mm','inch'] as const){const b=button(u==='mm'?'Metric (mm)':'Imperial (in)',{command:`cad.units.${u}`});b.setAttribute('aria-pressed',String(content.units===u));units.append(b);}root.append(units);
+   root.append(node('h3','Variables'),button('Add variable…',{command:'cad.addVariable'}));
+   for(const variable of content.variables){const row=node('div');row.className='cad-constraint';row.append(button(`${variable.name} = ${variable.expression.source}`,{command:'cad.editVariable',id:variable.name}),button(`Delete ${variable.name}`,{command:'cad.removeVariable',id:variable.name}));root.append(row);}
    root.append(node('h3','Feature tree'));
    const tree=node('ol');tree.className='cad-feature-tree';
    for(const f of content.graph.features){
@@ -37,15 +42,16 @@ export function cadProperties(ports:{root:HTMLElement;onEdit(edit:PropertyEdit):
     item.dataset.featureId=f.id;item.dataset.failed=String(failed);
     const current=f.kind==='sketch'?!active:f.id===model.activeSketch;
     if(f.kind==='sketch'){const b=button(`${failed?'! ':''}${f.name}`,{command:'cad.editSketch',id:f.id});b.setAttribute('aria-pressed',String(current));item.append(b,node('small','XY plane'));}
-    else if(f.kind==='extrude')item.append(button(`${failed?'! ':''}${f.name}`,{command:'cad.extrude'}),node('small',`${f.definition.extent.distance.source} ${content.units}`));
-    else if(f.kind==='pocket'){const b=button(`${failed?'! ':''}${f.name}`,{command:'cad.editSketch',id:f.id});b.setAttribute('aria-pressed',String(current));item.append(b,button('Depth…',{command:'cad.cutDepth',id:f.id}),button('Delete',{command:'cad.removeFeature',id:f.id}),node('small',f.definition.extent.kind==='through'?'Through all':`Depth ${f.definition.extent.distance.source} ${content.units}`));}
-    else item.append(button(`${failed?'! ':''}${f.name}`,{command:'cad.editEdges',id:f.id}),button('Delete',{command:'cad.removeFeature',id:f.id}),node('small',`${f.kind==='fillet'?'Radius':'Distance'} ${f.definition.size.source} ${content.units} · ${f.definition.edges} edges`));
+    else if(f.kind==='extrude')item.append(button(`${failed?'! ':''}${f.name}`,{command:'cad.extrude'}),node('small',display(f.definition.extent.distance.source,true)));
+    else if(f.kind==='pocket'){const b=button(`${failed?'! ':''}${f.name}`,{command:'cad.editSketch',id:f.id});b.setAttribute('aria-pressed',String(current));item.append(b,button('Depth…',{command:'cad.cutDepth',id:f.id}),button('Delete',{command:'cad.removeFeature',id:f.id}),node('small',f.definition.extent.kind==='through'?'Through all':`Depth ${display(f.definition.extent.distance.source,true)}`));}
+    else item.append(button(`${failed?'! ':''}${f.name}`,{command:'cad.editEdges',id:f.id}),button('Delete',{command:'cad.removeFeature',id:f.id}),node('small',`${f.kind==='fillet'?'Radius':'Distance'} ${display(f.definition.size.source,true)} · ${f.definition.edges} edges`));
     tree.append(item);
    }root.append(tree);
    const add=node('div');add.className='cad-add';add.append(button(boss?'Edit extrusion…':'Extrude…',{command:'cad.extrude'},content.graph.features[0].definition.sketch.entities.length>0),button('Cut…',{command:'cad.addCut'},!!boss),button('Fillet…',{command:'cad.fillet'},!!boss),button('Chamfer…',{command:'cad.chamfer'},!!boss));root.append(add);
    root.append(node('h3',active?`Dimensions (${active.name})`:'Dimensions'));
    if(!sketch.dimensions.length)root.append(node('p',active?'Draw circles or rectangles to cut. Circle dimensions and Rectangle dimensions place exact shapes.':'Use Rectangle dimensions or Circle dimensions to create a driven profile.'));
-   for(const d of sketch.dimensions){const b=button(`${d.kind==='diameter'?'Diameter':d.id.endsWith('width')?'Width':d.id.endsWith('height')?'Height':'Length'}: ${d.value.source}`,{command:'cad.dimension',id:d.id});b.dataset.editId=d.id;root.append(b);}
+   for(const d of sketch.dimensions){const b=button(`${d.kind==='diameter'?'Diameter':d.id.endsWith('width')?'Width':d.id.endsWith('height')?'Height':'Length'}: ${display(d.value.source)}`,{command:'cad.dimension',id:d.id});b.dataset.editId=d.id;b.title=`Expression: ${d.value.source}`;root.append(b);}
+   for(const c of sketch.constraints){if(!c.position)continue;const position=c.position,entity=sketch.entities.find(e=>e.id===c.entityIds[0]),label=entity?.kind==='circle'?'Circle center':position.entityIds.length===4?'Rectangle origin':'Fixed point';const b=button(`${label}: ${display(position.x.source)}, ${display(position.y.source)}`,{command:'cad.editPosition',id:c.id});b.dataset.positionId=c.id;b.title=`X: ${position.x.source}; Y: ${position.y.source}`;root.append(b);}
    const picked=model.selected.map(id=>sketch.entities.find(e=>e.id===id)).filter(Boolean),lines=picked.filter(e=>e!.kind==='segment').length;
    root.append(node('h3',model.selected.length?`Selection (${model.selected.length})`:'Selection · Ctrl-click to pick two'));
    const relate=node('div');relate.className='cad-relations';

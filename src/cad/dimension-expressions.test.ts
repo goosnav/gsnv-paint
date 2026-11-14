@@ -10,6 +10,30 @@ const variables: Variables = { width: { value: 40, kind: 'length' }, height: { v
 const evaluate = (source: string, kind: Kind = 'scalar', units: Units = 'mm', names: Variables = variables) =>
   evaluateDimension({ expression: { source, kind }, context: { units, variables: names } });
 const near = (actual: number, expected: number) => assert.ok(Math.abs(actual - expected) <= 8 * Number.EPSILON * Math.max(1, Math.abs(expected)), `${actual} != ${expected}`);
+
+test('C03 unit binding preserves arithmetic and variable dependencies in either unit system', () => {
+  for (const units of ['mm', 'inch'] as const) {
+    for (const [source, kind] of [
+      ['40', 'length'], [' width / 2 ', 'length'], ['width + 2', 'length'], ['2 + width + 3', 'length'],
+      ['-(2 + 3) * 4', 'length'], ['width + (10 / 2)', 'length'], ['2 * width + 4 × (2+3)', 'length'],
+      ['((2+3)*4)', 'length'], ['width + --2 + (height - 3)', 'length'], ['1inch + 2mm', 'length'],
+      ['90', 'angle'], ['angle + 90', 'angle'], ['(width / height) + 2', 'scalar'],
+    ] as const) {
+      const result = evaluateDimension({ expression: { source, kind }, context: { units, variables }, bindUnits: true });
+      assert.equal(typeof result.boundSource, 'string');
+      for (const next of ['mm', 'inch'] as const) {
+        const bound = evaluate(result.boundSource!, kind, next);
+        near(bound.value, result.value); assert.deepEqual(bound.dependencies, result.dependencies);
+      }
+      const rebound = evaluateDimension({ expression: { source: result.boundSource!, kind }, context: { units, variables }, bindUnits: true });
+      assert.equal(rebound.boundSource, result.boundSource, 'binding twice adds nothing');
+    }
+  }
+  const source = 'width / 2';
+  const bound = evaluateDimension({ expression: { source, kind: 'length' }, context: { units: 'mm', variables }, bindUnits: true });
+  assert.equal(bound.boundSource, source);
+  assert.equal(evaluate(bound.boundSource!, 'length', 'inch', { ...variables, width: { kind: 'length', value: 80 } }).value, 40);
+});
 function error(source: string, name: string, offset: number, token: string, kind: Kind = 'scalar', units: Units = 'mm', names: Variables = variables) {
   assert.throws(() => evaluate(source, kind, units, names), (cause: unknown) => {
     assert.ok(cause instanceof Error); assert.equal(cause.name, name);

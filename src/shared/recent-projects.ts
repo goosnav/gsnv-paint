@@ -1,12 +1,13 @@
 /**
- * PURPOSE    Keep recently edited projects in browser storage so work is never lost and can be reopened.
+ * PURPOSE    Keep edited projects in browser storage so they can be reopened until explicitly deleted.
  * KIND       SHELL
  * CONTRACT   IN: an IndexedDB factory. OUT: RecentPort {list,save,load,remove,clear}. save stores the
  *            native container parts of one document (keyed by document id) with its title, workspace and
- *            time; list returns metadata newest first; at most LIMIT entries are kept (oldest pruned).
+ *            time; list returns all metadata newest first. The caller may bound the recent menu,
+ *            but records are retained until remove/clear, including projects never exported to a file.
  *            RAISES: rejects with an Error when storage is unavailable or a record is malformed.
  * GUARANTEES Each save is one transaction; a failed save leaves the previous record intact.
- * TUNING     LIMIT=12, DB name/version below.
+ * TUNING     DB name/version below; menu limits must never delete stored records.
  * DECISIONS  D1: IndexedDB rather than localStorage: projects are binary and can be megabytes.
  * LIMITS     Browser storage can be evicted; File > Save to file is the durable copy.
  * TESTBENCH  src/shared/recent-projects.test.ts -- run with: node --import tsx --test src/shared/recent-projects.test.ts
@@ -19,7 +20,7 @@ export type RecentPort = {
   remove(id: string): Promise<void>;
   clear(): Promise<void>;
 };
-const DB = 'gsnv-paint-recent', STORE = 'projects', LIMIT = 12;
+const DB = 'gsnv-paint-recent', STORE = 'projects';
 
 export function recentProjects(factory: IDBFactory | undefined): RecentPort {
   let opening: Promise<IDBDatabase> | null = null;
@@ -38,15 +39,21 @@ export function recentProjects(factory: IDBFactory | undefined): RecentPort {
       tx.onerror = tx.onabort = () => reject(tx.error ?? new Error('Browser storage failed.'));
     });
   };
-  const all = () => run<(RecentEntry & { parts: Uint8Array[] })[]>('readonly', store => store.getAll());
   const meta = (r: RecentEntry): RecentEntry => ({ id: r.id, workspace: r.workspace, title: r.title, updated: r.updated });
   return {
-    async list() { return (await all()).map(meta).sort((a, b) => b.updated - a.updated); },
+    async list() {
+      const db = await open();
+      return new Promise<RecentEntry[]>((resolve, reject) => {
+        const entries: RecentEntry[] = [], tx = db.transaction(STORE, 'readonly'), request = tx.objectStore(STORE).openCursor();
+        // Discard each payload before advancing instead of keeping every project's bytes in memory.
+        request.onsuccess = () => { const cursor = request.result; if (cursor) { entries.push(meta(cursor.value as RecentEntry)); cursor.continue(); } };
+        tx.oncomplete = () => resolve(entries.sort((a, b) => b.updated - a.updated));
+        tx.onerror = tx.onabort = () => reject(tx.error ?? new Error('Stored projects could not be listed.'));
+      });
+    },
     async save(entry) {
       if (!entry.id || !['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio'].includes(entry.workspace) || !Number.isFinite(entry.updated) || !entry.parts.length) throw new Error('Invalid recent project.');
       await run('readwrite', store => { store.put({ ...meta(entry), parts: entry.parts.map(p => p.slice()) }); });
-      const stale = (await this.list()).slice(LIMIT);
-      if (stale.length) await run('readwrite', store => { for (const s of stale) store.delete(s.id); });
     },
     async load(id) {
       const record = await run<(RecentEntry & { parts: Uint8Array[] }) | undefined>('readonly', store => store.get(id));

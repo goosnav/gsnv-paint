@@ -199,14 +199,14 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
           range.type = 'range'; box.type = 'number'; for (const n of [range, box]) { n.min = '0'; n.max = '200'; n.step = '1'; n.value = String(Math.round(clip.volume * 100)); n.dataset.field = 'volume'; } box.setAttribute('aria-label', 'Volume (%)');
           vol.append(make('span', '', 'Volume (%)'), range, box); panel.append(vol);
           const buttons = make('div', 'video-buttons');
-          for (const [id, label] of [['video.moveEarlier', '◀ Earlier'], ['video.moveLater', 'Later ▶'], ['video.split', 'Split at playhead'], ['edit.delete', 'Delete clip']]) { const b = make('button', 'xp-button', label); b.type = 'button'; b.dataset.command = id!; buttons.append(b); }
+          for (const [id, label] of [['video.moveEarlier', '◀ Earlier'], ['video.moveLater', 'Later ▶'], ['video.split', 'Split at playhead'], ['edit.delete', 'Delete clip']]) { const b = make('button', 'xp-button', label); b.type = 'button'; b.dataset.videoCommand = id!; buttons.append(b); }
           panel.append(buttons);
         }
         section('Titles');
         for (const title of content?.titles ?? []) { const r = make('div', 'video-title-row'), edit = make('button', 'xp-button', 'Edit'), del = make('button', 'xp-button', 'Delete'); edit.type = del.type = 'button'; edit.dataset.editTitle = title.id; del.dataset.deleteTitle = title.id; r.append(make('span', '', `${title.text.split('\n')[0]} · ${title.start}s`), edit, del); panel.append(r); }
-        const add = make('button', 'xp-button', 'Add title…'); add.type = 'button'; add.dataset.command = 'video.addTitle'; add.disabled = !content?.clips.length; panel.append(add);
+        const add = make('button', 'xp-button', 'Add title…'); add.type = 'button'; add.dataset.videoCommand = 'video.addTitle'; add.disabled = !content?.clips.length; panel.append(add);
         section('Export');
-        const exp = make('button', 'xp-button', exporting ? 'Exporting…' : 'Export video…'); exp.type = 'button'; exp.dataset.command = 'video.export'; exp.disabled = !content?.clips.length || !!exporting; panel.append(exp, make('p', 'video-none', `${content?.width ?? 0} × ${content?.height ?? 0} px, 30 fps. Export plays the video once in real time.`));
+        const exp = make('button', 'xp-button', exporting ? 'Exporting…' : 'Export video…'); exp.type = 'button'; exp.dataset.videoCommand = 'video.export'; exp.disabled = !content?.clips.length || !!exporting; panel.append(exp, make('p', 'video-none', `${content?.width ?? 0} × ${content?.height ?? 0} px, 30 fps. Export plays the video once in real time.`));
       }
       function fit() {
         if (!content) return; const box = monitor.getBoundingClientRect(), s = Math.min((box.width - 24) / content.width, (box.height - 24) / content.height);
@@ -222,7 +222,7 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
       // Panel and timeline interactions.
       const onPanel = (event: Event) => {
         const target = event.target as HTMLElement & { value?: string }, clip = content?.clips.find(c => c.id === selected);
-        const command = target.closest<HTMLElement>('[data-command]')?.dataset.command; if (command && event.type === 'click') { run(command); return; }
+        const command = target.closest<HTMLElement>('[data-video-command]')?.dataset.videoCommand; if (command && event.type === 'click') { run(command); return; }
         const editTitle = target.closest<HTMLElement>('[data-edit-title]')?.dataset.editTitle, deleteTitle = target.closest<HTMLElement>('[data-delete-title]')?.dataset.deleteTitle;
         if (editTitle && event.type === 'click') { titleDialog(content!.titles.find(x => x.id === editTitle)); return; }
         if (deleteTitle && event.type === 'click') { commit({ kind: 'delete-title', id: deleteTitle }, 'Delete title'); return; }

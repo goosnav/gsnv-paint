@@ -728,7 +728,7 @@
     "verification": "V-CAD-015",
     "procedure": "Apply a fillet larger than the selected solid supports; assert the feature is flagged with a reason identifying the failed operation.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {
@@ -752,7 +752,7 @@
     "verification": "V-CAD-017",
     "procedure": "Create a 25.4 mm edge, switch document units to inch, and assert it displays as 1 inch without changing physical geometry; round-trip the document unit setting.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {
@@ -2012,7 +2012,7 @@
     "verification": "V-CAD-122",
     "procedure": "Model a 100 by 60 by 10 mm plate; fillet the four vertical corner edges R5; cut four diameter-6 through holes with each center 10 mm from its two neighboring edges; cut a centered 20 by 20 pocket 5 deep; assert B-rep volume differs from 56654.425 mm3 by no more than 5.6654425 mm3.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {
@@ -2024,7 +2024,7 @@
     "verification": "V-CAD-123",
     "procedure": "Change only the length-driving dimension from 100 to 120; rebuild dependent corner, edge-offset hole, and centered-pocket features; assert B-rep volume differs from 68654.425 mm3 by no more than 6.8654425 mm3.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {
@@ -2036,7 +2036,7 @@
     "verification": "V-CAD-124",
     "procedure": "Export the rebuilt 120 by 60 acceptance plate to STEP, re-import as a new non-parametric solid, and assert volume matches the pre-export B-rep within the documented exchange tolerance and remains within the acceptance-volume tolerance.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {

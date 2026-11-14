@@ -13,6 +13,12 @@ test('C56 sketch renderer and pointer conversion use the same view transform',()
  assert.deepEqual(view.point({x:470,y:190}),[100,60]);
  view.update({...model,view:{zoom:2,pan:{x:10,y:20}}});assert.deepEqual(view.point({x:950,y:400}),[100,60]);
  view.update({...model,selected:['r-edge-0']});assert.equal(root.querySelector('[data-entity-id="r-edge-0"]')?.getAttribute('data-selected'),'true');
+ const entity=root.querySelector<SVGElement>('[data-entity-id="r-edge-0"]')!;
+ assert.equal(entity.getAttribute('role'),'button');assert.equal(entity.getAttribute('tabindex'),'0');assert.equal(entity.getAttribute('aria-pressed'),'true');
+ assert.match(entity.getAttribute('aria-label')!,/Line 1/);entity.focus();
+ view.update({...model,selected:['r-edge-0','r-edge-1']});
+ assert.equal(dom.window.document.activeElement?.getAttribute('data-entity-id'),'r-edge-0','background redraw preserves geometry focus');
+ view.update({...model,content:{...content,units:'inch'}});assert.match(root.querySelector('[data-dimension-id]')?.textContent??'',/3\.9370079 in/);
  view.dispose();view.dispose();assert.equal(root.childElementCount,0);
 });
 test('C56 invalid hosts fail; unavailable rendering keeps sketch controls usable',()=>{

@@ -58,7 +58,7 @@ function openBrowser() {
 
 // A second launch reopens the running copy instead of starting a server on another origin.
 const alreadyRunning = await fetch(url, { signal: AbortSignal.timeout(1500) })
-  .then(async response => response.headers.get('cross-origin-opener-policy') === 'same-origin' && (await response.text()).includes('<title>gsnv-paint</title>'))
+  .then(async response => response.headers.get('cross-origin-opener-policy') === 'same-origin' && (await response.text()).includes('<meta name="application-name" content="gsnv-paint">'))
   .catch(() => false);
 if (alreadyRunning) {
   console.log(`gsnv-paint is already running at ${url}`);

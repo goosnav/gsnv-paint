@@ -96,7 +96,11 @@ export function bindInput({ root, context, onCommand, onGesture }: InputRequest)
     }
     if (failed) throw failure;
   };
-  const inputView = (event: Event, value: CommandContext) => !disposed && !event.defaultPrevented && value.target !== 'dialog' && value.viewRole !== 'none' && !inDialog(element(event.target)) && !interactive(element(event.target));
+  const inputView = (event: Event, value: CommandContext) => {
+    const target=element(event.target),control=target?.closest('button,a[href],[role="button"]');
+    const viewGeometry=control?.hasAttribute('data-view-geometry');
+    return !disposed && !event.defaultPrevented && value.target !== 'dialog' && value.viewRole !== 'none' && !inDialog(target) && !textEntry(target) && (!activationControl(target)||viewGeometry);
+  };
   const pressure = (event: PointerEvent) => event.pointerType === 'mouse' || !event.pointerType ? 1 : Number.isFinite(event.pressure) ? Math.max(0, Math.min(1, event.pressure)) : 0;
   const down = (event: PointerEvent) => {
     if (disposed || event.defaultPrevented || ![0, 1, 2].includes(event.button)) return;

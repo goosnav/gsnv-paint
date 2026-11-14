@@ -179,7 +179,8 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     const index = menuNodes.findIndex(item => item.button === target);
     if (target.dataset.workspace && ['ArrowLeft', 'ArrowRight'].includes(event.key)) {
       const currentIndex = workspaceButtons.indexOf(target as HTMLButtonElement);
-      const next = workspaceButtons[(currentIndex + (event.key === 'ArrowRight' ? 1 : 2)) % 3]!;
+      const count = workspaceButtons.length;
+      const next = workspaceButtons[(currentIndex + (event.key === 'ArrowRight' ? 1 : count - 1)) % count]!;
       next.focus(); onWorkspace(next.dataset.workspace as Workspace); event.preventDefault(); return;
     }
     if (event.key === 'Escape' && activeMenu >= 0) { closeMenu(true); event.preventDefault(); event.stopPropagation(); return; }

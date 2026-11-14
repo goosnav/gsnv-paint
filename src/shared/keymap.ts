@@ -4,7 +4,8 @@
  * CONTRACT   IN: CommandEvent with normalized KeyboardEvent.key and explicit focus role.
  *            OUT: {command,preventDefault}; stable command ID or null for unhandled keys.
  *            Text editing stays native; dialogs own Enter/Escape; Video playback Space
- *            is limited to its timeline, while 2D views use Space to hold pan.
+ *            is limited to its timeline, while 2D views use Space to hold pan. In Document and
+ *            Slides, Ctrl+Z/Y while typing undo the document (their text edits are document history).
  *            RAISES: TypeError for invalid workspace, context, key or modifier types.
  * GUARANTEES Pure, deterministic, no input mutation, no browser-event side effects.
  * TUNING     COMMON, CAD_KEYS, IMAGE_KEYS, PHOTO_KEYS and VIDEO_KEYS are shortcut tables; change only with shortcut review.
@@ -60,6 +61,8 @@ export function keymap(event: CommandEvent): CommandResult {
     return result(key === 'Escape' ? 'dialog.cancel' : key === 'Enter' ? 'dialog.confirm' : null);
   }
   if (event.target === 'text') {
+    // Rich-text workspaces keep one history: typing commits to the document, so undo must be the document's.
+    if (primary && (event.workspace === 'document' || event.workspace === 'slides') && (key === 'z' || key === 'y')) return result(key === 'y' || event.shift ? 'edit.redo' : 'edit.undo');
     return result(primary && !event.shift && ['s', 'o', 'n'].includes(key) ? COMMON[key] : null);
   }
   if (primary) {

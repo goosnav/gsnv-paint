@@ -27,7 +27,7 @@ function resource() {
 }
 function fixture(workspace: Workspace) {
   let commits: ((width: number, baseIdentity?: string) => void) | undefined; let invalidate = () => {}; let label = 'Change fixture'; let opener: ((value: AppDocument) => Promise<boolean>) | undefined;
-  let identity = ''; let current: AppDocument | undefined; let encoded = 0; let disposed = 0;
+  let identity = ''; let current: AppDocument | undefined; let encoded = 0; let disposed = 0; let staged: number | undefined;
   const gestures: Gesture[] = [];
   const adapter: WorkspaceAdapter = {
     create: () => ({ id: 'fixture-id', title: `${workspace} fixture`, format: `gsnv-${workspace}`, version: 1, value: { width: 10 } }),
@@ -40,17 +40,18 @@ function fixture(workspace: Workspace) {
     mount(host) {
       const output = host.root.ownerDocument.createElement('output'); host.root.append(output);
       const change = (width: number, baseIdentity = identity) => { assert.ok(current); host.commit({ ...current, value: { width } }, 'Change fixture width', baseIdentity); };
+      const flush = () => { if (staged !== undefined) { const width = staged; staged = undefined; change(width); } };
       commits = change; invalidate = () => host.invalidate(); opener = value => host.open(value);
       return {
         render(document, view) { current = document; identity = document?.identity ?? ''; output.textContent = JSON.stringify({ width: (document?.value as { width: number } | undefined)?.width ?? null, view }); },
         model: () => ({ menus: [{ id: 'fixture', label: 'Fixture', items: [{ id: 'fixture.change', label, shortcut: '', enabled: !!current }] }], tools: [], panels: [] }),
         context: () => ({ viewRole: workspace === 'cad' ? 'sketch2d' : 'canvas2d', activeTool: 'fixture', status: 'Development fixture.' }),
         command() { change((current!.value as { width: number }).width + 1); },
-        gesture(value) { gestures.push(value); }, dispose() { disposed++; },
+        gesture(value) { gestures.push(value); }, flush, dispose() { flush(); disposed++; },
       };
     },
   };
-  return { adapter, gestures, change: (width: number, baseIdentity?: string) => commits!(width, baseIdentity), relabel(next: string) { label = next; invalidate(); }, open: (value: AppDocument) => opener!(value), get encoded() { return encoded; }, get disposed() { return disposed; } };
+  return { adapter, gestures, change: (width: number, baseIdentity?: string) => commits!(width, baseIdentity), stage(width: number) { staged = width; }, relabel(next: string) { label = next; invalidate(); }, open: (value: AppDocument) => opener!(value), get encoded() { return encoded; }, get disposed() { return disposed; } };
 }
 function nativeHandle(value: File, close: () => Promise<void> = async () => {}) {
   const writes: Uint8Array[] = []; let permission = 'granted'; let requested = 0;
@@ -129,7 +130,129 @@ test('A-SHELL with recent projects: New never prompts, edits autosave to File > 
   assert.deepEqual((await recent.list()).map(e => [e.id, e.workspace, e.title]), [[first.id, 'cad', 'cad fixture']]);
   s.app.snapshot(); await s.app.dispatch('file.recent.0'); assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 55 });
   assert.match(s.root.querySelector('[data-command="file.recent.0"]')!.textContent!, /cad fixture \(CAD\)/);
-  await s.app.dispatch('file.clearRecent'); assert.deepEqual(await recent.list(), []); s.close();
+  await s.app.dispatch('file.clearRecent');
+  const checkbox = s.root.querySelector<HTMLInputElement>('dialog input[type="checkbox"]')!; assert.ok(checkbox, 'deleting stored work requires explicit confirmation');
+  checkbox.checked = true; checkbox.dispatchEvent(new s.window.Event('change', { bubbles: true }));
+  [...s.root.querySelectorAll<HTMLButtonElement>('dialog button')].find(button => button.textContent === 'OK')!.click();
+  await s.app.idle(); assert.deepEqual(await recent.list(), []); s.close();
+});
+
+for (const failure of ['unavailable', 'NotAllowedError', 'QuotaExceededError']) test(`A-SHELL ${failure} recent backup keeps dirty work on New and Open and warns on unload`, async () => {
+  const recent = recentProjects(failure === 'unavailable' ? undefined : new FakeFactory());
+  if (failure !== 'unavailable') recent.save = async () => { throw new DOMException('Dummy storage failure', failure); };
+  const s = setup({ recent });
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); s.fixtures.cad.change(47);
+    const original = s.app.snapshot().documents.cad;
+    await s.app.dispatch('file.new'); assert.equal(s.app.snapshot().documents.cad, original, 'failed backup cannot discard the current work');
+    assert.match(status(s.root), /save.*file|file.*save/i);
+    s.files.showOpenFilePicker = async () => [nativeHandle(fileFor(packageFor('cad', 80, 'other'))).handle];
+    await s.app.dispatch('file.open'); assert.equal(s.app.snapshot().documents.cad, original);
+    const unload = new s.window.Event('beforeunload', { cancelable: true }); s.window.dispatchEvent(unload);
+    assert.equal(unload.defaultPrevented, true);
+    await s.app.idle();
+  } finally { s.close(); }
+});
+
+test('A-SHELL unload protects the exact dirty revision until its recent backup succeeds', async () => {
+  const recent = recentProjects(new FakeFactory()), s = setup({ recent });
+  const unload = () => { const event = new s.window.Event('beforeunload', { cancelable: true }); s.window.dispatchEvent(event); return event.defaultPrevented; };
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); s.fixtures.cad.change(55);
+    assert.equal(unload(), true, 'a requested backup is not a completed backup');
+    await s.app.idle(); assert.equal(unload(), false, 'the exact stored revision can close without a warning');
+    s.fixtures.cad.stage(56);
+    assert.equal(unload(), true, 'pending view edits must flush before checking durability');
+    assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 56 });
+    await s.app.idle(); assert.equal(unload(), false);
+  } finally { s.close(); }
+});
+
+test('A-SHELL a changed revision during replacement backup stays open', async () => {
+  const recent = recentProjects(new FakeFactory()), realSave = recent.save.bind(recent), entered = deferred(), release = deferred();
+  recent.save = async entry => { entered.resolve(); await release.promise; await realSave(entry); };
+  const s = setup({ recent });
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); s.fixtures.cad.change(41);
+    const opening = s.fixtures.cad.open({ id: 'replacement', title: 'Replacement', format: 'gsnv-cad', version: 1, value: { width: 80 } });
+    await entered.promise; s.fixtures.cad.change(42); release.resolve();
+    assert.equal(await opening, false); assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 42 });
+    assert.match(status(s.root), /changed/i);
+  } finally { release.resolve(); await s.app.idle(); s.close(); }
+});
+
+test('A-SHELL overlapping recent writes cannot leave an older revision stored last', async () => {
+  const recent = recentProjects(new FakeFactory()), realSave = recent.save.bind(recent), entered = deferred(), release = deferred(), completed = deferred(); let saves = 0;
+  recent.save = async entry => { const position = ++saves; if (position === 1) { entered.resolve(); await release.promise; } await realSave(entry); if (position === 2) completed.resolve(); };
+  const s = setup({ recent });
+  const unload = () => s.window.dispatchEvent(new s.window.Event('beforeunload', { cancelable: true }));
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); s.fixtures.cad.change(71); unload(); await entered.promise;
+    s.fixtures.cad.change(72); unload(); await turn(); release.resolve(); await completed.promise; await s.app.idle();
+    const stored = nativeContainer({ op: 'decode', parts: await recent.load('fixture-id') });
+    assert.equal((stored.project.content as { width: number }).width, 72);
+  } finally { release.resolve(); s.close(); }
+});
+
+test('A-SHELL Undo cannot acknowledge a stored revision while queued writes can still replace it', async () => {
+  const recent = recentProjects(new FakeFactory()), realSave = recent.save.bind(recent), firstEntered = deferred(), firstRelease = deferred(), secondEntered = deferred(), secondRelease = deferred(); let saves = 0;
+  recent.save = async entry => {
+    const position = ++saves;
+    if (position === 1) { firstEntered.resolve(); await firstRelease.promise; }
+    if (position === 2) { secondEntered.resolve(); await secondRelease.promise; }
+    await realSave(entry);
+  };
+  const s = setup({ recent });
+  const unload = () => { const event = new s.window.Event('beforeunload', { cancelable: true }); s.window.dispatchEvent(event); return event.defaultPrevented; };
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); s.fixtures.cad.change(71); unload(); await firstEntered.promise;
+    s.fixtures.cad.change(72); unload(); await s.app.dispatch('edit.undo'); unload();
+    firstRelease.resolve(); await secondEntered.promise;
+    assert.equal(unload(), true, 'an older completed write cannot acknowledge the final Undo state while later writes are queued');
+    secondRelease.resolve(); await s.app.idle(); assert.equal(unload(), false);
+    const stored = nativeContainer({ op: 'decode', parts: await recent.load('fixture-id') });
+    assert.equal((stored.project.content as { width: number }).width, 71);
+  } finally { firstRelease.resolve(); secondRelease.resolve(); await s.app.idle(); s.close(); }
+});
+
+test('A-SHELL disposal accepts pending view edits and finishes their stored backup', async () => {
+  const recent = recentProjects(new FakeFactory()), s = setup({ recent });
+  await s.app.ready; await s.app.dispatch('file.new'); s.fixtures.cad.stage(63);
+  s.app.dispose(); await s.app.idle();
+  assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 63 });
+  const stored = nativeContainer({ op: 'decode', parts: await recent.load('fixture-id') });
+  assert.equal((stored.project.content as { width: number }).width, 63);
+  assert.equal(s.fixtures.cad.disposed, 1); s.dom.window.close();
+});
+
+test('A-SHELL all retained projects remain reachable beyond the newest 12 menu entries', async () => {
+  const recent = recentProjects(new FakeFactory());
+  for (let i = 0; i < 14; i++) await recent.save({ id: `project-${i}`, title: `Project ${i}`, workspace: 'cad', updated: i, parts: nativeContainer({ op: 'encode', package: packageFor('cad', i + 10, `project-${i}`) }).parts });
+  const s = setup({ recent });
+  try {
+    await s.app.ready;
+    assert.equal(s.root.querySelectorAll('[data-command^="file.recent."]').length, 12);
+    await s.app.dispatch('file.stored'); const choice = s.root.querySelector<HTMLSelectElement>('dialog select')!; assert.ok(choice);
+    assert.equal(choice.options.length, 14); choice.value = 'project-0'; choice.dispatchEvent(new s.window.Event('change', { bubbles: true }));
+    [...s.root.querySelectorAll<HTMLButtonElement>('dialog button')].find(button => button.textContent === 'OK')!.click();
+    await s.app.idle(); assert.equal(s.app.snapshot().documents.cad!.id, 'project-0');
+    assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 10 });
+  } finally { s.close(); }
+});
+
+test('A-SHELL opening an older file with the same project id preserves displaced unsaved work', async () => {
+  const recent = recentProjects(new FakeFactory()), s = setup({ recent });
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); s.fixtures.cad.change(91);
+    s.files.showOpenFilePicker = async () => [nativeHandle(fileFor(packageFor('cad', 10))).handle];
+    await s.app.dispatch('file.open');
+    assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 91 });
+    assert.match(status(s.root), /replace its stored copy.*Save.*current version first/);
+    s.window.dispatchEvent(new s.window.Event('beforeunload', { cancelable: true })); await s.app.idle();
+    await s.app.dispatch('file.recent.0'); assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 91 }, 'selecting the current stored project is harmless');
+    await s.app.dispatch('file.save'); await s.app.dispatch('file.open');
+    assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 10 }, 'an exported current version permits opening the other copy');
+  } finally { s.close(); }
 });
 
 test('A-SHELL real sessions keep 100 edits, independent workspaces and exactly-once keyboard history', async () => {

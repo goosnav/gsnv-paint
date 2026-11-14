@@ -37,7 +37,9 @@ export function cadViewport(host:HTMLElement):Handle {
   const screen=(p:readonly[number,number])=>({x:(base().x+p[0]*scale)*(model?.view.zoom??1)+(model?.view.pan.x??0),y:(base().y-p[1]*scale)*(model?.view.zoom??1)+(model?.view.pan.y??0)});
   function element(tag:string,attrs:Record<string,string|number>={},text?:string){const node=document.createElementNS(ns,tag);for(const[k,v]of Object.entries(attrs))node.setAttribute(k,String(v));if(text!==undefined)node.textContent=text;return node;}
   function drawSketch(){
-    if(!model)return;svg.replaceChildren();const {width,height}=size();svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
+    if(!model)return;
+    const focused=document.activeElement,focusKey=focused&&svg.contains(focused)?focused.getAttribute('data-entity-id')??focused.getAttribute('data-dimension-id'):null;
+    svg.replaceChildren();const {width,height}=size();svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
     const step=10**Math.ceil(Math.log10(24/(scale*model.view.zoom))),zero=screen([0,0]),pitch=step*scale*model.view.zoom;
     for(let x=((zero.x%pitch)+pitch)%pitch;x<width;x+=pitch)svg.append(element('line',{x1:x,y1:0,x2:x,y2:height,stroke:'#dfe5ee'}));
     for(let y=((zero.y%pitch)+pitch)%pitch;y<height;y+=pitch)svg.append(element('line',{x1:0,y1:y,x2:width,y2:y,stroke:'#dfe5ee'}));
@@ -51,12 +53,14 @@ export function cadViewport(host:HTMLElement):Handle {
     for(const entity of [...model.entities,...model.preview])if(entity.kind==='segment'){
       const a=screen(entity.a),b=screen(entity.b),selected=model.selected.includes(entity.id),preview=model.preview.includes(entity);
       const group=element('g',{'data-entity-id':entity.id,'data-selected':String(selected)});
+      if(!preview){group.setAttribute('role','button');group.setAttribute('data-view-geometry','');group.setAttribute('tabindex','0');group.setAttribute('aria-pressed',String(selected));group.setAttribute('aria-label',`Line ${model.entities.indexOf(entity)+1}. Enter selects; Ctrl+Enter adds or removes selection.`);}
       const attrs={x1:a.x,y1:a.y,x2:b.x,y2:b.y};group.append(element('line',{...attrs,stroke:'transparent','stroke-width':14}));
       group.append(element('line',{...attrs,stroke:selected?'#ff7a00':color,'stroke-width':selected?3:2,'stroke-dasharray':preview?'5 4':'none','pointer-events':'none'}));
       for(const p of [a,b])group.append(element('circle',{cx:p.x,cy:p.y,r:3,fill:'#fff',stroke:color,'pointer-events':'none'}));svg.append(group);
     }else if(entity.kind==='circle'){
       const c=screen(entity.center),r=entity.radius*scale*model.view.zoom,selected=model.selected.includes(entity.id),preview=model.preview.includes(entity);
       const group=element('g',{'data-entity-id':entity.id,'data-selected':String(selected)});
+      if(!preview){group.setAttribute('role','button');group.setAttribute('data-view-geometry','');group.setAttribute('tabindex','0');group.setAttribute('aria-pressed',String(selected));group.setAttribute('aria-label',`Circle ${model.entities.indexOf(entity)+1}. Enter selects; Ctrl+Enter adds or removes selection.`);}
       group.append(element('circle',{cx:c.x,cy:c.y,r,fill:'none',stroke:'transparent','stroke-width':14}));
       group.append(element('circle',{cx:c.x,cy:c.y,r,fill:'none',stroke:selected?'#ff7a00':color,'stroke-width':selected?3:2,'stroke-dasharray':preview?'5 4':'none','pointer-events':'none'}));
       group.append(element('path',{d:`M${c.x-4} ${c.y}h8M${c.x} ${c.y-4}v8`,stroke:color,'pointer-events':'none'}));svg.append(group);
@@ -69,13 +73,16 @@ export function cadViewport(host:HTMLElement):Handle {
     }
     for(const d of sketch?.dimensions??[]){
       const e=model.entities.find(e=>e.id===d.entityIds[0]);if(!e||e.kind==='point')continue;
+      const measured=e.kind==='circle'?e.radius*2:Math.hypot(e.b[0]-e.a[0],e.b[1]-e.a[1]);
+      const display=`${+(measured/(model.content?.units==='inch'?25.4:1)).toPrecision(8)}${model.content?.units==='inch'?' in':''}`;
       if(e.kind==='circle'){
         const p=screen([e.center[0]+e.radius*Math.SQRT1_2,e.center[1]+e.radius*Math.SQRT1_2]);
-        svg.append(element('text',{'data-dimension-id':d.id,role:'button',tabindex:0,'aria-label':`Edit dimension ${d.value.source}`,x:p.x+6,y:p.y-6,fill:'#000','font-size':13,class:'cad-dimension'},`⌀ ${d.value.source}`));continue;
+        svg.append(element('text',{'data-dimension-id':d.id,role:'button',tabindex:0,'aria-label':`Edit dimension ${d.value.source}`,x:p.x+6,y:p.y-6,fill:'#000','font-size':13,class:'cad-dimension'},`⌀ ${display}`));continue;
       }
       const a=screen(e.a),b=screen(e.b),horizontal=Math.abs(b.x-a.x)>=Math.abs(b.y-a.y);
-      svg.append(element('text',{'data-dimension-id':d.id,role:'button',tabindex:0,'aria-label':`Edit dimension ${d.value.source}`,x:(a.x+b.x)/2+(horizontal?0:20),y:(a.y+b.y)/2+(horizontal?23:0),fill:'#000','font-size':13,'text-anchor':'middle',class:'cad-dimension'},d.value.source));
+      svg.append(element('text',{'data-dimension-id':d.id,role:'button',tabindex:0,'aria-label':`Edit dimension ${d.value.source}`,x:(a.x+b.x)/2+(horizontal?0:20),y:(a.y+b.y)/2+(horizontal?23:0),fill:'#000','font-size':13,'text-anchor':'middle',class:'cad-dimension'},display));
     }
+    if(focusKey){const replacement=[...svg.querySelectorAll<SVGElement>('[data-entity-id],[data-dimension-id]')].find(node=>node.getAttribute('data-entity-id')===focusKey||node.getAttribute('data-dimension-id')===focusKey);(replacement??host).focus();}
   }
   function clearSolid(){
     if(mesh){scene.remove(mesh);mesh.geometry.dispose();(mesh.material as THREE.Material).dispose();mesh=null;}

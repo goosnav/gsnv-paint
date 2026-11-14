@@ -44,6 +44,22 @@ test('CAD-APP pointer tools and invalid sketch produce a visible failure with no
  }finally{await page.close();await server.close();}
 });
 
+test('CAD-APP keyboard selects one or several sketch entities without losing focus on redraw',async({page})=>{
+ test.setTimeout(60000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}});
+ try{
+  await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();
+  await page.keyboard.press('Control+n');await tool(page,'cad.rectangle');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();await ready(page);
+  const lines=page.locator('.cad-sketch [data-entity-id][role="button"]');await expect(lines).toHaveCount(4);
+  await lines.nth(0).focus();await page.keyboard.press('Enter');await expect(lines.nth(0)).toBeFocused();await expect(lines.nth(0)).toHaveAttribute('aria-pressed','true');
+  await page.keyboard.press('Tab');await expect(lines.nth(1)).toBeFocused();await page.keyboard.press('Control+Enter');
+  await expect(page.locator('.cad-properties')).toContainText('Selection (2)');await expect(lines.nth(1)).toBeFocused();
+  await page.keyboard.press('Control+Enter');await expect(page.locator('.cad-properties')).toContainText('Selection (1)');
+  await page.keyboard.press('Space');await expect(lines.nth(0)).toHaveAttribute('aria-pressed','false');await expect(lines.nth(1)).toHaveAttribute('aria-pressed','true');
+  const dimension=page.locator('.cad-sketch [data-dimension-id]').first();await dimension.focus();await page.keyboard.press('Enter');await expect(page.getByRole('dialog')).toBeVisible();await ready(page);
+  await page.keyboard.press('Escape');await ready(page);await expect(dimension).toBeFocused();
+ }finally{await page.close();await server.close();}
+});
+
 test('CAD-APP exact sketch tools, H/V solving and displayed dimension editing',async({page,context})=>{
  test.setTimeout(60000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}});
  await context.addInitScript(()=>{Object.defineProperty(window,'showSaveFilePicker',{value:undefined});Object.defineProperty(window,'showOpenFilePicker',{value:undefined});});
@@ -80,7 +96,7 @@ test('CAD-APP plate with circular holes extrudes exact B-rep volume and exports 
  await page.mouse.click(cx+50*pitch,cy);await page.mouse.click(cx+50*pitch+4*pitch,cy);await ready(page);
  await expect(page.locator('[data-entity-id$="-circle"]')).toHaveCount(2);
  const diameters=await page.locator('.cad-properties button[data-edit-id$="-diameter"]').allTextContents();expect(diameters).toHaveLength(2);
- const drawn=Number(/Diameter: ([\d.]+) mm/.exec(diameters[1]!)![1]);expect(Math.abs(drawn-8)).toBeLessThan(0.2);
+ const displayed=/^Diameter: ([\d.]+)$/.exec(diameters[1]!);expect(displayed).not.toBeNull();const drawn=Number(displayed![1]);expect(Math.abs(drawn-8)).toBeLessThan(0.2);
  await volume(page,((6000-25*Math.PI-Math.PI*(drawn/2)**2)*10).toFixed(3));
  await page.getByRole('menuitem',{name:'Solid',exact:true}).click();const downloading=page.waitForEvent('download');await page.getByRole('menuitem',{name:'Export STL (3D printing)'}).click();
  const download=await downloading,bytes=await readFile((await download.path())!);expect(download.suggestedFilename()).toBe('Untitled part.stl');
@@ -88,6 +104,18 @@ test('CAD-APP plate with circular holes extrudes exact B-rep volume and exports 
  const z=new Set<number>();for(let t=0;t<triangles;t++)for(let v=0;v<3;v++)z.add(Math.round(bytes.readFloatLE(84+t*50+12+v*12+8)*1000)/1000);expect([...z].sort((a,b)=>a-b)).toEqual([0,10]);
  await page.keyboard.press('Control+z');await volume(page,(60000-250*Math.PI).toFixed(3));
  expect(errors).toEqual([]);
+ }finally{await page.close();await server.close();}
+});
+
+test('CAD-APP failing fillet is flagged, readable and editable without a stale solid',async({page})=>{
+ test.setTimeout(60000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}});
+ try{
+  await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
+  await tool(page,'cad.rectangle');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();await ready(page);await page.keyboard.press('e');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();await volume(page,'60000.000');
+  await page.locator('.cad-properties').getByRole('button',{name:'Fillet…',exact:true}).click();await page.getByRole('dialog').getByLabel('Radius (mm or expression)').fill('100');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();
+  await expect(page.locator('.cad-build-status')).toHaveAttribute('data-state','error');await expect(page.locator('.cad-build-status')).toContainText(/Fillet 1: .+/);await expect(page.locator('.cad-feature-tree li[data-failed="true"]')).toContainText('Fillet 1');
+  await expect(page.locator('.cad-properties')).not.toContainText('60000.000 mm³');
+  await page.locator('.cad-properties').getByRole('button',{name:'! Fillet 1',exact:true}).click();await page.getByRole('dialog').getByLabel('Radius (mm or expression)').fill('5');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();await ready(page);await volume(page,(60000-(4-Math.PI)*250).toFixed(3));
  }finally{await page.close();await server.close();}
 });
 

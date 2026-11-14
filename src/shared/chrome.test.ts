@@ -90,6 +90,22 @@ test('S10 workspace controls emit the exact target and reflect updates', () => {
   assert.equal(chrome.viewport.getAttribute('aria-label'), 'Image workspace view');
 });
 
+test('S10 workspace keyboard navigation reaches every tab and wraps in both directions', () => {
+  const f = fixture(); const chrome = createChrome(f.args);
+  const tabs = [...f.root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+  tabs[0]!.focus();
+  for (const direction of ['ArrowRight', 'ArrowLeft']) {
+    for (let i = 1; i <= tabs.length; i++) {
+      const expected = tabs[(direction === 'ArrowRight' ? i : tabs.length - i) % tabs.length]!;
+      const event = new f.dom.window.KeyboardEvent('keydown', { key: direction, bubbles: true, cancelable: true });
+      f.document.activeElement!.dispatchEvent(event);
+      assert.equal(f.document.activeElement, expected); assert.equal(f.workspaces.at(-1), expected.dataset.workspace);
+      assert.equal(event.defaultPrevented, true);
+    }
+  }
+  chrome.dispose();
+});
+
 test('S10 updates retain viewport, mounted renderer, panel content and focused control identity', () => {
   const f = fixture(); const chrome = createChrome(f.args);
   const viewport = chrome.viewport;

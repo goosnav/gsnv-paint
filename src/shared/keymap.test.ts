@@ -40,6 +40,12 @@ test('S05 ordinary text editing stays native; document file shortcuts still work
       assert.deepEqual(mapped(key, { target: 'text', workspace, ctrl: true }), handled(command));
     }
   }
+  for (const workspace of ['document', 'slides'] as const) {
+    assert.deepEqual(mapped('z', { target: 'text', workspace, ctrl: true }), handled('edit.undo'));
+    assert.deepEqual(mapped('y', { target: 'text', workspace, ctrl: true }), handled('edit.redo'));
+    assert.deepEqual(mapped('Z', { target: 'text', workspace, ctrl: true, shift: true }), handled('edit.redo'));
+    assert.deepEqual(mapped('b', { target: 'text', workspace, ctrl: true }), unhandled);
+  }
 });
 
 test('S05 dialogs map Enter and Escape and shield workspace commands', () => {

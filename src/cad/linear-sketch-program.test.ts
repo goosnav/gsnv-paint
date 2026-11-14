@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { editableCADContent } from './editable-cad-content.ts';
 import { editCADContent } from './edit-cad-content.ts';
 import { linearSketchProgram } from './linear-sketch-program.ts';
+import { evaluateVariables } from './named-variables.ts';
 const context = { units: 'mm', variables: {} } as const;
 test('C52 exact one-line program golden; H/V and length map to native primitives', () => {
   let content = editCADContent({content:editableCADContent({operation:'new'}),action:{kind:'line',id:'e',a:[0,0],b:[10,0]}});
@@ -68,4 +69,54 @@ test('C52 parallel, perpendicular, equal and coincident constraints solve with t
     assert.ok(Math.abs(da[1]!) < 1e-6, 'a stays horizontal'); assert.ok(Math.abs(da[0]!*db[0]! + da[1]!*db[1]!) < 1e-6, 'perpendicular');
     assert.ok(Math.abs(Math.hypot(...da) - Math.hypot(...db)) < 1e-6, 'equal length'); assert.ok(Math.hypot(a!.b[0]-b!.a[0], a!.b[1]-b!.a[1]) < 1e-6, 'coincident');
   } finally { gcs.destroy_gcs_module(); }
+});
+
+test('C52 real PlaneGCS rebuilds dependent positions without reversing a translated rectangle', async () => {
+  const { make_gcs_wrapper } = await import('@salusoft89/planegcs');
+  let content = editCADContent({ content: editableCADContent({ operation: 'new' }), action: { kind: 'variable', name: 'width', source: '100' } });
+  content = editCADContent({ content, action: { kind: 'rectangle', prefix: 'r', width: '20', height: '10', origin: ['width / 2 - 10','-5'] } });
+  content = editCADContent({ content, action: { kind: 'circle', prefix: 'h', diameter: '6', center: ['width - 10','10'] } });
+  const originalSeeds = structuredClone(content.graph.features[0].definition.sketch.entities);
+  const gcs = await make_gcs_wrapper(new URL('../../node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm', import.meta.url).pathname);
+  try {
+    for (const width of [100,120,400,-100]) {
+      content = editCADContent({ content, action: { kind: 'variable', name: 'width', source: String(width) } });
+      content = editableCADContent({ operation: 'read', value: JSON.parse(JSON.stringify(content)) });
+      const sketch = content.graph.features[0].definition.sketch, before = JSON.stringify(sketch);
+      const p = linearSketchProgram({ sketch, context: evaluateVariables({ variables: content.variables, units: content.units }).context, tolerance: content.tolerance.linearMm });
+      assert.equal(p.primitives.filter(v => v.type === 'point').length, 5, 'rectangle corners continue sharing solver points');
+      gcs.clear_data(); gcs.push_primitives_and_params(p.primitives); assert.equal(gcs.solve(), 0); gcs.apply_solution();
+      assert.equal(gcs.gcs.dof(), 0);
+      const entities = p.accept(gcs.sketch_index.get_primitives()), first = entities[0], second = entities[1], hole = entities[4];
+      assert.equal(first!.kind, 'segment'); assert.equal(second!.kind, 'segment'); assert.equal(hole!.kind, 'circle');
+      if (first!.kind !== 'segment' || second!.kind !== 'segment' || hole!.kind !== 'circle') throw new Error('fixture');
+      assert.deepEqual(first!.a, [width / 2 - 10,-5]); assert.deepEqual(hole!.center, [width - 10,10]);
+      assert.ok(Math.abs(first!.b[0] - first!.a[0] - 20) < 1e-7, 'rightward width is preserved after large translations');
+      assert.ok(Math.abs(second!.b[1] - second!.a[1] - 10) < 1e-7, 'upward height is preserved');
+      assert.deepEqual(sketch.entities, originalSeeds); assert.equal(JSON.stringify(sketch), before);
+    }
+  } finally { gcs.destroy_gcs_module(); }
+});
+
+test('C52 endpoint b can anchor a full translated group and legacy fixed points stay numeric', () => {
+  const content = editCADContent({ content: editableCADContent({ operation: 'new' }), action: { kind: 'rectangle', prefix: 'r', width: '20', height: '10' } });
+  const sketch = content.graph.features[0].definition.sketch, fixed = sketch.constraints.find(c => c.kind === 'fix')!;
+  fixed.pointRoles = ['b']; fixed.position!.x.source = '100'; fixed.position!.y.source = '-20';
+  const p = linearSketchProgram({ sketch, context, tolerance: content.tolerance.linearMm });
+  const first = p.accept(p.primitives)[0]; assert.equal(first!.kind, 'segment');
+  if (first!.kind !== 'segment') throw new Error('fixture');
+  assert.deepEqual(first!.a, [80,-20]); assert.deepEqual(first!.b, [100,-20]);
+  delete fixed.position;
+  const legacy = linearSketchProgram({ sketch, context, tolerance: content.tolerance.linearMm });
+  assert.deepEqual(legacy.accept(legacy.primitives), sketch.entities);
+});
+
+test('C52 positional overflow and precision collapse fail before reaching the native solver', () => {
+  const content = editCADContent({ content: editableCADContent({ operation: 'new' }), action: { kind: 'rectangle', prefix: 'r', width: '20', height: '10' } });
+  const sketch = content.graph.features[0].definition.sketch, position = sketch.constraints.find(c => c.kind === 'fix')!.position!;
+  position.x.source = '1e308';
+  assert.throws(() => linearSketchProgram({ sketch, context, tolerance: content.tolerance.linearMm }), { name: 'SketchProgramError' }, 'translation must not collapse a finite source edge into one solver point');
+  const first = sketch.entities[0]; if (first!.kind !== 'segment') throw new Error('fixture');
+  sketch.entities[0] = { ...first!, b: [1e308,0] };
+  assert.throws(() => linearSketchProgram({ sketch, context, tolerance: content.tolerance.linearMm }), /finite coordinate range/, 'translation must not overflow a finite source edge');
 });

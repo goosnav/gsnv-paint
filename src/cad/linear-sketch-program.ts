@@ -3,7 +3,9 @@
  * KIND       CORE
  * CONTRACT   IN: valid C50 sketch, C03 context and positive tolerance. OUT: vendor
  *            primitives plus pure accept(snapshot) restoring solved entities by ID.
- *            RAISES: SketchProgramError for bad targets or missing/nonfinite points or collapsed solved edges.
+ *            Expression-controlled groups translate together before endpoint sharing and solve.
+ *            RAISES: SketchProgramError for bad targets, nonfinite/collapsed translated geometry,
+ *            missing/nonfinite points or collapsed solved edges.
  * GUARANTEES No I/O, solver imitation or input mutation; exact endpoints share a point.
  * TUNING     Document tolerance bounds positive driving dimensions.
  * DECISIONS  D1: Share exact endpoint coordinates. Alternative: disconnected duplicate
@@ -18,6 +20,33 @@ type Request = { sketch: CADContent['graph']['features'][0]['definition']['sketc
 export function linearSketchProgram(request: Request): { primitives: SketchPrimitive[]; accept(snapshot: SketchPrimitive[]): Request['sketch']['entities'] } {
   const fail = (message: string): never => { throw Object.assign(new Error(message), { name: 'SketchProgramError' }); };
   const sketch = JSON.parse(JSON.stringify(request.sketch)) as Request['sketch'];
+  // Translate source groups before sharing endpoints. Moving only the fixed point can
+  // reverse an unsigned-distance rectangle when its new origin passes its old edges.
+  const entities = new Map(sketch.entities.map(e => [e.id, e]));
+  for (const c of sketch.constraints) if (c.position) {
+    const anchor = entities.get(c.entityIds[0]!); if (!anchor) fail(`Missing position anchor ${c.id}.`);
+    const original = anchor!.kind === 'circle' ? [...anchor!.center] : [...(c.pointRoles[0] === 'a' ? anchor!.a : anchor!.b)];
+    const x = evaluateDimension({ expression: c.position.x, context: request.context }).value;
+    const y = evaluateDimension({ expression: c.position.y, context: request.context }).value;
+    const translated = (point: readonly [number,number]): [number,number] => {
+      const result: [number,number] = [x + (point[0] - original[0]!), y + (point[1] - original[1]!)];
+      if (!result.every(Number.isFinite)) fail(`Position ${c.id} exceeds finite coordinate range.`);
+      return result;
+    };
+    for (const id of c.position.entityIds) {
+      const entity = entities.get(id); if (!entity) fail(`Missing positioned entity ${id}.`);
+      if (entity!.kind === 'circle') {
+        const center = translated(entity!.center);
+        if (!center.every(v => Number.isFinite(Math.abs(v) + entity!.radius))) fail(`Position ${c.id} overflows circle ${id}.`);
+        entities.set(id, { ...entity!, center });
+      } else {
+        const a = translated(entity!.a), b = translated(entity!.b), length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        if (!Number.isFinite(length) || length <= request.tolerance) fail(`Position ${c.id} collapses or overflows edge ${id}.`);
+        entities.set(id, { ...entity!, a, b });
+      }
+    }
+  }
+  sketch.entities = sketch.entities.map(e => entities.get(e.id)!);
   const points: Extract<SketchPrimitive,{type:'point'}>[] = [], lines: Extract<SketchPrimitive,{type:'line'}>[] = [], circles: Extract<SketchPrimitive,{type:'circle'}>[] = [], relations: SketchPrimitive[] = [];
   const pointIds = new Map<string,string>(), used = new Set([...sketch.entities,...sketch.constraints,...sketch.dimensions].map(v=>v.id));
   const point = (v: readonly number[]) => {

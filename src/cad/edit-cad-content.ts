@@ -3,6 +3,8 @@
  * KIND       CORE
  * CONTRACT   IN: valid C50 content plus CADAction with caller-issued unique IDs.
  *            OUT: independently owned content, one revision increment, preserved expressions.
+ *            Numeric positions are canonical mm; strings use document units. Variable edits
+ *            validate their graph and every stored dependent expression before publication.
  *            RAISES: CADEditError for invalid targets, collisions, sizes or revision exhaustion.
  * GUARANTEES Pure, no mutation; failures preserve the input; dependent references are pruned.
  * TUNING     No tunable limits; geometry tolerance belongs to the document.
@@ -17,8 +19,11 @@ import { evaluateVariables } from './named-variables.ts';
 import { makeLinearEntities } from './sketch-linear-primitives.ts';
 export type CADAction =
   | { kind: 'line'; id: string; a: [number,number]; b: [number,number] }
-  | { kind: 'rectangle'; prefix: string; width: string; height: string; origin?: [number,number] }
-  | { kind: 'circle'; prefix: string; diameter: string; center: [number,number] }
+  | { kind: 'rectangle'; prefix: string; width: string; height: string; origin?: [number | string,number | string] }
+  | { kind: 'circle'; prefix: string; diameter: string; center: [number | string,number | string] }
+  | { kind: 'edit-position'; id: string; x: string; y: string }
+  | { kind: 'variable'; name: string; source: string; dimensionKind?: 'length' | 'angle' | 'scalar' }
+  | { kind: 'remove-variable'; name: string }
   | { kind: 'dimension'; id: string; source: string }
   | { kind: 'extrude'; id: string; depth: string }
   | { kind: 'remove-extrude' } | { kind: 'clear' }
@@ -47,32 +52,82 @@ export function editCADContent({ content, action, sketch: target }: CADEdit): CA
     if ((signed ? Math.abs(result) : result) <= value.tolerance.linearMm) fail('The dimension must exceed the document tolerance.');
     return result;
   };
+  const coordinate = (source: number | string) => {
+    if (typeof source !== 'string' && (typeof source !== 'number' || !Number.isFinite(source))) fail('Position coordinates must be finite lengths.');
+    const expression = { source: typeof source === 'number' ? `${source} mm` : source, kind: 'length' as const };
+    const context = evaluateVariables({ variables: value.variables, units: value.units }).context;
+    return { expression, value: evaluateDimension({ expression, context }).value };
+  };
+  const placement = (input: [number | string, number | string]) => {
+    if (!Array.isArray(input) || input.length !== 2) fail('A position needs two coordinates.');
+    const x = coordinate(input[0]), y = coordinate(input[1]);
+    return { point: [x.value, y.value] as [number,number], x: x.expression, y: y.expression };
+  };
+  // One inventory keeps variable edits and unit changes aware of every persisted expression.
+  const expressions = () => {
+    type Parameter = { expression: CADContent['variables'][number]['expression']; range?: 'positive' | 'nonzero' };
+    const result: Parameter[] = value.variables.map(v => ({ expression: v.expression }));
+    for (const s of allSketches) {
+      result.push(...s.dimensions.map(d => ({ expression: d.value, range: 'positive' as const })));
+      for (const c of s.constraints) if (c.position) result.push({ expression: c.position.x }, { expression: c.position.y });
+    }
+    for (const feature of value.graph.features) {
+      if (feature.kind === 'extrude') result.push({ expression: feature.definition.extent.distance, range: 'nonzero' });
+      else if (feature.kind === 'pocket' && feature.definition.extent.kind === 'blind') result.push({ expression: feature.definition.extent.distance, range: 'nonzero' });
+      else if (feature.kind === 'fillet' || feature.kind === 'chamfer') result.push({ expression: feature.definition.size, range: 'nonzero' });
+    }
+    return result;
+  };
+  const validateExpressions = () => {
+    const context = evaluateVariables({ variables: value.variables, units: value.units }).context;
+    for (const { expression, range } of expressions()) {
+      const result = evaluateDimension({ expression, context }).value;
+      if (range && (range === 'nonzero' ? Math.abs(result) : result) <= value.tolerance.linearMm) fail(`The dimension ${JSON.stringify(expression.source)} must exceed the document tolerance.`);
+    }
+  };
   if (action.kind === 'line') {
     if (![...action.a, ...action.b].every(Number.isFinite)) fail('Line coordinates must be finite.');
     const entities = makeLinearEntities({ tool: 'line', anchors: [action.a, action.b], ids: [unique(action.id)], construction: false, tolerance: value.tolerance });
     sketch.entities.push(...entities as typeof sketch.entities);
   } else if (action.kind === 'rectangle') {
-    const width = length(action.width), height = length(action.height), origin = action.origin ?? [0,0];
-    if (!origin.every(Number.isFinite)) fail('Rectangle origin must be finite.');
+    const width = length(action.width), height = length(action.height), position = placement(action.origin ?? [0,0]), origin = position.point;
     const entityIds = Array.from({ length: 4 }, (_, i) => unique(`${action.prefix}-edge-${i}`));
     // On the base sketch the rectangle replaces the outline (segments) and keeps circles as holes; cut sketches just add it.
     const circles = new Set(sketch.entities.filter(e => !isBase || e.kind === 'circle').map(e => e.id)), kept = (ids: string[]) => ids.every(id => circles.has(id));
     const edges = makeLinearEntities({ tool: 'corner-rectangle', anchors: [origin as [number,number],[origin[0]!+width,origin[1]!+height]], ids: entityIds, construction: false, tolerance: value.tolerance }) as Extract<typeof sketch.entities[number], { kind: 'segment' }>[];
     sketch.entities = [...edges, ...sketch.entities.filter(e => circles.has(e.id))];
     sketch.constraints = [...entityIds.map((entity, i) => ({ id: unique(`${action.prefix}-axis-${i}`), kind: i % 2 === 0 ? 'horizontal' as const : 'vertical' as const, entityIds: [entity], pointRoles: [], inferred: true })),
-      { id: unique(`${action.prefix}-origin`), kind: 'fix', entityIds: [entityIds[0]!], pointRoles: ['a'], inferred: true }, ...sketch.constraints.filter(c => kept(c.entityIds))];
+      { id: unique(`${action.prefix}-origin`), kind: 'fix', entityIds: [entityIds[0]!], pointRoles: ['a'], inferred: true,
+        position: { x: position.x, y: position.y, entityIds: [...entityIds] } }, ...sketch.constraints.filter(c => kept(c.entityIds) && (!c.position || kept(c.position.entityIds)))];
     sketch.dimensions = [...[action.width, action.height].map((source, i) => {
       const edge = edges[i]!;
       return { id: unique(`${action.prefix}-${i === 0 ? 'width' : 'height'}`), kind: 'linear' as const, entityIds: [edge.id], anchors: [[...edge.a],[...edge.b]] as [number,number][], value: { source, kind: 'length' as const }, label: (i === 0 ? [origin[0]! + width / 2,origin[1]! - 8] : [origin[0]! + width + 8,origin[1]! + height / 2]) as [number,number] };
     }), ...sketch.dimensions.filter(d => kept(d.entityIds))];
   } else if (action.kind === 'circle') {
-    const diameter = length(action.diameter), center = action.center;
-    if (!center.every(Number.isFinite)) fail('Circle center must be finite.');
+    const diameter = length(action.diameter), position = placement(action.center), center = position.point;
     const id = unique(`${action.prefix}-circle`), radius = diameter / 2;
     if (!center.every(v => Number.isFinite(Math.abs(v) + radius))) fail('The circle is too large.');
     sketch.entities.push({ id, kind: 'circle', center: [center[0], center[1]], radius, construction: false });
-    sketch.constraints.push({ id: unique(`${action.prefix}-center`), kind: 'fix', entityIds: [id], pointRoles: ['center'], inferred: true });
+    sketch.constraints.push({ id: unique(`${action.prefix}-center`), kind: 'fix', entityIds: [id], pointRoles: ['center'], inferred: true,
+      position: { x: position.x, y: position.y, entityIds: [id] } });
     sketch.dimensions.push({ id: unique(`${action.prefix}-diameter`), kind: 'diameter', entityIds: [id], anchors: [[center[0] - radius, center[1]], [center[0] + radius, center[1]]], value: { source: action.diameter, kind: 'length' }, label: [center[0] + radius * 0.75 + 4, center[1] + radius * 0.75 + 4] });
+  } else if (action.kind === 'edit-position') {
+    const fixed = sketch.constraints.find(c => c.id === action.id && c.kind === 'fix' && c.position);
+    if (!fixed?.position) fail('Select an existing controlled position.');
+    const position = placement([action.x, action.y]);
+    fixed!.position!.x = position.x; fixed!.position!.y = position.y;
+  } else if (action.kind === 'variable') {
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(action.name)) fail('Variable names must be identifiers starting with a letter or underscore.');
+    const existing = value.variables.find(v => v.name === action.name), kind = action.dimensionKind ?? existing?.expression.kind ?? 'length';
+    if (!['length', 'angle', 'scalar'].includes(kind)) fail('Choose length, angle or scalar for the variable kind.');
+    const expression = { source: action.source, kind };
+    if (existing) existing.expression = expression;
+    else value.variables.push({ name: action.name, expression });
+    validateExpressions();
+  } else if (action.kind === 'remove-variable') {
+    if (!value.variables.some(v => v.name === action.name)) fail('Select an existing variable.');
+    value.variables = value.variables.filter(v => v.name !== action.name);
+    validateExpressions();
   } else if (action.kind === 'dimension') {
     const target = sketch.dimensions.find(d => d.id === action.id); if (!target) fail('Select an existing dimension.');
     length(action.source); target!.value.source = action.source;
@@ -87,7 +142,7 @@ export function editCADContent({ content, action, sketch: target }: CADEdit): CA
     const removed = new Set(action.kind === 'clear' ? sketch.entities.map(e => e.id) : action.ids);
     if ([...removed].some(id => !sketch.entities.some(e => e.id === id))) fail('Select existing sketch geometry to delete.');
     sketch.entities = sketch.entities.filter(e => !removed.has(e.id));
-    sketch.constraints = sketch.constraints.filter(c => c.entityIds.every(id => !removed.has(id)));
+    sketch.constraints = sketch.constraints.filter(c => c.entityIds.every(id => !removed.has(id)) && (!c.position || c.position.entityIds.every(id => !removed.has(id))));
     sketch.dimensions = sketch.dimensions.filter(d => d.entityIds.every(id => !removed.has(id)));
   } else if (action.kind === 'constraint') {
     if (!sketch.entities.some(e => e.id === action.entity && e.kind === 'segment')) fail('Select a line before adding a constraint.');
@@ -125,7 +180,12 @@ export function editCADContent({ content, action, sketch: target }: CADEdit): CA
     const index = value.graph.features.findIndex((f, i) => i >= 2 && f.id === action.id); if (index < 0) fail('Select a cut, fillet or chamfer.');
     value.graph.features.splice(index, 1);
   } else if (action.kind === 'units') {
-    if (!['mm', 'inch'].includes(action.units)) fail('Units are mm or inch.'); value.units = action.units;
+    if (!['mm', 'inch'].includes(action.units)) fail('Units are mm or inch.');
+    if (value.units !== action.units) {
+      const context = evaluateVariables({ variables: value.variables, units: value.units }).context;
+      for (const { expression } of expressions()) expression.source = evaluateDimension({ expression, context, bindUnits: true }).boundSource!;
+      value.units = action.units;
+    }
   } else if (action.kind === 'remove-constraint') {
     if (!sketch.constraints.some(c => c.id === action.id)) fail('Select an existing constraint.');
     sketch.constraints = sketch.constraints.filter(c => c.id !== action.id);

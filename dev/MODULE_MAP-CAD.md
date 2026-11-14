@@ -132,8 +132,8 @@ Vendor: `@salusoft89/planegcs@1.3.0`; the public port is readable only inside th
 ### C03 dimension-expressions — CORE — GREEN
 File `src/cad/dimension-expressions.ts`; public `evaluateDimension(request)`.
 Purpose: Evaluate dimension arithmetic with unit checking. The [file header](../src/cad/dimension-expressions.ts) specifies literal promotion, unit suffixes, precedence and error locations. Bare numeric arithmetic uses document length units or degrees at a dimension boundary; explicit scalar variables and dimensional ratios remain scalar. Variables carry canonical values. Unit switching must preserve existing physical geometry at the document/editing boundary; C03 alone does not perform that migration.
-IN: `{expression:DimensionValue,context:ExpressionContext}`; grammar and operators are those above.
-OUT: `EvaluatedValue`; deterministic canonical units, no host evaluation.
+IN: `{expression:DimensionValue,context:ExpressionContext,bindUnits?:boolean}`; grammar and operators are those above.
+OUT: `EvaluatedValue`; deterministic canonical units, no host evaluation. D27 adds optional `boundSource` when binding is requested: the same grammar with implicit dimensional arithmetic bound explicitly, variable references and scalar factors preserved. Ordinary output is unchanged. C51 applies this before changing document units; C56/C58 display physical values in the selected units while source expressions remain editable.
 RAISES: `ExpressionSyntaxError`, `UnknownVariableError`, `UnitMismatchError`, `DivisionByZeroError`, or `NonFiniteValueError` at the offending token.
 DEPS: none.
 

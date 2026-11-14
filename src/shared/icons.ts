@@ -18,7 +18,7 @@
 
 export type IconRequest = { document: Document; name: string; label: string; size: number };
 export const iconCatalog: readonly string[] = Object.freeze([
-  'app', 'cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'play', 'pause', 'split', 'bold', 'italic', 'underline', 'listBullet', 'listNumber', 'alignLeft', 'alignCenter', 'alignRight', 'pdf', 'new', 'open', 'save', 'undo', 'redo', 'cut', 'copy', 'paste',
+  'app', 'cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'play', 'pause', 'split', 'bold', 'italic', 'underline', 'listBullet', 'listNumber', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'indent', 'outdent', 'link', 'strike', 'table', 'pageBreak', 'pdf', 'new', 'open', 'save', 'undo', 'redo', 'cut', 'copy', 'paste',
   'delete', 'select', 'hand', 'zoomIn', 'zoomOut', 'fit', 'history', 'properties', 'layers',
   'grid', 'ruler', 'line', 'rectangle', 'extrude',
   'pencil', 'brush', 'eraser', 'fill', 'picker', 'ellipse', 'text', 'crop', 'rotate', 'flip',
@@ -44,6 +44,13 @@ const PATHS: Readonly<Record<string, string>> = {
   alignLeft: 'M3 5h18M3 9h12M3 13h18M3 17h12',
   alignCenter: 'M3 5h18M6 9h12M3 13h18M6 17h12',
   alignRight: 'M3 5h18M9 9h12M3 13h18M9 17h12',
+  alignJustify: 'M3 5h18M3 9h18M3 13h18M3 17h18',
+  indent: 'M3 4h18M11 9h10M11 14h10M3 19h18M3 8l4 3.5L3 15z',
+  outdent: 'M3 4h18M11 9h10M11 14h10M3 19h18M7 8l-4 3.5L7 15z',
+  link: 'M10 14a4 4 0 0 0 6 0l4-4a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-4 4a4 4 0 0 0 6 6l1-1',
+  strike: 'M3 12h18M16 6a4 3 0 0 0-4-2c-3 0-4 2-4 3M8 18a4 3 0 0 0 4 2c3 0 4-2 4-4',
+  table: 'M3 4h18v16H3zM3 9h18M3 14h18M9 4v16M15 4v16',
+  pageBreak: 'M5 2v6h14V2M5 22v-6h14v6M2 12h3M7 12h3M14 12h3M19 12h3',
   pdf: 'M5 2h10l4 4v16H5zM15 2v4h4M8 13h2a1.5 1.5 0 0 1 0 3H8v-5M13 11v5h1a2 2 0 0 0 0-5zM17 11h2M17 11v5M17 13h2',
   video: 'M3 4h18v16H3zM7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4M10 9l5 3-5 3z',
   new: 'M5 2.5h10l5 5V21H5zM15 2.5v5h5M9 14h7M12.5 10.5v7',

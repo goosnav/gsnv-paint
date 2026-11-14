@@ -13,3 +13,14 @@ test('C58 feature errors and source dimensions are visible, safe and editable',(
 test('C58 invalid panel ports fail before binding handlers',()=>{
  assert.throws(()=>cadProperties({root:null as unknown as HTMLElement,onEdit(){}}),TypeError);
 });
+test('C58 selected document units display physical values without hiding editable source expressions',()=>{
+ const dom=new JSDOM('<div id="p"></div>'),root=dom.window.document.getElementById('p')!;
+ const panel=cadProperties({root,onEdit(){}});
+ let content=editCADContent({content:editableCADContent({operation:'new'}),action:{kind:'rectangle',prefix:'r',width:'25.4',height:'2 * 25.4'}});
+ content=editCADContent({content,action:{kind:'units',units:'inch'}});
+ panel.update({content,selected:[],state:'ready',message:'Ready',result:null});
+ assert.equal(root.querySelector('[data-edit-id="r-width"]')?.textContent,'Width: 1 in');
+ assert.equal(root.querySelector('[data-edit-id="r-height"]')?.textContent,'Height: 2 in');
+ assert.match(root.querySelector('[data-edit-id="r-height"]')?.getAttribute('title')??'',/2 \* 25.4/);
+ panel.dispose();
+});

@@ -19,6 +19,8 @@
  *            dimensional division yields explicit scalar. Compound dimensions are rejected.
  *            OUT: EvaluatedValue; finite canonical value, requested kind, +0 for either
  *            signed zero, and unique lexically sorted referenced names (even zero-weight).
+ *            Optional bindUnits returns boundSource with implicit dimensional arithmetic
+ *            made explicit, preserving references and meaning in either document unit system.
  *            RAISES: ExpressionSyntaxError for invalid grammar; UnknownVariableError for
  *            missing own names; UnitMismatchError at incompatible operator/final result;
  *            DivisionByZeroError at /; NonFiniteValueError at overflowing literal/unit,
@@ -47,11 +49,12 @@ type DimensionKind = 'length' | 'angle' | 'scalar';
 export type DimensionRequest = Readonly<{
   expression: Readonly<{ source: string; kind: DimensionKind }>;
   context: Readonly<{ units: 'mm' | 'inch'; variables: Readonly<Record<string, Readonly<{ value: number; kind: DimensionKind }>>> }>;
+  bindUnits?: boolean;
 }>;
-export type EvaluatedValue = { value: number; kind: DimensionKind; dependencies: string[] };
+export type EvaluatedValue = { value: number; kind: DimensionKind; dependencies: string[]; boundSource?: string };
 
 type Token = { text: string; offset: number };
-type Quantity = { value: number; kind: DimensionKind; implicit: boolean; token: Token };
+type Quantity = { value: number; kind: DimensionKind; implicit: boolean; token: Token; start: number; end: number };
 type Operator = { code: string; unary: boolean; token: Token };
 const INCH_TO_MM = 25.4; // Exact international-inch definition.
 const DEG_TO_RAD = Math.PI / 180; // Predivide to avoid overflowing otherwise finite large angles.
@@ -82,19 +85,21 @@ function tokenize(source: string): Token[] {
 }
 function priority(operator: Operator): number { return operator.unary ? 3 : ['*', '/'].includes(operator.code) ? 2 : 1; }
 
-export function evaluateDimension({ expression, context }: DimensionRequest): EvaluatedValue {
+export function evaluateDimension({ expression, context, bindUnits = false }: DimensionRequest): EvaluatedValue {
   const tokens = tokenize(expression.source), values: Quantity[] = [], operators: Operator[] = [], dependencies = new Set<string>();
+  const bindings: { start: number; end: number; unit: string }[] = [];
   const eof = { text: '', offset: expression.source.length };
   let expectingOperand = true;
   const promote = (quantity: Quantity, kind: DimensionKind, at: Token): Quantity => {
     if (!quantity.implicit || kind === 'scalar') return quantity;
     const scale = kind === 'angle' ? DEG_TO_RAD : context.units === 'inch' ? INCH_TO_MM : 1;
+    if (bindUnits) bindings.push({ start: quantity.start, end: quantity.end, unit: kind === 'angle' ? 'deg' : context.units });
     return { ...quantity, value: finite(quantity.value * scale, at), kind, implicit: false };
   };
   const reduce = () => {
     const operator = operators.pop()!, right = values.pop()!;
     if (operator.unary) {
-      values.push({ ...right, value: finite(operator.code === '-' ? -right.value : right.value, operator.token), token: operator.token });
+      values.push({ ...right, value: finite(operator.code === '-' ? -right.value : right.value, operator.token), token: operator.token, start: operator.token.offset });
       return;
     }
     let left = values.pop()!, rhs = right, kind: DimensionKind, value: number;
@@ -114,7 +119,7 @@ export function evaluateDimension({ expression, context }: DimensionRequest): Ev
       else fail('UnitMismatchError', `Cannot divide ${left.kind} by ${rhs.kind}`, operator.token);
       value = left.value / rhs.value;
     }
-    values.push({ value: finite(value, operator.token), kind, implicit: left.implicit && rhs.implicit, token: operator.token });
+    values.push({ value: finite(value, operator.token), kind, implicit: left.implicit && rhs.implicit, token: operator.token, start: left.start, end: rhs.end });
   };
   for (let index = 0; index < tokens.length; index++) {
     const token = tokens[index]!, code = token.text.replace('−', '-').replace('×', '*').replace('÷', '/');
@@ -123,24 +128,25 @@ export function evaluateDimension({ expression, context }: DimensionRequest): Ev
         operators.push({ code, unary: code !== '(', token }); continue;
       }
       if (/^[\d.]/.test(token.text)) {
-        let value = finite(Number(token.text), token), kind: DimensionKind = 'scalar', implicit = true;
+        let value = finite(Number(token.text), token), kind: DimensionKind = 'scalar', implicit = true, end = token.offset + token.text.length;
         const suffix = tokens[index + 1];
         if (suffix && Object.hasOwn(UNITS, suffix.text)) {
           const unit = UNITS[suffix.text]!;
-          value = finite(value * unit.scale, suffix); kind = unit.kind; implicit = false; index++;
+          value = finite(value * unit.scale, suffix); kind = unit.kind; implicit = false; end = suffix.offset + suffix.text.length; index++;
         }
-        values.push({ value, kind, implicit, token });
+        values.push({ value, kind, implicit, token, start: token.offset, end });
       } else if (/^[A-Za-z_]/.test(token.text) && !Object.hasOwn(UNITS, token.text)) {
         if (!Object.hasOwn(context.variables, token.text)) fail('UnknownVariableError', `Unknown variable ${JSON.stringify(token.text)}`, token);
         const variable = context.variables[token.text]!;
         dependencies.add(token.text);
-        values.push({ value: finite(variable.value, token), kind: variable.kind, implicit: false, token });
+        values.push({ value: finite(variable.value, token), kind: variable.kind, implicit: false, token, start: token.offset, end: token.offset + token.text.length });
       } else fail('ExpressionSyntaxError', 'Expected a number, variable or opening parenthesis', token);
       expectingOperand = false;
     } else if (code === ')') {
       while (operators.length && operators.at(-1)!.code !== '(') reduce();
       if (!operators.length) fail('ExpressionSyntaxError', 'Unmatched closing parenthesis', token);
-      operators.pop();
+      const opening = operators.pop()!;
+      values.at(-1)!.start = opening.token.offset; values.at(-1)!.end = token.offset + 1;
     } else if (['+', '-', '*', '/'].includes(code)) {
       const next = { code, unary: false, token };
       while (operators.length && operators.at(-1)!.code !== '(' && priority(operators.at(-1)!) >= priority(next)) reduce();
@@ -154,5 +160,15 @@ export function evaluateDimension({ expression, context }: DimensionRequest): Ev
   }
   const result = promote(values[0]!, expression.kind, values[0]!.token);
   if (result.kind !== expression.kind) fail('UnitMismatchError', `Expected ${expression.kind}, received ${result.kind}`, result.token);
-  return { value: result.value === 0 ? 0 : result.value, kind: result.kind, dependencies: [...dependencies].sort() };
+  const evaluated: EvaluatedValue = { value: result.value === 0 ? 0 : result.value, kind: result.kind, dependencies: [...dependencies].sort() };
+  if (bindUnits) {
+    // Promotions are disjoint: a promoted quantity cannot become implicit again.
+    let end = 0; const pieces: string[] = [];
+    for (const binding of bindings.sort((a, b) => a.start - b.start)) {
+      pieces.push(expression.source.slice(end, binding.start), `((${expression.source.slice(binding.start, binding.end)}) * 1 ${binding.unit})`);
+      end = binding.end;
+    }
+    pieces.push(expression.source.slice(end)); evaluated.boundSource = pieces.join('');
+  }
+  return evaluated;
 }

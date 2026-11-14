@@ -5,21 +5,26 @@
  *            with one XY sketch of segments and circles and an optional blind boss, exact
  *            persisted keys. Circles carry center/radius, may be fixed by their center and
  *            dimensioned by diameter; H/V and linear dimensions target segments only.
+ *            Fixed points may retain finite length-expression positions for disjoint groups.
  *            RAISES: CADContentError with field/reason for malformed or unsupported input.
  * GUARANTEES Pure, deterministic, no mutation; no native handles or silent data loss.
  * TUNING     New document tolerance: 1e-7 mm, 1e-9 rad, 1e-9 relative.
  * DECISIONS  D1: Reject unsupported features. Alternative: discard unknown content. Rejected to
  *            avoid data loss. Revisit if: a feature family is implemented; retain migration tests.
  * LIMITS     C50 subset only: no imports, suppressed features, rollback, drawing or custom appearance.
+ *            Position sources are evaluated here; legacy dimensions keep their existing lazy validation.
  * TESTBENCH  src/cad/editable-cad-content.test.ts -- run with: node --import tsx --test src/cad/editable-cad-content.test.ts
  */
 import type { LinearEntity } from './sketch-linear-primitives.ts';
+import { evaluateDimension } from './dimension-expressions.ts';
+import { evaluateVariables } from './named-variables.ts';
 type DimensionValue = { source: string; kind: 'length' | 'angle' | 'scalar' };
 type Segment = Extract<LinearEntity, { kind: 'segment' }>;
 export type Circle = { id: string; kind: 'circle'; center: [number, number]; radius: number; construction: boolean };
 export type SketchEntity = Segment | Circle;
 export type ConstraintKind = 'horizontal' | 'vertical' | 'fix' | 'parallel' | 'perpendicular' | 'equal' | 'coincident';
-type Constraint = { id: string; kind: ConstraintKind; entityIds: string[]; pointRoles: string[]; inferred: boolean };
+export type SketchPosition = { x: { source: string; kind: 'length' }; y: { source: string; kind: 'length' }; entityIds: string[] };
+type Constraint = { id: string; kind: ConstraintKind; entityIds: string[]; pointRoles: string[]; inferred: boolean; position?: SketchPosition };
 type Dimension = { id: string; kind: 'linear' | 'aligned' | 'diameter'; entityIds: string[]; anchors: [number, number][]; value: DimensionValue; label: [number, number] };
 export type Sketch = { id: string; name: string; plane: 'XY'; entities: SketchEntity[]; constraints: Constraint[]; dimensions: Dimension[]; projected: [] };
 type BaseFeature = { id: string; name: string; dependsOn: string[]; suppressed: false };
@@ -94,6 +99,7 @@ export function editableCADContent(request: { operation: 'new' } | { operation: 
   if (first.kind !== 'sketch') bad('first feature', 'expected an XY sketch');
   empty(first.dependsOn, 'sketch dependencies'); keys(first.definition, 'kind sketch', 'sketch definition');
   if (first.definition.kind !== 'sketch') bad('sketch definition', 'wrong kind');
+  let positionContext: ReturnType<typeof evaluateVariables>['context'] | undefined;
   const checkSketch = (sketch: Sketch, owner: string) => {
     keys(sketch, 'id name plane entities constraints dimensions projected', 'sketch');
     if (sketch.id !== owner) bad('sketch ID', 'must match feature ID'); text(sketch.name, 'sketch name');
@@ -116,10 +122,12 @@ export function editableCADContent(request: { operation: 'new' } | { operation: 
     }
     const target = (v: string[], where: string, kind: SketchEntity['kind'] = 'segment') => { if (!Array.isArray(v) || v.length !== 1 || kinds.get(v[0]!) !== kind) bad(where, `expected one existing ${kind}`); };
     const targetKind = (v: string[]) => Array.isArray(v) && v.length === 1 ? kinds.get(v[0]!) : undefined;
-    array(sketch.constraints, 'constraints');
+    array(sketch.constraints, 'constraints'); const controlled = new Set<string>();
     for (const c of sketch.constraints) {
-      keys(c, 'id kind entityIds pointRoles inferred', 'constraint'); id(c.id, 'constraint ID');
+      const positioned = Object.hasOwn(c ?? {}, 'position');
+      keys(c, `id kind entityIds pointRoles inferred${positioned ? ' position' : ''}`, 'constraint'); id(c.id, 'constraint ID');
       if (!['horizontal','vertical','fix','parallel','perpendicular','equal','coincident'].includes(c.kind) || typeof c.inferred !== 'boolean') bad(c.id, 'unsupported constraint');
+      if (positioned && c.kind !== 'fix') bad(c.id, 'only fixed points may control a position');
       if (['parallel','perpendicular','equal','coincident'].includes(c.kind)) {
         if (!Array.isArray(c.entityIds) || c.entityIds.length !== 2 || c.entityIds[0] === c.entityIds[1] || !c.entityIds.every(e => kinds.has(e))) bad(c.id, 'expected two different existing entities');
         if (c.kind !== 'coincident' && !c.entityIds.every(e => kinds.get(e) === 'segment')) bad(c.id, 'expected two segments');
@@ -130,6 +138,21 @@ export function editableCADContent(request: { operation: 'new' } | { operation: 
       const circle = c.kind === 'fix' && targetKind(c.entityIds) === 'circle'; target(c.entityIds, c.id, circle ? 'circle' : 'segment');
       if (c.kind === 'fix') { if (!Array.isArray(c.pointRoles) || c.pointRoles.length !== 1 || !(circle ? ['center'] : ['a','b']).includes(c.pointRoles[0]!)) bad(c.id, circle ? 'circle fix needs its center' : 'fix needs endpoint a or b'); }
       else empty(c.pointRoles, c.id);
+      if (positioned) {
+        const p = c.position!; keys(p, 'x y entityIds', `${c.id} position`);
+        dim(p.x, `${c.id} X`, true); dim(p.y, `${c.id} Y`, true); array(p.entityIds, `${c.id} position entities`);
+        if (!p.entityIds.includes(c.entityIds[0]!) || (circle && p.entityIds.length !== 1)) bad(c.id, 'position group must include its anchor and a circle controls only itself');
+        const group = new Set<string>();
+        for (const entity of p.entityIds) {
+          if (kinds.get(entity) !== (circle ? 'circle' : 'segment')) bad(c.id, 'position group must contain existing entities of the anchor kind');
+          if (group.has(entity) || controlled.has(entity)) bad(c.id, 'position groups must not repeat or overlap entities');
+          group.add(entity); controlled.add(entity);
+        }
+        try {
+          positionContext ??= evaluateVariables({ variables: value.variables, units: value.units }).context;
+          evaluateDimension({ expression: p.x, context: positionContext }); evaluateDimension({ expression: p.y, context: positionContext });
+        } catch (cause) { bad(c.id, `invalid position: ${cause instanceof Error ? cause.message : String(cause)}`); }
+      }
     }
     array(sketch.dimensions, 'dimensions');
     for (const d of sketch.dimensions) {

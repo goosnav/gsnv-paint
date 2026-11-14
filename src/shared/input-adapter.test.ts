@@ -51,6 +51,16 @@ test('S12 held Space pans 2D only and latches mode until release', () => {
   assert.deepEqual(f.gestures.map(value => value.type === 'pointer' && value.phase), ['down', 'move', 'up']);
 });
 
+test('S12 accessible view geometry still receives pointer, wheel and pan while ordinary buttons do not', () => {
+  const f = fixture(); const shape=f.element('shape'); shape.setAttribute('role','button');shape.setAttribute('tabindex','0');shape.setAttribute('data-view-geometry','');bindInput(f.args);
+  f.pointer('pointerdown',{},f.element('child'));f.pointer('pointerup',{},f.element('child'));
+  f.wheel(-400,0,f.element('child'));
+  assert.deepEqual(f.gestures.map(g=>g.type),['pointer','pointer','wheel']);
+  f.gestures.length=0;f.key(' ');f.pointer('pointerdown',{},f.element('child'));f.pointer('pointermove',{clientX:150},f.element('child'));f.pointer('pointerup',{},f.element('child'));
+  assert.deepEqual(f.gestures,[{type:'pan',delta:{x:20,y:0}}]);
+  f.gestures.length=0;f.pointer('pointerdown',{},f.element('button'));f.wheel(-100,0,f.element('button'));assert.deepEqual(f.gestures,[]);
+});
+
 test('S12 preview/sketch Space pans while timeline Space plays once and CAD3D does not pan', () => {
   for (const viewRole of ['preview2d', 'sketch2d', 'timeline', 'cad3d'] as const) {
     const f = fixture(); f.context = { ...f.context, workspace: viewRole === 'timeline' ? 'video' : 'cad', viewRole }; bindInput(f.args);

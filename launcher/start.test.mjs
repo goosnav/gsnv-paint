@@ -23,7 +23,8 @@ try {
   }
   const origin = `http://127.0.0.1:${port}`;
   const html = await (await fetch(origin)).text();
-  assert.match(html, /<title>gsnv-paint<\/title>/);
+  assert.match(html, /<title>gsnv-paint(?:<\/title>|:)/);
+  assert.ok(html.includes('<meta name="application-name" content="gsnv-paint">'), 'The served page identifies the application independently of its descriptive title.');
   const script = html.match(/src="(\/assets\/[^"]+\.js)"/)?.[1];
   assert.ok(script, 'The built page references its script.');
   for (const path of ['/', script]) {

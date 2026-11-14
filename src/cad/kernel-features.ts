@@ -5,10 +5,11 @@
  *            cut {loops (C64 loops), top z, depth or null for through all} — each loop is extruded downward
  *            from just above the top and subtracted; edges {kind:'fillet'|'chamfer', set, size} — rounds or
  *            bevels every edge in the set (vertical, top, bottom or all), classified by geometry.
- *            OUT: a new retained token for a valid solid; the input token is released.
+ *            OUT: a new retained token for one valid positive-volume solid; the input token is released.
  *            RAISES: FeatureError with a readable reason when OCCT cannot build or validate the result
  *            (for example a fillet larger than the edge allows); the input token stays valid in that case.
- * GUARANTEES Temporary OCCT objects are deleted; only valid solids are published.
+ * GUARANTEES Ordinary failures preserve the input; compounds never silently lose extra geometry.
+ *            Native faults stop further native calls and require whole-worker termination.
  * TUNING     CLEARANCE=1 mm above/below the solid so cut tools never share faces with it.
  * DECISIONS  D1: Edge sets by geometry rather than picked edges: robust across rebuilds (no topological
  *            naming problem). Revisit if: per-edge picking (C30) lands.
@@ -23,11 +24,19 @@ import type { EdgeSet } from './editable-cad-content.ts';
 type Token = ReturnType<KernelSession['retain']>;
 export type FeatureOp = { kind: 'cut'; loops: readonly ProfileLoop[]; top: number; bottom: number; depth: number | null } | { kind: 'fillet' | 'chamfer'; set: EdgeSet; size: number };
 const CLEARANCE = 1;
+// Allow floating-point integration noise, without introducing a physical minimum cut size.
+const VOLUME_ROUNDOFF = 64 * Number.EPSILON;
 const fail = (message: string): never => { throw Object.assign(new Error(message), { name: 'FeatureError' }); };
+const nativeFault = (cause: unknown) => (typeof WebAssembly.Exception === 'function' && cause instanceof WebAssembly.Exception) || cause instanceof WebAssembly.RuntimeError || typeof cause === 'number';
 
 export function applyFeature(session: KernelSession, token: Token, op: FeatureOp): Token {
   const oc = session.library, temp: { delete(): void }[] = [], own = <T extends { delete(): void }>(v: T): T => { temp.push(v); return v; };
   const tools: Token[] = [];
+  let faulted = false;
+  const volume = (shape: ReturnType<KernelSession['resolve']>) => {
+    const properties = own(new oc.GProp_GProps());
+    oc.BRepGProp.VolumeProperties(shape, properties, true, false, false); return properties.Mass();
+  };
   try {
     const shape = session.resolve(token); let result: InstanceType<typeof oc.TopoDS_Shape>;
     if (op.kind === 'cut') {
@@ -35,6 +44,7 @@ export function applyFeature(session: KernelSession, token: Token, op: FeatureOp
       const start = op.top + CLEARANCE, length = op.depth === null ? op.top - op.bottom + 2 * CLEARANCE : op.depth + CLEARANCE;
       if (!(length > 0)) fail('The cut depth must be positive.');
       result = shape;
+      let before = volume(shape);
       for (const loop of op.loops) {
         const tool = buildLinearPrism({ session, region: { outer: loop, holes: [] }, depth: -length }); tools.push(tool);
         const trsf = own(new oc.gp_Trsf()); trsf.SetTranslation(own(new oc.gp_Vec(0, 0, start)));
@@ -42,6 +52,11 @@ export function applyFeature(session: KernelSession, token: Token, op: FeatureOp
         const cut = own(new oc.BRepAlgoAPI_Cut(result, own(moved.Shape())));
         if (!cut.IsDone()) fail('The cut could not be computed. Check that the profile overlaps the part.');
         result = own(cut.Shape());
+        if (result.IsNull()) fail('The cut removed the whole solid. Use a smaller profile or a shallower depth.');
+        const after = volume(result);
+        if (!Number.isFinite(after) || after <= 0) fail('The cut left no valid solid. Use a smaller profile or a shallower depth.');
+        if (!(before - after > Math.abs(before) * VOLUME_ROUNDOFF)) fail('A cut profile does not remove material. Move it so it overlaps the remaining part.');
+        before = after;
       }
     } else {
       if (!(op.size > 0)) fail(`The ${op.kind} size must be positive.`);
@@ -65,15 +80,35 @@ export function applyFeature(session: KernelSession, token: Token, op: FeatureOp
       if (!builder.IsDone()) fail(`The ${op.kind} could not be built. Try a smaller size (it must fit within the shortest edge and the nearest face).`);
       result = own(builder.Shape());
     }
+    if (result.IsNull()) fail(`The ${op.kind} left no solid.`);
+    // OCCT features commonly return a compound even when it contains exactly one solid.
+    // Reject any additional topology before extracting that solid for display and STEP.
+    if (result.ShapeType() !== oc.TopAbs_ShapeEnum.TopAbs_SOLID) {
+      for (const kind of [oc.TopAbs_ShapeEnum.TopAbs_SHELL, oc.TopAbs_ShapeEnum.TopAbs_FACE, oc.TopAbs_ShapeEnum.TopAbs_WIRE, oc.TopAbs_ShapeEnum.TopAbs_EDGE, oc.TopAbs_ShapeEnum.TopAbs_VERTEX]) {
+        const loose = own(new oc.TopExp_Explorer(result, kind, oc.TopAbs_ShapeEnum.TopAbs_SOLID));
+        if (loose.More()) fail(`The ${op.kind} left loose geometry outside its solid. Try a different size or profile.`);
+      }
+      const solids = own(new oc.TopExp_Explorer(result, oc.TopAbs_ShapeEnum.TopAbs_SOLID, oc.TopAbs_ShapeEnum.TopAbs_SHAPE));
+      if (!solids.More()) fail(`The ${op.kind} left no solid.`);
+      const solid = own(solids.Current()); solids.Next();
+      if (solids.More()) fail(`The ${op.kind} produced multiple solids. This part must remain a single connected solid.`);
+      result = solid;
+    }
     const check = own(new oc.BRepCheck_Analyzer(result, true, false));
     if (!check.IsValid()) fail(`The ${op.kind} produced an invalid solid. Try a smaller size or a different profile.`);
+    const resultVolume = volume(result);
+    if (!Number.isFinite(resultVolume) || resultVolume <= 0) fail(`The ${op.kind} left no valid positive-volume solid.`);
     const next = session.retain(result); temp.splice(temp.indexOf(result), 1);
     session.release(token); return next;
   } catch (cause) {
+    faulted = nativeFault(cause) || session.isClosed();
     if (cause instanceof Error && cause.name === 'FeatureError') throw cause;
     throw Object.assign(new Error(`The ${op.kind} failed in the CAD kernel. Try a smaller size or simpler profile.`), { name: 'FeatureError', cause });
   } finally {
-    for (const t of tools) session.release(t);
-    for (const object of temp.reverse()) { try { object.delete(); } catch { /* Already released with its owner. */ } }
+    if (!faulted) {
+      for (const t of tools) session.release(t);
+      // A cleanup fault must also stop cleanup immediately; the worker will be terminated.
+      for (const object of temp.reverse()) object.delete();
+    }
   }
 }

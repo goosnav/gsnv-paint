@@ -40,3 +40,43 @@ test('C50 segment geometry and reference checks reject data loss', () => {
     (x: any) => { x.dimensions.push({ id: 'cl', kind: 'linear', entityIds: ['c'], anchors: [[0,0],[1,0]], value: { source: '4', kind: 'length' }, label: [8,8] }); }])
     assert.throws(() => read(withCircle(mutate)), { name: 'CADContentError' });
 });
+
+test('C50 optional position sources round trip and validate their complete controlled groups', () => {
+  const value = fresh(), sketch = value.graph.features[0].definition.sketch;
+  value.variables.push({ name: 'width', expression: { source: '100', kind: 'length' } });
+  sketch.entities.push({ id: 'a', kind: 'segment', a: [0,0], b: [20,0], construction: false },
+    { id: 'b', kind: 'segment', a: [20,0], b: [20,10], construction: false },
+    { id: 'c', kind: 'circle', center: [90,10], radius: 3, construction: false },
+    { id: 'd', kind: 'circle', center: [10,10], radius: 3, construction: false });
+  sketch.constraints.push({ id: 'origin', kind: 'fix', entityIds: ['a'], pointRoles: ['a'], inferred: true,
+    position: { x: { source: 'width / 2 - 10', kind: 'length' }, y: { source: '-5', kind: 'length' }, entityIds: ['a','b'] } },
+  { id: 'center', kind: 'fix', entityIds: ['c'], pointRoles: ['center'], inferred: true,
+    position: { x: { source: 'width - 10', kind: 'length' }, y: { source: '0', kind: 'length' }, entityIds: ['c'] } });
+  assert.deepEqual(read(JSON.parse(JSON.stringify(value))), value);
+  const legacy = structuredClone(value); for (const c of legacy.graph.features[0].definition.sketch.constraints) delete c.position;
+  assert.deepEqual(read(legacy), legacy, 'legacy fixed coordinates remain supported');
+  const invalid: [string, (s: any) => void][] = [
+    ['missing coordinate', s => delete s.constraints[0].position.x],
+    ['extra position field', s => s.constraints[0].position.z = 1],
+    ['extra coordinate field', s => s.constraints[0].position.x.extra = 1],
+    ['non-length coordinate', s => s.constraints[0].position.x.kind = 'angle'],
+    ['missing variable', s => s.constraints[0].position.x.source = 'missing'],
+    ['dimension mismatch', s => s.constraints[0].position.x.source = '2 deg'],
+    ['nonfinite length', s => s.constraints[0].position.x.source = '1e309 mm'],
+    ['division by zero', s => s.constraints[0].position.x.source = 'width / 0'],
+    ['empty group', s => s.constraints[0].position.entityIds = []],
+    ['missing anchor', s => s.constraints[0].position.entityIds = ['b']],
+    ['duplicate group member', s => s.constraints[0].position.entityIds = ['a','a']],
+    ['unknown group member', s => s.constraints[0].position.entityIds = ['a','absent']],
+    ['mixed entity kinds', s => s.constraints[0].position.entityIds = ['a','c']],
+    ['multiple circles', s => s.constraints[1].position.entityIds = ['c','d']],
+    ['non-fix constraint', s => { s.constraints[0].kind = 'horizontal'; s.constraints[0].pointRoles = []; }],
+    ['relation constraint', s => { s.constraints[0].kind = 'equal'; s.constraints[0].entityIds = ['a','b']; s.constraints[0].pointRoles = []; }],
+    ['overlapping group', s => s.constraints.push({ id: 'overlap', kind: 'fix', entityIds: ['b'], pointRoles: ['b'], inferred: false,
+      position: { x: { source: '10', kind: 'length' }, y: { source: '10', kind: 'length' }, entityIds: ['b'] } })],
+  ];
+  for (const [label, mutate] of invalid) {
+    const copy = structuredClone(value); mutate(copy.graph.features[0].definition.sketch);
+    assert.throws(() => read(copy), { name: 'CADContentError' }, label);
+  }
+});
