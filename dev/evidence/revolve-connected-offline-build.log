@@ -1,0 +1,16 @@
+
+> gsnv-paint@0.1.0 test:offline-build
+> node --import tsx --test dev/offline-build.test.ts
+
+✔ S17 inventories unvisited worker/binary output with exact hashes and stable build identity (403.746358ms)
+✔ S17 rejects missing required lazy runtimes and output at the hosting size limit (183.934764ms)
+✔ S17 rejects source/private output and public symlinks before declaring a build complete (465.196406ms)
+✔ S17 rejects malformed build identity before emitting static output (0.446547ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1994.964956

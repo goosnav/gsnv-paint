@@ -7,7 +7,8 @@
  *            a real valid 2×3×4 mm box with volume 24 mm³. Probe preserves owned shapes.
  *            retain transfers a distinct live shape wrapper; resolve borrows it;
  *            release deletes it once. Normal close invalidates generation and deletes all.
- *            Native-fault cleanup belongs to worker termination, without more geometry calls.
+ *            Every unknown/native/cleanup fault stops native calls, including exception
+ *            inspection/refcount calls; remaining cleanup belongs to worker termination.
  *            RAISES: KernelLoadError on configuration/load/init/probe/native lifetime failure;
  *            CapabilityError for missing worker/SIMD/native exceptions or unsupported
  *            thread lifecycle; DisposedSessionError for foreign/closed sessions or tokens.
@@ -61,15 +62,8 @@ function error(name: string, message: string, cause?: unknown): Error {
 function native(cause: unknown): cause is WebAssembly.Exception {
   return typeof WebAssembly.Exception === 'function' && cause instanceof WebAssembly.Exception;
 }
-function fatal(cause: unknown): boolean {
-  return native(cause) || cause instanceof WebAssembly.RuntimeError;
-}
-function explain(cause: unknown, library?: OpenCascadeInstance): string {
-  if (native(cause) && library) {
-    try { return library.getExceptionMessage(cause).filter(Boolean).join(': ') || 'native OpenCascade exception'; }
-    catch { return 'native OpenCascade exception'; }
-    finally { try { library.decrementExceptionRefcount(cause); } catch { /* The worker must be terminated. */ } }
-  }
+function explain(cause: unknown): string {
+  if (native(cause)) return 'native OpenCascade exception';
   try { return String(cause instanceof Error ? cause.message : cause); } catch { return 'unreadable kernel failure'; }
 }
 function status(config: KernelConfig, ready: boolean, diagnostics: Diagnostic[] = []): KernelStatus {
@@ -100,21 +94,23 @@ function checkConfig(config: KernelConfig): void {
 function probe(library: OpenCascadeInstance): void {
   const objects: { delete(): void }[] = [];
   let failure: { cause: unknown } | undefined;
+  let ordinary: Error | undefined;
+  const reject=(message:string):never=>{ordinary=new Error(message);throw ordinary;};
   try {
     const builder = new library.BRepPrimAPI_MakeBox(2, 3, 4); objects.push(builder);
     const shape = builder.Shape(); objects.push(shape);
     const validator = new library.BRepCheck_Analyzer(shape, true, false); objects.push(validator);
-    if (!validator.IsValid()) throw Error('The kernel box probe returned an invalid solid.');
+    if (!validator.IsValid()) reject('The kernel box probe returned an invalid solid.');
     const properties = new library.GProp_GProps(); objects.push(properties);
     library.BRepGProp.VolumeProperties(shape, properties, true, false, false);
     const mass = properties.Mass();
-    if (!Number.isFinite(mass) || Math.abs(mass - 24) > PROBE_VOLUME_TOLERANCE) throw Error(`The kernel box probe returned volume ${mass}; expected 24 mm³.`);
+    if (!Number.isFinite(mass) || Math.abs(mass - 24) > PROBE_VOLUME_TOLERANCE) reject(`The kernel box probe returned volume ${mass}; expected 24 mm³.`);
   } catch (cause) { failure = { cause }; }
-  // Native exceptions leave an unrestored shadow stack; avoid further geometry calls.
-  if (!fatal(failure?.cause)) for (const object of objects.reverse()) {
-    try { object.delete(); } catch (cause) { failure = { cause }; if (fatal(cause)) break; }
+  // Only our own validation rejection permits cleanup. Any unknown throw may be native.
+  if (!failure || ordinary!==undefined&&failure.cause===ordinary) for (const object of objects.reverse()) {
+    try { object.delete(); } catch (cause) { failure = { cause }; break; }
   }
-  if (failure) throw error('KernelLoadError', `OpenCascade box probe failed: ${explain(failure.cause, library)}. Restart the kernel worker.`, failure.cause);
+  if (failure) throw error('KernelLoadError', `OpenCascade box probe failed: ${explain(failure.cause)}. Restart the kernel worker.`, failure.cause);
 }
 
 function createSession(library: OpenCascadeInstance, config: KernelConfig): KernelSession {
@@ -135,8 +131,8 @@ function createSession(library: OpenCascadeInstance, config: KernelConfig): Kern
     if (dispose) for (const shape of pending) {
       try { shape.delete(); } catch (cause) {
         diagnostics.push({ code: 'kernel.dispose', severity: 'error', subjectIds: [],
-          message: `Kernel cleanup failed: ${explain(cause, library)}. Terminate the kernel worker.` });
-        if (fatal(cause)) break;
+          message: `Kernel cleanup failed: ${explain(cause)}. Terminate the kernel worker.` });
+        break;
       }
     }
     return diagnostics;
@@ -153,7 +149,7 @@ function createSession(library: OpenCascadeInstance, config: KernelConfig): Kern
       const shape = resolve(token); shapes.delete(token.id); owned.delete(shape);
       try { shape.delete(); } catch (cause) {
         close(false);
-        throw error('KernelLoadError', `Kernel shape release failed: ${explain(cause, library)}. Terminate the kernel worker.`, cause);
+        throw error('KernelLoadError', `Kernel shape release failed: ${explain(cause)}. Terminate the kernel worker.`, cause);
       }
     }, isClosed: () => closed,
   });
@@ -166,7 +162,7 @@ export async function kernelRuntime(request: KernelRequest): Promise<KernelResul
     const session = request.session, owned = sessions.get(session);
     if (!owned || session.isClosed()) throw error('DisposedSessionError', 'Kernel session is foreign or closed.');
     if (request.action === 'close') return { status: status(owned.config, false, owned.close()), session: null };
-    try { probe(session.library); } catch (cause) { owned.close(!fatal((cause as Error).cause)); throw cause; }
+    try { probe(session.library); } catch (cause) { owned.close(false); throw cause; }
     return { status: status(owned.config, true), session };
   }
   checkConfig(request.config);

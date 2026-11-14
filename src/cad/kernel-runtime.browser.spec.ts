@@ -56,7 +56,7 @@ test('C01 actual isolated worker owns native solids, remains responsive and reco
   await expect(page.locator('#kernel-status')).toHaveText('Faulted worker terminated');
   const fault = await receipt(page, 'fault');
   expect(fault).toMatchObject({ name: 'KernelLoadError', closed: true, faultInjection: true });
-  expect(fault.message).toContain('Standard_DomainError'); expect(fault.message).toContain('Restart the kernel worker');
+  expect(fault.message).toContain('native OpenCascade exception'); expect(fault.message).toContain('Restart the kernel worker');
   await expect(page.locator('#worker-alive')).toHaveText('no');
   await page.getByRole('button', { name: 'Main-thread click', exact: true }).click();
   await expect(page.locator('#click-count')).toHaveText('2');

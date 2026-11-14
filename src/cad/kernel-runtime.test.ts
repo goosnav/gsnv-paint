@@ -149,12 +149,12 @@ test('C01 refuses invalid solid or inaccurate/nonfinite mass instead of readines
   resource = fakeLibrary(); resource.state.valid = false;
   await assert.rejects(open(), named('KernelLoadError', /valid/i));
 });
-test('C01 failed live probe invalidates tokens and reports native type with context', async () => {
+test('C01 failed live probe invalidates tokens and reports JavaScript-only context', async () => {
   const session = (await open()).session!, token = session.retain(shape(session));
   const fault = new WebAssembly.Exception(new WebAssembly.Tag({ parameters: [] }), []);
   resource.state.fault = fault;
-  await assert.rejects(kernelRuntime({ action: 'probe', session }), named('KernelLoadError', /box.*Standard_DomainError/i));
-  assert.equal(resource.state.freedExceptions, 1); assert.equal(session.isClosed(), true);
+  await assert.rejects(kernelRuntime({ action: 'probe', session }), named('KernelLoadError', /box.*native OpenCascade exception/i));
+  assert.equal(resource.state.freedExceptions, 0); assert.equal(session.isClosed(), true);
   assert.throws(() => session.resolve(token), named('DisposedSessionError', /closed/i));
 });
 test('C01 malformed token and invalid ownership cannot delete another shape', async () => {
@@ -165,7 +165,7 @@ test('C01 malformed token and invalid ownership cannot delete another shape', as
   assert.equal(session.resolve(token), native);
   await kernelRuntime({ action: 'close', session });
 });
-test('C01 close reports cleanup failure and still releases remaining ordinary wrappers', async () => {
+test('C01 close reports unknown cleanup failure and leaves remaining wrappers to worker termination', async () => {
   const session = (await open()).session!, broken = shape(session), healthy = shape(session);
   session.retain(broken); session.retain(healthy);
   broken.delete = () => { throw Error('wrapper deletion failed'); };
@@ -173,15 +173,15 @@ test('C01 close reports cleanup failure and still releases remaining ordinary wr
   assert.equal(result.status.ready, false); assert.equal(result.session, null);
   assert.deepEqual(result.status.diagnostics, [{ code: 'kernel.dispose', severity: 'error', subjectIds: [],
     message: 'Kernel cleanup failed: wrapper deletion failed. Terminate the kernel worker.' }]);
-  assert.equal(resource.state.objects.find(value => Object.is(value, healthy))?.deletes, 1);
+  assert.equal(resource.state.objects.find(value => Object.is(value, healthy))?.deletes, 0);
   assert.equal(session.isClosed(), true);
 });
 test('C01 native release failure invalidates the entire session without further geometry calls', async () => {
   const session = (await open()).session!, broken = shape(session), healthy = shape(session);
   const token = session.retain(broken); session.retain(healthy);
   broken.delete = () => { throw new WebAssembly.Exception(new WebAssembly.Tag({ parameters: [] }), []); };
-  assert.throws(() => session.release(token), named('KernelLoadError', /release.*Standard_DomainError/i));
-  assert.equal(session.isClosed(), true); assert.equal(resource.state.freedExceptions, 1);
+  assert.throws(() => session.release(token), named('KernelLoadError', /release.*native OpenCascade exception/i));
+  assert.equal(session.isClosed(), true); assert.equal(resource.state.freedExceptions, 0);
   assert.equal(resource.state.objects.find(value => Object.is(value, healthy))?.deletes, 0);
 });
 test('C01 native close failure avoids subsequent native calls and leaves a readable result', async () => {
@@ -189,8 +189,8 @@ test('C01 native close failure avoids subsequent native calls and leaves a reada
   session.retain(broken); session.retain(healthy);
   broken.delete = () => { throw new WebAssembly.Exception(new WebAssembly.Tag({ parameters: [] }), []); };
   const result = await kernelRuntime({ action: 'close', session });
-  assert.equal(result.status.ready, false); assert.match(result.status.diagnostics[0]!.message, /Standard_DomainError/);
-  assert.equal(session.isClosed(), true); assert.equal(resource.state.freedExceptions, 1);
+  assert.equal(result.status.ready, false); assert.match(result.status.diagnostics[0]!.message, /native OpenCascade exception/);
+  assert.equal(session.isClosed(), true); assert.equal(resource.state.freedExceptions, 0);
   assert.equal(resource.state.objects.find(value => Object.is(value, healthy))?.deletes, 0);
 });
 test('C01 snapshots configuration before asynchronous module loading', async () => {
@@ -212,4 +212,19 @@ test('C01 a WASM trap stops all native cleanup and invalidates retained shapes',
   assert.ok(resource.state.objects.slice(before).every(value => value.deletes === 0));
   assert.equal(resource.state.freedExceptions, 0);
   assert.throws(() => session.resolve(token), named('DisposedSessionError', /closed/i));
+});
+test('C01 release, close and probe stop after every unknown fault without native exception inspection',async()=>{
+ for(const action of ['release','close','probe','probe-cleanup'] as const)for(const fault of [undefined,null,23,new Error('unknown'),new WebAssembly.RuntimeError('trap'),new WebAssembly.Exception(new WebAssembly.Tag({parameters:[]}),[])]){
+  resource=fakeLibrary();const session=(await open()).session!,broken=shape(session),healthy=shape(session),token=session.retain(broken);session.retain(healthy);
+  const calls:string[]=[];resource.library.getExceptionMessage=()=>{calls.push('inspect');return ['native',''];};resource.library.decrementExceptionRefcount=()=>{calls.push('decrement');};
+  const before=resource.state.objects.length;
+  if(action==='release'||action==='close')broken.delete=()=>{calls.push('fault');throw fault;};
+  else if(action==='probe')resource.library.BRepGProp.VolumeProperties=()=>{calls.push('fault');throw fault;};
+  else resource.library.GProp_GProps=class extends resource.library.GProp_GProps{override delete(){calls.push('fault');throw fault;}};
+  if(action==='close'){const result=await kernelRuntime({action:'close',session});assert.equal(result.status.diagnostics.length,1);}
+  else {const check=(error:unknown)=>{assert.ok(error instanceof Error);assert.equal(error.name,'KernelLoadError');assert.equal(error.cause,fault);return true;};
+   if(action==='release')assert.throws(()=>session.release(token),check);else await assert.rejects(kernelRuntime({action:'probe',session}),check);}
+  assert.deepEqual(calls,['fault'],action);assert.equal(session.isClosed(),true);assert.equal(resource.state.objects.find(value=>Object.is(value,healthy))?.deletes,0);
+  assert.ok(resource.state.objects.slice(before).every(value=>value.deletes===0),`${action}: no temporary deletes after fault`);
+ }
 });

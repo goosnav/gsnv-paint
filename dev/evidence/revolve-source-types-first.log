@@ -1,0 +1,10 @@
+
+> gsnv-paint@0.1.0 typecheck
+> tsc --noEmit
+
+src/cad/cad-properties.ts(47,226): error TS2339: Property 'size' does not exist on type '{ kind: "revolve"; operation: "boss"; sketchId: string; profileLoopIds: []; axis: { kind: "sketch-axis"; sketchId: string; axis: "v"; }; angle: { source: string; kind: "angle"; }; targetBodyIds: []; } | { ...; }'.
+  Property 'size' does not exist on type '{ kind: "revolve"; operation: "boss"; sketchId: string; profileLoopIds: []; axis: { kind: "sketch-axis"; sketchId: string; axis: "v"; }; angle: { source: string; kind: "angle"; }; targetBodyIds: []; }'.
+src/cad/cad-properties.ts(47,262): error TS2339: Property 'edges' does not exist on type '{ kind: "revolve"; operation: "boss"; sketchId: string; profileLoopIds: []; axis: { kind: "sketch-axis"; sketchId: string; axis: "v"; }; angle: { source: string; kind: "angle"; }; targetBodyIds: []; } | { ...; }'.
+  Property 'edges' does not exist on type '{ kind: "revolve"; operation: "boss"; sketchId: string; profileLoopIds: []; axis: { kind: "sketch-axis"; sketchId: string; axis: "v"; }; angle: { source: string; kind: "angle"; }; targetBodyIds: []; }'.
+src/cad/edit-cad-content.test.ts(26,238): error TS2339: Property 'size' does not exist on type '{ kind: "revolve"; operation: "boss"; sketchId: string; profileLoopIds: []; axis: { kind: "sketch-axis"; sketchId: string; axis: "v"; }; angle: { source: string; kind: "angle"; }; targetBodyIds: []; } | { ...; }'.
+  Property 'size' does not exist on type '{ kind: "revolve"; operation: "boss"; sketchId: string; profileLoopIds: []; axis: { kind: "sketch-axis"; sketchId: string; axis: "v"; }; angle: { source: string; kind: "angle"; }; targetBodyIds: []; }'.

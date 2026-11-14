@@ -1,0 +1,14 @@
+
+> gsnv-paint@0.1.0 test:launcher
+> node launcher/start.test.mjs && node --test launcher/offline-freshness.test.mjs
+
+launcher smoke: PASS
+✔ launcher rebuilds missing offline controls and changed public/generator sources, and reuses complete fresh output (1930.01263ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1997.441655

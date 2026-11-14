@@ -34,7 +34,7 @@ export function editCADContent({content,action,sketch:target}:CADEdit):CADConten
     const {context}=cadExpressionPolicy({units:value.units,variables:value.variables,linearMm:value.tolerance.linearMm});
     Object.assign(sketch,manageSketchProfiles({sketch,action,usedIds,context,tolerance:value.tolerance}));
   } else if(isLegacySketchAction(action))value=editLegacySketch({content,action,sketch:target});
-  else if(['plane','variable','remove-variable','extrude','remove-extrude','add-cut','cut-extent','edge-feature','remove-feature','units'].includes(action.kind))value=editCADModel({content,action});
+  else if(['plane','variable','remove-variable','extrude','remove-extrude','revolve','remove-revolve','add-cut','cut-extent','edge-feature','remove-feature','units'].includes(action.kind))value=editCADModel({content,action});
   else return fail('That CAD edit is not supported.');
   value.graph.rollback=value.graph.features.length;
   value.graph.revision=content.graph.revision+1;

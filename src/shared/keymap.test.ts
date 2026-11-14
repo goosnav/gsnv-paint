@@ -127,6 +127,14 @@ test('S05 production CAD tool shortcuts stay native while typing',()=>{
  }
 });
 
+test('S05 Shift+E opens Revolve only from the CAD view and leaves modified/text keys alone',()=>{
+ assert.deepEqual(mapped('E',{shift:true}),handled('cad.revolve'));
+ for(const patch of [{target:'text'},{target:'dialog'},{ctrl:true},{meta:true},{alt:true},{workspace:'image'},{workspace:'video'},{workspace:'code'}] as Partial<CommandEvent>[]){
+  assert.deepEqual(mapped('E',{shift:true,...patch}),unhandled);
+ }
+ assert.deepEqual(mapped('e'),handled('cad.extrude'));
+});
+
 test('S05 Photo before/after and crop keys are limited to the Photo workspace', () => {
   assert.deepEqual(mapped('\\', { workspace: 'photo', viewRole: 'preview2d' }), handled('photo.beforeAfter'));
   assert.deepEqual(mapped('r', { workspace: 'photo', viewRole: 'preview2d' }), handled('photo.crop'));

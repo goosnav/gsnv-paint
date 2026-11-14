@@ -1,0 +1,35 @@
+
+Running 1 test using 1 worker
+
+(node:1200208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/cad/cad-revolve.browser.spec.ts:30:1 › Revolve production: live signed preview, variables, undo, native reopen and recovery (6.3s)
+
+
+  1) src/cad/cad-revolve.browser.spec.ts:30:1 › Revolve production: live signed preview, variables, undo, native reopen and recovery
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('dialog')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('dialog') with timeout 5000ms
+      - waiting for getByRole('dialog')
+
+
+      35 |   await variable(page,'outer','20');await variable(page,'sweep','360','angle');await rectangle(page,'outer - 10');
+      36 |   const props=page.locator('.cad-properties'),dialog=page.getByRole('dialog'),before=await history(page);
+    > 37 |   await props.getByRole('button',{name:'Revolve…',exact:true}).click();await expect(dialog).toBeVisible();
+         |                                                                                             ^
+      38 |   await expect(dialog.getByLabel('Axis',{exact:true})).toHaveValue('v');await expect(dialog.getByLabel('Axis',{exact:true}).locator('option')).toHaveCount(1);
+      39 |   await expect(dialog.getByLabel('Angle (degrees or expression)')).toHaveValue('360 deg');await volume(page,3600*Math.PI);
+      40 |   await dialog.getByLabel('Angle (degrees or expression)').fill('90 deg');await volume(page,900*Math.PI);await expect(props).toContainText('9.903, 6.000, -9.903 mm');
+        at /home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve.browser.spec.ts:37:93
+
+    Error Context: ../../../../../tmp/gsnv-cad-revolve-results/cad-revolve.browser-Revolv-cdbeb--native-reopen-and-recovery/error-context.md
+
+  1 failed
+    src/cad/cad-revolve.browser.spec.ts:30:1 › Revolve production: live signed preview, variables, undo, native reopen and recovery

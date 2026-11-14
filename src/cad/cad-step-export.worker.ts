@@ -1,7 +1,6 @@
 /** STEP-APP assembly: a fresh worker rebuilds the requested source and exports its B-rep. */
 import {kernelRuntime} from './kernel-runtime.ts';
 import {solverRuntime} from './solver-runtime.ts';
-import {bossOf} from './editable-cad-content.ts';
 import {cadProjectSource,isSTEPSource} from './cad-project-source.ts';
 import {buildPart} from './part-builder.ts';
 import {stepExchange} from './step-exchange.ts';
@@ -17,8 +16,8 @@ async function exportSource(request:Request){
   const file=stepExchange({action:'export',session,units:content.units,bodies}).file!;
   for(const body of bodies.shapes)session.release(body.token);return file;
  }
- const boss=bossOf(content);
- if(!boss)throw new Error('Create an extrusion before exporting STEP.');
+ const boss=content.graph.features[1];
+ if(!boss||(boss.kind!=='extrude'&&boss.kind!=='revolve'))throw new Error('Create an extrusion or revolve before exporting STEP.');
  const opened=await solverRuntime({action:'open',moduleUrl:request.assets.solverModule,wasmUrl:request.assets.solverWasm}),solver=opened.session;
  if(!solver)throw new Error(opened.diagnostics.map(d=>d.message).join(' '));
  const part=await buildPart({content,solver,kernel:async()=>{const loaded=await kernelRuntime({action:'open',config:{moduleUrl:request.assets.kernelModule,wasmUrl:request.assets.kernelWasm,mode:'single',tolerance:content.tolerance}});if(!loaded.session)throw new Error(loaded.status.diagnostics.map(d=>d.message).join(' '));return loaded.session;}});
@@ -28,5 +27,5 @@ async function exportSource(request:Request){
 }
 port.onmessage=event=>{
  port.onmessage=null;
- void exportSource(event.data).then(file=>port.postMessage({ok:true,file},[file.bytes.buffer as ArrayBuffer]),cause=>port.postMessage({ok:false,message:cause instanceof Error?cause.message:'The CAD kernel could not export this part. Edit the sketch or depth and retry.'}));
+ void exportSource(event.data).then(file=>port.postMessage({ok:true,file},[file.bytes.buffer as ArrayBuffer]),cause=>port.postMessage({ok:false,message:cause instanceof Error?cause.message:'The CAD kernel could not export this part. Edit the sketch or feature dimensions and retry.'}));
 };

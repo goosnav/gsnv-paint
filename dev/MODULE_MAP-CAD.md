@@ -119,6 +119,7 @@ OUT: `{status:KernelStatus,session:KernelSession|null}`; open returns the public
 RAISES: `KernelLoadError` on fetch/compile/init failure; `CapabilityError` for unsupported SIMD/exceptions/thread requirements; `DisposedSessionError` for invalid token.
 DEPS: none.
 Vendor: `replicad-opencascadejs@1.2.1`; commercial-distribution and byte-size evidence recorded in DECISIONS. Spike gate is real worker execution, readable exception conversion, disposal, and asset-size verification. C01 passes the single-runtime gate with evidence in [PHASE-2.md](PHASE-2.md). D10 records fatal-worker replacement, actual heap bounds and explicit unsupported pthread lifecycle; source asset size is verified, final distribution remains open.
+Current lifecycle amendment: unknown/native/cleanup faults stop all native calls, including exception introspection/refcount helpers. Diagnostics use JavaScript only; failed live probes invalidate tokens without further disposal. D29 supersedes D10's native exception inspection allowance. Only locally created ordinary probe rejections permit temporary cleanup; any cleanup throw stops it.
 
 ### C02 solver-runtime — SHELL — GREEN
 File `src/cad/solver-runtime.ts`; public `solverRuntime(request)`.
@@ -417,6 +418,7 @@ RAISES: `STEPReadError`, `STEPTransferError`, `STEPWriteError`, `InvalidImported
 DEPS: C01.
 Real acceptance disposes original B-rep before importing exported STEP and remeasuring.
 The current brick returns one token per valid imported solid with empty topology/operand metadata; the document assembly retains source bytes and assigns document-local feature IDs. Native import UI and full CAD-A7 remain pending. Canonical kernel geometry is mm regardless of document display units. The pinned writer needs both model units and a temporarily set/restored `write.step.unit` to label inch output correctly (D17).
+Fault-boundary amendment: only identity-tagged local ordinary rejections permit cleanup. Unknown exceptions (including undefined and forged error names) propagate unchanged, and any native/FS/cleanup exception stops all later calls; worker termination reclaims the instance. Normal unit/file cleanup remains required. See D29 and the revolve integration evidence.
 
 ### C38 stl-serialization — CORE — GREEN
 File `src/cad/stl-serialization.ts`; public `writeSTL(request)`.
@@ -584,7 +586,7 @@ C50–C58 are additive, dependency-ordered contracts for the production path. Th
 ### C50 editable-cad-content — CORE — GREEN
 Purpose: Validate the supported editable CAD document subset.
 IN: `{operation:'new'}` or `{operation:'read',value:unknown}`. Read is untrusted JSON.
-OUT: Owned `CADContent` using the existing persisted envelope content: mm/inch, positive tolerance, variable definitions, one XY segment sketch followed by at most one blind boss extrude, rollback at end, nonsuppressed features, empty assets, default appearance, no drawing. Sketch supports H/V and fixed endpoint constraints, linear/aligned single-segment dimensions. Reject unknown keys, unsupported features, duplicate IDs, dangling references, nonfinite/collapsed geometry and invalid revisions. Expressions remain source strings and may fail visibly during rebuild.
+OUT: Owned `CADContent` using the existing persisted envelope content: mm/inch, positive tolerance, variables, one default-plane sketch followed by a blind extrusion and its supported cuts/edge features, or one bounded +V revolve boss. Rollback is at the end; features are nonsuppressed; assets/appearance/drawing retain their bounded defaults. Supported sketch entities, profiles, constraints and dimensions are defined by the subsequent amendments. Reject unknown keys, unsupported features, duplicate IDs, dangling references, nonfinite/collapsed geometry and invalid revisions. Expressions remain source strings and may fail visibly during rebuild; persisted revolve angles may be reopened for repair. `bossOf` remains extrusion-only. The exact revolve schema is in CAD-REVOLVE-INCREMENT.md.
 RAISES: `CADContentError` with field/reason for malformed or unsupported content. New supplies an empty XY sketch, explicit tolerance and defaults. Revision is a safe nonnegative integer; this validator does not edit graph revisions.
 DEPS: none.
 
@@ -611,11 +613,11 @@ RAISES: `ProfileError` with readable reason for empty, open, branched, duplicate
 DEPS: none.
 
 ### C54 extrude-preview — SHELL — GREEN
-Purpose: Execute a validated linear extrusion with OpenCascade.
-IN: C01 live worker-local session; C53 polygon; finite signed nonzero depth.
+Purpose: Produce a CAD solid display packet with OpenCascade.
+IN: C01 live worker-local session and caller-validated owned solid token, or the legacy C59 prism request.
 OUT: Actual B-rep volume, surface area, center of mass, triangulated positions and triangle indices; no native handles cross boundary. Kernel validates the solid before publishing. Owned native wrappers disposed on normal completion; unexpected native faults require worker termination.
 RAISES: `ExtrusionError` for failed construction, invalid solid or unavailable triangulation; vendor faults propagate to worker owner.
-DEPS: C59.
+DEPS: C01 (type-only), C59.
 
 ### C55 cad-worker-client — SHELL — GREEN
 Purpose: Own one cancellable CAD worker request stream.
@@ -641,9 +643,9 @@ DEPS: none.
 ### C58 cad-properties — SHELL — GREEN
 Purpose: Render editable CAD properties.
 IN: DOM host, C50 content, solver/build status and selection; edit-intent callback. The assembly owns dialog callbacks.
-OUT: update/dispose; feature tree, selection constraints, dimension/depth edit controls and model measurements. User strings stay text; edit buttons request typed source dialogs; no model calculations. Failed sketch/extrusion is visibly flagged. Supported actions are exposed without inactive feature buttons.
+OUT: update/dispose; feature tree, selection constraints, dimension/depth/angle edit controls and model measurements. User strings stay text; edit buttons request typed source dialogs. Failed features are visibly flagged. Revolve exposes its source angle and +V axis with edit/delete; extrusion-only modifiers are disabled. Replacing a lone extrusion is explicitly labeled and unavailable with downstream features.
 RAISES: TypeError for invalid host; validation remains in C51/dialog caller.
-DEPS: none.
+DEPS: C50, C74, C55.
 
 CAD-APP assembly: C50/C51 + S01/S03/S15/shared shell; C52 + C02 + C53 + C54 + C01 in one worker; C55/C56/C57/C58 in workspace adapter. Assembly contains only lifecycle/routing. C04 resolves variables before C52 and depth evaluation. Test the real production entry: new → draw/typed rectangle → solve → extrude → edit → undo/redo → save/open → recovery; malformed/open sketches produce readable errors, canceled/stale jobs cannot commit. No shell fixture substitutes for production entry. Full requirement status remains conservative until each entire verification procedure passes.
 
@@ -788,23 +790,24 @@ File `src/cad/cad-legacy-sketch-edit.ts`; existing sketch tests plus direct isol
 
 ### C76 cad-model-edit — CORE — GREEN
 Purpose: Apply current model and unit edits with complete expression validation.
-IN: `{content:CADContent,action:ModelAction}`; plane/variable/extrude/cut/edge-feature/removal/units operations.
+IN: `{content:CADContent,action:ModelAction}`; plane/variable/extrude/revolve/cut/edge-feature/removal/units operations. Revolve create/edit/remove uses the exact bounded +V source, and may explicitly replace only a lone extrusion while retaining its ID; downstream conversion is rejected.
 OUT: Owned C50-valid content with unchanged revision; cuts inherit the root plane; units bind every supported variable/dimension/position/profile/feature source.
-RAISES: `CADEditError` for invalid target/ID/range/name/units/plane; C50/C74 errors propagate. Referenced variable removal rejects atomically.
-DEPS: C50, C74.
-File `src/cad/cad-model-edit.ts`; native unit/plane/source invariants, direct model-action tests and demo. Production revolve is not implemented by this contract.
+RAISES: `CADEditError` for invalid target/ID/range/name/units/plane; C50/C74/C79 errors propagate. Referenced variable removal rejects atomically. Revolve angle sources join the complete expression inventory; C79 validates signed angular range independently of linear tolerance.
+DEPS: C50, C74, C79.
+File `src/cad/cad-model-edit.ts`; native unit/plane/source invariants, direct model-action tests and demo. Unit changes bind implicit angle units without rescaling physical angles.
 
 ## Production revolve increment
 
 [CAD-REVOLVE-INCREMENT.md](CAD-REVOLVE-INCREMENT.md) closes the bounded +V-axis
 boss contract after the real native proof. It defines the exact source union,
 signed angular range, graph guards, failure clearing, analytic/STEP oracles,
-worker lifetime and editing/UI seams. Implement after the current checkpoint
-repairs finish: C77 and characterized C59 extraction, C79, C78, then source,
-worker/export and connected UI. Existing C59 gains the explicit fail-stop and
-cleanup-before-retain amendment when C77 is joined. C50 keeps `bossOf`
-extrusion-only; C76 adds C79 as its third collaborator only when integrated.
-No proof-only fixture enters production. No requirement is promoted by this map.
+worker lifetime and editing/UI seams. C77/C59, C79/C78, source edits,
+worker/export and connected UI are now GREEN under the
+[connected checkpoint](CAD-REVOLVE-EVIDENCE.md). C59 retains the explicit
+fail-stop and cleanup-before-retain amendment. C50 keeps `bossOf`
+extrusion-only; C76 uses C79 as its third collaborator.
+No proof-only fixture enters production. Requirement credit comes from the
+recorded complete procedure, not from this map.
 
 ### C77 kernel-profile-face — SHELL — GREEN
 Purpose: Build one analytic worker-local planar face from a validated region.

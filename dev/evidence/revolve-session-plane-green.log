@@ -1,0 +1,32 @@
+✔ C72 real rigid planes preserve geometry, signed depth, ownership and STEP world coordinates (1221.602501ms)
+✔ C72 ordinary failures preserve input; native and cleanup faults stop every subsequent native call (3.567947ms)
+✔ C72 every native boundary is fail-stop even for undefined or a forged ordinary-error name (9.558854ms)
+✔ C01 golden opens a genuine-probe contract and closes the worker-local port (4.156406ms)
+✔ C01 tracks ownership, stale tokens and cross-session generation isolation (1.620661ms)
+✔ C01 probe preserves owned shapes and returns independent status arrays (0.600831ms)
+✔ C01 rejects disposed and forged sessions without calling the vendor (1.259866ms)
+✔ C01 checks same origin and finite positive tolerance before loading (1.338789ms)
+✔ C01 refuses the main thread and unsupported threaded lifecycle explicitly (0.530339ms)
+✔ C01 detects missing SIMD and exception support before module initialization (0.858145ms)
+✔ C01 turns initialization and malformed module failures into readable load errors (0.928036ms)
+✔ C01 refuses invalid solid or inaccurate/nonfinite mass instead of readiness (1.466889ms)
+✔ C01 failed live probe invalidates tokens and reports JavaScript-only context (0.747689ms)
+✔ C01 malformed token and invalid ownership cannot delete another shape (0.629715ms)
+✔ C01 close reports unknown cleanup failure and leaves remaining wrappers to worker termination (0.535541ms)
+✔ C01 native release failure invalidates the entire session without further geometry calls (0.704274ms)
+✔ C01 native close failure avoids subsequent native calls and leaves a readable result (0.518222ms)
+✔ C01 snapshots configuration before asynchronous module loading (0.350004ms)
+✔ C01 a WASM trap stops all native cleanup and invalidates retained shapes (0.485792ms)
+✔ C01 release, close and probe stop after every unknown fault without native exception inspection (5.616284ms)
+✔ production revolve rebuild solves variable tube sections, signed angles and every default plane once, with STEP and preview (2361.280534ms)
+✔ production revolve routes real solved circles and axis contact to analytic torus/cylinder solids (254.730131ms)
+✔ production revolve flags failed geometry and lazy angle sources by feature name before kernel allocation (39.271118ms)
+✔ production revolve assembly does not clean up or call native APIs after builder/cleanup/retain faults (16.839096ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3053.367102

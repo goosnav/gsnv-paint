@@ -1,0 +1,20 @@
+✔ unchanged 120 mm acceptance plate retains holes, pocket and physical world placement on all default planes (4169.874934ms)
+CAD golden: width 100 mm, document mm; native volume 56654.424808105 mm3; STEP re-import matches.
+CAD golden: width 100 mm, document inch; native volume 56654.424808105 mm3; STEP re-import matches.
+CAD golden: width 100 mm, document mm; native volume 56654.424808105 mm3; STEP re-import matches.
+CAD golden: width 120 mm, document mm; native volume 68654.424808105 mm3; STEP re-import matches.
+CAD golden: width 120 mm, document inch; native volume 68654.424808105 mm3; STEP re-import matches.
+CAD golden: width 120 mm, document mm; native volume 68654.424808105 mm3; STEP re-import matches.
+✔ CAD golden production rebuild: rounded plate, four holes, pocket, changed width and STEP round trip (3428.187201ms)
+✔ production revolve rebuild solves variable tube sections, signed angles and every default plane once, with STEP and preview (3534.442631ms)
+✔ production revolve routes real solved circles and axis contact to analytic torus/cylinder solids (357.363997ms)
+✔ production revolve flags failed geometry and lazy angle sources by feature name before kernel allocation (39.468695ms)
+✔ production revolve assembly does not clean up or call native APIs after builder/cleanup/retain faults (21.530961ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4500.896684

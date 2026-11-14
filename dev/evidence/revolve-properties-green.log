@@ -1,0 +1,13 @@
+✔ C58 feature errors and source dimensions are visible, safe and editable (119.381574ms)
+✔ C58 invalid panel ports fail before binding handlers (0.63198ms)
+✔ C58 revolve source has a flagged editable row and guards unsupported extrusion modifiers (54.316385ms)
+✔ C58 selected document units display physical values without hiding editable source expressions (38.770271ms)
+✔ C58 profile controls expose source editing and atomic group actions without free-member constraints (42.780877ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1566.561387

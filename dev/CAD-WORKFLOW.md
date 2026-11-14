@@ -1,5 +1,14 @@
 # First working CAD increment — provisional GREEN
 
+This document records the original increment and its historical checks. Current
+default-plane/profile capabilities are in [modeling evidence](CAD-MODELING-EVIDENCE.md).
+The [connected revolve checkpoint](CAD-REVOLVE-EVIDENCE.md) extends the native
+version-1 format with the exact `[Sketch, Revolve]` union described in
+[CAD-REVOLVE-INCREMENT.md](CAD-REVOLVE-INCREMENT.md). Root axes remain sketch-relative;
+angle expressions remain source text and unit changes preserve physical angles.
+Existing extrusion/imported-STEP files retain their meanings. The current
+editable format boundary rejects unsupported features rather than discarding them.
+
 The production entry registers a CAD workspace instead of an empty adapter registry. C50–C58 and CAD-APP connect editable source, PlaneGCS constraints, OpenCascade B-rep extrusion, a sketch viewport, a solid viewport and the shared history/file/recovery shell. The full Phase 2 gate is not complete. No brick is human-ACCEPTED; this is not CANDIDATE_FOR_ACCEPTANCE.
 
 ## Supported workflow

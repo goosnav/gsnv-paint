@@ -1,0 +1,184 @@
+✖ revolve source is exact, owned and fully preserved through the existing native container (2.055095ms)
+✔ C50 rejects unsupported revolve schema, references, graph positions and global ID collisions (5.193743ms)
+✖ C50 preserves unevaluated angle text so failed rebuilt features remain editable (0.217979ms)
+✖ C76 creates and edits one revolve with unchanged revision and retained identity/name/references (3.473929ms)
+✖ C51 revolve create/edit/remove increments once and history restores exact source (0.267439ms)
+✖ revolve IDs and the +V axis reject invalid creation, mismatched edits and wrong removals atomically (2.587193ms)
+✖ explicit replacement of a lone extrusion retains its ID and undo restores the extrusion exactly (1.727112ms)
+✖ unsupported downstream commands never reinterpret or delete a revolve graph (0.165683ms)
+✖ angle expressions join variable validation and use angular, not linear, resolution (0.806015ms)
+✖ unit binding and default planes preserve angular meaning and sketch-relative source after native reopen (2.087593ms)
+✖ sketch geometry may fail rebuild without losing the editable revolve feature (0.779256ms)
+✔ revision exhaustion rejects every revolve edit without touching source or history (1.134738ms)
+✔ legacy sketch, extrusion and imported STEP sources keep their prior format and asset behavior (5.337772ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 3
+ℹ fail 10
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 263.672735
+
+✖ failing tests:
+
+test at src/cad/cad-revolve-source.test.ts:1:2704
+✖ revolve source is exact, owned and fully preserved through the existing native container (2.055095ms)
+  Error [CADContentError]: extrusion: must depend on the sketch
+      at bad (/home/goosnav/Desktop/code/gsnv-paint/src/cad/editable-cad-content.ts:58:79)
+      at editableCADContent (/home/goosnav/Desktop/code/gsnv-paint/src/cad/editable-cad-content.ts:176:114)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:43:43)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/cad/cad-revolve-source.test.ts:1:4967
+✖ C50 preserves unevaluated angle text so failed rebuilt features remain editable (0.217979ms)
+  Error [CADContentError]: extrusion: must depend on the sketch
+      at bad (/home/goosnav/Desktop/code/gsnv-paint/src/cad/editable-cad-content.ts:58:79)
+      at editableCADContent (/home/goosnav/Desktop/code/gsnv-paint/src/cad/editable-cad-content.ts:176:114)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:75:41)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/cad-revolve-source.test.ts:1:5311
+✖ C76 creates and edits one revolve with unchanged revision and retained identity/name/references (3.473929ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  1 !== 2
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:83:73)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/cad-revolve-source.test.ts:1:6270
+✖ C51 revolve create/edit/remove increments once and history restores exact source (0.267439ms)
+  Error [CADEditError]: That CAD edit is not supported.
+      at fail (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:24:59)
+      at editCADContent (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:38:15)
+      at edit (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:20:56)
+      at turn (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:21:71)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:93:38)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+
+test at src/cad/cad-revolve-source.test.ts:1:7077
+✖ revolve IDs and the +V axis reject invalid creation, mismatched edits and wrong removals atomically (2.587193ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /ID|used|empty/i. Input:
+
+  'CADEditError: That CAD edit is not supported.'
+
+      at unchanged (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:38:10)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:108:48)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: CADEditError: That CAD edit is not supported.
+        at fail (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:24:59)
+        at editCADContent (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:38:15)
+        at edit (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:20:56)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:38:23)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at unchanged (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:38:10)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:108:48)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25),
+    expected: /ID|used|empty/i,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/cad-revolve-source.test.ts:1:8093
+✖ explicit replacement of a lone extrusion retains its ID and undo restores the extrusion exactly (1.727112ms)
+  Error [CADEditError]: That CAD edit is not supported.
+      at fail (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:24:59)
+      at editCADContent (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:38:15)
+      at edit (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:20:56)
+      at turn (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:21:71)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:119:23)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+
+test at src/cad/cad-revolve-source.test.ts:1:9312
+✖ unsupported downstream commands never reinterpret or delete a revolve graph (0.165683ms)
+  Error [CADEditError]: That CAD edit is not supported.
+      at fail (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:24:59)
+      at editCADContent (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:38:15)
+      at edit (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:20:56)
+      at turn (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:21:71)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:132:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+
+test at src/cad/cad-revolve-source.test.ts:1:9779
+✖ angle expressions join variable validation and use angular, not linear, resolution (0.806015ms)
+  Error [CADEditError]: That CAD edit is not supported.
+      at fail (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:24:59)
+      at editCADContent (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:38:15)
+      at edit (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:20:56)
+      at turn (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:21:71)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:140:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+
+test at src/cad/cad-revolve-source.test.ts:1:10873
+✖ unit binding and default planes preserve angular meaning and sketch-relative source after native reopen (2.087593ms)
+  Error [CADEditError]: That CAD edit is not supported.
+      at fail (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:24:59)
+      at editCADContent (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:38:15)
+      at edit (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:20:56)
+      at turn (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:21:71)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:157:15)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+
+test at src/cad/cad-revolve-source.test.ts:1:12011
+✖ sketch geometry may fail rebuild without losing the editable revolve feature (0.779256ms)
+  Error [CADEditError]: That CAD edit is not supported.
+      at fail (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:24:59)
+      at editCADContent (/home/goosnav/Desktop/code/gsnv-paint/src/cad/edit-cad-content.ts:38:15)
+      at edit (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:20:56)
+      at turn (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:21:71)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-revolve-source.test.ts:171:128)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)

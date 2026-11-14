@@ -1400,7 +1400,7 @@
     "verification": "V-CAD-071",
     "procedure": "Apply revolve boss to a rectangular profile offset from an axis and a 360-degree angle; assert a closed revolved solid with analytically expected volume, then edit its driving value and assert dependent rebuild succeeds.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {

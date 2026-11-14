@@ -4,6 +4,8 @@
  * CONTRACT   IN: live host, model status/content/selection, edit callback.
  *            OUT: update/dispose; feature tree, dimension edits, constraint removal,
  *            measurements and visible failures. Buttons request typed source dialogs.
+ *            Revolve rows expose angle source/+V, edit/remove; extrusion modifiers
+ *            stay disabled for revolve. A lone extrusion may request explicit replacement.
  *            RAISES: TypeError for invalid host/callback.
  * GUARANTEES User strings stay text; no model calculations or native handles.
  * TUNING     None; property presentation styles live in cad-workspace.css.
@@ -27,8 +29,9 @@ export function cadProperties(ports:{root:HTMLElement;onEdit(edit:PropertyEdit):
   update(model){
    if(disposed)return;root.replaceChildren();root.className='cad-properties';
    const status=node('p',model.message);status.className='cad-build-status';status.dataset.state=model.state;status.setAttribute('role','status');root.append(status);
-   if(!model.content){root.append(node('p','Choose New (Ctrl+N) to start a part. Draw a closed sketch, then extrude it.'));return;}
+   if(!model.content){root.append(node('p','Choose New (Ctrl+N) to start a part. Draw a closed sketch, then extrude or revolve it.'));return;}
    const {content}=model,active=laterOf(content).find(f=>f.id===model.activeSketch&&f.kind==='pocket'),sketch=active&&active.kind==='pocket'?active.definition.sketch:content.graph.features[0].definition.sketch,boss=bossOf(content);
+   const revolve=content.graph.features[1]?.kind==='revolve',hasProfile=content.graph.features[0].definition.sketch.entities.length>0;
    const display=(source:string,suffix=false)=>{try{const value=cadExpressionPolicy({units:content.units,variables:content.variables,linearMm:content.tolerance.linearMm,parameters:[{expression:{source,kind:'length'}}]}).values[0]!/(content.units==='inch'?25.4:1);return `${+value.toPrecision(8)}${content.units==='inch'?' in':suffix?' mm':''}`;}catch{return source;}};
    const units=node('div');units.className='cad-units';units.append(node('span','Units '));
    for(const u of ['mm','inch'] as const){const b=button(u==='mm'?'Metric (mm)':'Imperial (in)',{command:`cad.units.${u}`});b.setAttribute('aria-pressed',String(content.units===u));units.append(b);}root.append(units);
@@ -38,16 +41,17 @@ export function cadProperties(ports:{root:HTMLElement;onEdit(edit:PropertyEdit):
    root.append(node('h3','Feature tree'));
    const tree=node('ol');tree.className='cad-feature-tree';
    for(const f of content.graph.features){
-    const item=node('li'),failed=model.state==='error'&&(model.message.startsWith(f.name)||(model.message.startsWith('Extrude')&&f.kind==='extrude')||(model.message.startsWith('Sketch')&&f.kind==='sketch'));
+    const item=node('li'),failed=model.state==='error'&&(model.message.startsWith(f.name)||(model.message.startsWith('Extrude')&&f.kind==='extrude')||(model.message.startsWith('Revolve')&&f.kind==='revolve')||(model.message.startsWith('Sketch')&&f.kind==='sketch'));
     item.dataset.featureId=f.id;item.dataset.failed=String(failed);
     const current=f.kind==='sketch'?!active:f.id===model.activeSketch;
     if(f.kind==='sketch'){const b=button(`${failed?'! ':''}${f.name}`,{command:'cad.editSketch',id:f.id});b.setAttribute('aria-pressed',String(current));item.append(b,node('small',`${f.definition.sketch.plane} plane`));}
     else if(f.kind==='extrude')item.append(button(`${failed?'! ':''}${f.name}`,{command:'cad.extrude'}),node('small',display(f.definition.extent.distance.source,true)));
+    else if(f.kind==='revolve')item.append(button(`${failed?'! ':''}${f.name}`,{command:'cad.revolve'}),button('Delete revolve',{command:'cad.removeRevolve',id:f.id}),node('small',`${f.definition.angle.source} · Sketch vertical axis (+V)`));
     else if(f.kind==='pocket'){const b=button(`${failed?'! ':''}${f.name}`,{command:'cad.editSketch',id:f.id});b.setAttribute('aria-pressed',String(current));item.append(b,button('Depth…',{command:'cad.cutDepth',id:f.id}),button('Delete',{command:'cad.removeFeature',id:f.id}),node('small',f.definition.extent.kind==='through'?'Through all':`Depth ${display(f.definition.extent.distance.source,true)}`));}
     else item.append(button(`${failed?'! ':''}${f.name}`,{command:'cad.editEdges',id:f.id}),button('Delete',{command:'cad.removeFeature',id:f.id}),node('small',`${f.kind==='fillet'?'Radius':'Distance'} ${display(f.definition.size.source,true)} · ${f.definition.edges} edges`));
     tree.append(item);
    }root.append(tree);
-   const add=node('div');add.className='cad-add';add.append(button(boss?'Edit extrusion…':'Extrude…',{command:'cad.extrude'},content.graph.features[0].definition.sketch.entities.length>0),button('Cut…',{command:'cad.addCut'},!!boss),button('Fillet…',{command:'cad.fillet'},!!boss),button('Chamfer…',{command:'cad.chamfer'},!!boss));root.append(add);
+   const add=node('div');add.className='cad-add';add.append(button(boss?'Edit extrusion…':'Extrude…',{command:'cad.extrude'},hasProfile&&!revolve),button(revolve?'Edit revolve…':boss?'Replace extrusion with revolve…':'Revolve…',{command:'cad.revolve'},revolve||(hasProfile&&!laterOf(content).length)),button('Cut…',{command:'cad.addCut'},!!boss),button('Fillet…',{command:'cad.fillet'},!!boss),button('Chamfer…',{command:'cad.chamfer'},!!boss));root.append(add);
    root.append(node('h3','Profiles'));
    for(const profile of sketch.profiles??[]){
     const row=node('div');row.className='cad-profile';const label=profile.kind==='center-rectangle'?`Centered rectangle · ${display(profile.width.source)} × ${display(profile.height.source)}`:`${profile.sides}-sided polygon · radius ${display(profile.radius.source)}`;

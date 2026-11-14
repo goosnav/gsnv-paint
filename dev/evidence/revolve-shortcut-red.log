@@ -1,0 +1,59 @@
+✔ S05 golden shortcut transcript (2.22294ms)
+✔ S05 complete common Ctrl/Meta table across all workspaces (1.83657ms)
+✔ S05 ordinary text editing stays native; document file shortcuts still work (0.607045ms)
+✔ S05 dialogs map Enter and Escape and shield workspace commands (0.250073ms)
+✔ S05 Space pans every 2D view and plays the focused Video or Audio timeline (0.267502ms)
+✔ S05 complete Video timeline table is limited to the focused timeline (0.32358ms)
+✔ S05 complete Image tool/color table is workspace-specific (0.522821ms)
+✔ S05 unspecified modifier combinations and unknown keys are untouched (0.184459ms)
+✔ S05 output property: only handled commands request preventDefault; input stays frozen (0.279275ms)
+✔ S05 malformed event 0 raises TypeError (0.45126ms)
+✔ S05 malformed event 1 raises TypeError (0.103159ms)
+✔ S05 malformed event 2 raises TypeError (0.076085ms)
+✔ S05 malformed event 3 raises TypeError (0.063578ms)
+✔ S05 malformed event 4 raises TypeError (0.146565ms)
+✔ S05 malformed event 5 raises TypeError (0.126053ms)
+✔ S05 malformed event 6 raises TypeError (0.106641ms)
+✔ S05 malformed event 7 raises TypeError (0.067632ms)
+✔ S05 malformed event 8 raises TypeError (0.066607ms)
+✔ S05 malformed event 9 raises TypeError (0.075714ms)
+✔ S05 production CAD tool shortcuts stay native while typing (0.175703ms)
+✖ S05 Shift+E opens Revolve only from the CAD view and leaves modified/text keys alone (2.802404ms)
+✔ S05 Photo before/after and crop keys are limited to the Photo workspace (0.162681ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 21
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 219.516288
+
+✖ failing tests:
+
+test at src/shared/keymap.test.ts:1:6927
+✖ S05 Shift+E opens Revolve only from the CAD view and leaves modified/text keys alone (2.802404ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    {
+  +   command: null,
+  +   preventDefault: false
+  -   command: 'cad.revolve',
+  -   preventDefault: true
+    }
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/keymap.test.ts:131:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { command: null, preventDefault: false },
+    expected: { command: 'cad.revolve', preventDefault: true },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

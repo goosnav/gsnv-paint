@@ -34,7 +34,7 @@ export function transformPartPlane({session,token,plane}:{session:KernelSession;
     const check=own(new oc.BRepCheck_Analyzer(result,true,false));if(!check.IsValid())fail('Plane placement produced invalid geometry.');
     const properties=own(new oc.GProp_GProps());oc.BRepGProp.VolumeProperties(result,properties,true,false,false);
     if(!Number.isFinite(properties.Mass())||properties.Mass()<=0)fail('Plane placement has no finite solid volume.');
-  }catch(cause){if(cause===ordinary)cleanup();throw cause;}
+  }catch(cause){if(ordinary!==undefined&&cause===ordinary)cleanup();throw cause;}
   temp.delete(result);cleanup(); // A cleanup fault must not consume or publish a token.
   const output=session.retain(result);session.release(token);return output;
 }

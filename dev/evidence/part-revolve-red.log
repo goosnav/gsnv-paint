@@ -1,0 +1,78 @@
+✖ production revolve rebuild solves variable tube sections, signed angles and every default plane once, with STEP and preview (308.920194ms)
+✖ production revolve routes real solved circles and axis contact to analytic torus/cylinder solids (247.01345ms)
+✖ production revolve flags failed geometry and lazy angle sources by feature name before kernel allocation (23.554817ms)
+✖ production revolve assembly does not clean up or call native APIs after builder/cleanup/retain faults (12.556181ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 864.669864
+
+✖ failing tests:
+
+test at src/cad/part-revolve.test.ts:1:1957
+✖ production revolve rebuild solves variable tube sections, signed angles and every default plane once, with STEP and preview (308.920194ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(part.token)
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/part-revolve.test.ts:44:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/cad/part-revolve.test.ts:1:5068
+✖ production revolve routes real solved circles and axis contact to analytic torus/cylinder solids (247.01345ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(part.token)
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/part-revolve.test.ts:86:106)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/cad/part-revolve.test.ts:1:5938
+✖ production revolve flags failed geometry and lazy angle sources by feature name before kernel allocation (23.554817ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/part-revolve.test.ts:106:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/cad/part-revolve.test.ts:1:7139
+✖ production revolve assembly does not clean up or call native APIs after builder/cleanup/retain faults (12.556181ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(complete.token)
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/part-revolve.test.ts:118:116)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

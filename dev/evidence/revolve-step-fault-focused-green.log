@@ -1,0 +1,26 @@
+✔ C37 exact writer-construction regression propagates every unknown identity without later cleanup (8.221797ms)
+✔ C37 normal import/export own results and clean wrappers/files without consuming export sources (1.354277ms)
+✔ C37 every import/export native, filesystem, retain and cleanup fault is the last call (147.139563ms)
+✔ C37 locally recognized ordinary rejections still release all owned temporaries and partial files (8.913885ms)
+✔ C37 a cleanup fault during ordinary rejection stops deletion, unlink and unit restore immediately (100.292857ms)
+✔ C37 missing private files do not require swallowing unlink errors; restore status stays readable (0.746772ms)
+✔ C37 cleanup preserves unrelated virtual files on success and deliberate rejection (0.497023ms)
+✔ C37 export golden uses declared units and returns owned bytes without consuming input tokens (5.34944ms)
+✔ C37 import golden publishes all valid solids only after canonical-mm transfer (1.446402ms)
+✔ C37 closed sessions and stale tokens fail before exchange (1.065808ms)
+✔ C37 rejects empty, unreadable and invalid-unit import requests (1.169447ms)
+✔ C37 refuses zero or partial root transfer without publishing any body (0.7954ms)
+✔ C37 refuses erroneous/unknown entities and per-entity translation failures even when every root transfers (0.538611ms)
+✔ C37 rejects invalid, zero-volume, reversed, nonfinite, nonsolid and mixed imports atomically (1.707369ms)
+✔ C37 validates export solids and transfer statuses without mutating originals (1.613171ms)
+✔ C37 deliberate write rejections clean up; unknown write failures propagate without cleanup (7.788818ms)
+✔ C37 restore failures are explicit; native faults avoid unsafe native cleanup (1.020138ms)
+✔ C37 real C01/OpenCascade: dispose source, import mm/inch STEP, preserve curved solids and multiple bodies (1098.968619ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2712.706955

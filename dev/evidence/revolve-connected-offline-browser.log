@@ -1,0 +1,22 @@
+{"directory":"/tmp/gsnv-offline-acceptance-A61dty","buildA":"27e2f584b22e6ba9b6ad1bbd8b544fc6c1a6506c898f21d96d9e9f13d6a64d95","buildB":"11bc5390b534a246ec0b6dfe1f906e3f59c2abcd99583eaf8a26059e05b878aa","files":55,"bytes":41178176}
+
+Running 9 tests using 1 worker
+
+(node:1218943) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/shared/offline-client.browser.spec.ts:8:1 › S20 real client reports failed B while A stays usable, then installs B without disturbing typing (4.4s)
+  ✓  2 src/shared/offline-retain.browser.spec.ts:8:1 › S18 real CacheStorage cleanup preserves A after partial B eviction and C activation (2.9s)
+  ✓  3 src/shared/offline-status.browser.spec.ts:8:1 › S21 XP footer details stay inside 1280×720 and Escape restores summary focus (610ms)
+  ✓  4 src/shared/offline-worker.browser.spec.ts:8:1 › S19 real Chrome installs, reloads offline and defers a complete update until all tabs close (1.8s)
+COLD root ready after complete browser restart, server stopped.
+COLD CAD solver/kernel/native/STEP complete.
+COLD Document/Slides/Spreadsheet edit/native/export complete.
+COLD Image/RAW/Audio/Video edit/native/export complete.
+COLD JS/Python stdlib/HTML/CSS/Stop/native/export complete.
+  ✓  5 src/shared/offline.browser.spec.ts:70:1 › OFFLINE production survives complete Chrome shutdown and first-use editing/export in all nine workspaces with the server stopped (40.6s)
+  ✓  6 src/shared/offline.browser.spec.ts:101:1 › OFFLINE failed full-build updates preserve A through cold restarts; complete B waits for dirty tabs and native close warnings (32.0s)
+  ✓  7 src/shared/offline.browser.spec.ts:173:1 › OFFLINE eviction and denied storage fail visibly, retry repairs, and foreign messages cannot mutate installation (6.1s)
+  ✓  8 src/shared/offline.browser.spec.ts:199:1 › OFFLINE first installation refuses to claim an unresponsive existing same-origin window (8.5s)
+  ✓  9 src/shared/offline.browser.spec.ts:211:1 › OFFLINE real local launcher retains control headers and its origin opens after the launcher and browser both stop (4.6s)
+
+  9 passed (1.7m)

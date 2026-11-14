@@ -1,0 +1,27 @@
+✔ C58 feature errors and source dimensions are visible, safe and editable (104.423353ms)
+✔ C58 invalid panel ports fail before binding handlers (0.4183ms)
+✖ C58 revolve source has a flagged editable row and guards unsupported extrusion modifiers (16.164926ms)
+✔ C58 selected document units display physical values without hiding editable source expressions (12.782734ms)
+✔ C58 profile controls expose source editing and atomic group actions without free-member constraints (13.817766ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1024.74385
+
+✖ failing tests:
+
+test at src/cad/cad-properties.test.ts:1:1536
+✖ C58 revolve source has a flagged editable row and guards unsupported extrusion modifiers (16.164926ms)
+  TypeError: Cannot read properties of undefined (reading 'source')
+      at Object.update (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-properties.ts:47:231)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-properties.test.ts:21:8)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

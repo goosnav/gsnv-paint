@@ -1,0 +1,49 @@
+✔ C01 golden opens a genuine-probe contract and closes the worker-local port (3.433822ms)
+✔ C01 tracks ownership, stale tokens and cross-session generation isolation (1.420002ms)
+✔ C01 probe preserves owned shapes and returns independent status arrays (0.535669ms)
+✔ C01 rejects disposed and forged sessions without calling the vendor (0.987531ms)
+✔ C01 checks same origin and finite positive tolerance before loading (1.23216ms)
+✔ C01 refuses the main thread and unsupported threaded lifecycle explicitly (0.395244ms)
+✔ C01 detects missing SIMD and exception support before module initialization (0.728774ms)
+✔ C01 turns initialization and malformed module failures into readable load errors (0.747065ms)
+✔ C01 refuses invalid solid or inaccurate/nonfinite mass instead of readiness (1.303787ms)
+✔ C01 failed live probe invalidates tokens and reports native type with context (0.659574ms)
+✔ C01 malformed token and invalid ownership cannot delete another shape (0.505724ms)
+✔ C01 close reports cleanup failure and still releases remaining ordinary wrappers (0.568317ms)
+✔ C01 native release failure invalidates the entire session without further geometry calls (0.60967ms)
+✔ C01 native close failure avoids subsequent native calls and leaves a readable result (0.373274ms)
+✔ C01 snapshots configuration before asynchronous module loading (0.309618ms)
+✔ C01 a WASM trap stops all native cleanup and invalidates retained shapes (0.459732ms)
+✖ C01 release, close and probe stop after every unknown fault without native exception inspection (5.423357ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 16
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 228.458939
+
+✖ failing tests:
+
+test at src/cad/kernel-runtime.test.ts:1:12567
+✖ C01 release, close and probe stop after every unknown fault without native exception inspection (5.423357ms)
+  AssertionError [ERR_ASSERTION]: release
+  + actual - expected
+
+    [
+      'fault',
+  +   'inspect',
+  +   'decrement'
+    ]
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-runtime.test.ts:227:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'fault', 'inspect', 'decrement' ],
+    expected: [ 'fault' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

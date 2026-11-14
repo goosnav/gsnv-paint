@@ -1,0 +1,14 @@
+✔ C37 exact writer-construction regression propagates every unknown identity without later cleanup (3.93769ms)
+✔ C37 normal import/export own results and clean wrappers/files without consuming export sources (0.924038ms)
+✔ C37 every import/export native, filesystem, retain and cleanup fault is the last call (73.416057ms)
+✔ C37 locally recognized ordinary rejections still release all owned temporaries and partial files (1.369684ms)
+✔ C37 a cleanup fault during ordinary rejection stops deletion, unlink and unit restore immediately (61.151397ms)
+✔ C37 missing private files do not require swallowing unlink errors; restore status stays readable (0.474616ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 380.576376

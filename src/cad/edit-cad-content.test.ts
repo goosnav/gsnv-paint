@@ -23,7 +23,7 @@ test('C51 changing units preserves physical values, named formulas and reopened 
   const parameters = (content: typeof value) => {
     const context = evaluateVariables({ variables: content.variables, units: content.units }).context;
     const sources = content.graph.features.flatMap(f => f.kind === 'sketch' ? f.definition.sketch.dimensions.map(d => d.value)
-      : f.kind === 'extrude' ? [f.definition.extent.distance] : f.kind === 'pocket' ? [...f.definition.sketch.dimensions.map(d => d.value), ...(f.definition.extent.kind === 'blind' ? [f.definition.extent.distance] : [])] : [f.definition.size]);
+      : f.kind === 'extrude' ? [f.definition.extent.distance] : f.kind === 'revolve' ? [f.definition.angle] : f.kind === 'pocket' ? [...f.definition.sketch.dimensions.map(d => d.value), ...(f.definition.extent.kind === 'blind' ? [f.definition.extent.distance] : [])] : [f.definition.size]);
     return sources.map(expression => evaluateDimension({ expression, context }).value);
   };
   const expected = parameters(value);

@@ -69,7 +69,7 @@ export function keymap(event: CommandEvent): CommandResult {
     if (event.workspace === 'image' && !event.shift && key === 't') return result('image.transform');
     return result(event.shift ? key === 'z' ? 'edit.redo' : null : Object.hasOwn(COMMON, key) ? COMMON[key] : null);
   }
-  if (event.shift) return result();
+  if (event.shift) return result(event.workspace === 'cad' && key === 'e' ? 'cad.revolve' : null);
   if (key === 'Escape') return result('tool.cancel');
   if (key === 'Enter') return result('tool.confirm');
   if (key === 'Delete') return result('edit.delete');

@@ -4,7 +4,24 @@ For a desktop creator, gsnv-paint turns local models, images, footage, documents
 
 Authority: original requirements in `requirements.json`, the owner's additions in [the current plan](PLAN-2026-11-12.md), and the 2026-11-13 request for consumer usability, Spreadsheet and Code. The [modeling and offline checkpoint](MODELING-OFFLINE-CHECKPOINT.md) owns the pushed `9496858` candidate's combined results. The subsequent [profile-face increment](CAD-PROFILE-FACE-EVIDENCE.md) records the C77/C59 integration and C65 native-fault caller repair. Baseline inspected commit `73405de` and the earlier repair/authoring counts below are historical. Later evidence supersedes them only within its stated scope.
 
-## Analytic profile-face checkpoint — bounded combined gates GREEN
+## Connected revolve checkpoint — bounded combined gates GREEN
+
+The [connected revolve evidence](CAD-REVOLVE-EVIDENCE.md) records 978/978 unit
+tests, 91/91 combined browser checks, 9/9 dedicated offline checks, successful
+type/build, local Wrangler hosting, Linux source launcher and deployment dry-run.
+One root sketch now drives an editable +V-axis revolve boss, with signed angles,
+variables, XY/XZ/YZ placement, native persistence/recovery and STEP export.
+Independent review also led to C01/C37/C72 native-fault corrections. The original
+plate and extrusion geometry oracles are unchanged.
+
+The complete V-CAD-071 procedure now passes. Current totals are **47 PASS / 0 FAIL /
+355 UNTESTED**. The remaining full CAD/Image/Video and performance requirements,
+live-host browser verification and M1a/platform gates remain open. The planned
+waveform Audio editor and browser JavaScript/HTML/CSS/Python Code scope remain
+the owner's selected deliverables; composing music and a system terminal are
+not added.
+
+## Earlier analytic profile-face checkpoint — bounded combined gates GREEN
 
 The newer [profile-face evidence](CAD-PROFILE-FACE-EVIDENCE.md) records
 923/923 unit tests, 51 focused CAD seams, 89/89 combined browser checks,
@@ -13,7 +30,8 @@ C77/C59 preserve analytic extrusion geometry; C65 now stops native cleanup
 after unknown nested faults. A Slides fixture now maintains chooser
 interception from setup; the application was not changed for that timeout.
 Its historical attribution stays inferred. No requirement credit was added.
-Production revolve and full consumer/release acceptance remain open.
+At that checkpoint, production revolve and full consumer/release acceptance
+remained open; the connected checkpoint above supersedes only the revolve gap.
 
 ## Earlier modeling/offline checkpoint — bounded combined gates GREEN
 
@@ -41,7 +59,7 @@ was made for that issue. Attribution of the earlier uninstrumented failures
 remains inferred; [diagnosis and RED evidence](CAD-REOPEN-DIAGNOSIS.md) are kept.
 
 After reviewing the full procedures, the parent credited CAD-020, CAD-025,
-CAD-030, CAD-033, XWS-001, XWS-003 and SYS-010. The requirement ledger now totals
+CAD-030, CAD-033, XWS-001, XWS-003 and SYS-010. That checkpoint's ledger totaled
 **46 PASS / 0 FAIL / 356 UNTESTED**; IMG-103/104 were already PASS. These counts
 describe tested requirements, not full product or owner acceptance.
 
@@ -75,7 +93,7 @@ See [consumer repair evidence](CONSUMER-REPAIR-CHECKPOINT.md): 610 existing-edit
 
 ## Authoring and imported-CAD checkpoint
 
-All nine workspace adapters are connected to the common shell. [Authoring evidence](AUTHORING-CHECKPOINT.md) records that earlier checkpoint's tested scope. CAD-116 passes the real consumer STEP import workflow, including multiple solids and exact source retention. The newer [CAD modeling evidence](CAD-MODELING-EVIDENCE.md) covers default planes, editable centered rectangles/polygons and construction exclusion. Production revolve is contracted but not implemented; its native API proof does not complete CAD-071.
+All nine workspace adapters are connected to the common shell. [Authoring evidence](AUTHORING-CHECKPOINT.md) records that earlier checkpoint's tested scope. CAD-116 passes the real consumer STEP import workflow, including multiple solids and exact source retention. The newer [CAD modeling evidence](CAD-MODELING-EVIDENCE.md) covers default planes, editable centered rectangles/polygons and construction exclusion. Production revolve now passes the bounded CAD-071 procedure in the connected checkpoint above; its earlier native API proof alone did not establish that result.
 
 [Snapshot transfers](CROSS-WORKSPACE.md), [Video export focus](VIDEO-EXPORT-FOCUS.md), [exact-revision recovery and Save availability](RECOVERY-CONSISTENCY.md), and [offline installation](OFFLINE-WORKFLOW.md) now pass their bounded combined regression gates; the current checkpoint records the exact evidence and credit. Remaining CAD tools, Video corrections, broader Image/Video and performance requirements, live hosting and M1a/platform distribution are still open. No CANDIDATE_FOR_ACCEPTANCE or owner acceptance is claimed.
 

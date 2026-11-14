@@ -124,7 +124,7 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-003 | CAD-068 | 2 | 2 | CADKernel | V-CAD-068 | T | UNTESTED |
 | N-003 | CAD-069 | 2 | 2 | CADKernel | V-CAD-069 | T | UNTESTED |
 | N-003 | CAD-070 | 2 | 2 | CADKernel | V-CAD-070 | T | UNTESTED |
-| N-003 | CAD-071 | 2 | 2 | CADKernel | V-CAD-071 | T | UNTESTED |
+| N-003 | CAD-071 | 2 | 2 | CADKernel | V-CAD-071 | T | PASS |
 | N-003 | CAD-072 | 2 | 2 | CADKernel | V-CAD-072 | T | UNTESTED |
 | N-003 | CAD-073 | 2 | 2 | CADKernel | V-CAD-073 | T | UNTESTED |
 | N-003 | CAD-074 | 2 | 2 | CADKernel | V-CAD-074 | T | UNTESTED |

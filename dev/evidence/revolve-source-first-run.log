@@ -1,0 +1,21 @@
+✔ revolve source is exact, owned and fully preserved through the existing native container (6.755128ms)
+✔ C50 rejects unsupported revolve schema, references, graph positions and global ID collisions (5.030036ms)
+✔ C50 preserves unevaluated angle text so failed rebuilt features remain editable (7.926789ms)
+✔ C76 creates and edits one revolve with unchanged revision and retained identity/name/references (0.933899ms)
+✔ C51 revolve create/edit/remove increments once and history restores exact source (1.075293ms)
+✔ revolve IDs and the +V axis reject invalid creation, mismatched edits and wrong removals atomically (9.037434ms)
+✔ explicit replacement of a lone extrusion retains its ID and undo restores the extrusion exactly (3.648277ms)
+✔ unsupported downstream commands never reinterpret or delete a revolve graph (1.229929ms)
+✔ angle expressions join variable validation and use angular, not linear, resolution (3.885176ms)
+✔ unit binding and default planes preserve angular meaning and sketch-relative source after native reopen (67.221761ms)
+✔ sketch geometry may fail rebuild without losing the editable revolve feature (3.756301ms)
+✔ revision exhaustion rejects every revolve edit without touching source or history (0.743313ms)
+✔ legacy sketch, extrusion and imported STEP sources keep their prior format and asset behavior (2.158996ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 354.952616

@@ -20,7 +20,7 @@ export type IconRequest = { document: Document; name: string; label: string; siz
 export const iconCatalog: readonly string[] = Object.freeze([
   'app', 'cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code', 'play', 'pause', 'split', 'bold', 'italic', 'underline', 'listBullet', 'listNumber', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'indent', 'outdent', 'link', 'strike', 'table', 'pageBreak', 'pdf', 'new', 'open', 'save', 'undo', 'redo', 'cut', 'copy', 'paste',
   'delete', 'select', 'hand', 'zoomIn', 'zoomOut', 'fit', 'history', 'properties', 'layers',
-  'grid', 'ruler', 'line', 'rectangle', 'extrude',
+  'grid', 'ruler', 'line', 'rectangle', 'extrude', 'revolve',
   'pencil', 'brush', 'eraser', 'fill', 'picker', 'ellipse', 'text', 'crop', 'rotate', 'flip',
   'move', 'ellipseSelect', 'lasso', 'wand', 'airbrush', 'clone', 'blur', 'gradient', 'layerAdd', 'smudge', 'export', 'close', 'help', 'chevronRight', 'chevronDown',
 ]);
@@ -98,6 +98,7 @@ const PATHS: Readonly<Record<string, string>> = {
   smudge: 'M9 21v-9a2 2 0 0 1 4 0v-7a2 2 0 0 1 4 0v12l-3 4zM3 14h4M2 18h5M4 10h3',
   layerAdd: 'M12 3 22 8l-10 5L2 8zM2 13l10 5 4-2M19 15v6M16 18h6',
   extrude: 'M3 12l9-5 9 5v7l-9 4-9-4zM3 12l9 5 9-5M12 17v6M12 13V1M8 5l4-4 4 4',
+  revolve: 'M12 2v20M12 5h6v11h-6M8 7C1 8 1 17 8 18M5 14l3 4-5 1M9 3l3-1 3 1',
   close: 'M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5',
   help: 'M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0M9 8a3 3 0 0 1 6 0c0 3-3 2-3 5M12 17h0',
   chevronRight: 'M8 4l8 8-8 8',

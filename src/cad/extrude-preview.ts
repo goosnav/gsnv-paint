@@ -1,14 +1,16 @@
 /**
- * PURPOSE    Execute a linear extrusion with OpenCascade.
+ * PURPOSE    Produce the display packet for a validated CAD solid.
  * KIND       SHELL
- * CONTRACT   IN: live C01 session, simple CCW polygon, finite signed nonzero depth.
+ * CONTRACT   IN: live C01 session and owned valid solid token, or a C59 prism request.
  *            OUT: B-rep measurements plus triangle buffers; no native handles escape.
  *            RAISES: ExtrusionError for failed/invalid solid or missing triangulation.
  * GUARANTEES Native validity checked before publication; wrappers released on normal completion.
  * TUNING     Mesh deflection 0.1 mm, angular deflection 0.5 radians for viewport display only.
  * DECISIONS  D1: Measure the B-rep, not the display mesh. Alternative: mesh integration
  *            changes with tessellation. Revisit if: the kernel provides a better exact port.
- * LIMITS     One linear blind boss; unexpected native faults require worker termination.
+ * LIMITS     The token route consumes any caller-validated solid; no feature-source policy.
+ *            Legacy ExtrusionError copy is contextualized by the worker assembly.
+ *            Unexpected native faults require worker termination.
  * TESTBENCH  src/cad/extrude-preview.test.ts -- run with: node --import tsx --test src/cad/extrude-preview.test.ts
  */
 import type { KernelSession } from './kernel-runtime.ts';

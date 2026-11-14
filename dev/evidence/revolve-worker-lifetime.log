@@ -1,0 +1,24 @@
+✔ C60 rejects invalid callbacks or absent file ports (2.974709ms)
+✔ C60 native golden starts picker first, writes returned bytes once, closes, then reports saved (50.986671ms)
+✔ C60 fallback golden hands exact bytes to a browser download and revokes the object URL (5.506166ms)
+✔ C60 cancel during picker or worker ignores late resources and never downloads (6.620957ms)
+✔ C60 a new export replaces the previous job; disposal stops and ignores all late work (8.720273ms)
+✔ C60 distinguishes cancellation, worker failures, malformed replies and write failures (11.676129ms)
+✔ C60 cancellation while writing aborts the pending native save before close (2.077104ms)
+✔ C60 an in-flight native close finishes honestly and cannot be canceled or replaced (4.648108ms)
+✔ C60 a failed in-flight close reports the disk failure and releases the job for retry (4.543337ms)
+✔ C60 disposal during an in-flight close suppresses late UI without claiming to revoke the commit (4.80812ms)
+✔ C60 worker timeout terminates work and cannot later publish (3.333322ms)
+✔ C60 revolve snapshots preserve angle sources and never download a canceled or failed solid (13.30117ms)
+✔ C55 publishes only latest revision; cancel and disposal prevent late results (3.804539ms)
+✔ C55 worker failures and watchdog terminate the worker and allow clean retry (1.657305ms)
+✔ C55 rejects missing worker ports before creating resources (0.620814ms)
+✔ C55 revolve angle/plane/unit/profile edits and same-ID reopen discard stale replies and replace failed workers (13.012173ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 437.393149

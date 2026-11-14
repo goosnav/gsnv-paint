@@ -1,0 +1,44 @@
+✔ C76 model actions own data, preserve revision and retain all parameter sources through units (22.325418ms)
+✔ C76 inventories profile expressions for physical unit binding and dependent-variable validation (6.013071ms)
+✔ C51 profile routing preserves source, global IDs, target isolation and one atomic revision (26.427306ms)
+✔ C52 materializes formulas before endpoint sharing and fixes a center-preserving profile in real PlaneGCS (78.61365ms)
+✔ profile native golden: polygon with hole, construction exclusion and parameter rebuild in all planes and STEP units (2204.312583ms)
+✔ C66 legacy parametric files retain their exact native JSON and no assets (6.560698ms)
+✔ C66 literal imported native source roundtrips exact metadata and independently owned bytes (2.293144ms)
+✔ C66 exact imported schema rejects unsupported geometry, metadata and asset relationships (16.610181ms)
+✔ C66 source size limits, immutable unit changes and revision exhaustion are atomic (6.693855ms)
+✔ revolve source is exact, owned and fully preserved through the existing native container (13.248879ms)
+✔ C50 rejects unsupported revolve schema, references, graph positions and global ID collisions (7.90924ms)
+✔ C50 preserves unevaluated angle text so failed rebuilt features remain editable (16.342258ms)
+✔ C76 creates and edits one revolve with unchanged revision and retained identity/name/references (1.467184ms)
+✔ C51 revolve create/edit/remove increments once and history restores exact source (1.641232ms)
+✔ revolve IDs and the +V axis reject invalid creation, mismatched edits and wrong removals atomically (12.940409ms)
+✔ explicit replacement of a lone extrusion retains its ID and undo restores the extrusion exactly (10.128287ms)
+✔ unsupported downstream commands never reinterpret or delete a revolve graph (2.393527ms)
+✔ angle expressions join variable validation and use angular, not linear, resolution (8.090407ms)
+✔ unit binding and default planes preserve angular meaning and sketch-relative source after native reopen (150.707869ms)
+✔ sketch geometry may fail rebuild without losing the editable revolve feature (6.659497ms)
+✔ revision exhaustion rejects every revolve edit without touching source or history (0.537993ms)
+✔ legacy sketch, extrusion and imported STEP sources keep their prior format and asset behavior (4.160535ms)
+✔ C51 changing units preserves physical values, named formulas and reopened feature parameters (63.034008ms)
+✔ C51 rectangle stores real driving constraints and edits preserve source expressions (10.507968ms)
+✔ C51 lines, constraints, units and named dimensions use real existing bricks (6.708376ms)
+✔ C51 errors preserve model and safe revision boundary (2.909996ms)
+✔ C51 pointer-positioned rectangle preserves its supplied fixed corner (2.070127ms)
+✔ C51 circles add a fixed center and diameter, survive a replacing rectangle and delete with their relations (9.634851ms)
+✔ C51 coordinate strings retain formulas while numeric placement stays canonical mm in inches (23.165659ms)
+✔ C51 position formulas remain physically stable and parametric through units and JSON reopen (23.094429ms)
+✔ C51 named variables preserve kinds, reject broken dependents and remove only unused names atomically (21.68195ms)
+✔ C51 variable deletion checks dimensions, feature parameters and cut positions independently (13.840399ms)
+✔ C50 golden new document uses the existing canonical CAD content schema (4.104196ms)
+✔ C50 JSON round trip owns its arrays and rejects malformed or unsupported content (7.107796ms)
+✔ C50 segment geometry and reference checks reject data loss (19.758108ms)
+✔ C50 optional position sources round trip and validate their complete controlled groups (11.169952ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3188.88338

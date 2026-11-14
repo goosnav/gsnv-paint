@@ -1,0 +1,13 @@
+{
+  "build": "27e2f584b22e6ba9b6ad1bbd8b544fc6c1a6506c898f21d96d9e9f13d6a64d95",
+  "manifestSHA256": "fca22f09b24ea9d6fbe0613dd6b95335a6ead1c54c8ab2c8cfb42e7b9af21411",
+  "assets": 55,
+  "totalBytes": 41178176,
+  "largest": {
+    "url": "/assets/replicad_single-g5eiaENB.wasm",
+    "bytes": 22942327,
+    "sha256": "a9335919fa64bfeaee3e241d3139ad134022682429c6688e20d8ca12093d33d9",
+    "mime": "application/wasm"
+  },
+  "allUnder25MiB": true
+}

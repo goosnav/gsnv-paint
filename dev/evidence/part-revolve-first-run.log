@@ -1,0 +1,35 @@
+✔ production revolve rebuild solves variable tube sections, signed angles and every default plane once, with STEP and preview (1715.518015ms)
+✔ production revolve routes real solved circles and axis contact to analytic torus/cylinder solids (250.940524ms)
+✖ production revolve flags failed geometry and lazy angle sources by feature name before kernel allocation (43.215994ms)
+✔ production revolve assembly does not clean up or call native APIs after builder/cleanup/retain faults (20.822734ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2365.057038
+
+✖ failing tests:
+
+test at src/cad/part-revolve.test.ts:1:5938
+✖ production revolve flags failed geometry and lazy angle sources by feature name before kernel allocation (43.215994ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /Extrude/. Input:
+
+  'Turned sleeve: Extrude needs a closed profile: draw a closed outline or a circle.'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/part-revolve.test.ts:107:100)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.rejects (node:assert:769:3)
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/part-revolve.test.ts:106:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Turned sleeve: Extrude needs a closed profile: draw a closed outline or a circle.',
+    expected: /Extrude/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }

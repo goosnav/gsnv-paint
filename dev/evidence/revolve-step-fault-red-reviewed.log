@@ -1,0 +1,131 @@
+✖ C37 exact writer-construction regression propagates every unknown identity without later cleanup (10.428308ms)
+✔ C37 normal import/export own results and clean wrappers/files without consuming export sources (0.779855ms)
+✖ C37 every import/export native, filesystem, retain and cleanup fault is the last call (0.933328ms)
+✔ C37 locally recognized ordinary rejections still release all owned temporaries and partial files (2.037634ms)
+✖ C37 a cleanup fault during ordinary rejection stops deletion, unlink and unit restore immediately (6.704652ms)
+✖ C37 missing private files do not require swallowing unlink errors; restore status stays readable (0.924776ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 2
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 227.241626
+
+✖ failing tests:
+
+test at src/cad/step-exchange-faults.test.ts:1:960
+✖ C37 exact writer-construction regression propagates every unknown identity without later cleanup (10.428308ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+
+  Caught error:
+
+  STEPTransferError: STEP exchange failed: undefined
+      at sameCause (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:9:65)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:20:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: STEPTransferError: STEP exchange failed: undefined
+        at fail (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.ts:42:71)
+        at stepExchange (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.ts:114:12)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:20:21)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at sameCause (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:9:65)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:20:5)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.start (node:internal/test_runner/test:1262:17),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/step-exchange-faults.test.ts:1:1998
+✖ C37 every import/export native, filesystem, retain and cleanup fault is the last call (0.933328ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+
+  Caught error:
+
+  STEPReadError: STEP exchange failed: undefined
+      at sameCause (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:9:65)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:42:7)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: STEPReadError: STEP exchange failed: undefined
+        at fail (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.ts:42:71)
+        at stepExchange (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.ts:114:12)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:42:23)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at sameCause (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:9:65)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:42:7)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/step-exchange-faults.test.ts:1:3042
+✖ C37 a cleanup fault during ordinary rejection stops deletion, unlink and unit restore immediately (6.704652ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+
+  Caught error:
+
+  STEPTransferError: OpenCascade could not set the requested STEP unit.
+      at sameCause (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:9:65)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:65:7)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: STEPTransferError: OpenCascade could not set the requested STEP unit.
+        at fail (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.ts:42:71)
+        at stepExchange (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.ts:67:85)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:65:23)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at sameCause (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:9:65)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:65:7)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/step-exchange-faults.test.ts:1:3663
+✖ C37 missing private files do not require swallowing unlink errors; restore status stays readable (0.924776ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+    assert.ok(!beforeFile.trace.includes('FS.unlink'))
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange-faults.test.ts:74:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

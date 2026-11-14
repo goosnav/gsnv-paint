@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { setImmediate } from 'node:timers/promises';
 import { cadSTEPExport } from './cad-step-export.ts';
 import { editableCADContent } from './editable-cad-content.ts';
+import { editCADContent } from './edit-cad-content.ts';
 import type { FilePorts } from '../shared/file-access.ts';
 const content=editableCADContent({operation:'new'}),bytes=new Uint8Array([73,83,79]);
 const assets={kernelModule:'/occt.js',kernelWasm:'/occt.wasm',solverModule:'/solver.js',solverWasm:'/solver.wasm'};
@@ -92,4 +93,18 @@ test('C60 disposal during an in-flight close suppresses late UI without claiming
 test('C60 worker timeout terminates work and cannot later publish',async context=>{
  context.mock.timers.enable({apis:['setTimeout']});const f=fixture(),exporter=cadSTEPExport(f.ports),task=exporter.run(request());await setImmediate();context.mock.timers.tick(30000);await task;f.workers[0]!.reply();
  assert.equal(f.statuses.at(-1)!.state,'error');assert.match(f.statuses.at(-1)!.message,/timed out/);assert.equal(f.workers[0]!.terminated,1);assert.equal(f.blob,undefined);exporter.dispose();
+});
+test('C60 revolve snapshots preserve angle sources and never download a canceled or failed solid',async()=>{
+ const f=fixture(),exporter=cadSTEPExport(f.ports);
+ const source=editCADContent({content:structuredClone(content),action:{kind:'revolve',id:'turned',axis:'v',angle:'360 deg'}});
+ const first=exporter.run({content:source,name:'plate.step'});await setImmediate();
+ const changed=editCADContent({content:source,action:{kind:'revolve',id:'turned',axis:'v',angle:'-90 deg'}});
+ const second=exporter.run({content:changed,name:'plate.step'});await setImmediate();
+ assert.deepEqual(f.workers[0]!.requests,[{content:source,assets}]);assert.deepEqual(f.workers[1]!.requests,[{content:changed,assets}]);
+ f.workers[0]!.reply();assert.equal(f.blob,undefined);
+ f.workers[1]!.reply({ok:false,message:'Revolve 1: invalid solid'});await Promise.all([first,second]);
+ assert.equal(f.blob,undefined);assert.match(f.statuses.at(-1)!.message,/Revolve 1: invalid solid/);
+ f.workers[1]!.reply();assert.equal(f.blob,undefined);
+ const retry=exporter.run({content:source,name:'plate.step'});await setImmediate();f.workers[2]!.reply();await retry;
+ assert.equal(f.events.filter(e=>e==='download').length,1);assert.ok(f.workers.every(w=>w.terminated===1));exporter.dispose();
 });

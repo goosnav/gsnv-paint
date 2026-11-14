@@ -1,5 +1,5 @@
 /**
- * PURPOSE    Rebuild a whole CAD part (all sketches, the boss, cuts, fillets and chamfers) inside a worker.
+ * PURPOSE    Rebuild a whole CAD part from an extrusion stack or one revolve boss inside a worker.
  * KIND       SHELL (worker-side assembly shared by the editor and STEP export workers)
  * CONTRACT   IN: validated CADContent and open solver/kernel sessions (kernel may be opened lazily by the caller).
  *            OUT: {sketches: solved entities per sketch id, dof of the base sketch, token of the final solid or null}.
@@ -20,6 +20,8 @@ import { sketchRegions, sketchLoops } from './sketch-regions.ts';
 import { buildLinearPrism } from './kernel-linear-prism.ts';
 import { transformPartPlane } from './kernel-plane-transform.ts';
 import { applyFeature } from './kernel-features.ts';
+import { revolveRecipe } from './revolve-recipe.ts';
+import { buildRevolvedSolid } from './kernel-revolve.ts';
 
 type Token = ReturnType<KernelSession['retain']>;
 const NAMES: Record<string, string> = { horizontal: 'Horizontal', vertical: 'Vertical', fix: 'Fixed point', parallel: 'Parallel', perpendicular: 'Perpendicular', equal: 'Equal length', coincident: 'Coincident' };
@@ -44,6 +46,17 @@ export async function buildPart({ content, solver, kernel }: { content: CADConte
   const first = solve(base.definition.sketch, 'Sketch', content, solver), sketches: Record<string, SketchEntity[]> = { [base.id]: first.entities };
   const later = laterOf(content);
   for (const f of later) if (f.kind === 'pocket') sketches[f.id] = solve(f.definition.sketch, f.name, content, solver).entities;
+  const baseSolid = content.graph.features[1];
+  if (baseSolid?.kind === 'revolve') {
+    try {
+      const recipe = revolveRecipe({operation:'profile',source:baseSolid.definition,sketchId:base.id,context,tolerance:content.tolerance,entities:first.entities});
+      const session = await kernel(), local = buildRevolvedSolid({session,recipe});
+      return {sketches,dof:first.dof,token:transformPartPlane({session,token:local,plane:base.definition.sketch.plane}),session};
+    } catch (cause) {
+      const message = cause instanceof Error ? cause.message : String(cause);
+      throw new Error(`${baseSolid.name}: ${message.replace(/^(Extrude|Revolve):\s*/, '').replace(/^Extrude\b/, 'This feature')}`);
+    }
+  }
   const boss = bossOf(content); if (!boss) return { sketches, dof: first.dof, token: null, session: null };
   const length = (source: { source: string; kind: 'length' | 'angle' | 'scalar' }, label: string) => { const v = evaluateDimension({ expression: source, context }).value; if (!(Math.abs(v) > tolerance)) throw new Error(`${label} must be larger than zero.`); return v; };
   const session = await kernel();

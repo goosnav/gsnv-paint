@@ -1,0 +1,40 @@
+✔ C72 real rigid planes preserve geometry, signed depth, ownership and STEP world coordinates (985.991402ms)
+✔ C72 ordinary failures preserve input; native and cleanup faults stop every subsequent native call (3.30086ms)
+✖ C72 every native boundary is fail-stop even for undefined or a forged ordinary-error name (5.39739ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 2
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2074.500048
+
+✖ failing tests:
+
+test at src/cad/kernel-plane-transform.test.ts:1:4187
+✖ C72 every native boundary is fail-stop even for undefined or a forged ordinary-error name (5.39739ms)
+  AssertionError [ERR_ASSERTION]: native boundary transform.SetValues after undefined
+  + actual - expected
+
+    [
+      'session.resolve',
+      'new transform',
+      'transform.SetValues',
+  +   'transform.delete'
+    ]
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-plane-transform.test.ts:59:49)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'session.resolve', 'new transform', 'transform.SetValues', 'transform.delete' ],
+    expected: [ 'session.resolve', 'new transform', 'transform.SetValues' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

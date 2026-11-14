@@ -37,3 +37,25 @@ test('C72 ordinary failures preserve input; native and cleanup faults stop every
   const cleanup=fake('cleanup');assert.throws(()=>transformPartPlane({session:cleanup.session,token:{id:1,generation:1},plane:'YZ'}),WebAssembly.RuntimeError);assert.equal(cleanup.calls.filter(c=>c==='delete').length,1);assert.ok(!cleanup.calls.includes('release'));
   const closed=fake(null);assert.throws(()=>transformPartPlane({session:{...closed.session,isClosed:()=>true},token:{id:1,generation:1},plane:'XY'}),{name:'DisposedSessionError'});assert.deepEqual(closed.calls,[]);
 });
+test('C72 every native boundary is fail-stop even for undefined or a forged ordinary-error name',()=>{
+  const run=(at=-1,fault?:unknown)=>{
+    const calls:string[]=[];
+    const hit=(name:string)=>{calls.push(name);if(calls.length-1===at)throw fault;};
+    const wrapper=(name:string,extra={})=>({delete(){hit(`${name}.delete`);},...extra});
+    const output=wrapper('output',{IsNull(){hit('output.IsNull');return false;},ShapeType(){hit('output.ShapeType');return 1;}});
+    const factory=(name:string,extra={})=>function(){hit(`new ${name}`);return wrapper(name,extra);};
+    const session={isClosed:()=>false,resolve(){hit('session.resolve');return {};},retain(){hit('session.retain');return{id:2,generation:1};},release(){hit('session.release');},library:{
+      TopAbs_ShapeEnum:{TopAbs_SOLID:1},gp_Trsf:factory('transform',{SetValues(){hit('transform.SetValues');}}),
+      BRepBuilderAPI_Transform:factory('builder',{IsDone(){hit('builder.IsDone');return true;},Shape(){hit('builder.Shape');return output;}}),
+      BRepCheck_Analyzer:factory('check',{IsValid(){hit('check.IsValid');return true;}}),
+      GProp_GProps:factory('properties',{Mass(){hit('properties.Mass');return 1;}}),BRepGProp:{VolumeProperties(){hit('VolumeProperties');}},
+    }} as unknown as KernelSession;
+    let caught=false;
+    try{transformPartPlane({session,token:{id:1,generation:1},plane:'XZ'});}catch(error){caught=true;assert.equal(error,fault);}
+    assert.equal(caught,at>=0);return calls;
+  };
+  const complete=run();
+  for(const fault of [undefined,null,17,'fault',new Error('unexpected'),Object.assign(new Error('forged'),{name:'PlaneTransformError'}),new WebAssembly.RuntimeError('native')]){
+    for(let at=0;at<complete.length;at++)assert.deepEqual(run(at,fault),complete.slice(0,at+1),`native boundary ${complete[at]} after ${String(fault)}`);
+  }
+});

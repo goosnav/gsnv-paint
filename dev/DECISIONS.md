@@ -70,6 +70,8 @@ C01 transfers ownership of distinct shape wrappers to its token registry, invali
 
 The build exports exception introspection/refcount helpers but not stackSave/stackRestore. Catch a native exception only to extract type/message and decrement its reference, then invalidate and replace that worker. Do not continue geometry on the faulted instance. [Emscripten exception guidance](https://emscripten.org/docs/porting/exceptions.html#handling-c-exceptions-from-javascript) requires shadow-stack restoration for continued module use. Alternative adding custom kernel exports is deferred until measured need; silent continued reuse is unsafe.
 
+**Superseded by D29 for exception handling:** no native introspection/refcount calls occur after a fault. Whole-worker replacement remains required.
+
 Exact library source/build provenance: [package source at gitHead 5e4ad9b](https://github.com/sgenoud/replicad/tree/5e4ad9bb5a35bb9ae0571e91c25fa1897ba0570c/packages/replicad-opencascadejs), build images `ghcr.io/taucad/opencascade.js:3.1.0-single-threaded` / `3.1.0-multi-threaded`, [pinned build dependencies](https://raw.githubusercontent.com/taucad/opencascade.js/v3.1.0/DEPS.json). That manifest identifies OCCT V8_0_1 at b8f597c677811d1f9f4d8a97f5ae2825c0353a42. The npm archive alone omits corresponding C++/build source and the [OCCT exception](https://raw.githubusercontent.com/taucad/opencascade.js/v3.1.0/LICENSE.OCCT-Exception); release packaging must preserve them and provide replacement/rebuild instructions. This is not distribution clearance.
 
 D03 clarification from pinned sources: FreeCAD native files carry LGPL-2.0-or-later; wrapper/build headers carry LGPL-2.1-or-later; packaged LICENSE is LGPL 2.1. These are component notices, not simply inaccurate metadata. Preserve both and apply the compatible LGPL 2.1 terms. No solver runtime claim follows from declaration inspection.
@@ -226,3 +228,21 @@ Cloudflare asset gate recheck, 2026-11-13: the primary [Pages limits](https://de
 still specifies 25 MiB per asset and 20,000 files for Free. S17 measures emitted
 uncompressed bytes and rejects equality as required by the owner's strict
 “under the limit” instruction; cached/gzipped transfer size does not substitute.
+
+## D29 — fail-stop native boundaries during connected revolve verification
+
+Review reproduced native calls after unknown faults in C72 plane placement,
+C37 STEP exchange and C01 session disposal. Only a locally created ordinary
+validation error can authorize cleanup. Unknown throws (including undefined,
+null and forged error names), cleanup throws and virtual-filesystem exceptions
+stop every later native call. C01 provides JavaScript-only context and preserves
+the cause on KernelLoadError; the worker owns complete heap reclamation.
+This supersedes D10's exception-introspection/refcount allowance and the older
+C01 tests expecting disposal to continue after an unknown wrapper error.
+
+Alternative: classify errors by their name/type, extract native exception text,
+or restore translator settings after an unknown failure. Rejected because the
+pinned kernel does not establish safe calls on a faulted instance. Revisit only
+with a verified kernel recovery/stack-restoration contract. The source graph,
+public interfaces, geometry tolerances and STEP unit oracles stay unchanged.
+See [revolve contracts and evidence](CAD-REVOLVE-INCREMENT.md).

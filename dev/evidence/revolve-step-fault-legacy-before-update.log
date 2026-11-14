@@ -1,0 +1,227 @@
+✖ C37 export golden uses declared units and returns owned bytes without consuming input tokens (2.360239ms)
+✖ C37 import golden publishes all valid solids only after canonical-mm transfer (0.755999ms)
+✔ C37 closed sessions and stale tokens fail before exchange (0.928145ms)
+✖ C37 rejects empty, unreadable and invalid-unit import requests (4.148839ms)
+✖ C37 refuses zero or partial root transfer without publishing any body (0.610194ms)
+✖ C37 refuses erroneous/unknown entities and per-entity translation failures even when every root transfers (3.60368ms)
+✖ C37 rejects invalid, zero-volume, reversed, nonfinite, nonsolid and mixed imports atomically (0.728955ms)
+✖ C37 validates export solids and transfer statuses without mutating originals (0.480866ms)
+✖ C37 write failures are explicit and temporary files are removed (0.672357ms)
+✖ C37 restore failures are explicit; native faults avoid unsafe native cleanup (0.572164ms)
+✔ C37 real C01/OpenCascade: dispose source, import mm/inch STEP, preserve curved solids and multiple bodies (698.229616ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 2
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2015.720287
+
+✖ failing tests:
+
+test at src/cad/step-exchange.test.ts:1:5129
+✖ C37 export golden uses declared units and returns owned bytes without consuming input tokens (2.360239ms)
+  TypeError: oc.FS.readdir is not a function
+      at cleanup (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.ts:62:14)
+      at stepExchange (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.ts:125:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:57:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/cad/step-exchange.test.ts:1:5757
+✖ C37 import golden publishes all valid solids only after canonical-mm transfer (0.755999ms)
+  TypeError: oc.FS.readdir is not a function
+      at cleanup (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.ts:62:14)
+      at stepExchange (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.ts:125:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:65:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/cad/step-exchange.test.ts:1:6683
+✖ C37 rejects empty, unreadable and invalid-unit import requests (4.148839ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'TypeError'
+  - 'STEPReadError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:53:87)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:78:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'TypeError',
+    expected: 'STEPReadError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/step-exchange.test.ts:1:7177
+✖ C37 refuses zero or partial root transfer without publishing any body (0.610194ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'TypeError'
+  - 'STEPTransferError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:53:87)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:84:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'TypeError',
+    expected: 'STEPTransferError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/step-exchange.test.ts:1:7551
+✖ C37 refuses erroneous/unknown entities and per-entity translation failures even when every root transfers (3.60368ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'TypeError'
+  - 'STEPReadError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:53:87)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:90:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'TypeError',
+    expected: 'STEPReadError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/step-exchange.test.ts:1:8100
+✖ C37 rejects invalid, zero-volume, reversed, nonfinite, nonsolid and mixed imports atomically (0.728955ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'TypeError'
+  - 'InvalidImportedSolidError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:53:87)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:99:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'TypeError',
+    expected: 'InvalidImportedSolidError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/step-exchange.test.ts:1:8890
+✖ C37 validates export solids and transfer statuses without mutating originals (0.480866ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'TypeError'
+  - 'STEPTransferError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:53:87)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:106:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'TypeError',
+    expected: 'STEPTransferError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/step-exchange.test.ts:1:9625
+✖ C37 write failures are explicit and temporary files are removed (0.672357ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'TypeError'
+  - 'STEPWriteError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:53:87)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:112:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'TypeError',
+    expected: 'STEPWriteError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/step-exchange.test.ts:1:10051
+✖ C37 restore failures are explicit; native faults avoid unsafe native cleanup (0.572164ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'TypeError'
+  - 'STEPTransferError'
+
+      at Object.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:53:87)
+      at expectedException (node:assert:578:17)
+      at expectsError (node:assert:703:21)
+      at strict.throws (node:assert:759:3)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/step-exchange.test.ts:117:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'TypeError',
+    expected: 'STEPTransferError',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,8 @@
+PASS: src/cad/editable-cad-content.ts
+PASS: src/cad/cad-model-edit.ts
+PASS: src/cad/cad-properties.ts
+PASS: src/cad/extrude-preview.ts
+PASS: src/cad/kernel-runtime.ts
+PASS: src/cad/kernel-plane-transform.ts
+PASS: src/shared/keymap.ts
+PASS: src/shared/icons.ts

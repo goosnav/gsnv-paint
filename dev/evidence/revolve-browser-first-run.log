@@ -1,0 +1,11 @@
+
+Running 2 tests using 1 worker
+
+(node:1204593) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Revolve production Chrome 154.0.8037.97 linux/x64: signed preview, editable source/recovery, undo and unit roundtrip; no external requests.
+  ✓  1 src/cad/cad-revolve.browser.spec.ts:30:1 › Revolve production: live signed preview, variables, undo, native reopen and recovery (6.6s)
+Revolve STEP Chrome 154.0.8037.97 linux/x64: native reimport at XY/XZ/YZ, failed-feature readiness and reversible explicit replacement.
+  ✓  2 src/cad/cad-revolve.browser.spec.ts:64:1 › Revolve production: STEP world placement, failed feature readiness, explicit replacement and removal (6.4s)
+
+  2 passed (14.1s)

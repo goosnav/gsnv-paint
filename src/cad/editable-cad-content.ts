@@ -2,7 +2,7 @@
  * PURPOSE    Validate the supported editable CAD document subset.
  * KIND       CORE
  * CONTRACT   IN: new request or read with untrusted JSON value. OUT: owned CADContent
- *            with one default-plane sketch of segments and circles and an optional blind boss, exact
+ *            with one default-plane sketch and an optional blind extrusion or +V revolve boss, exact
  *            persisted keys. Circles carry center/radius, may be fixed by their center and
  *            dimensioned by diameter; H/V and linear dimensions target segments only.
  *            Fixed points may retain finite length-expression positions for disjoint groups.
@@ -13,6 +13,8 @@
  *            avoid data loss. Revisit if: a feature family is implemented; retain migration tests.
  * LIMITS     C50 subset only: no imports, suppressed features, rollback, drawing or custom appearance.
  *            Position sources are evaluated here; legacy dimensions keep their existing lazy validation.
+ *            Revolve source is structurally validated only: [Sketch, Revolve], angle source,
+ *            local +V root reference, no downstream features; C79 evaluates its meaning.
  * TESTBENCH  src/cad/editable-cad-content.test.ts -- run with: node --import tsx --test src/cad/editable-cad-content.test.ts
  */
 import { cadExpressionPolicy } from './cad-expression-policy.ts';
@@ -30,6 +32,11 @@ export type Sketch = { id: string; name: string; plane: 'XY' | 'XZ' | 'YZ'; enti
 type BaseFeature = { id: string; name: string; dependsOn: string[]; suppressed: false };
 type SketchFeature = BaseFeature & { kind: 'sketch'; definition: { kind: 'sketch'; sketch: Sketch } };
 type ExtrudeFeature = BaseFeature & { kind: 'extrude'; definition: { kind: 'extrude'; operation: 'boss'; sketchId: string; profileLoopIds: []; extent: { kind: 'blind'; distance: DimensionValue }; targetBodyIds: [] } };
+type RevolveFeature = BaseFeature & { kind: 'revolve'; definition: {
+  kind: 'revolve'; operation: 'boss'; sketchId: string; profileLoopIds: [];
+  axis: { kind: 'sketch-axis'; sketchId: string; axis: 'v' };
+  angle: { source: string; kind: 'angle' }; targetBodyIds: [];
+} };
 export type PocketFeature = BaseFeature & { kind: 'pocket'; definition: { kind: 'pocket'; sketch: Sketch; extent: { kind: 'blind'; distance: DimensionValue } | { kind: 'through' } } };
 export type EdgeSet = 'vertical' | 'top' | 'bottom' | 'all';
 export type EdgeFeature = BaseFeature & { kind: 'fillet' | 'chamfer'; definition: { kind: 'fillet' | 'chamfer'; edges: EdgeSet; size: DimensionValue } };
@@ -38,7 +45,7 @@ type Frame = { origin: number[]; x: number[]; y: number[]; normal: number[] };
 export type CADContent = {
   units: 'mm' | 'inch'; tolerance: { linearMm: number; angularRad: number; relative: number };
   variables: { name: string; expression: DimensionValue }[];
-  graph: { features: [SketchFeature, ...(ExtrudeFeature | LaterFeature)[]]; rollback: number; revision: number };
+  graph: { features: [SketchFeature, ...(ExtrudeFeature | RevolveFeature | LaterFeature)[]]; rollback: number; revision: number };
   assets: []; appearance: { mode: 'shaded-edges'; bodyColors: Record<string, never>; faceColors: []; section: { enabled: false; frame: Frame; offsetMm: 0 } }; drawing: null;
 };
 /** The boss extrusion (second feature), when present. */
@@ -86,7 +93,7 @@ export function editableCADContent(request: { operation: 'new' } | { operation: 
   };
   if (!equal(value.appearance, appearance)) bad('appearance', 'custom display settings are not supported in this CAD build');
   keys(value.graph, 'features rollback revision', 'graph'); array(value.graph.features, 'features');
-  if (value.graph.features.length < 1 || value.graph.features.length > 64) bad('features', 'expected one sketch, an extrusion and at most 62 further features');
+  if (value.graph.features.length < 1 || value.graph.features.length > 64) bad('features', 'expected one sketch, an extrusion with up to 62 further features, or one revolve');
   if (!Number.isSafeInteger(value.graph.revision) || value.graph.revision < 0) bad('revision', 'expected a nonnegative safe integer');
   if (value.graph.rollback !== value.graph.features.length) bad('rollback', 'partial rollback is not supported in this CAD build');
   const ids = new Set<string>();
@@ -169,10 +176,19 @@ export function editableCADContent(request: { operation: 'new' } | { operation: 
     }
   };
   checkSketch(first.definition.sketch, first.id);
-  const extrusion = value.graph.features[1] as ExtrudeFeature | undefined;
-  if (extrusion) {
-    if (extrusion.kind !== 'extrude' || extrusion.dependsOn.length !== 1 || extrusion.dependsOn[0] !== first.id) bad('extrusion', 'must depend on the sketch');
-    const d = extrusion.definition; keys(d, 'kind operation sketchId profileLoopIds extent targetBodyIds', 'extrusion definition');
+  const solid = value.graph.features[1], extrusion = bossOf(value);
+  if (solid?.kind === 'revolve') {
+    if (value.graph.features.length !== 2) bad('revolve', 'must be the only feature after the root sketch');
+    if (solid.dependsOn.length !== 1 || solid.dependsOn[0] !== first.id) bad('revolve dependencies', 'must reference the root sketch');
+    const d = solid.definition; keys(d, 'kind operation sketchId profileLoopIds axis angle targetBodyIds', 'revolve definition');
+    if (d.kind !== 'revolve' || d.operation !== 'boss' || d.sketchId !== first.id) bad('revolve', 'only a boss from the root sketch is supported');
+    empty(d.profileLoopIds, 'revolve profile selection'); empty(d.targetBodyIds, 'revolve target bodies');
+    keys(d.axis, 'kind sketchId axis', 'revolve axis');
+    if (d.axis.kind !== 'sketch-axis' || d.axis.sketchId !== first.id || d.axis.axis !== 'v') bad('revolve axis', 'choose the root sketch vertical axis (+V)');
+    dim(d.angle, 'revolve angle'); if (d.angle.kind !== 'angle') bad('revolve angle', 'expected an angle expression');
+  } else if (solid) {
+    if (solid.kind !== 'extrude' || solid.dependsOn.length !== 1 || solid.dependsOn[0] !== first.id) bad('extrusion', 'must depend on the sketch');
+    const d = solid.definition as ExtrudeFeature['definition']; keys(d, 'kind operation sketchId profileLoopIds extent targetBodyIds', 'extrusion definition');
     if (d.kind !== 'extrude' || d.operation !== 'boss' || d.sketchId !== first.id) bad('extrusion', 'only a boss from the first sketch is supported');
     empty(d.profileLoopIds, 'profile selection'); empty(d.targetBodyIds, 'target bodies'); keys(d.extent, 'kind distance', 'extent');
     if (d.extent.kind !== 'blind') bad('extent', 'only blind extrusion is supported'); dim(d.extent.distance, 'depth', true);

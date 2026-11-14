@@ -1,11 +1,12 @@
 # Production revolve — Mode A contract
 
-Reviewed by the parent, 2026-11-13. **Connected workflow CONTRACTED; not accepted.**
-Current progress: steps 1–3 (C77 plus characterized C59 integration, C79 recipe,
-and C78 native executor) are GREEN; see [profile-face evidence](CAD-PROFILE-FACE-EVIDENCE.md)
-and the C79/C78 checkpoints below. Connected production revolve remains
-contracted/unverified. The original contract follows, with checkpoint evidence
-appended. GREEN does not mean human ACCEPTED.
+Reviewed by the parent, 2026-11-13. **Bounded connected workflow GREEN; not accepted.**
+Steps 1–6 now have implementation and connected verification evidence: C77/C59,
+C79, C78, editable source, worker/export and production UI. The
+[connected checkpoint](CAD-REVOLVE-EVIDENCE.md) records 978 unit tests, 91 browser
+checks, nine offline checks, local hosting, launcher and deployment dry-run.
+The earlier component checkpoints below are historical. The original contract
+follows; GREEN does not mean human ACCEPTED.
 This document closes the proposed gate 4 of [CAD-NEXT-INCREMENT.md](CAD-NEXT-INCREMENT.md)
 using the actual gate-3 fixtures in `revolve-proof-fixture.ts` and
 `revolve-proof.test.ts`. The parent reviewed the persisted source, analytic
@@ -345,6 +346,30 @@ they must route, not absorb the new leaf policy. Do not create a generic
 utility or reclassify an oversized policy leaf as an assembly to bypass limits.
 
 ## Required integration tests and planned commands
+
+### Integration correction: C01/C37/C72 fault boundaries
+
+Independent review found inherited seams inconsistent with the fail-stop rule
+above. C72 compared a thrown `undefined` to an unset ordinary-error marker;
+C37 treated unknown throws as safe for cleanup and swallowed unlink exceptions;
+C01 queried native exception messages/refcounts after a cleanup fault and could
+continue deleting after an unknown exception. These are corrections to existing
+worker-lifetime contracts, with no new public symbols or collaborators.
+
+Only a locally created, identity-tagged ordinary validation rejection permits
+further temporary cleanup. Any unknown native/FS/session or cleanup throw,
+including `undefined`, `null`, ordinary `Error` or a forged error name, stops all
+later native calls. C01 retains its readable `KernelLoadError`/close-diagnostic
+interface with JavaScript-only messages and original `cause` where applicable;
+it must not inspect/decrement native exception handles. A failed live probe
+invalidates retained tokens without attempting more disposal. Whole-worker
+termination reclaims remaining wrappers and exception storage. C37 still returns
+normal STEP validation errors for ordinary native result-code rejections, but
+unknown throws propagate unchanged. Regression tests must establish RED first,
+then verify no calls after faults and unchanged geometry/unit oracles. Previous
+tests that required native exception inspection or continuing after unknown
+deletion errors are superseded by this stricter lifecycle contract; record that
+change explicitly, never characterize them as unchanged passing oracles.
 
 New paths listed here are planned, not files created by this draft.
 

@@ -9,6 +9,7 @@ import { kernelRuntime, type KernelSession } from './kernel-runtime.ts';
 const STEP_BYTES = new TextEncoder().encode('ISO-10303-21;\nEND-ISO-10303-21;\n');
 function fixture() {
   const allocated:Native[]=[], files=new Map<string,Uint8Array>(), retained=new Map<number,Shape>();
+  const faults={write:new Error('virtual disk full'),read:new Error('virtual write failed')};
   const state={read:'done',write:'done',transfer:'done',roots:2,transferred:2,entityError:0,unknownEntity:0,transferFailures:0,valid:[true,true],volumes:[24,30],extras:'',closed:false,writeFailure:false,readFailure:false,emptyWrite:false,unitFailure:false,restoreFailure:false,nativeFault:false,unit:'CM',unitChanges:[] as string[],units:[] as number[],local:[] as number[],system:[] as number[],transferCalls:0};
   class Native {deleted=false;constructor(){allocated.push(this);}delete(){assert.equal(this.deleted,false);this.deleted=true;}}
   class Shape extends Native {constructor(public index=-1){super();}IsNull(){return false;}ShapeType(){return this.index<0?'compound':'solid';}IsSame(other:Shape){return this.index===other.index;}}
@@ -18,7 +19,7 @@ function fixture() {
     STEPControl_Writer:class extends Native {
       Model(){return Object.assign(new Native(),{SetLocalLengthUnit:(v:number)=>state.local.push(v),SetWriteLengthUnit:(v:number)=>state.units.push(v)});}
       Transfer(){state.transferCalls++;if(state.nativeFault)throw new WebAssembly.RuntimeError('native fault');return state.transfer;}
-      Write(path:string){if(state.writeFailure)throw new Error('virtual disk full');files.set(path,state.emptyWrite?new Uint8Array():STEP_BYTES.slice());return state.write;}
+      Write(path:string){if(state.writeFailure)throw faults.write;files.set(path,state.emptyWrite?new Uint8Array():STEP_BYTES.slice());return state.write;}
     },
     STEPControl_Reader:class extends Native {
       ReadFile(){return state.read;}NbRootsForTransfer(){return state.roots;}TransferRoots(){return state.transferred;}
@@ -38,7 +39,7 @@ function fixture() {
     Interface_Static:{CVal:()=>state.unit,SetCVal(_name:string,value:string){if((value==='CM'&&state.restoreFailure)||(value!=='CM'&&state.unitFailure))return false;state.unit=value;state.unitChanges.push(value);return true;}},
     IFSelect_ReturnStatus:{IFSelect_RetDone:'done'},STEPControl_StepModelType:{STEPControl_ManifoldSolidBrep:'brep'},
     TopAbs_ShapeEnum:{TopAbs_SOLID:'solid',TopAbs_SHAPE:'shape',TopAbs_SHELL:'shell',TopAbs_FACE:'face',TopAbs_WIRE:'wire',TopAbs_EDGE:'edge',TopAbs_VERTEX:'vertex'},
-    FS:{writeFile(path:string,bytes:Uint8Array){if(state.readFailure)throw new Error('virtual write failed');files.set(path,bytes.slice());},readFile(path:string){return files.get(path)!;},unlink(path:string){files.delete(path);}},
+    FS:{writeFile(path:string,bytes:Uint8Array){if(state.readFailure)throw faults.read;files.set(path,bytes.slice());},readFile(path:string){return files.get(path)!;},readdir(){return['.','..',...[...files.keys()].map(path=>path.slice(1))];},unlink(path:string){assert.ok(files.has(path));files.delete(path);}},
   };
   let issued=0;
   const session={generation:1,library,isClosed:()=>state.closed,
@@ -48,7 +49,7 @@ function fixture() {
   } as unknown as KernelSession;
   const body=(index=0)=>({shapes:[{bodyId:'plate',token:session.retain(new Shape(index) as never)}],topology:[],operands:[],diagnostics:[]});
   const cleaned=()=>{assert.equal(files.size,0);assert.equal(state.unit,'CM');assert.ok(allocated.every(v=>v.deleted||[...retained.values()].includes(v as Shape)),'temporaries released');};
-  return {state,session,body,cleaned,retained,allocated};
+  return {state,session,body,cleaned,retained,allocated,faults};
 }
 const named=(name:string)=>(cause:unknown)=>{assert.ok(cause instanceof Error);assert.equal(cause.name,name);assert.ok(cause.message.length>15);return true;};
 
@@ -75,7 +76,7 @@ test('C37 rejects empty, unreadable and invalid-unit import requests',()=>{
   for(const scenario of ['empty','read','filesystem','units']){
     const f=fixture();if(scenario==='read')f.state.read='failed';if(scenario==='filesystem')f.state.readFailure=true;
     const request={action:'import',session:f.session,bytes:scenario==='empty'?new Uint8Array():STEP_BYTES,units:scenario==='units'?'m':'mm'} as STEPRequest;
-    assert.throws(()=>stepExchange(request),named('STEPReadError'));assert.equal(f.retained.size,0);f.cleaned();
+    assert.throws(()=>stepExchange(request),scenario==='filesystem'?cause=>cause===f.faults.read:named('STEPReadError'));assert.equal(f.retained.size,0);f.cleaned();
   }
 });
 test('C37 refuses zero or partial root transfer without publishing any body',()=>{
@@ -106,10 +107,11 @@ test('C37 validates export solids and transfer statuses without mutating origina
     assert.throws(()=>stepExchange({action:'export',session:f.session,bodies,units:scenario==='units'?'m':'mm'} as STEPRequest),named('STEPTransferError'));f.cleaned();
   }
 });
-test('C37 write failures are explicit and temporary files are removed',()=>{
+test('C37 deliberate write rejections clean up; unknown write failures propagate without cleanup',()=>{
   for(const scenario of ['status','exception','empty']){
     const f=fixture();if(scenario==='status')f.state.write='failed';if(scenario==='exception')f.state.writeFailure=true;if(scenario==='empty')f.state.emptyWrite=true;
-    assert.throws(()=>stepExchange({action:'export',session:f.session,bodies:f.body(),units:'mm'}),named('STEPWriteError'));f.cleaned();
+    assert.throws(()=>stepExchange({action:'export',session:f.session,bodies:f.body(),units:'mm'}),scenario==='exception'?cause=>cause===f.faults.write:named('STEPWriteError'));
+    if(scenario==='exception'){assert.ok(f.allocated.every(v=>!v.deleted));assert.equal(f.state.unit,'MM');}else f.cleaned();
   }
 });
 test('C37 restore failures are explicit; native faults avoid unsafe native cleanup',()=>{

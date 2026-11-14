@@ -41,6 +41,7 @@ import './cad-workspace.css';
 
 type Snapshot=Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
 const firstSegment=(entities:readonly SketchEntity[])=>entities.find((e):e is Extract<SketchEntity,{kind:'segment'}>=>e.kind==='segment');
+const revolvedOf=(content:CADContent|null)=>{const feature=content?.graph.features[1];return feature?.kind==='revolve'?feature:undefined;};
 function profileSource(kind:ProfileSource['kind'],values:DialogSpec['initial'],id:string,members?:string[]):ProfileSource {
  const count=kind==='center-rectangle'?4:Number(values.sides);
  if(!Number.isInteger(count)||count<3||count>128)throw new Error('A polygon needs 3–128 whole sides.');
@@ -52,7 +53,7 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
  const value=(document:AppDocument)=>editableCADContent({operation:'read',value:document.value});
  return{
   create:()=>({id:crypto.randomUUID(),title:'Untitled part',format:'gsnv-cad',version:1,value:{...editableCADContent({operation:'new'}),units:defaultUnits()}}),
-  decode(packageValue){if(packageValue.project.format!=='gsnv-cad'||packageValue.assets.length)throw new Error('This CAD build opens native sketch/extrusion projects without imported assets.');const p=packageValue.project;return{id:p.id,title:p.title,format:p.format,version:p.version,value:editableCADContent({operation:'read',value:p.content})};},
+  decode(packageValue){if(packageValue.project.format!=='gsnv-cad'||packageValue.assets.length)throw new Error('This CAD build opens native parametric projects without imported assets.');const p=packageValue.project;return{id:p.id,title:p.title,format:p.format,version:p.version,value:editableCADContent({operation:'read',value:p.content})};},
   encode(document){return{project:{format:'gsnv-cad',version:1,id:document.id,title:document.title,content:JSON.parse(JSON.stringify(value(document)))},assets:[]};},
   mount(host){
    const document=host.root.ownerDocument,stage=document.createElement('div'),panel=document.createElement('div'),hint=document.createElement('div');
@@ -70,6 +71,7 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
     onError(identity,error){if(disposed||identity!==jobIdentity)return;result=null;status='error';message=error;refresh();host.invalidate();},
    });
    const effective=()=>preview??content;
+   const solidReady=()=>!!current&&!preview&&!tool.anchor&&status==='ready'&&jobIdentity===current.identity&&!!result?.solid;
    let activeSketch='';
    const baseId=()=>effective()?.graph.features[0].id??'';
    const sketchOf=(c:CADContent|null):Sketch|undefined=>{if(!c)return undefined;const cut=laterOf(c).find(f=>f.id===activeSketch&&f.kind==='pocket');return cut&&cut.kind==='pocket'?cut.definition.sketch:c.graph.features[0].definition.sketch;};
@@ -93,7 +95,7 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
    }
    function build(next:CADContent,identity:string){
     jobIdentity=identity;result=null;
-    if(!next.graph.features[0].definition.sketch.entities.length&&!bossOf(next)){worker.cancel();status='idle';message='Draw a closed sketch, then extrude it.';refresh();return;}
+    if(!next.graph.features[0].definition.sketch.entities.length&&next.graph.features.length===1){worker.cancel();status='idle';message='Draw a closed sketch, then extrude or revolve it.';refresh();return;}
     status='busy';message='Rebuilding in the CAD worker…';refresh();worker.submit(identity,next);
    }
    function commit(action:CADAction,label:string){
@@ -158,7 +160,7 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
     if(!content)return;
     if(id==='bridge.cadToImage'){sending.send();return;}
     if(id==='tool.cancel'){exporter.cancel();worker.cancel();preview=null;tool=cadToolInput({state:tool,event:{kind:'cancel'},endpoints:[],tolerance:content.tolerance.linearMm}).state;build(content,current!.identity);return;}
-    if(id==='cad.exportSTEP'){void exporter.run({content,name:`${current?.title.trim()||'part'}.step`});return;}
+    if(id==='cad.exportSTEP'){if(bossOf(content)||(revolvedOf(content)&&solidReady()))void exporter.run({content,name:`${current?.title.trim()||'part'}.step`});return;}
     if(id==='tool.confirm'){if(tool.anchor&&tool.cursor)pointer(tool.cursor,null,false,false);return;}
     const chooseTool=(next:CADToolState['tool'])=>{mode='sketch';tool=cadToolInput({state:tool,event:{kind:'tool',tool:next},endpoints:[],tolerance:content!.tolerance.linearMm}).state;refresh();host.invalidate();};
     const tools:Record<string,CADToolState['tool']>={'cad.select':'select','cad.line':'line','cad.rectangleTool':'rectangle','cad.circleTool':'circle','cad.centerRectangleTool':'center-rectangle'};
@@ -182,8 +184,18 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
     if(['cad.parallel','cad.perpendicular','cad.equal','cad.coincident'].includes(id)){if(tool.selected.length===2)commit({kind:'relation',id:uid(),relation:id.slice(4) as 'parallel',entities:[tool.selected[0]!,tool.selected[1]!]},id.slice(4)[0]!.toUpperCase()+id.slice(5));return;}
     if(id==='edit.delete'){if(tool.selected.length)commit({kind:'remove',ids:tool.selected},'Delete sketch geometry');return;}
     if(id==='cad.horizontal'||id==='cad.vertical'){if(tool.selected.length===1)commit({kind:'constraint',id:uid(),entity:tool.selected[0]!,axis:id==='cad.horizontal'?'horizontal':'vertical'},'Add constraint');return;}
-    if(id==='cad.removeExtrude'){commit({kind:'remove-extrude'},'Delete extrusion');mode='sketch';refresh();return;}
+    if(id==='cad.removeRevolve'){const feature=revolvedOf(content);if(feature){mode='sketch';commit({kind:'remove-revolve',id:feature.id},'Delete revolve');refresh();}return;}
+    if(id==='cad.revolve'){
+     const feature=revolvedOf(content),boss=bossOf(content);if(laterOf(content).length||(!feature&&!content.graph.features[0].definition.sketch.entities.length))return;
+     const featureId=feature?.id??boss?.id??uid();activeSketch='';
+     transaction(boss?'Replace extrusion with revolve…':feature?'Edit revolve':'Revolve',[
+      {key:'axis',label:'Axis',type:'select',choices:[{value:'v',label:'Sketch vertical axis (+V)'}]},
+      {key:'angle',label:'Angle (degrees or expression)',type:'text',placeholder:'360 deg, -90 deg, or an angle variable'},
+     ],{axis:'v',angle:feature?.definition.angle.source??'360 deg'},v=>({kind:'revolve',id:featureId,axis:v.axis as 'v',angle:String(v.angle)}),true);return;
+    }
+    if(id==='cad.removeExtrude'){if(bossOf(content)){commit({kind:'remove-extrude'},'Delete extrusion');mode='sketch';refresh();}return;}
     if(id==='cad.extrude'){
+     if(revolvedOf(content))return;
      const feature=bossOf(content);const featureId=feature?.id??uid();
      transaction('Extrude',[{key:'depth',label:`Depth (${content.units} or expression)`,type:'text'}],{depth:feature?.definition.extent.distance.source??'10'},v=>({kind:'extrude',id:featureId,depth:String(v.depth)}),true);return;
     }
@@ -233,8 +245,8 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
      if(changed){exporter.cancel();exportMessage='';delete hint.dataset.exportState;preview=null;content=snapshot?value(snapshot):null;if(activeSketch&&!(content&&laterOf(content).some(f=>f.id===activeSketch&&f.kind==='pocket')))activeSketch='';tool={...tool,anchor:null,cursor:null,selected:tool.selected.filter(id=>content?.graph.features[0].definition.sketch.entities.some(e=>e.id===id))};if(content)build(content,snapshot!.identity);else{worker.cancel();result=null;refresh();}}else refresh();
     },
     model(){
-     const enabled=!!current,item=(id:string,label:string,icon:string,shortcut='',toolbar=false)=>({id,label,icon,shortcut,toolbar,enabled});
-     return{menus:[{id:'sketch',label:'Sketch',items:[item('cad.rectangle','Rectangle dimensions…','rectangle','',true),item('cad.lineCoordinates','Line coordinates…','line'),item('cad.circle','Circle dimensions…','ellipse'),item('cad.centerRectangle','Centered rectangle dimensions…','rectangle'),item('cad.polygon','Regular polygon dimensions…','cad'),item('cad.sketch','Edit sketch','grid'),item('cad.horizontal','Horizontal constraint','ruler'),item('cad.vertical','Vertical constraint','ruler'),item('edit.selectAll','Select all','select','Ctrl+A'),item('edit.delete','Delete selected','delete','Delete')]},{id:'solid',label:'Solid',items:[item('cad.extrude','Extrude…','extrude','E',true),item('cad.solid','Solid view','cad','',true),item('cad.removeExtrude','Delete extrusion','delete'),item('view.fit','Zoom to fit','fit','F',true),{...item('cad.addCut','Cut (pocket or hole)…','delete'),enabled:enabled&&!!(content&&bossOf(content))},{...item('cad.fillet','Fillet (round edges)…','ellipse'),enabled:enabled&&!!(content&&bossOf(content))},{...item('cad.chamfer','Chamfer (bevel edges)…','extrude'),enabled:enabled&&!!(content&&bossOf(content))},item('cad.units.mm','Metric units (mm)','ruler'),item('cad.units.inch','Imperial units (inch)','ruler'),{...item('cad.exportSTEP','Export STEP','export','',true),enabled:enabled&&!!(content&&bossOf(content))},{...item('cad.exportSTL','Export STL (3D printing)','export'),enabled:enabled&&!!result?.solid},{...item('bridge.cadToImage','Send transparent view to Image…','image'),enabled:sending.ready()}]}],
+     const enabled=!!current,revolve=revolvedOf(content),boss=content&&bossOf(content),canRevolve=!!content&&!laterOf(content).length&&(!!revolve||content.graph.features[0].definition.sketch.entities.length>0),item=(id:string,label:string,icon:string,shortcut='',toolbar=false)=>({id,label,icon,shortcut,toolbar,enabled});
+     return{menus:[{id:'sketch',label:'Sketch',items:[item('cad.rectangle','Rectangle dimensions…','rectangle','',true),item('cad.lineCoordinates','Line coordinates…','line'),item('cad.circle','Circle dimensions…','ellipse'),item('cad.centerRectangle','Centered rectangle dimensions…','rectangle'),item('cad.polygon','Regular polygon dimensions…','cad'),item('cad.sketch','Edit sketch','grid'),item('cad.horizontal','Horizontal constraint','ruler'),item('cad.vertical','Vertical constraint','ruler'),item('edit.selectAll','Select all','select','Ctrl+A'),item('edit.delete','Delete selected','delete','Delete')]},{id:'solid',label:'Solid',items:[{...item('cad.extrude','Extrude…','extrude','E',true),enabled:enabled&&!revolve},{...item('cad.revolve',boss?'Replace extrusion with revolve…':revolve?'Edit revolve…':'Revolve…','revolve','Shift+E',true),enabled:enabled&&canRevolve},item('cad.solid','Solid view','cad','',true),{...item('cad.removeExtrude','Delete extrusion','delete'),enabled:enabled&&!!boss},item('view.fit','Zoom to fit','fit','F',true),{...item('cad.addCut','Cut (pocket or hole)…','delete'),enabled:enabled&&!!(content&&bossOf(content))},{...item('cad.fillet','Fillet (round edges)…','ellipse'),enabled:enabled&&!!(content&&bossOf(content))},{...item('cad.chamfer','Chamfer (bevel edges)…','extrude'),enabled:enabled&&!!(content&&bossOf(content))},item('cad.units.mm','Metric units (mm)','ruler'),item('cad.units.inch','Imperial units (inch)','ruler'),{...item('cad.exportSTEP','Export STEP','export','',true),enabled:enabled&&(!!boss||!!revolve&&solidReady())},{...item('cad.exportSTL','Export STL (3D printing)','export'),enabled:enabled&&!!result?.solid},{...item('bridge.cadToImage','Send transparent view to Image…','image'),enabled:sending.ready()}]}],
      tools:[{active:enabled&&tool.tool==='select',id:'cad.select',label:'Select',icon:'select',shortcut:'V',enabled,status:'Click an edge to select it.'},{active:enabled&&tool.tool==='line',id:'cad.line',label:'Line',icon:'line',shortcut:'L',enabled,status:'Click two endpoints to draw a line.'},{active:enabled&&tool.tool==='rectangle',id:'cad.rectangleTool',label:'Rectangle',icon:'rectangle',shortcut:'R',enabled,status:'Click two corners to replace the outline with a rectangle.'},{active:enabled&&tool.tool==='circle',id:'cad.circleTool',label:'Circle',icon:'ellipse',shortcut:'C',enabled,status:'Click the center, then a point on the circle.'},{active:enabled&&tool.tool==='center-rectangle',id:'cad.centerRectangleTool',label:'Centered rectangle',icon:'rectangle',shortcut:'',enabled,status:'Click the center, then a corner.'},{active:enabled&&tool.tool==='polygon',id:'cad.polygonTool',label:'Polygon',icon:'cad',shortcut:'',enabled,status:'Choose sides, then click the center and first vertex.'}],panels:[{id:'cad-properties',title:'Part',content:panel}]};
     },bridge:sending.bridge,context:()=>({viewRole:mode==='sketch'?'sketch2d':'cad3d',activeTool:tool.tool,status:exportMessage||toolStatus()}),command,
     gesture(gesture){if(mode!=='sketch'||gesture.type!=='pointer')return;if(gesture.phase==='cancel'){tool={...tool,anchor:null,cursor:null};refresh();}else if(gesture.phase==='down'&&gesture.button===0)pointer(viewport.point(gesture.point),viewport.hit(gesture.point),gesture.ctrl,gesture.shift);else if(gesture.phase==='move')pointer(viewport.point(gesture.point),null,gesture.ctrl,gesture.shift,true);},

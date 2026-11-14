@@ -13,6 +13,19 @@ test('C58 feature errors and source dimensions are visible, safe and editable',(
 test('C58 invalid panel ports fail before binding handlers',()=>{
  assert.throws(()=>cadProperties({root:null as unknown as HTMLElement,onEdit(){}}),TypeError);
 });
+test('C58 revolve source has a flagged editable row and guards unsupported extrusion modifiers',()=>{
+ const dom=new JSDOM('<div id="p"></div>'),root=dom.window.document.getElementById('p')!,edits:unknown[]=[];
+ const panel=cadProperties({root,onEdit:e=>edits.push(e)});
+ let content=editCADContent({content:editableCADContent({operation:'new'}),action:{kind:'rectangle',prefix:'r',width:'10',height:'12',origin:['10','0']}});
+ content=editCADContent({content,action:{kind:'revolve',id:'turned',axis:'v',angle:'-90 deg'}});
+ panel.update({content,selected:[],state:'error',message:'Revolve 1: the profile crosses the axis.',result:null});
+ const row=root.querySelector('[data-feature-id="turned"]')!;assert.equal(row.getAttribute('data-failed'),'true');assert.match(row.textContent!,/-90 deg/);assert.match(row.textContent!,/\+V/);
+ const buttons=[...root.querySelectorAll<HTMLButtonElement>('button')];
+ for(const label of ['Extrude…','Cut…','Fillet…','Chamfer…'])assert.equal(buttons.find(b=>b.textContent===label)!.disabled,true);
+ buttons.find(b=>b.textContent==='Edit revolve…')!.click();assert.deepEqual(edits.at(-1),{command:'cad.revolve'});
+ buttons.find(b=>b.textContent==='Delete revolve')!.click();assert.deepEqual(edits.at(-1),{command:'cad.removeRevolve',id:'turned'});
+ panel.dispose();
+});
 test('C58 selected document units display physical values without hiding editable source expressions',()=>{
  const dom=new JSDOM('<div id="p"></div>'),root=dom.window.document.getElementById('p')!;
  const panel=cadProperties({root,onEdit(){}});

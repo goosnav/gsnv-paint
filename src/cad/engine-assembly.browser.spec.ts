@@ -64,7 +64,7 @@ test('CAD-A1 real paired worker preserves both engines and owns failure, cancell
   await expect(page.locator('#worker-alive')).toHaveText('yes'); await inspect(page);
   await page.getByRole('button', { name: 'Inject native fault', exact: true }).click();
   await expect(page.locator('#assembly-status')).toHaveText('Pair failed; worker terminated'); await expect(page.locator('#worker-alive')).toHaveText('no');
-  await expect(page.locator('#error-result')).toContainText('KernelLoadError'); await expect(page.locator('#error-result')).toContainText('Standard_DomainError');
+  await expect(page.locator('#error-result')).toContainText('KernelLoadError'); await expect(page.locator('#error-result')).toContainText('native OpenCascade exception');
   expect(await receipt(page, 'error')).toMatchObject({ kernelState: 'closed', solverState: 'open' });
   const nativeFailure = await page.locator('#error-result').textContent();
   await open(page, 5); const recovered = await inspect(page); const finalClose = await close(page);

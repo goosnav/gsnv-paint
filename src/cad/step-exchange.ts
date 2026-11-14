@@ -7,9 +7,13 @@
  *            IDs are step-solid-1… in file traversal order; topology/operands are empty.
  *            The document owner retains the original import bytes and assigns feature IDs.
  *            RAISES: STEPReadError, STEPTransferError, STEPWriteError,
- *            InvalidImportedSolidError, DisposedSessionError.
+ *            InvalidImportedSolidError, DisposedSessionError for deliberate rejection;
+ *            every unknown/native/cleanup fault propagates unchanged.
  * GUARANTEES No network or host filesystem, no source mutation; failed imports publish
  *            no partial bodies. Normal completion releases temporary native wrappers/files.
+ *            Only this call's exact deliberate error permits rejection cleanup. Every
+ *            other throw stops native/FS calls, including deletion, unlink and unit restore;
+ *            the worker owner reclaims the faulted session, files and unpublished tokens.
  * TUNING     No geometric approximation: STEP carries analytic B-rep geometry.
  * DECISIONS  D1: Set model units and temporarily set/restore write.step.unit; the
  *            exposed Transfer overload copies that global into header parameters.
@@ -18,6 +22,12 @@
  *            D2: Check every loaded entity and transfer result, then reject non-solid/
  *            partial imports. Root counts alone can hide a failed assembly child.
  *            Revisit if: the product explicitly adds surface or wire import.
+ *            D3: Use exact deliberate-error identity. Alternative: exception-name/type
+ *            lists misclassify unknown faults as safe cleanup. Revisit only with a proved
+ *            native recovery boundary.
+ *            D4: Check the private filename with the supported FS.readdir before unlink.
+ *            Alternative: catching unlink errors hides real storage faults. Revisit if
+ *            the pinned binding exposes a non-throwing single-path existence operation.
  * LIMITS     One synchronous job per worker. Vendor native faults propagate and require
  *            whole-worker termination. STEP names/colors and parametric history are not imported.
  * TESTBENCH  src/cad/step-exchange.test.ts -- run with: node --import tsx --test src/cad/step-exchange.test.ts
@@ -32,9 +42,10 @@ export type STEPRequest = {session:KernelSession;units:'mm'|'inch'} & (
 export type STEPResult = {bodies:Bodies|null;file:{name:string;mime:string;bytes:Uint8Array;diagnostics:Diagnostic[]}|null};
 export function stepExchange(request:STEPRequest):STEPResult {
   const {session,units}=request,oc=session.library;
-  const fail=(name:string,message:string):never=>{throw Object.assign(new Error(message),{name});};
+  let ordinary:Error|undefined;
+  const fail=(name:string,message:string):never=>{ordinary=Object.assign(new Error(message),{name});throw ordinary;};
   if(session.isClosed())fail('DisposedSessionError','The kernel session is closed. Rebuild before exchanging STEP.');
-  let stage=request.action==='import'?'STEPReadError':'STEPTransferError',faulted=false,previousUnit:string|undefined;
+  let stage=request.action==='import'?'STEPReadError':'STEPTransferError',previousUnit:string|undefined;
   const temporary=new Set<{delete():void}>(),published:Token[]=[];
   const own=<T extends {delete():void}>(object:T):T=>{temporary.add(object);return object;};
   // The worker serializes synchronous calls; this private virtual path never touches the host filesystem.
@@ -46,7 +57,12 @@ export function stepExchange(request:STEPRequest):STEPResult {
     oc.BRepGProp.VolumeProperties(shape,props,true,false,false);
     if(!Number.isFinite(props.Mass())||props.Mass()<=0)fail(error,'STEP contains a solid with no finite, positive closed volume.');
   };
-  try{
+  const cleanup=()=>{
+    for(const object of [...temporary].reverse())object.delete();
+    if(oc.FS.readdir('/').includes(path.slice(1)))oc.FS.unlink(path);
+    if(previousUnit!==undefined&&!oc.Interface_Static.SetCVal('write.step.unit',previousUnit))fail('STEPTransferError','OpenCascade could not restore its STEP translator settings. Restart the CAD worker.');
+  };
+  const execute=():STEPResult=>{
     if(!['mm','inch'].includes(units))fail(stage,'STEP document units must be millimetres or inches.');
     if(request.action==='export'){
       if(!request.bodies.shapes.length)fail(stage,'There are no solid bodies to export.');
@@ -100,16 +116,11 @@ export function stepExchange(request:STEPRequest):STEPResult {
       const token=session.retain(shape);temporary.delete(shape);published.push(token);return{bodyId:`step-solid-${index+1}`,token};
     });
     return{bodies:{shapes,topology:[],operands:[],diagnostics:[]},file:null};
-  }catch(cause){
-    faulted=(typeof WebAssembly.Exception==='function'&&cause instanceof WebAssembly.Exception)||cause instanceof WebAssembly.RuntimeError||typeof cause==='number';
-    if(!faulted)for(const token of published)session.release(token);
-    if(faulted||cause instanceof Error&&['STEPReadError','STEPTransferError','STEPWriteError','InvalidImportedSolidError','DisposedSessionError'].includes(cause.name))throw cause;
-    return fail(stage,`STEP exchange failed: ${cause instanceof Error?cause.message:String(cause)}`);
-  }finally{
-    if(!faulted){
-      for(const object of [...temporary].reverse())object.delete();
-      try{oc.FS.unlink(path);}catch{/* A failed read/write may not have created the virtual file. */}
-      if(previousUnit!==undefined&&!oc.Interface_Static.SetCVal('write.step.unit',previousUnit))fail('STEPTransferError','OpenCascade could not restore its STEP translator settings. Restart the CAD worker.');
-    }
+  };
+  let result:STEPResult;
+  try{result=execute();}catch(cause){
+    if(ordinary!==undefined&&cause===ordinary){for(const token of published)session.release(token);cleanup();}
+    throw cause;
   }
+  cleanup();return result;
 }

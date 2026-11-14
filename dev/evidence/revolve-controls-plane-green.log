@@ -1,0 +1,47 @@
+✔ C72 real rigid planes preserve geometry, signed depth, ownership and STEP world coordinates (978.65211ms)
+✔ C72 ordinary failures preserve input; native and cleanup faults stop every subsequent native call (2.317214ms)
+✔ C72 every native boundary is fail-stop even for undefined or a forged ordinary-error name (5.152916ms)
+✔ S09 golden accessible original close glyph (5.702291ms)
+✔ S09 every catalog glyph has unique original local path data and an accessible name (3.171423ms)
+✔ S09 labels are literal text, repeated instances share no nodes or IDs (0.211297ms)
+✔ S09 inclusive size bounds and fractional CSS pixel sizes (0.17318ms)
+✔ S09 rejects invalid size 0 (0.399035ms)
+✔ S09 rejects invalid size 11.9 (0.124504ms)
+✔ S09 rejects invalid size 64.1 (0.092392ms)
+✔ S09 rejects invalid size NaN (0.144225ms)
+✔ S09 rejects invalid size Infinity (0.180604ms)
+✔ S09 rejects invalid size -Infinity (0.277306ms)
+✔ S09 rejects unknown name unknown (0.164461ms)
+✔ S09 rejects unknown name  (0.07941ms)
+✔ S09 rejects unknown name __proto__ (0.129819ms)
+✔ S09 rejects unknown name constructor (0.121853ms)
+✔ S05 golden shortcut transcript (2.414843ms)
+✔ S05 complete common Ctrl/Meta table across all workspaces (3.317365ms)
+✔ S05 ordinary text editing stays native; document file shortcuts still work (0.629007ms)
+✔ S05 dialogs map Enter and Escape and shield workspace commands (0.23891ms)
+✔ S05 Space pans every 2D view and plays the focused Video or Audio timeline (0.29321ms)
+✔ S05 complete Video timeline table is limited to the focused timeline (0.368217ms)
+✔ S05 complete Image tool/color table is workspace-specific (0.600154ms)
+✔ S05 unspecified modifier combinations and unknown keys are untouched (0.360783ms)
+✔ S05 output property: only handled commands request preventDefault; input stays frozen (0.372683ms)
+✔ S05 malformed event 0 raises TypeError (0.587044ms)
+✔ S05 malformed event 1 raises TypeError (0.160064ms)
+✔ S05 malformed event 2 raises TypeError (0.109075ms)
+✔ S05 malformed event 3 raises TypeError (0.071452ms)
+✔ S05 malformed event 4 raises TypeError (0.145182ms)
+✔ S05 malformed event 5 raises TypeError (0.065277ms)
+✔ S05 malformed event 6 raises TypeError (0.161208ms)
+✔ S05 malformed event 7 raises TypeError (0.065683ms)
+✔ S05 malformed event 8 raises TypeError (0.1085ms)
+✔ S05 malformed event 9 raises TypeError (0.186434ms)
+✔ S05 production CAD tool shortcuts stay native while typing (0.259929ms)
+✔ S05 Shift+E opens Revolve only from the CAD view and leaves modified/text keys alone (0.296988ms)
+✔ S05 Photo before/after and crop keys are limited to the Photo workspace (0.165205ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2155.627605

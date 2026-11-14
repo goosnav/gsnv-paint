@@ -1,0 +1,8 @@
+
+> gsnv-paint@0.1.0 build
+> tsc --noEmit && vite build
+
+src/cad/step-exchange-faults.test.ts(83,32): error TS2379: Argument of type '{ action: "export" | "import"; reject: "read" | "write" | undefined; }' is not assignable to parameter of type 'Options' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'reject' are incompatible.
+    Type '"read" | "write" | undefined' is not assignable to type 'Rejection'.
+      Type 'undefined' is not assignable to type 'Rejection'.
