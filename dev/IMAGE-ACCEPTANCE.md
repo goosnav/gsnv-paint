@@ -79,3 +79,32 @@ adjustment/filter formulas and transparent pixel values must not change.
 
 Status and exact evidence will be appended after execution. Product acceptance
 and untested platforms remain with the user.
+
+## Typed image zoom correction — contracted assembly rework
+
+The production acceptance run exposed a view defect: setting Zoom to 800%
+multiplied the image's centering offset and moved a 32×24 document outside the
+viewport. The shared percentage also ignored Image's local Fit scale. This
+correction is required for the existing typed-control requirement; it adds no
+new tool and changes no raster algorithm or shared S04 contract.
+
+A-SHELL's optional `EditorView.viewSettings():void` lets an adapter that owns
+an additional view transform present its own settings dialog. The existing
+shared dialog remains the fallback. Dispatch still applies the same enabled,
+modal and lifecycle guards; it never commits a document by itself.
+
+IMAGE-APP supplies this callback. Zoom (%) is the **effective** pixel scale,
+1–6400%, initially the current scale after Fit/wheel zoom. Horizontal and
+vertical offset fields are explicitly labelled in screen pixels and start at
+zero for this dialog. Every preview derives from the original placement,
+zooms around the viewport center using S04, then applies those typed offsets.
+It never compounds successive previews. OK keeps the view; Cancel/Esc restores
+the original local scale/offset exactly. Document pixels, selection and history
+are unchanged. Wheel zoom continues to preserve its cursor anchor.
+
+Gate before GREEN: a shell unit seam proves adapter dispatch and preserves
+existing fallback cases; a production Image test proves visible 800% zoom,
+live preview/cancel, exact typed offsets, correct percent after Fit, and
+wheel-anchor invariance. The IMG-103/104 test must still edit the reopened
+selected layer through a visible pixel after typed zoom, with the same exact
+pixel expectation. No golden may be weakened to accommodate this defect.
