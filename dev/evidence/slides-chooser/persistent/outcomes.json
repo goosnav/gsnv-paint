@@ -1,0 +1,1545 @@
+{
+  "outcomes": [
+    {
+      "iteration": 0,
+      "passed": true
+    },
+    {
+      "iteration": 1,
+      "passed": true
+    },
+    {
+      "iteration": 2,
+      "passed": true
+    },
+    {
+      "iteration": 3,
+      "passed": true
+    },
+    {
+      "iteration": 4,
+      "passed": true
+    },
+    {
+      "iteration": 5,
+      "passed": true
+    },
+    {
+      "iteration": 6,
+      "passed": true
+    },
+    {
+      "iteration": 7,
+      "passed": true
+    },
+    {
+      "iteration": 8,
+      "passed": true
+    },
+    {
+      "iteration": 9,
+      "passed": true
+    }
+  ],
+  "state": {
+    "events": [
+      {
+        "kind": "input-click",
+        "time": 1240.1000000238419,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "BUTTON",
+          "class": "xp-button",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Applied Edit element."
+      },
+      {
+        "kind": "input-change",
+        "time": 1254.6000000238419,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "BUTTON",
+          "class": "xp-button",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Applied Edit element."
+      },
+      {
+        "kind": "keydown-capture",
+        "time": 2272.3000000715256,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 2272.899999976158,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 2272.899999976158,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 2281.8000000715256,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-capture",
+        "time": 2345.600000023842,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 2345.899999976158,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 2345.899999976158,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 2357,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-capture",
+        "time": 2422,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 2422.399999976158,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 2422.399999976158,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 2432,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-capture",
+        "time": 2514.899999976158,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 2515.3000000715256,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 2515.399999976158,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 2526,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-capture",
+        "time": 2589.399999976158,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 2589.600000023842,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 2589.600000023842,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 2598,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-capture",
+        "time": 2670.399999976158,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 2670.600000023842,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 2670.7000000476837,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 2681.3000000715256,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-capture",
+        "time": 2761.5,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 2761.899999976158,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 2761.899999976158,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 2774.3000000715256,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-capture",
+        "time": 2868.3000000715256,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 2868.7000000476837,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 2868.8000000715256,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 2878.5,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-capture",
+        "time": 3019.5,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 3019.8000000715256,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 3019.899999976158,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 3028,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-capture",
+        "time": 3098,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 3098.2000000476837,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 3098.3000000715256,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "INPUT",
+          "LABEL",
+          "slides-properties",
+          "slides-body",
+          "slides-stage",
+          "DIV",
+          "slides-workspace",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "Slides workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 3113,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "INPUT",
+          "class": "",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          true,
+          true
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "Slides workspace."
+      }
+    ],
+    "active": "<button class=\"gc-workspace\" type=\"button\" data-workspace=\"document\" data-focus-key=\"workspace:document\" role=\"tab\" aria-label=\"Document\" aria-selected=\"true\" tabindex=\"0\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" role=\"img\" aria-label=\"Document\" focusable=\"false\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"square\" stroke-linejoin=\"miter\" shape-rendering=\"crispEdges\" data-icon=\"document\"><title>Document</title><path d=\"M5 2h10l4 4v16H5zM15 2v4h4M8 10h8M8 13h8M8 16h8M8 19h5\"></path></svg><span class=\"\">Document</span></button>"
+  }
+}

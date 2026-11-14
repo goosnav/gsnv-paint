@@ -1,0 +1,105 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: static-host.browser.spec.ts >> Cloudflare static host installs the complete build and serves exact isolated assets offline
+- Location: dev/static-host.browser.spec.ts:16:1
+
+# Error details
+
+```
+Error: /index.html
+
+expect(received).toBe(expected) // Object.is equality
+
+Expected: "a64776c2f47d564116a4afaeb94a20dd8894d8e380b8156c4e5e6f1958c5386d"
+Received: "a836db0c9a65462c134d42a3006d40b3643894edb92d18c37ab12c62e23f624e"
+```
+
+# Test source
+
+```ts
+  1  | /** Test the emitted build through the real local Cloudflare static-asset runtime. */
+  2  | import { test, expect } from '@playwright/test';
+  3  | import { spawn } from 'node:child_process';
+  4  | import { createHash } from 'node:crypto';
+  5  | import { mkdtemp, readFile, rm } from 'node:fs/promises';
+  6  | import { tmpdir } from 'node:os';
+  7  | import { join, resolve } from 'node:path';
+  8  | 
+  9  | const headers = {
+  10 |   'cross-origin-opener-policy': 'same-origin',
+  11 |   'cross-origin-embedder-policy': 'require-corp',
+  12 |   'cross-origin-resource-policy': 'same-origin',
+  13 | };
+  14 | type Manifest = { build: string; assets: { url: string; bytes: number; sha256: string; mime: string }[] };
+  15 | 
+  16 | test('Cloudflare static host installs the complete build and serves exact isolated assets offline', async ({ browser }) => {
+  17 |   const output = resolve(process.env.GSNV_TEST_DIST ?? 'dist');
+  18 |   const manifest = JSON.parse(await readFile(join(output, 'offline-manifest.json'), 'utf8')) as Manifest;
+  19 |   const state = await mkdtemp(join(tmpdir(), 'gsnv-static-host-'));
+  20 |   const origin = 'http://127.0.0.1:4198';
+  21 |   const server = spawn(process.execPath, [resolve('node_modules/wrangler/bin/wrangler.js'), 'dev', '--local', '--assets', output,
+  22 |     '--ip', '127.0.0.1', '--port', '4198', '--inspector-port', '9294', '--persist-to', state, '--show-interactive-dev-session', 'false'],
+  23 |   { env: { ...process.env, WRANGLER_SEND_METRICS: 'false' }, stdio: ['ignore', 'pipe', 'pipe'] });
+  24 |   let log = ''; server.stdout.on('data', chunk => { log += chunk; }); server.stderr.on('data', chunk => { log += chunk; });
+  25 |   const stopped = new Promise<void>(resolve => server.once('close', () => resolve()));
+  26 |   const context = await browser.newContext({ serviceWorkers: 'allow', viewport: { width: 1280, height: 720 } });
+  27 |   try {
+  28 |     await expect.poll(() => log.includes('Ready on http://127.0.0.1:4198'), { timeout: 30_000, message: 'Local Wrangler becomes ready' }).toBe(true);
+  29 |     // Cloudflare canonicalizes the physical index path; S18 must request its root representation.
+  30 |     const redirect = await context.request.get(origin + '/index.html', { maxRedirects: 0 });
+  31 |     expect(redirect.status()).toBe(307); expect(redirect.headers().location).toBe('/');
+  32 |     for (const asset of manifest.assets) {
+  33 |       const response = await context.request.get(origin + (asset.url === '/index.html' ? '/' : asset.url), { maxRedirects: 0 });
+  34 |       expect(response.status(), asset.url).toBe(200);
+  35 |       expect(response.headers()['content-type']?.split(';')[0], asset.url).toBe(asset.mime);
+  36 |       for (const [key, value] of Object.entries(headers)) expect(response.headers()[key], `${asset.url}: ${key}`).toBe(value);
+  37 |       const bytes = await response.body(); expect(bytes.length, asset.url).toBe(asset.bytes);
+> 38 |       expect(createHash('sha256').update(bytes).digest('hex'), asset.url).toBe(asset.sha256);
+     |                                                                           ^ Error: /index.html
+  39 |       await response.dispose();
+  40 |     }
+  41 |     for (const path of ['/', '/offline-sw.js', '/offline-manifest.json']) {
+  42 |       const response = await context.request.get(origin + path);
+  43 |       expect(response.headers()['cache-control'], path).toBe('no-cache'); await response.dispose();
+  44 |     }
+  45 |     const page = await context.newPage(), errors: string[] = [];
+  46 |     page.on('pageerror', error => errors.push(error.message));
+  47 |     await page.goto(origin);
+  48 |     const summary = page.locator('.gc-offline > summary');
+  49 |     await expect(summary).toHaveText('Ready offline', { timeout: 60_000 });
+  50 |     expect(await page.evaluate(() => crossOriginIsolated)).toBe(true);
+  51 |     expect(await page.locator('meta[name="gsnv-build-id"]').getAttribute('content')).toBe(manifest.build);
+  52 |     await summary.focus(); await page.keyboard.press('Enter'); await expect(page.locator('.gc-offline')).toHaveAttribute('open', '');
+  53 |     await page.keyboard.press('Space'); await expect(page.locator('.gc-offline')).not.toHaveAttribute('open');
+  54 |     await context.setOffline(true); await page.reload(); await expect(summary).toHaveText('Ready offline', { timeout: 30_000 });
+  55 |     expect(await page.evaluate(() => crossOriginIsolated)).toBe(true);
+  56 |     const cached = await page.evaluate(async ({ assets, required }) => {
+  57 |       const results = [];
+  58 |       for (const asset of assets) {
+  59 |         const response = await fetch(asset.url), bytes = await response.arrayBuffer();
+  60 |         const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(v => v.toString(16).padStart(2, '0')).join('');
+  61 |         results.push({ url: asset.url, status: response.status, bytes: bytes.byteLength, sha256: hash,
+  62 |           mime: response.headers.get('content-type')?.split(';')[0], isolated: Object.entries(required).every(([key, value]) => response.headers.get(key) === value) });
+  63 |       }
+  64 |       return results;
+  65 |     }, { assets: manifest.assets, required: headers });
+  66 |     expect(cached).toEqual(manifest.assets.map(asset => ({ ...asset, status: 200, isolated: true })));
+  67 |     await summary.click(); await expect(page.locator('.gc-offline-panel')).toContainText('stored for offline use');
+  68 |     await page.screenshot({ path: 'dev/evidence/OFFLINE-Cloudflare-production.png' });
+  69 |     expect(errors).toEqual([]);
+  70 |     console.log(`Cloudflare static host: ${cached.length} exact assets; root canonicalization; isolation; cold network-disabled reload; zero page errors.`);
+  71 |   } finally {
+  72 |     await context.close(); server.kill('SIGINT');
+  73 |     const timeout = setTimeout(() => server.kill('SIGKILL'), 10_000);
+  74 |     await stopped; clearTimeout(timeout); await rm(state, { recursive: true, force: true });
+  75 |     if (server.exitCode !== 0 && server.exitCode !== null) console.log(log);
+  76 |   }
+  77 | });
+  78 | 
+```

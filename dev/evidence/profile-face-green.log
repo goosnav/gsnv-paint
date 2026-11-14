@@ -1,0 +1,15 @@
+✔ C77 success gives the caller only one face after reverse cleanup; never retains it (2.719767ms)
+✔ C77 ordinary wire and face rejections return exact tags after all cleanup (0.577884ms)
+✔ C77 keeps the +Z outer and −Z inner analytic circle convention (0.201026ms)
+✔ C77 closed session raises before allocating or calling native code (0.441549ms)
+✔ C77 stops at every native boundary for unexpected, numeric, WASM and cleanup exceptions (37.838558ms)
+✔ C77 cleanup failure during ordinary rejection propagates instead of returning a safe tag (0.693257ms)
+✔ C77 real kernel: polygon, circle and mixed-hole faces have independent analytic areas (280.629258ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 557.977469

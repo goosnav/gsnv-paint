@@ -1,0 +1,25 @@
+✔ C59 golden retains only the validated solid and releases temporary native resources (3.787703ms)
+✔ C59 every unsuccessful builder and invalid solid fails without publishing a token (1.455947ms)
+✔ C59 real kernel seam: reversed prism survives STEP export and independent re-import (533.906175ms)
+✔ C59 real kernel: plate regions with circular and polygon holes have exact volume and survive STEP (527.492361ms)
+✔ C59 characterization: all six ordinary rejection messages stay stable (4.935855ms)
+✔ C59 characterization: clockwise circular holes, immutable input and one surviving solid (1.504118ms)
+✔ C59 transfers its only live wrapper after all temporary cleanup succeeds (3.348763ms)
+✔ C59 stops every native call after unknown, numeric, WASM, cleanup or retain failure (78.695342ms)
+✔ C59 cleanup failure on any ordinary rejection propagates and stops immediately (15.923683ms)
+✔ C59 closed session never enters C77 or any native allocation (0.30725ms)
+✔ C77 success gives the caller only one face after reverse cleanup; never retains it (4.725346ms)
+✔ C77 ordinary wire and face rejections return exact tags after all cleanup (0.886302ms)
+✔ C77 keeps the +Z outer and −Z inner analytic circle convention (0.342265ms)
+✔ C77 closed session raises before allocating or calling native code (0.861105ms)
+✔ C77 stops at every native boundary for unexpected, numeric, WASM and cleanup exceptions (66.70745ms)
+✔ C77 cleanup failure during ordinary rejection propagates instead of returning a safe tag (1.124547ms)
+✔ C77 real kernel: polygon, circle and mixed-hole faces have independent analytic areas (318.650258ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2106.623682

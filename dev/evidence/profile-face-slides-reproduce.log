@@ -1,0 +1,208 @@
+[WebServer] (node:1147455) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:1147488) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF (5.3s)
+(node:1147860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF (5.3s)
+(node:1148213) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF (5.3s)
+(node:1148596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF (5.3s)
+(node:1148907) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  5 src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF (5.3s)
+
+
+  1) src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Array []
+    + Array [
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    + ]
+
+      52 |     await page.getByRole('tab',{name:'Slides',exact:true}).click();await expect(scene(page)).toContainText('Quarterly update');expect(await history(page)).toEqual(slideHistory);await expect(scene(page).locator('[data-element-id]')).toHaveCount(5);
+      53 |     await property(page,'Slide name').press('Control+z');await expect(scene(page).locator('[data-element-id]')).toHaveCount(4);await page.getByRole('tab',{name:'Document',exact:true}).click();await expect(documentEditor).toContainText('Independent document');
+    > 54 |     expect(errors).toEqual([]);expect(external).toEqual([]);
+         |                    ^
+      55 |   }finally{await server.close();}
+      56 | });
+      57 |
+        at /home/goosnav/Desktop/code/gsnv-paint/src/slides/slides-workspace.browser.spec.ts:54:20
+
+    attachment #3: Slides production (image/png) ───────────────────────────────────────────────────
+    test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF/attachments/Slides-production-69f00a75e2d2b285974ad80be833c2a74949bf98.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Array []
+    + Array [
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    + ]
+
+      52 |     await page.getByRole('tab',{name:'Slides',exact:true}).click();await expect(scene(page)).toContainText('Quarterly update');expect(await history(page)).toEqual(slideHistory);await expect(scene(page).locator('[data-element-id]')).toHaveCount(5);
+      53 |     await property(page,'Slide name').press('Control+z');await expect(scene(page).locator('[data-element-id]')).toHaveCount(4);await page.getByRole('tab',{name:'Document',exact:true}).click();await expect(documentEditor).toContainText('Independent document');
+    > 54 |     expect(errors).toEqual([]);expect(external).toEqual([]);
+         |                    ^
+      55 |   }finally{await server.close();}
+      56 | });
+      57 |
+        at /home/goosnav/Desktop/code/gsnv-paint/src/slides/slides-workspace.browser.spec.ts:54:20
+
+    attachment #3: Slides production (image/png) ───────────────────────────────────────────────────
+    test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat1/attachments/Slides-production-cd895e7af7763a89ba9f117c3927f3677a3fb08a.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat1/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Array []
+    + Array [
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    + ]
+
+      52 |     await page.getByRole('tab',{name:'Slides',exact:true}).click();await expect(scene(page)).toContainText('Quarterly update');expect(await history(page)).toEqual(slideHistory);await expect(scene(page).locator('[data-element-id]')).toHaveCount(5);
+      53 |     await property(page,'Slide name').press('Control+z');await expect(scene(page).locator('[data-element-id]')).toHaveCount(4);await page.getByRole('tab',{name:'Document',exact:true}).click();await expect(documentEditor).toContainText('Independent document');
+    > 54 |     expect(errors).toEqual([]);expect(external).toEqual([]);
+         |                    ^
+      55 |   }finally{await server.close();}
+      56 | });
+      57 |
+        at /home/goosnav/Desktop/code/gsnv-paint/src/slides/slides-workspace.browser.spec.ts:54:20
+
+    attachment #3: Slides production (image/png) ───────────────────────────────────────────────────
+    test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat2/attachments/Slides-production-4e64dd3012aee7646fb01e7f23ed9dd918d1f79a.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat2/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat2/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat2/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Array []
+    + Array [
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    + ]
+
+      52 |     await page.getByRole('tab',{name:'Slides',exact:true}).click();await expect(scene(page)).toContainText('Quarterly update');expect(await history(page)).toEqual(slideHistory);await expect(scene(page).locator('[data-element-id]')).toHaveCount(5);
+      53 |     await property(page,'Slide name').press('Control+z');await expect(scene(page).locator('[data-element-id]')).toHaveCount(4);await page.getByRole('tab',{name:'Document',exact:true}).click();await expect(documentEditor).toContainText('Independent document');
+    > 54 |     expect(errors).toEqual([]);expect(external).toEqual([]);
+         |                    ^
+      55 |   }finally{await server.close();}
+      56 | });
+      57 |
+        at /home/goosnav/Desktop/code/gsnv-paint/src/slides/slides-workspace.browser.spec.ts:54:20
+
+    attachment #3: Slides production (image/png) ───────────────────────────────────────────────────
+    test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat3/attachments/Slides-production-98ad3acf1145aa04abb7980135a05e3f9e9688a6.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat3/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat3/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat3/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Array []
+    + Array [
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    + ]
+
+      52 |     await page.getByRole('tab',{name:'Slides',exact:true}).click();await expect(scene(page)).toContainText('Quarterly update');expect(await history(page)).toEqual(slideHistory);await expect(scene(page).locator('[data-element-id]')).toHaveCount(5);
+      53 |     await property(page,'Slide name').press('Control+z');await expect(scene(page).locator('[data-element-id]')).toHaveCount(4);await page.getByRole('tab',{name:'Document',exact:true}).click();await expect(documentEditor).toContainText('Independent document');
+    > 54 |     expect(errors).toEqual([]);expect(external).toEqual([]);
+         |                    ^
+      55 |   }finally{await server.close();}
+      56 | });
+      57 |
+        at /home/goosnav/Desktop/code/gsnv-paint/src/slides/slides-workspace.browser.spec.ts:54:20
+
+    attachment #3: Slides production (image/png) ───────────────────────────────────────────────────
+    test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat4/attachments/Slides-production-6931815e0c8af04e4b6f630f3f0766264a6f4c51.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat4/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat4/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF-repeat4/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5 failed
+    src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+    src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+    src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+    src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+    src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 

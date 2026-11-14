@@ -1,0 +1,161 @@
+{
+  "kind": "persistent",
+  "enableCount": 1,
+  "disableCount": 0,
+  "chooserCount": 11,
+  "reopenPassCount": 10,
+  "navigationLines": [
+    81
+  ],
+  "transitions": [
+    {
+      "send": 76,
+      "id": 29,
+      "ack": 79,
+      "session": "663A9BDDF06F3ECAAFA34E4DB1049C16",
+      "keys": [
+        {
+          "line": 1808,
+          "id": 751,
+          "type": "rawKeyDown",
+          "ack": 1809
+        },
+        {
+          "line": 1810,
+          "id": 752,
+          "type": "keyUp",
+          "ack": 1813
+        },
+        {
+          "line": 1911,
+          "id": 795,
+          "type": "rawKeyDown",
+          "ack": 1912
+        },
+        {
+          "line": 1913,
+          "id": 796,
+          "type": "keyUp",
+          "ack": 1916
+        },
+        {
+          "line": 2014,
+          "id": 839,
+          "type": "rawKeyDown",
+          "ack": 2015
+        },
+        {
+          "line": 2016,
+          "id": 840,
+          "type": "keyUp",
+          "ack": 2019
+        },
+        {
+          "line": 2117,
+          "id": 883,
+          "type": "rawKeyDown",
+          "ack": 2118
+        },
+        {
+          "line": 2119,
+          "id": 884,
+          "type": "keyUp",
+          "ack": 2122
+        },
+        {
+          "line": 2220,
+          "id": 927,
+          "type": "rawKeyDown",
+          "ack": 2221
+        },
+        {
+          "line": 2222,
+          "id": 928,
+          "type": "keyUp",
+          "ack": 2225
+        },
+        {
+          "line": 2323,
+          "id": 971,
+          "type": "rawKeyDown",
+          "ack": 2324
+        },
+        {
+          "line": 2325,
+          "id": 972,
+          "type": "keyUp",
+          "ack": 2328
+        },
+        {
+          "line": 2428,
+          "id": 1016,
+          "type": "rawKeyDown",
+          "ack": 2429
+        },
+        {
+          "line": 2430,
+          "id": 1017,
+          "type": "keyUp",
+          "ack": 2433
+        },
+        {
+          "line": 2529,
+          "id": 1059,
+          "type": "rawKeyDown",
+          "ack": 2530
+        },
+        {
+          "line": 2531,
+          "id": 1060,
+          "type": "keyUp",
+          "ack": 2534
+        },
+        {
+          "line": 2634,
+          "id": 1104,
+          "type": "rawKeyDown",
+          "ack": 2635
+        },
+        {
+          "line": 2636,
+          "id": 1105,
+          "type": "keyUp",
+          "ack": 2639
+        },
+        {
+          "line": 2739,
+          "id": 1149,
+          "type": "rawKeyDown",
+          "ack": 2740
+        },
+        {
+          "line": 2741,
+          "id": 1150,
+          "type": "keyUp",
+          "ack": 2744
+        }
+      ],
+      "chooser": [
+        902,
+        1811,
+        1914,
+        2017,
+        2120,
+        2223,
+        2326,
+        2431,
+        2532,
+        2637,
+        2742
+      ]
+    }
+  ],
+  "lastLines": [
+    "  pw:protocol \u25c0 RECV {\"id\":1345,\"error\":{\"code\":-32001,\"message\":\"Session with given id not found.\"}} +12ms",
+    "  pw:protocol \u25c0 RECV {\"id\":-9999,\"result\":{}} +17ms",
+    "  pw:protocol \u25c0 RECV {\"method\":\"Inspector.targetCrashed\",\"params\":{},\"sessionId\":\"9B9E68044C8472BADA549E9069E6B4A5\"} +1ms",
+    "  pw:protocol \u25c0 RECV {\"method\":\"Target.detachedFromTarget\",\"params\":{\"sessionId\":\"9B9E68044C8472BADA549E9069E6B4A5\",\"targetId\":\"7667266B12AA6B6229FED97E2CFEE108\"}} +0ms",
+    "",
+    "  1 passed (4.9s)"
+  ]
+}

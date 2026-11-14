@@ -1,0 +1,121 @@
+✖ C59 transfers its only live wrapper after all temporary cleanup succeeds (5.284527ms)
+✖ C59 stops every native call after unknown, numeric, WASM, cleanup or retain failure (1.481956ms)
+✔ C59 cleanup failure on any ordinary rejection propagates and stops immediately (22.586193ms)
+✔ C59 closed session never enters C77 or any native allocation (0.199737ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 2
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 235.730092
+
+✖ failing tests:
+
+test at src/cad/kernel-prism-ownership.test.ts:1:199
+✖ C59 transfers its only live wrapper after all temporary cleanup succeeds (5.284527ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      [
+  +     1,
+  +     2,
+  +     3,
+  +     4,
+  +     5,
+  +     6,
+  +     7,
+  +     8,
+  +     9,
+  +     10,
+  +     11,
+  +     12,
+  +     13,
+  +     14,
+  +     15,
+  +     16,
+  +     17,
+  +     18,
+  +     19,
+  +     20,
+  +     21,
+  +     22,
+  +     23,
+  +     24,
+  +     25,
+  +     26,
+  +     27,
+  +     28,
+  +     29,
+  +     30,
+  +     31,
+  +     32,
+  +     33,
+  +     34,
+  +     35,
+  +     36,
+  +     37,
+  +     38,
+  +     39,
+  +     40,
+  +     41,
+  +     42,
+  +     43,
+  +     44,
+  +     45,
+  +     46,
+  +     47,
+  +     48,
+        49,
+  +     50
+      ]
+    ]
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-prism-ownership.test.ts:12:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      [
+         1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11,
+        12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+        23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+        34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+        45, 46, 47, 48, 49, 50
+      ]
+    ],
+    expected: [ [ 49 ] ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/cad/kernel-prism-ownership.test.ts:1:676
+✖ C59 stops every native call after unknown, numeric, WASM, cleanup or retain failure (1.481956ms)
+  AssertionError [ERR_ASSERTION]: no calls after fault 2
+  + actual - expected
+  
+    [
+      'new wire-builder',
+      'new point',
+  +   'delete 1:wire-builder'
+    ]
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-prism-ownership.test.ts:29:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'new wire-builder', 'new point', 'delete 1:wire-builder' ],
+    expected: [ 'new wire-builder', 'new point' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

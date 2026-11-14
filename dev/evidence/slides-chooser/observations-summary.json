@@ -1,0 +1,12 @@
+{
+  "build": "8d6ddc95d851f7e7350cfbc25946cceb4be161e4151a4555b2dbeee0c22814fe",
+  "playwright": "1.65.0",
+  "persistentPasses": 10,
+  "inputCancelCount": 0,
+  "keyCaptureCount": 10,
+  "keyCaptureAllRootFocusedActivated": true,
+  "keyBubbleAllConsumed": true,
+  "inputClickCount": 11,
+  "inputChangeCount": 11,
+  "port4209ListeningAfterCleanup": false
+}

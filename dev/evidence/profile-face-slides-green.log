@@ -1,0 +1,11 @@
+[WebServer] (node:1154721) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:1154779) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF (3.0s)
+  ✓  2 src/slides/slides-workspace.browser.spec.ts:60:1 › SLIDES-APP rejected images, cancelled drags and invalid pending properties preserve editable state (835ms)
+
+  2 passed (5.9s)

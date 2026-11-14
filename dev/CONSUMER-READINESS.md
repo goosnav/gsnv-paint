@@ -2,9 +2,20 @@
 
 For a desktop creator, gsnv-paint turns local models, images, footage, documents and audio into editable projects and useful exported files through one browser application; completion requires the requested workflows, recovery and exports to work without a backend, plus the original acceptance and distribution gates.
 
-Authority: original requirements in `requirements.json`, the owner's additions in [the current plan](PLAN-2026-11-12.md), and the 2026-11-13 request for consumer usability, Spreadsheet and Code. The [modeling and offline checkpoint](MODELING-OFFLINE-CHECKPOINT.md) owns the current candidate's final combined results. Baseline inspected commit `73405de` and the earlier repair/authoring counts below are historical. Later evidence supersedes them only within its stated scope.
+Authority: original requirements in `requirements.json`, the owner's additions in [the current plan](PLAN-2026-11-12.md), and the 2026-11-13 request for consumer usability, Spreadsheet and Code. The [modeling and offline checkpoint](MODELING-OFFLINE-CHECKPOINT.md) owns the pushed `9496858` candidate's combined results. The subsequent [profile-face increment](CAD-PROFILE-FACE-EVIDENCE.md) records the C77/C59 integration and C65 native-fault caller repair. Baseline inspected commit `73405de` and the earlier repair/authoring counts below are historical. Later evidence supersedes them only within its stated scope.
 
-## Current candidate — bounded combined gates GREEN
+## Analytic profile-face checkpoint — bounded combined gates GREEN
+
+The newer [profile-face evidence](CAD-PROFILE-FACE-EVIDENCE.md) records
+923/923 unit tests, 51 focused CAD seams, 89/89 combined browser checks,
+type/build success, local static-host verification and deployment dry-run.
+C77/C59 preserve analytic extrusion geometry; C65 now stops native cleanup
+after unknown nested faults. A Slides fixture now maintains chooser
+interception from setup; the application was not changed for that timeout.
+Its historical attribution stays inferred. No requirement credit was added.
+Production revolve and full consumer/release acceptance remain open.
+
+## Earlier modeling/offline checkpoint — bounded combined gates GREEN
 
 The parent confirmed **908/908 full unit tests**, production build exit 0,
 Linux launcher smoke success and freshness **1/1**, offline builder **4/4**,

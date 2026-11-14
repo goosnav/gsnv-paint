@@ -10,6 +10,8 @@ const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42
 const serve=async()=>{if(process.env.SLIDES_DEV==='1'){const server=await createServer({server:{host:'127.0.0.1',port:4188,strictPort:true}});await server.listen();return server;}return preview({preview:{host:'127.0.0.1',port:4188,strictPort:true}});};
 
 test('SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF',async({page,context,browser},testInfo)=>{
+  // Keep interception active before navigation; one-shot subscriptions can race Ctrl+O.
+  page.on('filechooser',()=>{});
   test.setTimeout(90000);const server=await serve(),errors:string[]=[],external:string[]=[];
   page.on('pageerror',error=>errors.push(error.message));page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
   page.on('request',request=>{if(/^https?:/.test(request.url())&&!request.url().startsWith('http://127.0.0.1:4188'))external.push(request.url());});

@@ -1,5 +1,5 @@
 /**
- * PURPOSE    Apply cut, fillet and chamfer features to a retained B-rep solid.
+ * PURPOSE    Apply one bounded machining feature to a retained B-rep solid.
  * KIND       SHELL
  * CONTRACT   IN: live C01 session, a retained solid token and one operation:
  *            cut {loops (C64 loops), top z, depth or null for through all} — each loop is extruded downward
@@ -10,29 +10,35 @@
  *            (for example a fillet larger than the edge allows); the input token stays valid in that case.
  * GUARANTEES Ordinary failures preserve the input; compounds never silently lose extra geometry.
  *            Native faults stop further native calls and require whole-worker termination.
+ *            Only this operation's deliberate rejection permits cleanup; nested failures
+ *            and arbitrary error names do not prove the kernel can still be called.
  * TUNING     CLEARANCE=1 mm above/below the solid so cut tools never share faces with it.
  * DECISIONS  D1: Edge sets by geometry rather than picked edges: robust across rebuilds (no topological
  *            naming problem). Revisit if: per-edge picking (C30) lands.
+ *            D2: Recognize local rejection identity, not exception type/name. Alternative:
+ *            a native-fault denylist misses plain errors from nested builders. Revisit if:
+ *            a lower-level contract explicitly proves recoverability across this boundary.
  * LIMITS     XY-plane features only; cuts go downward from the top of the part.
- * TESTBENCH  src/cad/kernel-features.test.ts -- run with: node --import tsx --test src/cad/kernel-features.test.ts
+ * TESTBENCH  node --import tsx --test src/cad/kernel-features.test.ts src/cad/kernel-feature-faults.test.ts
  */
 import type { KernelSession } from './kernel-runtime.ts';
 import type { ProfileLoop } from './sketch-regions.ts';
 import { buildLinearPrism } from './kernel-linear-prism.ts';
-import type { EdgeSet } from './editable-cad-content.ts';
 
 type Token = ReturnType<KernelSession['retain']>;
-export type FeatureOp = { kind: 'cut'; loops: readonly ProfileLoop[]; top: number; bottom: number; depth: number | null } | { kind: 'fillet' | 'chamfer'; set: EdgeSet; size: number };
+export type FeatureOp = { kind: 'cut'; loops: readonly ProfileLoop[]; top: number; bottom: number; depth: number | null } | { kind: 'fillet' | 'chamfer'; set: 'vertical' | 'top' | 'bottom' | 'all'; size: number };
 const CLEARANCE = 1;
 // Allow floating-point integration noise, without introducing a physical minimum cut size.
 const VOLUME_ROUNDOFF = 64 * Number.EPSILON;
-const fail = (message: string): never => { throw Object.assign(new Error(message), { name: 'FeatureError' }); };
-const nativeFault = (cause: unknown) => (typeof WebAssembly.Exception === 'function' && cause instanceof WebAssembly.Exception) || cause instanceof WebAssembly.RuntimeError || typeof cause === 'number';
 
 export function applyFeature(session: KernelSession, token: Token, op: FeatureOp): Token {
   const oc = session.library, temp: { delete(): void }[] = [], own = <T extends { delete(): void }>(v: T): T => { temp.push(v); return v; };
   const tools: Token[] = [];
-  let faulted = false;
+  let faulted = false, ordinary: Error | undefined;
+  const fail = (message: string): never => {
+    ordinary = Object.assign(new Error(message), { name: 'FeatureError' });
+    throw ordinary;
+  };
   const volume = (shape: ReturnType<KernelSession['resolve']>) => {
     const properties = own(new oc.GProp_GProps());
     oc.BRepGProp.VolumeProperties(shape, properties, true, false, false); return properties.Mass();
@@ -101,7 +107,7 @@ export function applyFeature(session: KernelSession, token: Token, op: FeatureOp
     const next = session.retain(result); temp.splice(temp.indexOf(result), 1);
     session.release(token); return next;
   } catch (cause) {
-    faulted = nativeFault(cause) || session.isClosed();
+    faulted = !(ordinary !== undefined && cause === ordinary);
     if (cause instanceof Error && cause.name === 'FeatureError') throw cause;
     throw Object.assign(new Error(`The ${op.kind} failed in the CAD kernel. Try a smaller size or simpler profile.`), { name: 'FeatureError', cause });
   } finally {

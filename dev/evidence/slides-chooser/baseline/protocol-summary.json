@@ -1,0 +1,467 @@
+{
+  "kind": "baseline",
+  "enableCount": 20,
+  "disableCount": 20,
+  "chooserCount": 20,
+  "reopenPassCount": 19,
+  "navigationLines": [
+    79
+  ],
+  "transitions": [
+    {
+      "send": 879,
+      "id": 352,
+      "ack": 882,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [],
+      "chooser": [
+        909
+      ]
+    },
+    {
+      "send": 1817,
+      "id": 751,
+      "ack": 1819,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 1821,
+          "id": 753,
+          "type": "rawKeyDown",
+          "ack": 1822
+        },
+        {
+          "line": 1823,
+          "id": 754,
+          "type": "keyUp",
+          "ack": 1826
+        }
+      ],
+      "chooser": [
+        1824
+      ]
+    },
+    {
+      "send": 1926,
+      "id": 798,
+      "ack": 1928,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 1930,
+          "id": 800,
+          "type": "rawKeyDown",
+          "ack": 1931
+        },
+        {
+          "line": 1932,
+          "id": 801,
+          "type": "keyUp",
+          "ack": 1935
+        }
+      ],
+      "chooser": [
+        1933
+      ]
+    },
+    {
+      "send": 2031,
+      "id": 843,
+      "ack": 2033,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 2035,
+          "id": 845,
+          "type": "rawKeyDown",
+          "ack": 2038
+        },
+        {
+          "line": 2039,
+          "id": 847,
+          "type": "keyUp",
+          "ack": 2043
+        }
+      ],
+      "chooser": [
+        2036
+      ]
+    },
+    {
+      "send": 2138,
+      "id": 889,
+      "ack": 2140,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 2142,
+          "id": 891,
+          "type": "rawKeyDown",
+          "ack": 2143
+        },
+        {
+          "line": 2144,
+          "id": 892,
+          "type": "keyUp",
+          "ack": 2147
+        }
+      ],
+      "chooser": [
+        2145
+      ]
+    },
+    {
+      "send": 2245,
+      "id": 935,
+      "ack": 2247,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 2249,
+          "id": 937,
+          "type": "rawKeyDown",
+          "ack": 2250
+        },
+        {
+          "line": 2251,
+          "id": 938,
+          "type": "keyUp",
+          "ack": 2254
+        }
+      ],
+      "chooser": [
+        2252
+      ]
+    },
+    {
+      "send": 2352,
+      "id": 981,
+      "ack": 2356,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 2355,
+          "id": 983,
+          "type": "rawKeyDown",
+          "ack": 2357
+        },
+        {
+          "line": 2358,
+          "id": 984,
+          "type": "keyUp",
+          "ack": 2361
+        }
+      ],
+      "chooser": [
+        2359
+      ]
+    },
+    {
+      "send": 2461,
+      "id": 1028,
+      "ack": 2463,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 2465,
+          "id": 1030,
+          "type": "rawKeyDown",
+          "ack": 2466
+        },
+        {
+          "line": 2467,
+          "id": 1031,
+          "type": "keyUp",
+          "ack": 2470
+        }
+      ],
+      "chooser": [
+        2468
+      ]
+    },
+    {
+      "send": 2568,
+      "id": 1074,
+      "ack": 2570,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 2572,
+          "id": 1076,
+          "type": "rawKeyDown",
+          "ack": 2573
+        },
+        {
+          "line": 2574,
+          "id": 1077,
+          "type": "keyUp",
+          "ack": 2577
+        }
+      ],
+      "chooser": [
+        2575
+      ]
+    },
+    {
+      "send": 2677,
+      "id": 1121,
+      "ack": 2679,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 2681,
+          "id": 1123,
+          "type": "rawKeyDown",
+          "ack": 2682
+        },
+        {
+          "line": 2683,
+          "id": 1124,
+          "type": "keyUp",
+          "ack": 2686
+        }
+      ],
+      "chooser": [
+        2684
+      ]
+    },
+    {
+      "send": 2786,
+      "id": 1168,
+      "ack": 2788,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 2790,
+          "id": 1170,
+          "type": "rawKeyDown",
+          "ack": 2791
+        },
+        {
+          "line": 2792,
+          "id": 1171,
+          "type": "keyUp",
+          "ack": 2795
+        }
+      ],
+      "chooser": [
+        2793
+      ]
+    },
+    {
+      "send": 2893,
+      "id": 1214,
+      "ack": 2895,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 2897,
+          "id": 1216,
+          "type": "rawKeyDown",
+          "ack": 2898
+        },
+        {
+          "line": 2899,
+          "id": 1217,
+          "type": "keyUp",
+          "ack": 2902
+        }
+      ],
+      "chooser": [
+        2900
+      ]
+    },
+    {
+      "send": 3002,
+      "id": 1261,
+      "ack": 3004,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 3006,
+          "id": 1263,
+          "type": "rawKeyDown",
+          "ack": 3007
+        },
+        {
+          "line": 3008,
+          "id": 1264,
+          "type": "keyUp",
+          "ack": 3011
+        }
+      ],
+      "chooser": [
+        3009
+      ]
+    },
+    {
+      "send": 3111,
+      "id": 1308,
+      "ack": 3113,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 3115,
+          "id": 1310,
+          "type": "rawKeyDown",
+          "ack": 3116
+        },
+        {
+          "line": 3117,
+          "id": 1311,
+          "type": "keyUp",
+          "ack": 3120
+        }
+      ],
+      "chooser": [
+        3118
+      ]
+    },
+    {
+      "send": 3220,
+      "id": 1355,
+      "ack": 3222,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 3224,
+          "id": 1357,
+          "type": "rawKeyDown",
+          "ack": 3225
+        },
+        {
+          "line": 3226,
+          "id": 1358,
+          "type": "keyUp",
+          "ack": 3229
+        }
+      ],
+      "chooser": [
+        3227
+      ]
+    },
+    {
+      "send": 3329,
+      "id": 1402,
+      "ack": 3331,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 3333,
+          "id": 1404,
+          "type": "rawKeyDown",
+          "ack": 3334
+        },
+        {
+          "line": 3335,
+          "id": 1405,
+          "type": "keyUp",
+          "ack": 3338
+        }
+      ],
+      "chooser": [
+        3336
+      ]
+    },
+    {
+      "send": 3436,
+      "id": 1448,
+      "ack": 3438,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 3440,
+          "id": 1450,
+          "type": "rawKeyDown",
+          "ack": 3441
+        },
+        {
+          "line": 3442,
+          "id": 1451,
+          "type": "keyUp",
+          "ack": 3443
+        }
+      ],
+      "chooser": [
+        3445
+      ]
+    },
+    {
+      "send": 3545,
+      "id": 1495,
+      "ack": 3547,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 3549,
+          "id": 1497,
+          "type": "rawKeyDown",
+          "ack": 3550
+        },
+        {
+          "line": 3551,
+          "id": 1498,
+          "type": "keyUp",
+          "ack": 3554
+        }
+      ],
+      "chooser": [
+        3552
+      ]
+    },
+    {
+      "send": 3654,
+      "id": 1542,
+      "ack": 3656,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 3658,
+          "id": 1544,
+          "type": "rawKeyDown",
+          "ack": 3659
+        },
+        {
+          "line": 3660,
+          "id": 1545,
+          "type": "keyUp",
+          "ack": 3663
+        }
+      ],
+      "chooser": [
+        3661
+      ]
+    },
+    {
+      "send": 3763,
+      "id": 1589,
+      "ack": 3765,
+      "session": "C0D366A3C43A6A3A957985EB870BC202",
+      "keys": [
+        {
+          "line": 3767,
+          "id": 1591,
+          "type": "rawKeyDown",
+          "ack": 3768
+        },
+        {
+          "line": 3769,
+          "id": 1592,
+          "type": "keyUp",
+          "ack": 3772
+        }
+      ],
+      "chooser": [
+        3770
+      ]
+    }
+  ],
+  "lastLines": [
+    "    \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+    "",
+    "    Error Context: ../../../../../tmp/gsnv-consumer-audit-20261113/security-scratch/slides-chooser-diagnosis/baseline/results/slides-chooser.browser-SLI-1546b-esentation-and-two-page-PDF/error-context.md",
+    "",
+    "  1 failed",
+    "    ../../../../../tmp/gsnv-consumer-audit-20261113/security-scratch/slides-chooser-diagnosis/slides-chooser.browser.spec.ts:12:1 \u203a SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF "
+  ]
+}

@@ -1,0 +1,65 @@
+✔ unchanged 120 mm acceptance plate retains holes, pocket and physical world placement on all default planes (6103.800524ms)
+✔ C60 rejects invalid callbacks or absent file ports (4.099067ms)
+✔ C60 native golden starts picker first, writes returned bytes once, closes, then reports saved (56.929337ms)
+✔ C60 fallback golden hands exact bytes to a browser download and revokes the object URL (2.822606ms)
+✔ C60 cancel during picker or worker ignores late resources and never downloads (4.254623ms)
+✔ C60 a new export replaces the previous job; disposal stops and ignores all late work (3.676483ms)
+✔ C60 distinguishes cancellation, worker failures, malformed replies and write failures (4.555487ms)
+✔ C60 cancellation while writing aborts the pending native save before close (2.798095ms)
+✔ C60 an in-flight native close finishes honestly and cannot be canceled or replaced (3.518427ms)
+✔ C60 a failed in-flight close reports the disk failure and releases the job for retry (3.173019ms)
+✔ C60 disposal during an in-flight close suppresses late UI without claiming to revoke the commit (3.632546ms)
+✔ C60 worker timeout terminates work and cannot later publish (2.746581ms)
+✔ C55 publishes only latest revision; cancel and disposal prevent late results (3.644631ms)
+✔ C55 worker failures and watchdog terminate the worker and allow clean retry (3.740858ms)
+✔ C55 rejects missing worker ports before creating resources (0.742109ms)
+✔ C65 cut caller stops after every untrusted C59/C77 failure, including an ordinary-looking name (5.289645ms)
+✔ C65 edge caller stops on unknown errors independently of their public diagnostic name (0.654706ms)
+✔ C65 through cut publishes one solid that preserves volume through STEP (1662.262599ms)
+✔ C65 blind cut publishes one solid that preserves volume through STEP (133.365051ms)
+✔ C65 fillet publishes one solid that preserves volume through STEP (373.596485ms)
+✔ C65 chamfer publishes one solid that preserves volume through STEP (155.280125ms)
+✔ C65 disjoint cut fails without replacing the input solid (13.908766ms)
+✔ C65 tangent cut fails without replacing the input solid (39.852419ms)
+✔ C65 partially ineffective cut fails without replacing the input solid (44.316864ms)
+✔ C65 whole body removal cut fails without replacing the input solid (54.849944ms)
+✔ C65 disconnected result cut fails without replacing the input solid (93.801522ms)
+✔ C65 normalization rejects loose geometry alongside a solid instead of dropping it (115.967905ms)
+✔ C65 native feature faults stop all native cleanup calls (0.841955ms)
+✔ C65 a native fault during a cut does not release retained tools (21.180455ms)
+✔ C65 native cleanup stops at the first cleanup fault (7.918253ms)
+✔ C65 real kernel: through and blind cuts, fillets and chamfers give exact or bounded volumes (1675.931908ms)
+✔ C59 golden retains only the validated solid and releases temporary native resources (2.491538ms)
+✔ C59 every unsuccessful builder and invalid solid fails without publishing a token (1.325134ms)
+✔ C59 real kernel seam: reversed prism survives STEP export and independent re-import (1154.641505ms)
+✔ C59 real kernel: plate regions with circular and polygon holes have exact volume and survive STEP (1976.586203ms)
+✔ C59 characterization: all six ordinary rejection messages stay stable (5.73811ms)
+✔ C59 characterization: clockwise circular holes, immutable input and one surviving solid (1.742933ms)
+✔ C59 transfers its only live wrapper after all temporary cleanup succeeds (8.604443ms)
+✔ C59 stops every native call after unknown, numeric, WASM, cleanup or retain failure (170.827737ms)
+✔ C59 cleanup failure on any ordinary rejection propagates and stops immediately (30.119915ms)
+✔ C59 closed session never enters C77 or any native allocation (9.910571ms)
+✔ C77 success gives the caller only one face after reverse cleanup; never retains it (10.607736ms)
+✔ C77 ordinary wire and face rejections return exact tags after all cleanup (1.125194ms)
+✔ C77 keeps the +Z outer and −Z inner analytic circle convention (0.455375ms)
+✔ C77 closed session raises before allocating or calling native code (0.879717ms)
+✔ C77 stops at every native boundary for unexpected, numeric, WASM and cleanup exceptions (109.724019ms)
+✔ C77 cleanup failure during ordinary rejection propagates instead of returning a safe tag (12.23291ms)
+✔ C77 real kernel: polygon, circle and mixed-hole faces have independent analytic areas and centroids (677.76542ms)
+CAD golden: width 100 mm, document mm; native volume 56654.424808105 mm3; STEP re-import matches.
+CAD golden: width 100 mm, document inch; native volume 56654.424808105 mm3; STEP re-import matches.
+CAD golden: width 100 mm, document mm; native volume 56654.424808105 mm3; STEP re-import matches.
+CAD golden: width 120 mm, document mm; native volume 68654.424808105 mm3; STEP re-import matches.
+CAD golden: width 120 mm, document inch; native volume 68654.424808105 mm3; STEP re-import matches.
+CAD golden: width 120 mm, document mm; native volume 68654.424808105 mm3; STEP re-import matches.
+✔ CAD golden production rebuild: rounded plate, four holes, pocket, changed width and STEP round trip (4909.332536ms)
+✔ plane edit is atomic, inherited by cuts, persisted and rejects mixed or unsupported planes (15.92076ms)
+✔ real part planes preserve local fillet/cut intent and asymmetric world positions through units and STEP (4949.040503ms)
+ℹ tests 51
+ℹ suites 0
+ℹ pass 51
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6539.019217

@@ -1,0 +1,22 @@
+
+> gsnv-paint@0.1.0 test:launcher
+> node launcher/start.test.mjs && node --test launcher/offline-freshness.test.mjs
+
+[plugin rolldown:vite-resolve] Module "node:module" has been externalized for browser compatibility, imported by "/home/goosnav/Desktop/code/gsnv-paint/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin rolldown:vite-resolve] Module "node:module" has been externalized for browser compatibility, imported by "/home/goosnav/Desktop/code/gsnv-paint/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin rolldown:vite-resolve] Module "node:module" has been externalized for browser compatibility, imported by "/home/goosnav/Desktop/code/gsnv-paint/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+launcher smoke: PASS
+✔ launcher rebuilds missing offline controls and changed public/generator sources, and reuses complete fresh output (2792.372972ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2901.774106

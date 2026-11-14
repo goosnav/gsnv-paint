@@ -1,0 +1,680 @@
+{
+  "cause": "Parent ran launcher smoke concurrently with static-host/browser verification. Launcher rebuilt shared dist after the final C65 header timestamp changed.",
+  "before": {
+    "schema": 1,
+    "build": "dab043b21826514ee2d55c43703aa92ef580ac675db07fc24729ad16045d186d",
+    "assets": [
+      {
+        "url": "/THIRD_PARTY_NOTICES.txt",
+        "bytes": 2849,
+        "sha256": "268ce166e71cf98a6b90fc1f8a65fa9dc53f0002fb7842d30140be4cd2a7f380",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/assets/app-icon-C0NVVvbT.svg",
+        "bytes": 9475,
+        "sha256": "9c1773b939a7299481828f4c96d0505537ca9ff7ece0fdb1b960af41663be1f4",
+        "mime": "image/svg+xml"
+      },
+      {
+        "url": "/assets/cad-step-export.worker-B1OTIrbx.js",
+        "bytes": 88100,
+        "sha256": "2c787c9cc4a449714693193f4dac249c6c437b1c8c8e4224946ac2b93aafdb25",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/cad-workspace.worker-bI3tXJd1.js",
+        "bytes": 90963,
+        "sha256": "1459c865db5c41478916e2710fbadb421a1affdf36ed322a39ecb836cb24f311",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/code-runtime-DZZP279C.js",
+        "bytes": 1282032,
+        "sha256": "c6a498596371873f2a0451ce36bfc09d2d1bf8e7ec5d9dcc28e9c3bb98948dd1",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/index-B_e1YMii.css",
+        "bytes": 64395,
+        "sha256": "246e5f861e4d7110129f1d7b8e40cf984e09772bd9763e8e891624c01afcbb89",
+        "mime": "text/css"
+      },
+      {
+        "url": "/assets/index-Cz9ukzZu.js",
+        "bytes": 2062472,
+        "sha256": "929be618ade65a1ccdc0c85cc00a6e4e61e72a81f6a3f051395397867bbfec4b",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/libraw-CKnqEbQ6.wasm",
+        "bytes": 1417725,
+        "sha256": "8947f7e668e488461c3e9defe7007583aa8477b4886aa603b36b407f2f0846ff",
+        "mime": "application/wasm"
+      },
+      {
+        "url": "/assets/libraw-Cm6KFyZe.js",
+        "bytes": 68176,
+        "sha256": "4e9f1e63c45010777604b3eb2566bc598af7d0c606495c4dd43d2dd3a3696494",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/photo-develop.worker-DAifgXh2.js",
+        "bytes": 14522,
+        "sha256": "5f64486de1696cc0e839890a8ee60b70719c1604360358e0fa5c2dc46ba64d61",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/pixel-tahoma-6h5M2JtG.woff2",
+        "bytes": 7448,
+        "sha256": "3b0c6679595f01ab9e5035793fe577472ca15b5893be49ed7b56cbc9a8862d85",
+        "mime": "font/woff2"
+      },
+      {
+        "url": "/assets/pixel-tahoma-bold-CcfyHzC-.woff2",
+        "bytes": 7464,
+        "sha256": "f62d5c2385ddf9b4073c98d15121687641e74213c35aec0c9a7bb93745b10d42",
+        "mime": "font/woff2"
+      },
+      {
+        "url": "/assets/planegcs-DNpN9qS7.wasm",
+        "bytes": 484003,
+        "sha256": "af9d1874fc895726bd267703a698a86c82d35b7415a02fe5184ebf65ddbc04af",
+        "mime": "application/wasm"
+      },
+      {
+        "url": "/assets/planegcs-DmlzCoVG.js",
+        "bytes": 26129,
+        "sha256": "d541e52942d9480438ea44f2ca05bb07dcc216e99da29d7aa31d3cc60ad6ef81",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/pyodide-lock-y3tUuWGz.json",
+        "bytes": 119077,
+        "sha256": "5dc2fc119108bc148c7457dc86e7675b5c87e1cafd420b9c34c1eaef7b36c010",
+        "mime": "application/json"
+      },
+      {
+        "url": "/assets/pyodide.asm-DoBEEsqh.wasm",
+        "bytes": 9598218,
+        "sha256": "cc36e3cab04fdfc9a63ff13eb52eae2b911bf46c025cc7b281f394bd3de1d5e6",
+        "mime": "application/wasm"
+      },
+      {
+        "url": "/assets/python_stdlib-Dms11Th8.zip",
+        "bytes": 2545637,
+        "sha256": "fa1957e5777068fc4f7437f96d860ae2fbe9c19732ba06c84e004ec16dd7dd7a",
+        "mime": "application/zip"
+      },
+      {
+        "url": "/assets/replicad_single-DD6apbHo.js",
+        "bytes": 60483,
+        "sha256": "465b68c209b416396857fad30a6e33e7f5407907373cfe240c194af6d80c4a1d",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/replicad_single-g5eiaENB.wasm",
+        "bytes": 22942327,
+        "sha256": "a9335919fa64bfeaee3e241d3139ad134022682429c6688e20d8ca12093d33d9",
+        "mime": "application/wasm"
+      },
+      {
+        "url": "/assets/worker-BZtgTZAf.js",
+        "bytes": 68616,
+        "sha256": "0f6b8a0d7491f87925ceb220f5b909820182f9db864213436da43a6f59586b8d",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/favicon.svg",
+        "bytes": 9475,
+        "sha256": "9c1773b939a7299481828f4c96d0505537ca9ff7ece0fdb1b960af41663be1f4",
+        "mime": "image/svg+xml"
+      },
+      {
+        "url": "/index.html",
+        "bytes": 3030,
+        "sha256": "a64776c2f47d564116a4afaeb94a20dd8894d8e380b8156c4e5e6f1958c5386d",
+        "mime": "text/html"
+      },
+      {
+        "url": "/licenses/OCCT-8.0.1-EXCEPTION.txt",
+        "bytes": 947,
+        "sha256": "121ba3ff45b104d133fd1bd5072e1b821c20dbcf217c560f437b9e341b11e61d",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-6.0.2.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-autocomplete-6.20.4.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-commands-6.11.1.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-lang-css-6.3.1.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-lang-html-6.4.12.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-lang-javascript-6.2.5.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-lang-python-6.2.1.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-language-6.13.1.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-lint-6.9.8.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-search-6.7.2.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-state-6.7.6.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-streamparser-6.0.0.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-view-6.43.15.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/crelt-1.0.7.LICENSE.txt",
+        "bytes": 1089,
+        "sha256": "23852ebf6aef7fadffc92514b3c5df163a8651f2c3ed0dbb494cb49d93bd5de5",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-common-1.5.5.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-css-1.3.9.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-highlight-1.2.5.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-html-1.3.13.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-javascript-1.5.6.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-lr-1.4.12.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-python-1.1.19.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "54bd812a6d334e0c438b78a43cea74b67e882739fd3450115ddc7c52be5706c1",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/marijn-find-cluster-break-1.0.4.LICENSE.txt",
+        "bytes": 1102,
+        "sha256": "9360b00fdd091f05c783b568bdd46c679c41b72415599252de98949462ea1acb",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/planegcs-1.3.0.LICENSE.txt",
+        "bytes": 26526,
+        "sha256": "20c17d8b8c48a600800dfd14f95d5cb9ff47066a9641ddeab48dc54aec96e331",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/pyodide-314.0.7.LICENSE.txt",
+        "bytes": 16725,
+        "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/python-3.14.2.LICENSE.txt",
+        "bytes": 13804,
+        "sha256": "b0e25a78cffb43f4d92de8b61ccfa1f1f98ecbc22330b54b5251e7b6ba010231",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/replicad-opencascadejs-1.2.1.LICENSE.txt",
+        "bytes": 26526,
+        "sha256": "20c17d8b8c48a600800dfd14f95d5cb9ff47066a9641ddeab48dc54aec96e331",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/sheetjs-0.20.3.LICENSE.txt",
+        "bytes": 11355,
+        "sha256": "4d2a38ac35cda06a555c84074a819d413339cd3691b822cae50f8f322fe01f64",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/style-mod-4.1.4.LICENSE.txt",
+        "bytes": 1100,
+        "sha256": "cb4474e26547397169061d3586c00022cda5330a1b64fa13e872319f3b63aff1",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/three-0.187.0.LICENSE.txt",
+        "bytes": 1081,
+        "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/w3c-keyname-2.2.8.LICENSE.txt",
+        "bytes": 1100,
+        "sha256": "869c30f368eb08735e779027b9f4bc9fea2f39624351856aebe42741f0bc0884",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/og-image.png",
+        "bytes": 59203,
+        "sha256": "2ac58a9a5b57e7dea1179005d2bbd301ee535eb39fede2205636a64a61956cc1",
+        "mime": "image/png"
+      },
+      {
+        "url": "/robots.txt",
+        "bytes": 23,
+        "sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95",
+        "mime": "text/plain"
+      }
+    ]
+  },
+  "after": {
+    "schema": 1,
+    "build": "8d6ddc95d851f7e7350cfbc25946cceb4be161e4151a4555b2dbeee0c22814fe",
+    "assets": [
+      {
+        "url": "/THIRD_PARTY_NOTICES.txt",
+        "bytes": 2849,
+        "sha256": "268ce166e71cf98a6b90fc1f8a65fa9dc53f0002fb7842d30140be4cd2a7f380",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/assets/app-icon-C0NVVvbT.svg",
+        "bytes": 9475,
+        "sha256": "9c1773b939a7299481828f4c96d0505537ca9ff7ece0fdb1b960af41663be1f4",
+        "mime": "image/svg+xml"
+      },
+      {
+        "url": "/assets/cad-step-export.worker-B1OTIrbx.js",
+        "bytes": 88100,
+        "sha256": "2c787c9cc4a449714693193f4dac249c6c437b1c8c8e4224946ac2b93aafdb25",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/cad-workspace.worker-bI3tXJd1.js",
+        "bytes": 90963,
+        "sha256": "1459c865db5c41478916e2710fbadb421a1affdf36ed322a39ecb836cb24f311",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/code-runtime-DZZP279C.js",
+        "bytes": 1282032,
+        "sha256": "c6a498596371873f2a0451ce36bfc09d2d1bf8e7ec5d9dcc28e9c3bb98948dd1",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/index-B_e1YMii.css",
+        "bytes": 64395,
+        "sha256": "246e5f861e4d7110129f1d7b8e40cf984e09772bd9763e8e891624c01afcbb89",
+        "mime": "text/css"
+      },
+      {
+        "url": "/assets/index-Cz9ukzZu.js",
+        "bytes": 2062472,
+        "sha256": "929be618ade65a1ccdc0c85cc00a6e4e61e72a81f6a3f051395397867bbfec4b",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/libraw-CKnqEbQ6.wasm",
+        "bytes": 1417725,
+        "sha256": "8947f7e668e488461c3e9defe7007583aa8477b4886aa603b36b407f2f0846ff",
+        "mime": "application/wasm"
+      },
+      {
+        "url": "/assets/libraw-Cm6KFyZe.js",
+        "bytes": 68176,
+        "sha256": "4e9f1e63c45010777604b3eb2566bc598af7d0c606495c4dd43d2dd3a3696494",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/photo-develop.worker-DAifgXh2.js",
+        "bytes": 14522,
+        "sha256": "5f64486de1696cc0e839890a8ee60b70719c1604360358e0fa5c2dc46ba64d61",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/pixel-tahoma-6h5M2JtG.woff2",
+        "bytes": 7448,
+        "sha256": "3b0c6679595f01ab9e5035793fe577472ca15b5893be49ed7b56cbc9a8862d85",
+        "mime": "font/woff2"
+      },
+      {
+        "url": "/assets/pixel-tahoma-bold-CcfyHzC-.woff2",
+        "bytes": 7464,
+        "sha256": "f62d5c2385ddf9b4073c98d15121687641e74213c35aec0c9a7bb93745b10d42",
+        "mime": "font/woff2"
+      },
+      {
+        "url": "/assets/planegcs-DNpN9qS7.wasm",
+        "bytes": 484003,
+        "sha256": "af9d1874fc895726bd267703a698a86c82d35b7415a02fe5184ebf65ddbc04af",
+        "mime": "application/wasm"
+      },
+      {
+        "url": "/assets/planegcs-DmlzCoVG.js",
+        "bytes": 26129,
+        "sha256": "d541e52942d9480438ea44f2ca05bb07dcc216e99da29d7aa31d3cc60ad6ef81",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/pyodide-lock-y3tUuWGz.json",
+        "bytes": 119077,
+        "sha256": "5dc2fc119108bc148c7457dc86e7675b5c87e1cafd420b9c34c1eaef7b36c010",
+        "mime": "application/json"
+      },
+      {
+        "url": "/assets/pyodide.asm-DoBEEsqh.wasm",
+        "bytes": 9598218,
+        "sha256": "cc36e3cab04fdfc9a63ff13eb52eae2b911bf46c025cc7b281f394bd3de1d5e6",
+        "mime": "application/wasm"
+      },
+      {
+        "url": "/assets/python_stdlib-Dms11Th8.zip",
+        "bytes": 2545637,
+        "sha256": "fa1957e5777068fc4f7437f96d860ae2fbe9c19732ba06c84e004ec16dd7dd7a",
+        "mime": "application/zip"
+      },
+      {
+        "url": "/assets/replicad_single-DD6apbHo.js",
+        "bytes": 60483,
+        "sha256": "465b68c209b416396857fad30a6e33e7f5407907373cfe240c194af6d80c4a1d",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/assets/replicad_single-g5eiaENB.wasm",
+        "bytes": 22942327,
+        "sha256": "a9335919fa64bfeaee3e241d3139ad134022682429c6688e20d8ca12093d33d9",
+        "mime": "application/wasm"
+      },
+      {
+        "url": "/assets/worker-BZtgTZAf.js",
+        "bytes": 68616,
+        "sha256": "0f6b8a0d7491f87925ceb220f5b909820182f9db864213436da43a6f59586b8d",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "/favicon.svg",
+        "bytes": 9475,
+        "sha256": "9c1773b939a7299481828f4c96d0505537ca9ff7ece0fdb1b960af41663be1f4",
+        "mime": "image/svg+xml"
+      },
+      {
+        "url": "/index.html",
+        "bytes": 3030,
+        "sha256": "a836db0c9a65462c134d42a3006d40b3643894edb92d18c37ab12c62e23f624e",
+        "mime": "text/html"
+      },
+      {
+        "url": "/licenses/OCCT-8.0.1-EXCEPTION.txt",
+        "bytes": 947,
+        "sha256": "121ba3ff45b104d133fd1bd5072e1b821c20dbcf217c560f437b9e341b11e61d",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-6.0.2.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-autocomplete-6.20.4.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-commands-6.11.1.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-lang-css-6.3.1.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-lang-html-6.4.12.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-lang-javascript-6.2.5.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-lang-python-6.2.1.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-language-6.13.1.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-lint-6.9.8.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-search-6.7.2.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-state-6.7.6.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-streamparser-6.0.0.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/codemirror-view-6.43.15.LICENSE.txt",
+        "bytes": 1118,
+        "sha256": "05c6130cda97e7600ca91427a41e8a065efcf82365fc0293e7de80faec494c07",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/crelt-1.0.7.LICENSE.txt",
+        "bytes": 1089,
+        "sha256": "23852ebf6aef7fadffc92514b3c5df163a8651f2c3ed0dbb494cb49d93bd5de5",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-common-1.5.5.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-css-1.3.9.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-highlight-1.2.5.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-html-1.3.13.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-javascript-1.5.6.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-lr-1.4.12.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "568902fb66eaf1f11750e966b33fd7b5d7c618e65af09f35ef843635bcf5f1ba",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/lezer-python-1.1.19.LICENSE.txt",
+        "bytes": 1113,
+        "sha256": "54bd812a6d334e0c438b78a43cea74b67e882739fd3450115ddc7c52be5706c1",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/marijn-find-cluster-break-1.0.4.LICENSE.txt",
+        "bytes": 1102,
+        "sha256": "9360b00fdd091f05c783b568bdd46c679c41b72415599252de98949462ea1acb",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/planegcs-1.3.0.LICENSE.txt",
+        "bytes": 26526,
+        "sha256": "20c17d8b8c48a600800dfd14f95d5cb9ff47066a9641ddeab48dc54aec96e331",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/pyodide-314.0.7.LICENSE.txt",
+        "bytes": 16725,
+        "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/python-3.14.2.LICENSE.txt",
+        "bytes": 13804,
+        "sha256": "b0e25a78cffb43f4d92de8b61ccfa1f1f98ecbc22330b54b5251e7b6ba010231",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/replicad-opencascadejs-1.2.1.LICENSE.txt",
+        "bytes": 26526,
+        "sha256": "20c17d8b8c48a600800dfd14f95d5cb9ff47066a9641ddeab48dc54aec96e331",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/sheetjs-0.20.3.LICENSE.txt",
+        "bytes": 11355,
+        "sha256": "4d2a38ac35cda06a555c84074a819d413339cd3691b822cae50f8f322fe01f64",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/style-mod-4.1.4.LICENSE.txt",
+        "bytes": 1100,
+        "sha256": "cb4474e26547397169061d3586c00022cda5330a1b64fa13e872319f3b63aff1",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/three-0.187.0.LICENSE.txt",
+        "bytes": 1081,
+        "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/licenses/w3c-keyname-2.2.8.LICENSE.txt",
+        "bytes": 1100,
+        "sha256": "869c30f368eb08735e779027b9f4bc9fea2f39624351856aebe42741f0bc0884",
+        "mime": "text/plain"
+      },
+      {
+        "url": "/og-image.png",
+        "bytes": 59203,
+        "sha256": "2ac58a9a5b57e7dea1179005d2bbd301ee535eb39fede2205636a64a61956cc1",
+        "mime": "image/png"
+      },
+      {
+        "url": "/robots.txt",
+        "bytes": 23,
+        "sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95",
+        "mime": "text/plain"
+      }
+    ]
+  },
+  "changedAssets": [
+    "/index.html"
+  ],
+  "firstFailure": "Static-host /index.html SHA mismatch; raw log and error context retained.",
+  "disposition": "Repeat affected gates sequentially on frozen after build. No runtime or test assertion relaxed."
+}

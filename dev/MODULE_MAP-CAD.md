@@ -656,9 +656,9 @@ C37 is now a GREEN independent exchange leaf. Build C59, then C60, then connect 
 ### C59 kernel-linear-prism — SHELL — GREEN
 Purpose: Construct one validated B-rep prism from a polygon or a region with holes.
 IN: `{session:KernelSession,depth:number} & ({polygon:readonly Vec2[]} | {region:ProfileRegion})`; polygon is C53's simple CCW boundary in canonical mm; region is C64's outer loop plus CW/clockwise-circle holes (D21); depth is finite and nonzero; session is live and worker-local.
-OUT: `ShapeToken` owned by C01, representing a valid solid. Caller releases the token. Temporary builders, points, wire and face wrappers are disposed on normal completion. No source mutation.
-RAISES: `ExtrusionError` for unsuccessful wire/face/prism construction or invalid solid; `DisposedSessionError` for a closed session. Vendor faults propagate and require worker termination.
-DEPS: C01.
+OUT: `ShapeToken` owned by C01, representing a valid solid. Caller releases the token. Temporary cleanup completes before retention; only the output wrapper survives. No source mutation.
+RAISES: `ExtrusionError` for unsuccessful wire/face/prism construction or invalid solid; `DisposedSessionError` for a closed session. Unexpected/native/cleanup faults propagate without further native calls and require worker termination.
+DEPS: C01, C64, C77.
 File `src/cad/kernel-linear-prism.ts`; public `buildLinearPrism(request)`. Extract the already-characterized construction from C54 without changing C54's public contract or numerical test expectations. C54's direct dependency becomes C59, with C01's type-only port retained. The output also feeds C37 so export never reconstructs geometry from a display mesh.
 
 ### C60 cad-step-export — SHELL — GREEN
@@ -717,6 +717,14 @@ OUT: `ProfileRegion = {outer:ProfileLoop,holes:ProfileLoop[]}` with `ProfileLoop
 RAISES: `ProfileError` for no closed loop, open/branched outlines (via C53), more than one outer boundary, holes touching or crossing the outline or each other, and holes nested in holes.
 DEPS: C53.
 Separation uses the document linear tolerance. Loops are grouped by shared endpoints within tolerance and each group is validated by C53. Testbench `src/cad/sketch-regions.test.ts`; the real-kernel seam is exercised by C59's testbench (exact plate-with-holes volume and STEP round trip). [CAD-HOLES-STL.md](CAD-HOLES-STL.md) records evidence and limits.
+
+### C65 kernel-features — SHELL — GREEN
+Purpose: Apply one bounded machining feature to a retained B-rep solid.
+IN: live C01 session, retained single solid token, and `FeatureOp`: cut with C64 closed loops/top/bottom/depth or fillet/chamfer with vertical/top/bottom/all edge set and positive size.
+OUT: New retained valid single positive-volume solid; successful operation consumes input. Ordinary locally detected rejection preserves input. No compound topology is silently discarded.
+RAISES: `FeatureError` with the existing readable diagnostics; unknown/native/nested/cleanup failures forbid further native calls and require whole-worker termination. Only exact locally originated deliberate rejection permits cleanup.
+DEPS: C01, C64, C59.
+File `src/cad/kernel-features.ts`; this inventories the existing implemented cut/edge adapter, previously omitted from the map. Its public behavior and geometric subset are unchanged. The caller fault repair enforces its existing native fail-stop guarantee. Current evidence: [profile-face increment](CAD-PROFILE-FACE-EVIDENCE.md).
 
 ## Default planes and editable source profiles
 
@@ -798,13 +806,14 @@ cleanup-before-retain amendment when C77 is joined. C50 keeps `bossOf`
 extrusion-only; C76 adds C79 as its third collaborator only when integrated.
 No proof-only fixture enters production. No requirement is promoted by this map.
 
-### C77 kernel-profile-face — SHELL — CONTRACTED
+### C77 kernel-profile-face — SHELL — GREEN
 Purpose: Build one analytic worker-local planar face from a validated region.
 IN: `{session:KernelSession,region:ProfileRegion}`; live C01 and C64 canonical-mm simple outer CCW polygon/circle plus validated disjoint CW holes.
 OUT: `{ok:true,face:TopoDS_Face}` with one caller-owned raw wrapper after all other temporaries are cleaned; or `{ok:false,reason:'outline-wire'|'hole-wire'|'outer-face'|'hole-face'}` after known rejection and complete cleanup.
 RAISES: `DisposedSessionError`; unexpected/native/cleanup exceptions propagate unchanged and forbid further native calls until worker termination.
 DEPS: C01, C64.
 File `src/cad/kernel-profile-face.ts`; no source compilation, region inference, tolerance repair, session retention or revolve policy. C59's polygon/circle/hole/negative-prism and STEP goldens must stay unchanged.
+The characterized extraction, lifetime amendment and C65 caller regression are verified in [profile-face evidence](CAD-PROFILE-FACE-EVIDENCE.md). GREEN is not human acceptance; C79 and C78 remain CONTRACTED.
 
 ### C79 revolve-recipe — CORE — CONTRACTED
 Purpose: Compile a bounded +V-axis revolve source into evaluated parameters or a solved native-ready section.

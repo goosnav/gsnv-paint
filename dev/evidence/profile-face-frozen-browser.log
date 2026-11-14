@@ -1,0 +1,243 @@
+[WebServer] (node:1135938) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 89 tests using 1 worker
+
+(node:1135984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+A-SHELL browser: Chrome 154.0.8037.97; runner linux/x64; viewport {"width":1280,"height":720}.
+A-SHELL: actual wheel/Space pan and typed 2D view settings applied through the shared seams; right-click target reached the fixture adapter.
+A-SHELL emitted production capability results: [
+  {
+    state: 'supported',
+    text: 'Native file pickers: Native file pickers are available; access requires your file selection.'
+  },
+  {
+    state: 'supported',
+    text: 'Background workers: Background worker API is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebAssembly: WebAssembly compilation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebGL 2: WebGL 2 context creation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'Isolated execution: Cross-origin isolation is active.'
+  },
+  {
+    state: 'supported',
+    text: 'Image clipboard: Image clipboard API is available; access may require permission.'
+  },
+  {
+    state: 'supported',
+    text: 'Pen pressure API: Pressure API is available; pen hardware has not been tested.'
+  }
+]
+A-SHELL: emitted dist via Vite preview exposes one shell with nine real workspace adapters and no fixture tools. Live deployment remains untested.
+A-SHELL: one window; fixture preview/cancel/commit; undo/redo; exact downloaded container reopens; IDB recovery survives page close/reopen. Native picker interaction and product editing remain untested.
+  ✓   1 src/app/app-shell.browser.spec.ts:20:1 › A-SHELL actual window composes fixture editing, history, project files and local recovery (3.4s)
+  ✓   2 src/audio/audio-workspace.browser.spec.ts:48:1 › AUDIO-APP real WAV import, playback, range edits, shared undo, native reopen and recovery (3.4s)
+  ✓   3 src/audio/audio-workspace.browser.spec.ts:70:1 › AUDIO-APP effects export sample-exact PCM WAV and invalid import retains edits (1.4s)
+  ✓   4 src/audio/audio-workspace.browser.spec.ts:90:1 › AUDIO-APP keyboard range selection and missing Web Audio are explicit (1.2s)
+C35 capture proof {"size":[320,240],"corners":[0,0,0,0],"blue":[64,128,192,255],"green":[16,192,64,255],"edges":160,"maxFringeError":1,"unchanged":true}
+  ✓   5 src/bridge/bridge-raster.browser.spec.ts:15:1 › C35 real transparent capture retains all geometry, camera/color, edge alpha and visible renderer state (337ms)
+  ✓   6 src/bridge/bridge-raster.browser.spec.ts:22:1 › D05 real browser CompressionStream PNG preserves low-alpha bytes without Canvas conversion (258ms)
+  ✓   7 src/bridge/bridge-raster.browser.spec.ts:28:1 › D03 private decoder returns the requested adjacent frame, letterbox, fade and title (305ms)
+  ✓   8 src/bridge/bridge-raster.browser.spec.ts:37:1 › C35 lost source context fails before creating a capture (251ms)
+D03 trimmed endpoint proof {"frames":[{"sample":0.499999,"timelineSeconds":0.5,"rgba":[254,0,0,255]},{"sample":0.999999,"timelineSeconds":0.5,"rgba":[0,255,2,255]}],"beyond":"BridgeFrameReadbackError"}
+  ✓   9 src/bridge/bridge-raster.browser.spec.ts:38:1 › D03 samples inside trimmed End and rejects a trim beyond the actual decoded duration (321ms)
+  ✓  10 src/bridge/bridge-workspace.browser.spec.ts:44:1 › XWS Image composite arrives as an undoable bin-only PNG; frame becomes an editable native Image and prior source stays stored (3.8s)
+  ✓  11 src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0,0.5) keeps its last included frame in preview and native Image (956ms)
+  ✓  12 src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0.5,1) keeps its last included frame in preview and native Image (963ms)
+D03 MediaRecorder import proof {"initialDuration":"Infinity","rgba":[254,0,0,255],"sourceBytesPreserved":true}
+  ✓  13 src/bridge/bridge-workspace.browser.spec.ts:81:1 › XWS MediaRecorder WebM export can be imported and captured with an initially unknown decoded duration (2.7s)
+  ✓  14 src/bridge/bridge-workspace.browser.spec.ts:96:1 › XWS existing Video receives exactly one reversible append and pending Image floats remain untouched (1.1s)
+  ✓  15 src/bridge/bridge-workspace.browser.spec.ts:103:1 › XWS denied durable storage keeps a dirty Image target and stays in Video (1.0s)
+  ✓  16 src/bridge/bridge-workspace.browser.spec.ts:112:1 › XWS committed parametric CAD capture stays transparent, reopens exactly, and source dimensions remain editable (3.7s)
+  ✓  17 src/bridge/bridge-workspace.browser.spec.ts:120:1 › XWS imported CAD capture retains both disconnected STEP bodies and exact source bytes (3.5s)
+CAD consumer golden Chrome 154.0.8037.97 linux/x64: complete UI construction, dependent placements, exact volumes, units, editable native reopen and actual STEP re-import.
+  ✓  18 src/cad/cad-consumer.browser.spec.ts:12:1 › CAD consumer golden: dependent holes/pocket, live variables, unit conversion, files and real STEP (8.1s)
+  ✓  19 src/cad/cad-modeling.browser.spec.ts:16:1 › CAD modeling production: centered formula profile, planes, units, editable native reopen and STEP world position (4.6s)
+  ✓  20 src/cad/cad-modeling.browser.spec.ts:40:1 › CAD modeling production: pointer profiles, keyboard group selection, detach/undo and construction exclusion (2.2s)
+  ✓  21 src/cad/cad-modeling.browser.spec.ts:61:1 › CAD modeling production: numeric polygon radius/rotation edits and a circle hole on YZ (2.2s)
+  ✓  22 src/cad/cad-modeling.browser.spec.ts:73:1 › CAD modeling production: exact hexagon and independent construction-line native reopen fixtures (2.2s)
+STEP-APP Chrome 154.0.8037.97 linux/x64: real worker downloads re-import as 60000/72000 mm3; history unchanged; no external requests.
+  ✓  23 src/cad/cad-step-export.browser.spec.ts:8:1 › STEP-APP production downloads the actual solid and rebuilt dimensions without changing project history (3.5s)
+  ✓  24 src/cad/cad-step-export.browser.spec.ts:40:1 › STEP export with a network-held worker › STEP-APP cancels real workers on Esc/source changes and reports invalid solids without a download (3.7s)
+  ✓  25 src/cad/cad-step-import.browser.spec.ts:25:1 › CAD-IMPORT production golden: exact source, units, undo, STEP/STL export and native reopen (5.4s)
+  ✓  26 src/cad/cad-step-import.browser.spec.ts:51:1 › CAD-IMPORT production preserves every source solid and rejects a damaged second solid atomically (3.8s)
+  ✓  27 src/cad/cad-step-import.browser.spec.ts:67:1 › STEP import with a network-held worker › CAD-IMPORT production cancellation and project replacement terminate pending native work (804ms)
+CAD-APP Chrome 154.0.8037.97 linux/x64: exact 60000/72000 mm3, live cancel, undo/redo, editable native file, recovery.
+  ✓  28 src/cad/cad-workspace.browser.spec.ts:8:1 › CAD-APP production: constrain, extrude, preview/cancel, rebuild, undo, files and recovery (4.2s)
+  ✓  29 src/cad/cad-workspace.browser.spec.ts:35:1 › CAD-APP pointer tools and invalid sketch produce a visible failure with no stale solid (2.2s)
+  ✓  30 src/cad/cad-workspace.browser.spec.ts:47:1 › CAD-APP keyboard selects one or several sketch entities without losing focus on redraw (820ms)
+  ✓  31 src/cad/cad-workspace.browser.spec.ts:63:1 › CAD-APP exact sketch tools, H/V solving and displayed dimension editing (1.9s)
+  ✓  32 src/cad/cad-workspace.browser.spec.ts:84:1 › CAD-APP plate with circular holes extrudes exact B-rep volume and exports STL (2.1s)
+  ✓  33 src/cad/cad-workspace.browser.spec.ts:110:1 › CAD-APP failing fillet is flagged, readable and editable without a stale solid (2.8s)
+  ✓  34 src/cad/cad-workspace.browser.spec.ts:122:1 › CAD-APP cut, fillet, chamfer, imperial units and parallel/perpendicular/equal constraints (3.9s)
+[WebServer] 10:22:22 PM [vite] (client) [console.error] wasm streaming compile failed: TypeError: Failed to fetch
+[WebServer] 10:22:22 PM [vite] (client) [console.error] falling back to ArrayBuffer instantiation
+[WebServer] 10:22:22 PM [vite] (client) [console.error] failed to asynchronously prepare wasm: NetworkError: Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'http://127.0.0.1:4173/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm'.
+[WebServer] 10:22:22 PM [vite] (client) [console.error] Aborted(NetworkError: Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'http://127.0.0.1:4173/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm'.)
+CAD-A1 paired-worker evidence: {"browser":"154.0.8037.97","platform":"linux","arch":"x64","viewport":{"width":1280,"height":720},"headers":{"coop":"same-origin","coep":"require-corp","corp":"same-origin"},"initial":{"box":{"valid":true,"volume":23.999999999999996},"solved":{"status":0,"dof":0,"conflicts":[],"point":[10,20]},"contradiction":{"status":2,"dof":-1,"conflicts":["x10","x11"],"applied":false,"snapshotPreserved":true},"probes":{"kernelReady":true,"solverReady":true,"shapePreserved":true,"solverSnapshotPreserved":true},"after":{"valid":true,"volume":23.999999999999996,"kernelClosed":false,"solverClosed":false}},"initialClose":{"kernelClosed":true,"solverClosed":true,"kernelGenerationChanged":true,"solverGenerationChanged":true,"kernelTokenError":"DisposedSessionError","capturedSolveError":"DisposedSessionError","diagnostics":[]},"initializationFailure":"{\n  \"name\": \"SolverLoadError\",\n  \"message\": \"PlaneGCS initialization/probe failed: Aborted(NetworkError: Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'http://127.0.0.1:4173/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm'.). Build with -sASSERTIONS for more info.. Terminate the solver worker.\",\n  \"failedAction\": \"open\",\n  \"kernelState\": \"open\",\n  \"solverState\": \"absent\"\n}","work":{"elapsedMs":600.0750000476837,"iterations":335,"framesDuringWork":35,"clicksDuringWork":1,"navigationDuringWork":1},"nativeFailure":"{\n  \"name\": \"KernelLoadError\",\n  \"message\": \"OpenCascade box probe failed: Standard_DomainError. Restart the kernel worker.\",\n  \"failedAction\": \"fault\",\n  \"kernelState\": \"closed\",\n  \"solverState\": \"open\"\n}","recovered":{"box":{"valid":true,"volume":23.999999999999996},"solved":{"status":0,"dof":0,"conflicts":[],"point":[10,20]},"contradiction":{"status":2,"dof":-1,"conflicts":["x10","x11"],"applied":false,"snapshotPreserved":true},"probes":{"kernelReady":true,"solverReady":true,"shapePreserved":true,"solverSnapshotPreserved":true},"after":{"valid":true,"volume":23.999999999999996,"kernelClosed":false,"solverClosed":false}},"finalClose":{"kernelClosed":true,"solverClosed":true,"kernelGenerationChanged":true,"solverGenerationChanged":true,"kernelTokenError":"DisposedSessionError","capturedSolveError":"DisposedSessionError","diagnostics":[]}}
+CAD-A1 limits: single kernel mode; development fault injection only. Bounded paired-probe work does not prove product operation latency, 50-feature performance, offline behavior, release assets, deployment or other OS/browser coverage.
+  ✓  35 src/cad/engine-assembly.browser.spec.ts:30:1 › CAD-A1 real paired worker preserves both engines and owns failure, cancellation and replacement (5.4s)
+C01 source artifact (not final emitted asset coverage): {"specifier":"replicad-opencascadejs","bytes":60483,"sha256":"465b68c209b416396857fad30a6e33e7f5407907373cfe240c194af6d80c4a1d"}
+C01 source artifact (not final emitted asset coverage): {"specifier":"replicad-opencascadejs/wasm","bytes":22942327,"sha256":"a9335919fa64bfeaee3e241d3139ad134022682429c6688e20d8ca12093d33d9"}
+C01 real Chrome worker evidence: {"browser":"154.0.8037.97","platform":"linux","arch":"x64","viewport":{"width":1280,"height":720},"opened":{"ready":true,"mode":"single","version":"replicad-opencascadejs@1.2.1","workerIsolated":true,"workerOnly":true,"valid":true,"volume":23.999999999999996,"center":[1,1.5,2],"heapBytes":104857600},"owned":{"valid":true,"volume":23.999999999999996,"center":[1,1.5,2],"heapBytes":104857600,"probePreservedShape":true,"releasedTokenError":"DisposedSessionError"},"work":{"elapsedMs":400.4500000476837,"iterations":448,"volume":23.999999999999996,"valid":true,"heapBytes":104857600,"framesDuringWork":23,"clicksDuringWork":1,"navigationDuringWork":1},"fault":{"name":"KernelLoadError","message":"OpenCascade box probe failed: Standard_DomainError. Restart the kernel worker.","closed":true,"faultInjection":true}}
+C01 limits: single mode only; native fault injection is fixture-only; this bounded responsiveness check is not CAD product performance, solver, final emitted asset, deployment or other OS/browser coverage.
+  ✓  36 src/cad/kernel-runtime.browser.spec.ts:9:1 › C01 actual isolated worker owns native solids, remains responsive and recovers by replacement (2.6s)
+C02 source artifact (not final emitted asset coverage): {"specifier":"@salusoft89/planegcs/dist/planegcs_dist/planegcs.js","bytes":26129,"sha256":"d541e52942d9480438ea44f2ca05bb07dcc216e99da29d7aa31d3cc60ad6ef81"}
+C02 source artifact (not final emitted asset coverage): {"specifier":"@salusoft89/planegcs/dist/planegcs_dist/planegcs.wasm","bytes":484003,"sha256":"af9d1874fc895726bd267703a698a86c82d35b7415a02fe5184ebf65ddbc04af"}
+C02 real Chrome worker evidence: {"browser":"154.0.8037.97","platform":"linux","arch":"x64","viewport":{"width":1280,"height":720},"opened":{"ready":true,"workerIsolated":true,"workerOnly":true,"diagnostics":[]},"solved":{"underdefined":{"status":0,"dof":2,"conflicts":[],"redundant":[],"partiallyRedundant":[],"applied":true},"widthOnly":{"status":0,"dof":1,"conflicts":[],"redundant":[],"partiallyRedundant":[],"applied":true},"defined":{"status":0,"dof":0,"conflicts":[],"redundant":[],"partiallyRedundant":[],"applied":true,"snapshotPreserved":false,"points":{"A":[0,0],"B":[100,0],"C":[100,60],"D":[0,60]}}},"conflict":{"status":2,"dof":-1,"conflicts":["width100","width101"],"redundant":[],"partiallyRedundant":[],"applied":false,"snapshotPreserved":true,"points":{"A":[0,0],"B":[95,3],"C":[98,57],"D":[-2,59]},"closed":false,"lastSuccessfulPoints":{"A":[0,0],"B":[100,0],"C":[100,60],"D":[0,60]}},"work":{"elapsedMs":400.1100000143051,"iterations":2440,"status":0,"dof":0,"points":{"A":[0,0],"B":[100,0],"C":[100,60],"D":[0,60]},"framesDuringWork":23,"clicksDuringWork":1}}
+C02 limits: fixture solve/apply policy only; bounded responsiveness is not product performance. No native fault injection, final emitted asset, deployment or other OS/browser coverage.
+  ✓  37 src/cad/solver-runtime.browser.spec.ts:15:1 › C02 real worker solves constrained geometry, reports contradiction and invalidates closed methods (1.8s)
+  ✓  38 src/code/code-editor.browser.spec.ts:21:1 › K03 source editing, indentation, syntax and search never execute source (709ms)
+  ✓  39 src/code/code-editor.browser.spec.ts:30:1 › K03 switching files retains caret; external render emits no change; keyboard exits and flushes (503ms)
+K02 isolated production assets: 13548224 bytes
+K02 demo output: answer 42 undefined
+  ✓  40 src/code/code-runtime.browser.spec.ts:34:1 › K02 explicit-only JavaScript output, errors and no DOM (447ms)
+  ✓  41 src/code/code-runtime.browser.spec.ts:42:1 › K02 Python stdlib/local imports, errors and repeat run (5.9s)
+  ✓  42 src/code/code-runtime.browser.spec.ts:47:1 › K02 real infinite-loop Stop remains responsive and restart works in both engines (6.4s)
+  ✓  43 src/code/code-runtime.browser.spec.ts:58:1 › K02 opaque worker denies editor IndexedDB and network even through Python JS bridge (3.2s)
+  ✓  44 src/code/code-runtime.browser.spec.ts:68:1 › K02 direct empty-message floods are capped and disposal settles a running promise (470ms)
+  ✓  45 src/code/code-runtime.browser.spec.ts:76:1 › K02 cached local Python assets work with browser offline and console output is capped (6.1s)
+  ✓  46 src/code/code-runtime.browser.spec.ts:82:1 › K02 missing local runtime asset reports an error and retries without changing source (3.2s)
+  ✓  47 src/code/code-runtime.browser.spec.ts:88:1 › K02 HTML/CSS preview is script-free and blocks navigation/remote resources (382ms)
+  ✓  48 src/code/code-workspace.browser.spec.ts:29:1 › K04 immediate native save, shared undo, multi-file edits/import/export and reopen preserve source (1.4s)
+  ✓  49 src/code/code-workspace.browser.spec.ts:41:1 › K04 immediate shared project rename keeps pending source in the renamed revision (882ms)
+  ✓  50 src/code/code-workspace.browser.spec.ts:46:1 › K04 explicit JS/Python run, errors, real Stop/restart and HTML/CSS preview work through controls (5.2s)
+  ✓  51 src/code/code-workspace.browser.spec.ts:58:1 › K04 invalid paths, duplicate imports and oversized pending edits preserve source; file tabs support keyboard travel (1.6s)
+  ✓  52 src/document/document-workspace.browser.spec.ts:10:1 › DOCUMENT-APP type, style, lists, table, sanitized paste, undo, page setup, PDF, HTML export and project round trip (3.9s)
+  ✓  53 src/document/document-workspace.browser.spec.ts:80:1 › DOCUMENT-APP page estimates include forced breaks without counting unused page space twice (1.6s)
+  ✓  54 src/document/document-workspace.browser.spec.ts:106:1 › DOCUMENT-APP rejects unreadable pictures without changing content or history and keeps valid pictures on reopen (1.0s)
+  ✓  55 src/document/document-workspace.browser.spec.ts:131:1 › DOCUMENT-APP keyboard escape preserves selection and pending typing before menus and save (977ms)
+  ✓  56 src/document/document-workspace.browser.spec.ts:151:1 › DOCUMENT-APP an immediate reload either keeps unpersisted typing open or restores its completed backup (816ms)
+  ✓  57 src/image/image-acceptance.browser.spec.ts:11:1 › IMG-103/104 production controls match the exact golden and preserve editable layers and selection on reopen (2.3s)
+  ✓  58 src/image/image-acceptance.browser.spec.ts:93:1 › Image selection-only edits undo, recover, cancel a floating move and clear on another legacy document (1.3s)
+  ✓  59 src/image/image-acceptance.browser.spec.ts:153:1 › Image typed zoom stays centered, previews and cancels, matches Fit and retains wheel anchoring (1.2s)
+  ✓  60 src/image/image-workspace.browser.spec.ts:22:1 › IMAGE-APP production: paint tools, selection move, undo, layered native file, PNG export/open and recovery (8.6s)
+  ✓  61 src/image/image-workspace.browser.spec.ts:75:1 › IMAGE-APP layers, soft brush clipped to a selection, opacity/blend, adjustments, filters, text and geometry (6.0s)
+PHOTO-APP Chrome 154.0.8037.97: LibRaw DNG decode, Auto, B&W, slider/undo, 1:1 crop, project round trip, 2048 and full-size JPEG export, JPEG import.
+  ✓  62 src/photo/photo-workspace.browser.spec.ts:13:1 › PHOTO-APP RAW develop: LibRaw decode, Auto, preset, sliders, undo, before/after, crop, project and exports (28.1s)
+{
+  "browser": "154.0.8037.97",
+  "platform": "linux",
+  "arch": "x64",
+  "headless": true,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "results": [
+    {
+      "id": "file-access",
+      "label": "Native file pickers",
+      "status": "supported",
+      "message": "Native file pickers are available; access requires your file selection."
+    },
+    {
+      "id": "workers",
+      "label": "Background workers",
+      "status": "supported",
+      "message": "Background worker API is available."
+    },
+    {
+      "id": "wasm",
+      "label": "WebAssembly",
+      "status": "supported",
+      "message": "WebAssembly compilation is available."
+    },
+    {
+      "id": "webgl2",
+      "label": "WebGL 2",
+      "status": "supported",
+      "message": "WebGL 2 context creation is available."
+    },
+    {
+      "id": "cross-origin-isolation",
+      "label": "Isolated execution",
+      "status": "supported",
+      "message": "Cross-origin isolation is active."
+    },
+    {
+      "id": "clipboard",
+      "label": "Image clipboard",
+      "status": "supported",
+      "message": "Image clipboard API is available; access may require permission."
+    },
+    {
+      "id": "pressure",
+      "label": "Pen pressure API",
+      "status": "supported",
+      "message": "Pressure API is available; pen hardware has not been tested."
+    }
+  ]
+}
+  ✓  63 src/shared/capability-probe.browser.spec.ts:4:1 › S06 actual Chromium API probe matches this isolated browser session (220ms)
+  ✓  64 src/shared/chrome-commit.browser.spec.ts:6:1 › S10 production mouse Save and File menu survive a property commit on blur (855ms)
+  ✓  65 src/shared/chrome.browser.spec.ts:3:1 › S10 XP-inspired web shell fits 1280×720 and preserves focus, menus and workspace content (637ms)
+  ✓  66 src/shared/dialog.browser.spec.ts:3:1 › S11 actual modal previews typed edits, traps focus, rolls back and commits once (502ms)
+S07: 8 binary bytes matched after browser upload, download, and reopen; native picker interaction untested.
+  ✓  67 src/shared/file-access.browser.spec.ts:4:1 › S07 actual browser fallback open/download/reopen preserves exact binary bytes (320ms)
+  ✓  68 src/shared/icons.browser.spec.ts:4:1 › S09 original glyph sheet renders local accessible SVG at desktop size (690ms)
+  ✓  69 src/shared/input-adapter.browser.spec.ts:4:1 › S12 actual Chromium wheel, captured pan, context target and native editing route correctly (617ms)
+  ✓  70 src/shared/offline-client.browser.spec.ts:8:1 › S20 real client reports failed B while A stays usable, then installs B without disturbing typing (1.8s)
+  ✓  71 src/shared/offline-retain.browser.spec.ts:8:1 › S18 real CacheStorage cleanup preserves A after partial B eviction and C activation (2.8s)
+  ✓  72 src/shared/offline-status.browser.spec.ts:8:1 › S21 XP footer details stay inside 1280×720 and Escape restores summary focus (502ms)
+  ✓  73 src/shared/offline-worker.browser.spec.ts:8:1 › S19 real Chrome installs, reloads offline and defers a complete update until all tabs close (1.7s)
+S13: 247 bytes matched after browser download/open/re-save; corruption retained prior fixture. Chrome 154.0.8037.97, linux/x64, headless 1280x720. Native picker interaction untested.
+  ✓  74 src/shared/project-files.browser.spec.ts:5:1 › S13 actual Chromium download/open roundtrip preserves project assets and rejects corruption (510ms)
+S14: exact metadata and RGBA bytes survived page close/reopen and reload; stale generation 6 returned committed generation 7; discard persisted.
+  ✓  75 src/shared/recovery-session.browser.spec.ts:3:1 › S14 actual recovery validates a native package across page close, reopen and reload (816ms)
+S08: generation 7 and exact payload bytes survived page close/reopen and reload; journal contains metadata only.
+  ✓  76 src/shared/recovery-store.browser.spec.ts:3:1 › S08 actual browser recovery survives page close/reopen and reload with exact bytes (572ms)
+  ✘  77 src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF (1.5m)
+(node:1144557) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  78 src/slides/slides-workspace.browser.spec.ts:58:1 › SLIDES-APP rejected images, cancelled drags and invalid pending properties preserve editable state (1.1s)
+  ✓  79 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:12:1 › SHEET-APP cells, ranges, formulas, fill, formats, sorting/filtering, shared history and native recovery (3.7s)
+  ✓  80 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:23:1 › SHEET-APP real XLSX/CSV interchange, literal formulas, invalid import and immediate-save input (1.6s)
+  ✓  81 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:31:1 › SHEET-APP pointer ranges, clipboard references, structural edits and distant virtual cells (1.7s)
+VIDEO focus browser 154.0.8037.97; output dist
+  ✓  82 src/video/video-export-focus.browser.spec.ts:54:3 › VIDEO focus inspector mouse Export retains immediate native Save and New shortcuts (2.3s)
+  ✓  83 src/video/video-export-focus.browser.spec.ts:54:3 › VIDEO focus inspector keyboard Export retains immediate native Save and New shortcuts (2.2s)
+  ✓  84 src/video/video-export-focus.browser.spec.ts:54:3 › VIDEO focus toolbar mouse Export retains immediate native Save and New shortcuts (2.2s)
+  ✓  85 src/video/video-export-focus.browser.spec.ts:54:3 › VIDEO focus toolbar keyboard Export retains immediate native Save and New shortcuts (2.2s)
+  ✓  86 src/video/video-export-focus.browser.spec.ts:66:1 › VIDEO focus export refresh preserves a pending field value and the exact number control (2.2s)
+  ✓  87 src/video/video-export-focus.browser.spec.ts:74:1 › VIDEO focus export refresh keeps an outside menu focused and open (2.2s)
+  ✓  88 src/video/video-export-focus.browser.spec.ts:80:1 › VIDEO focus refresh restores the same title control and removed controls hand focus to the timeline (2.2s)
+  ✓  89 src/video/video-workspace.browser.spec.ts:21:1 › VIDEO-APP import, split, trim, fade, title, reorder, undo, project round trip and real-time export (10.7s)
+
+
+  1) src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 90000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "filechooser"
+    ============================================================
+
+      44 |     const saving=page.waitForEvent('download');await property(page,'Slide name').press('Control+s');const saved=await saving,bytes=await readFile((await saved.path())!),pkg=nativeContainer({op:'decode',parts:[bytes]});
+      45 |     expect(pkg.project.format).toBe('gsnv-slides');expect(pkg.assets).toHaveLength(1);expect(pkg.assets[0]!.bytes).toEqual(new Uint8Array(png));const content=pkg.project.content as {slides:{elements:unknown[]}[]};expect(content.slides).toHaveLength(2);expect(content.slides[0]!.elements).toHaveLength(4);
+    > 46 |     await property(page,'Slide name').press('Control+n');await expect(scene(page).locator('[data-element-id]')).toHaveCount(0);const opening=page.waitForEvent('filechooser');await page.keyboard.press('Control+o');await(await opening).setFiles({name:saved.suggestedFilename(),mimeType:'application/octet-stream',buffer:bytes});
+         |                                                                                                                                                   ^
+      47 |     await expect(page.locator('.slides-list li')).toHaveCount(2);await expect(scene(page)).toContainText('Quarterly update');await expect(scene(page).locator('img')).toHaveCount(1);
+      48 |     await tool(page,'ellipse').click();const slideHistory=await history(page);await expect(scene(page).locator('[data-element-id]')).toHaveCount(5);
+      49 |     await page.getByRole('tab',{name:'Document',exact:true}).click();await page.getByRole('button',{name:'New blank document'}).click();const documentEditor=page.locator('.doc-page');await documentEditor.click();await page.keyboard.insertText('Independent document');
+        at /home/goosnav/Desktop/code/gsnv-paint/src/slides/slides-workspace.browser.spec.ts:46:147
+
+    attachment #3: Slides production (image/png) ───────────────────────────────────────────────────
+    test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF/attachments/Slides-production-69f00a75e2d2b285974ad80be833c2a74949bf98.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/slides-slides-workspace.br-6e2a6-esentation-and-two-page-PDF/error-context.md
+
+  1 failed
+    src/slides/slides-workspace.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+  88 passed (5.4m)

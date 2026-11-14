@@ -1,0 +1,3 @@
+PASS: src/cad/kernel-profile-face.ts
+PASS: src/cad/kernel-linear-prism.ts
+PASS: src/cad/kernel-features.ts

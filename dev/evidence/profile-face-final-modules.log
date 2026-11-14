@@ -1,0 +1,4 @@
+FAIL: src/cad/kernel-features.ts
+  - PURPOSE reads as more than one responsibility; consider splitting the brick
+PASS: src/cad/kernel-profile-face.ts
+PASS: src/cad/kernel-linear-prism.ts

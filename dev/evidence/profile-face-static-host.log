@@ -1,0 +1,86 @@
+
+Running 1 test using 1 worker
+
+(node:1130633) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ ⛅️ wrangler 4.160.1
+────────────────────
+⎔ Starting local server...
+[wrangler:info] ✨ Parsed 5 valid header rules.
+Wrangler detected this dev session is running in an AI agent.
+The Local Explorer API is available at http://127.0.0.1:4198/cdn-cgi/local/explorer/api
+Useful routes:
+  GET http://127.0.0.1:4198/cdn-cgi/local/explorer/api/local/workers - local Workers and bindings
+  POST http://127.0.0.1:4198/cdn-cgi/local/explorer/api/local/scheduled?worker=<name> - invoke a Worker's scheduled handler; cron is required (see the OpenAPI schema for the full request)
+  GET http://127.0.0.1:4198/cdn-cgi/local/explorer/api/storage/kv/namespaces - KV namespaces
+  GET http://127.0.0.1:4198/cdn-cgi/local/explorer/api/d1/database - D1 databases
+  GET http://127.0.0.1:4198/cdn-cgi/local/explorer/api/r2/buckets - R2 buckets
+  GET http://127.0.0.1:4198/cdn-cgi/local/explorer/api/workers/durable_objects/namespaces - Durable Object namespaces
+  GET http://127.0.0.1:4198/cdn-cgi/local/explorer/api/workflows - Workflows
+  POST http://127.0.0.1:4198/cdn-cgi/local/explorer/api/local/observability/query - run a read-only SQL query (SELECT/WITH only) over captured request traces and console logs. Tables: spans, logs (read attributes via json(attributes)). Example:
+    curl -X POST http://127.0.0.1:4198/cdn-cgi/local/explorer/api/local/observability/query -H 'Content-Type: application/json' -d '{"sql":"SELECT service, name, outcome, duration_ms FROM spans WHERE parent_id IS NULL LIMIT 20"}'
+  POST http://127.0.0.1:4198/cdn-cgi/local/explorer/api/local/observability/clear - clear all captured traces and logs
+If the routes above don't cover what you need, fetch the full OpenAPI schema (large - use only as a last resort):
+  GET http://127.0.0.1:4198/cdn-cgi/local/explorer/api - OpenAPI schema
+[wrangler:info] Ready on http://127.0.0.1:4198
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 5 valid header rules.
+⎔ Local server updated and ready
+[wrangler:info] GET /index.html 307 Temporary Redirect (168ms)
+[wrangler:info] GET /THIRD_PARTY_NOTICES.txt 200 OK (6ms)
+[wrangler:info] GET /assets/app-icon-C0NVVvbT.svg 200 OK (9ms)
+[wrangler:info] GET /assets/cad-step-export.worker-B1OTIrbx.js 200 OK (8ms)
+[wrangler:info] GET /assets/cad-workspace.worker-bI3tXJd1.js 200 OK (6ms)
+[wrangler:info] GET /assets/code-runtime-DZZP279C.js 200 OK (6ms)
+[wrangler:info] GET /assets/index-B_e1YMii.css 200 OK (7ms)
+[wrangler:info] GET /assets/index-Cz9ukzZu.js 200 OK (9ms)
+[wrangler:info] GET /assets/libraw-CKnqEbQ6.wasm 200 OK (6ms)
+[wrangler:info] GET /assets/libraw-Cm6KFyZe.js 200 OK (7ms)
+[wrangler:info] GET /assets/photo-develop.worker-DAifgXh2.js 200 OK (7ms)
+[wrangler:info] GET /assets/pixel-tahoma-6h5M2JtG.woff2 200 OK (5ms)
+[wrangler:info] GET /assets/pixel-tahoma-bold-CcfyHzC-.woff2 200 OK (9ms)
+[wrangler:info] GET /assets/planegcs-DNpN9qS7.wasm 200 OK (5ms)
+[wrangler:info] GET /assets/planegcs-DmlzCoVG.js 200 OK (4ms)
+[wrangler:info] GET /assets/pyodide-lock-y3tUuWGz.json 200 OK (5ms)
+[wrangler:info] GET /assets/pyodide.asm-DoBEEsqh.wasm 200 OK (5ms)
+[wrangler:info] GET /assets/python_stdlib-Dms11Th8.zip 200 OK (6ms)
+[wrangler:info] GET /assets/replicad_single-DD6apbHo.js 200 OK (6ms)
+[wrangler:info] GET /assets/replicad_single-g5eiaENB.wasm 200 OK (9ms)
+[wrangler:info] GET /assets/worker-BZtgTZAf.js 200 OK (7ms)
+[wrangler:info] GET /favicon.svg 200 OK (6ms)
+[wrangler:info] GET / 200 OK (6ms)
+
+  ✘  1 dev/static-host.browser.spec.ts:16:1 › Cloudflare static host installs the complete build and serves exact isolated assets offline (6.7s)
+
+
+  1) dev/static-host.browser.spec.ts:16:1 › Cloudflare static host installs the complete build and serves exact isolated assets offline 
+
+    Error: /index.html
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "a64776c2f47d564116a4afaeb94a20dd8894d8e380b8156c4e5e6f1958c5386d"
+    Received: "a836db0c9a65462c134d42a3006d40b3643894edb92d18c37ab12c62e23f624e"
+
+      36 |       for (const [key, value] of Object.entries(headers)) expect(response.headers()[key], `${asset.url}: ${key}`).toBe(value);
+      37 |       const bytes = await response.body(); expect(bytes.length, asset.url).toBe(asset.bytes);
+    > 38 |       expect(createHash('sha256').update(bytes).digest('hex'), asset.url).toBe(asset.sha256);
+         |                                                                           ^
+      39 |       await response.dispose();
+      40 |     }
+      41 |     for (const path of ['/', '/offline-sw.js', '/offline-manifest.json']) {
+        at /home/goosnav/Desktop/code/gsnv-paint/dev/static-host.browser.spec.ts:38:75
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/static-host-results/static-host.browser-Cloudf-642cb-act-isolated-assets-offline/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-qa/static-host-results/static-host.browser-Cloudf-642cb-act-isolated-assets-offline/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-qa/static-host-results/static-host.browser-Cloudf-642cb-act-isolated-assets-offline/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    dev/static-host.browser.spec.ts:16:1 › Cloudflare static host installs the complete build and serves exact isolated assets offline 

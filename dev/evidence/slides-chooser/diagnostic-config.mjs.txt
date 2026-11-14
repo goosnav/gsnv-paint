@@ -1,0 +1,2 @@
+import {defineConfig} from '/home/goosnav/Desktop/code/gsnv-paint/node_modules/@playwright/test/index.mjs';
+export default defineConfig({testDir:'.',testMatch:'slides-chooser.browser.spec.ts',workers:1,reporter:'list',outputDir:process.env.SLIDES_CHOOSER_ARMED==='1'?'./persistent/results':'./baseline/results',use:{channel:'chrome',headless:true,viewport:{width:1280,height:720},trace:'off'}});

@@ -1,0 +1,14 @@
+✔ C59 golden retains only the validated solid and releases temporary native resources (2.547878ms)
+✔ C59 every unsuccessful builder and invalid solid fails without publishing a token (1.242673ms)
+✔ C59 real kernel seam: reversed prism survives STEP export and independent re-import (483.366625ms)
+✔ C59 real kernel: plate regions with circular and polygon holes have exact volume and survive STEP (637.997359ms)
+✔ C59 characterization: all six ordinary rejection messages stay stable (3.43893ms)
+✔ C59 characterization: clockwise circular holes, immutable input and one surviving solid (1.144194ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1995.748942

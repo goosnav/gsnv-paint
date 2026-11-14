@@ -1,0 +1,118 @@
+✖ C77 success gives the caller only one face after reverse cleanup; never retains it (1.198491ms)
+✖ C77 ordinary wire and face rejections return exact tags after all cleanup (0.1883ms)
+✖ C77 keeps the +Z outer and −Z inner analytic circle convention (0.133729ms)
+✖ C77 closed session raises before allocating or calling native code (3.138713ms)
+✖ C77 stops at every native boundary for unexpected, numeric, WASM and cleanup exceptions (0.200226ms)
+✖ C77 cleanup failure during ordinary rejection propagates instead of returning a safe tag (0.191072ms)
+✖ C77 real kernel: polygon, circle and mixed-hole faces have independent analytic areas (270.553248ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 0
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 510.022364
+
+✖ failing tests:
+
+test at src/cad/kernel-profile-face.test.ts:1:271
+✖ C77 success gives the caller only one face after reverse cleanup; never retains it (1.198491ms)
+  Error: C77 is contracted; the testbench must fail before implementation.
+      at buildKernelProfileFace (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.ts:33:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.test.ts:11:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/cad/kernel-profile-face.test.ts:1:966
+✖ C77 ordinary wire and face rejections return exact tags after all cleanup (0.1883ms)
+  Error: C77 is contracted; the testbench must fail before implementation.
+      at buildKernelProfileFace (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.ts:33:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.test.ts:28:22)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/cad/kernel-profile-face.test.ts:1:1366
+✖ C77 keeps the +Z outer and −Z inner analytic circle convention (0.133729ms)
+  Error: C77 is contracted; the testbench must fail before implementation.
+      at buildKernelProfileFace (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.ts:33:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.test.ts:36:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/kernel-profile-face.test.ts:1:1646
+✖ C77 closed session raises before allocating or calling native code (3.138713ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   name: 'Error'
+  -   name: 'DisposedSessionError'
+    }
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.test.ts:44:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: C77 is contracted; the testbench must fail before implementation.
+        at buildKernelProfileFace (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.ts:33:9)
+        at assert.throws.name (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.test.ts:44:23)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.test.ts:44:10)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    expected: { name: 'DisposedSessionError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/kernel-profile-face.test.ts:1:1909
+✖ C77 stops at every native boundary for unexpected, numeric, WASM and cleanup exceptions (0.200226ms)
+  Error: C77 is contracted; the testbench must fail before implementation.
+      at buildKernelProfileFace (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.ts:33:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.test.ts:50:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/kernel-profile-face.test.ts:1:2812
+✖ C77 cleanup failure during ordinary rejection propagates instead of returning a safe tag (0.191072ms)
+  Error: C77 is contracted; the testbench must fail before implementation.
+      at buildKernelProfileFace (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.ts:33:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.test.ts:71:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/kernel-profile-face.test.ts:1:3416
+✖ C77 real kernel: polygon, circle and mixed-hole faces have independent analytic areas (270.553248ms)
+  Error: C77 is contracted; the testbench must fail before implementation.
+      at buildKernelProfileFace (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.ts:33:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-profile-face.test.ts:89:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

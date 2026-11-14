@@ -1,6 +1,9 @@
 # Production revolve — Mode A contract
 
 Reviewed by the parent, 2026-11-13. **CONTRACTED; implementation and acceptance tests remain unverified.**
+Current progress: step 1 (C77 plus characterized C59 integration) is GREEN;
+see [profile-face evidence](CAD-PROFILE-FACE-EVIDENCE.md). C79, C78 and connected
+production revolve remain contracted/unverified. The original contract follows.
 This document closes the proposed gate 4 of [CAD-NEXT-INCREMENT.md](CAD-NEXT-INCREMENT.md)
 using the actual gate-3 fixtures in `revolve-proof-fixture.ts` and
 `revolve-proof.test.ts`. The parent reviewed the persisted source, analytic
@@ -179,7 +182,7 @@ Purpose: Compile the bounded revolve source into canonical evaluated parameters
 or a native-ready profile recipe. One entry: `revolveRecipe(request)`.
 
 IN common fields: `{source: RevolveFeature['definition'], sketchId:string,
-context:C03.ExpressionContext, tolerance:{linearMm,angularRad,relative}}`.
+context:C03.DimensionRequest['context'], tolerance:{linearMm,angularRad,relative}}`.
 The exact discriminated requests are `operation:'parameters'` or
 `operation:'profile'` with `entities: readonly SolvedSketchEntity[]` additionally
 required. The latter uses the existing C64 entity boundary (derive its type
@@ -196,9 +199,13 @@ The profile mode calls C64 on the **actual solved** entities, rejects every
 nonempty holes list, then checks the complete outer boundary: polygon points
 must have finite coordinates and `U >= 0`; circle radius/center must be finite
 and `centerU - radius > linearMm`. No absolute-value reflection, tolerance
-snap, crossing repair, hole drop or first-loop selection. Zero/tiny negative U
-is rejected under this conservative domain rather than silently moved onto
-the axis. Exact axis-touching polygons remain supported. Source and entities
+snap, crossing repair, hole drop or first-loop selection. Any negative U,
+however small, is rejected rather than silently moved onto the axis. Exact
+zero (including signed zero) and axis-touching polygons remain supported.
+Inspect actual nonconstruction solved endpoints as well as the compiled boundary:
+C53 tolerance clustering must not hide a negative endpoint in one entity order.
+This clarifies the existing nonnegative domain without changing C53 or C64.
+Source and entities
 are never mutated; no native/session/DOM/clock/file access occurs.
 
 RAISES: `RevolveRecipeError` with field/reason for malformed definition,
