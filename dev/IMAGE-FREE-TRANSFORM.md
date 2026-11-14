@@ -32,7 +32,7 @@ must include only committed output. Other browsers and physical iPad are unteste
 unless actually exercised. Existing bilinear alpha sampling is retained; no warp,
 perspective or new interpolation algorithm is introduced.
 
-Status: specified; evidence pending.
+Status: provisional GREEN. See [checkpoint evidence](PAINT-OPEN-NAVIGATION-EVIDENCE.md).
 
 Small-selection refinement: automatically displayed handles must not intercept
 ordinary selection gestures on a tiny image. Below 48 screen pixels on either

@@ -50,7 +50,7 @@ extra payload copy in the shared picker and does not claim streaming support.
 
 ## Evidence
 
-Pending implementation and verification. No requirement above is marked passed yet.
+Implemented and verified for the bounded amendment. See [checkpoint evidence](PAINT-OPEN-NAVIGATION-EVIDENCE.md) for command output, traced checks and platform limits.
 
 ## Native picker filter compatibility amendment
 

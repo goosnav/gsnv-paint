@@ -72,7 +72,7 @@ export function createPhotoWorkspace(files: FilePorts): WorkspaceAdapter {
         if (disposed) return;
         empty.hidden = !!current; surface.hidden = !current || !ready; badge.hidden = !before; stage.dataset.crop = String(cropMode);
         hint.textContent = busy || message || (cropMode ? 'Drag the frame or its handles · Enter applies the crop · Esc cancels.' : current ? 'Drag sliders to adjust · double-click a label to reset · \\ shows before/after · R crops.' : 'Import a photo to start.');
-        hint.hidden = !current && !busy;
+        hint.hidden = !current && !busy && !message;
         controls.update({ settings: draftCrop ? { ...settings(), crop: draftCrop } : settings(), histogram, enabled: !!current && ready, cropMode, before, aspect });
         layout();
       }
@@ -128,6 +128,7 @@ export function createPhotoWorkspace(files: FilePorts): WorkspaceAdapter {
         catch (cause) { message = cause instanceof Error ? cause.message : String(cause); refresh(); }
       }
       async function importPhoto(file?: File) {
+        const identity = current?.identity;
         let name: string, mime: string, bytes: Uint8Array;
         if (file) { name = file.name; mime = file.type; bytes = new Uint8Array(await file.arrayBuffer()); }
         else {
@@ -139,8 +140,22 @@ export function createPhotoWorkspace(files: FilePorts): WorkspaceAdapter {
         }
         const extension = name.slice(name.lastIndexOf('.')).toLowerCase();
         mime ||= Object.entries(DISPLAY_TYPES).find(([, ext]) => ext.includes(extension))?.[0] ?? 'application/octet-stream';
-        try { await host.open({ id: crypto.randomUUID(), title: basename(name), format: 'gsnv-photo', version: 1, value: photoContent({ operation: 'new', name, mime, bytes }) }); }
-        catch (cause) { message = cause instanceof Error ? cause.message : String(cause); refresh(); }
+        if (disposed) return;
+        if (current?.identity !== identity) { message = 'The photo changed while opening. Open it again.'; refresh(); return; }
+        try {
+          const value = photoContent({ operation: 'new', name, mime, bytes });
+          setBusy(`Checking ${name}…`);
+          // Validate before replacement; a broken source must not displace editable work.
+          if (value.source.kind === 'raw') {
+            const raw = new LibRaw();
+            try { await raw.open(bytes.slice(), { outputBps: 16 }); const image = await raw.imageData(); if (!image || image.colors !== 3 || !image.width || !image.height) throw new Error('The RAW file contains no readable RGB image.'); }
+            finally { raw.dispose(); }
+          } else { const bitmap = await createImageBitmap(new Blob([bytes.slice()], { type: mime })); bitmap.close(); }
+          if (disposed) return;
+          if (current?.identity !== identity) throw new Error('The photo changed while opening. Open it again.');
+          await host.open({ id: crypto.randomUUID(), title: basename(name), format: 'gsnv-photo', version: 1, value });
+        } catch (cause) { if (!disposed) message = `This photo could not be opened: ${cause instanceof Error ? cause.message : String(cause)}`; }
+        finally { if (!disposed) setBusy(''); }
       }
       function exportPhoto() {
         if (!content || !current) return;
@@ -227,6 +242,7 @@ export function createPhotoWorkspace(files: FilePorts): WorkspaceAdapter {
     importButton.addEventListener('click', () => { void importPhoto(); });
     const Resize = window.ResizeObserver, observer = Resize ? new Resize(() => { layout(); }) : null; observer?.observe(stage);
     return {
+      openFile: { accept: ACCEPT, open: importPhoto },
       render(snapshot, nextView) {
         const changed = snapshot?.identity !== current?.identity; current = snapshot; view = nextView;
         if (changed) {

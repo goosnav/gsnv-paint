@@ -278,15 +278,16 @@ Other conceptual owners are bound by the CAD and media maps. `requirements.json`
 [OPEN-FILES-UX.md](OPEN-FILES-UX.md) amends S07, S13 and A-SHELL plus existing
 workspace importer seams. Implement transport tests first, then routing and
 workspace integration, then browser acceptance. No new file codecs or domain
-modules. Status: specified, not yet GREEN.
+modules. Status: GREEN for this amendment; evidence is in
+[the checkpoint](PAINT-OPEN-NAVIGATION-EVIDENCE.md).
 
-## IMAGE-NAV image-navigator — SHELL — SPECIFIED
+## IMAGE-NAV / I59 image-navigator — SHELL — GREEN
 
 The owner-requested [Paint navigator contract](IMAGE-NAVIGATOR.md) adds a compact
 view-only corner control and uses the existing original arrow cursor. Dependencies:
 DOM/Canvas ports only; IMAGE-APP composes S05 for zoom and its existing local view.
 
-## IMAGE-XFORM / IMAGE-XFORM-VIEW — CORE / SHELL — SPECIFIED
+## IMAGE-XFORM / I60 and IMAGE-XFORM-VIEW / I61 — CORE / SHELL — GREEN
 
 [Graphical transform contract](IMAGE-FREE-TRANSFORM.md) declares pure geometry,
 DOM pointer/numeric controls and the IMAGE-APP seam. Existing raster-ops performs

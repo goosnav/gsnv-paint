@@ -70,8 +70,8 @@ export function createCodeWorkspace(files: FilePorts): WorkspaceAdapter {
           preview() {}, cancel() {}, commit(result) { const data = result as { path: string; content: { entry: string; files: File[] } }; selected = data.path; commit(codeDocument({ operation: 'decode', content: data.content }), rename ? 'Rename source file' : 'New source file'); editor.focus(); },
         });
       }
-      async function importSource() {
-        flush(); const identity = current?.identity, result = await codeFiles({ operation: 'read' }, files); if (disposed || result.kind !== 'opened') return;
+      async function importSource(file?: globalThis.File) {
+        flush(); const identity = current?.identity, result = await codeFiles({ operation: 'read', file }, files); if (disposed || result.kind !== 'opened') return;
         if (pending || current?.identity !== identity) throw new Error('The project changed while the source file was opening. Import it again.');
         if (value()?.files.some(file => file.path === result.path)) throw new Error(`A file named ${result.path} already exists. Rename that file before importing another with the same name.`);
         const next = codeDocument({ operation: 'import', value: value() ?? codeDocument({ operation: 'new' }), path: result.path, language: result.language, bytes: result.bytes }); selected = result.path;
@@ -93,6 +93,7 @@ export function createCodeWorkspace(files: FilePorts): WorkspaceAdapter {
         } catch (cause) { error(cause); }
       }
       return {
+        openFile: { accept: { 'text/plain': ['.js', '.mjs', '.py', '.html', '.htm', '.css', '.txt', '.json', '.md'] }, open: importSource },
         render(snapshot) {
           const different = snapshot?.id !== current?.id, changed = snapshot?.identity !== current?.identity;
           if (different) { stop(); output = ''; view.output(''); view.notice(''); preview = false; runStatus = 'Ready'; selected = ''; editor.render(null); }

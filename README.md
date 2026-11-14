@@ -16,9 +16,19 @@ Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MO
 
 Image opens first. **Save…** in the toolbar opens a choice of editable project or exported file; **File → Save…** offers the same choices in a submenu. **Export…** opens the export formats directly. **Ctrl+S** still saves the editable project. Exported images, PDFs and other files do not replace the native project.
 
+**Open / Ctrl+O** accepts a project or a supported ordinary file for the current
+workspace—PNG/JPEG in Image, STEP in CAD, CSV/XLSX in Spreadsheet, and the existing
+formats in the other editors. Image also has a corner navigator with a draggable
+preview, zoom buttons, slider, typed percentage and Fit. Select pixels and drag
+the handles to resize; use **Free transform / Ctrl+T** for rotation and precise
+values. **Enter** applies and **Esc** cancels. Small selections expose handles when
+Free transform is activated, so normal selection gestures stay usable.
+
 All use shared save/open, undo/redo, stored projects and local recovery. Failed browser backups keep unsaved work open with a Save instruction. Send Image composites to the Video bin, current Video frames to Image, or transparent CAD views to Image through each workspace's menus. These are working subsets; the full original CAD/Image/Video scope and packaged release remain unfinished. [Readiness ledger](dev/CONSUMER-READINESS.md).
 
-The [Save/export UI checkpoint](dev/SAVE-EXPORT-UX.md) passes 993 unit tests and 93 combined browser checks, plus local Cloudflare hosting and a cold offline workflow through all nine editors. It adds the Save choices, Image-first startup and locally bundled pixel Paint icons. This UI work does not change the broader readiness ledger.
+The [Open/navigation/transform checkpoint](dev/PAINT-OPEN-NAVIGATION-EVIDENCE.md) records this update, its regression checks and platform limits.
+
+The preceding [Save/export UI checkpoint](dev/SAVE-EXPORT-UX.md) passes 993 unit tests and 93 combined browser checks, plus local Cloudflare hosting and a cold offline workflow through all nine editors. It adds the Save choices, Image-first startup and locally bundled pixel Paint icons. This UI work does not change the broader readiness ledger.
 
 The [connected revolve checkpoint](dev/CAD-REVOLVE-EVIDENCE.md) passes 978 unit tests, 91 combined browser checks, nine offline checks, local Cloudflare hosting, the Linux source launcher and deployment dry-run. It adds editable native revolves and strengthens native-kernel fault handling while preserving the original plate golden. The ledger records 47 PASS, 0 FAIL and 355 UNTESTED requirements; full consumer and packaged-release acceptance remain open. Earlier [modeling/offline](dev/MODELING-OFFLINE-CHECKPOINT.md) and [profile-face](dev/CAD-PROFILE-FACE-EVIDENCE.md) results are historical. CAD Open timeouts and the test chooser-interception correction remain in the [diagnosis](dev/CAD-REOPEN-DIAGNOSIS.md); that correction changed test setup, not application behavior.
 

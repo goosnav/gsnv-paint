@@ -2,6 +2,7 @@
  * PURPOSE    Transfer validated native projects through the browser file adapter.
  * KIND       SHELL
  * CONTRACT   IN: open, or save with an immutable NativePackage and optional handle;
+ *            Open optionally accepts an already-selected File, using the same validation.
  *            S07 FilePorts supply browser I/O and any required user activation.
  *            OUT: Promise of validated NativePackage on open, S07 FileResult on
  *            save, an unchanged transport error/cancellation, or a project error.
@@ -39,7 +40,7 @@ import { nativeContainer, ContainerFormatError, ContainerLimitError } from './na
 type NativePackage = ReturnType<typeof nativeContainer<{ op: 'decode'; parts: readonly Uint8Array[] }>>;
 type FileResult = Extract<Awaited<ReturnType<typeof fileAccess>>, { ok: true }>['value'];
 type Failure = { ok: false; error: { code: string; message: string } };
-export type ProjectFileRequest = { operation: 'open' } | { operation: 'save'; package: NativePackage; handle?: FileSystemFileHandle };
+export type ProjectFileRequest = { operation: 'open'; file?: File } | { operation: 'save'; package: NativePackage; handle?: FileSystemFileHandle };
 export type ProjectFileOutcome<T extends ProjectFileRequest = ProjectFileRequest> =
   | { ok: true; value: T extends { operation: 'open' } ? NativePackage : FileResult }
   | Failure | { cancelled: true };
@@ -83,7 +84,7 @@ export async function projectFiles<T extends ProjectFileRequest>(request: T, por
     const operation = Object.getOwnPropertyDescriptor(request, 'operation');
     if (!operation?.enumerable || !('value' in operation) || !['open', 'save'].includes(operation.value)) return failure('project.request', 'Choose a project open or save operation.');
     if (operation.value === 'open') {
-      const result = await fileAccess({ op: 'open', accept: { [MIME]: Object.values(EXTENSIONS) } }, ports);
+      const result = await fileAccess({ op: 'open', file: (request as Extract<ProjectFileRequest, { operation: 'open' }>).file, accept: { [MIME]: Object.values(EXTENSIONS) } }, ports);
       if ('cancelled' in result || !result.ok) return result;
       return { ok: true, value: nativeContainer({ op: 'decode', parts: result.value.bytes }) } as ProjectFileOutcome<T>;
     }

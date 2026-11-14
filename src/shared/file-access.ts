@@ -3,6 +3,8 @@
  * KIND       SHELL
  * CONTRACT   IN: FileRequest and FilePorts; caller supplies user activation and immutable
  *            byte parts. Native pickers are primary; input/download are fallback.
+ *            Pick returns File/handle without payload reads; open accepts a selected File
+ *            without a second picker or an associated write handle.
  *            Optional open maxBytes rejects File.size before reading any payload chunks.
  *            OUT: Promise<FileOutcome>; successful bytes are segmented Uint8Array parts,
  *            native writes resolve only after close; cancellation is explicit.
@@ -23,7 +25,8 @@
  */
 
 export type FileRequest =
-  | { op: 'open'; accept: Record<string, string[]>; maxBytes?: number }
+  | { op: 'pick'; accept: Record<string, string[]> }
+  | { op: 'open'; accept: Record<string, string[]>; maxBytes?: number; file?: File | undefined }
   | { op: 'save'; name: string; mime: string; bytes: Uint8Array | readonly Uint8Array[]; handle?: FileSystemFileHandle };
 type PickerType = { accept: Record<string, string[]> };
 export type FilePorts = {
@@ -34,9 +37,14 @@ export type FilePorts = {
   showSaveFilePicker?: (options: { suggestedName: string; types: PickerType[] }) => Promise<FileSystemFileHandle>;
 };
 type FileResult = { name: string; bytes: readonly Uint8Array[]; handle?: FileSystemFileHandle };
+type PickOutcome = { ok: true; value: { file: File; handle?: FileSystemFileHandle } } | { ok: false; error: { code: string; message: string } } | { cancelled: true };
 type FileOutcome = { ok: true; value: FileResult } | { ok: false; error: { code: string; message: string } } | { cancelled: true };
 const READ_CHUNK_BYTES = 8 * 1024 * 1024;
 const REVOKE_DELAY_MS = 1000;
+// The native API rejects suffixes longer than 16 code points; HTML input does not.
+function pickerTypes(accept: Record<string, string[]>): PickerType[] {
+  return Object.keys(accept).length && Object.values(accept).flat().every(extension => [...extension].length <= 16) ? [{ accept }] : [];
+}
 
 function inputFile(accept: Record<string, string[]>, ports: FilePorts): Promise<File | null> {
   return new Promise((resolve, reject) => {
@@ -81,29 +89,35 @@ function download(name: string, mime: string, bytes: readonly Uint8Array[], port
   }
 }
 
-export async function fileAccess(request: FileRequest, ports: FilePorts): Promise<FileOutcome> {
-  let stage = request.op === 'open' ? 'file.open' : 'file.save';
+export function fileAccess(request: Extract<FileRequest, { op: 'pick' }>, ports: FilePorts): Promise<PickOutcome>;
+export function fileAccess(request: Exclude<FileRequest, { op: 'pick' }>, ports: FilePorts): Promise<FileOutcome>;
+export async function fileAccess(request: FileRequest, ports: FilePorts): Promise<FileOutcome | PickOutcome> {
+  let stage = request.op === 'save' ? 'file.save' : 'file.open';
   let writable: FileSystemWritableFileStream | undefined;
   try {
-    if (request.op === 'open') {
-      if (request.maxBytes !== undefined && (!Number.isSafeInteger(request.maxBytes) || request.maxBytes < 0)) return { ok: false, error: { code: 'file.request', message: 'File read limits must be a nonnegative whole number of bytes.' } };
-      if (ports.showOpenFilePicker) {
-        const [handle] = await ports.showOpenFilePicker({ multiple: false, types: Object.keys(request.accept).length ? [{ accept: request.accept }] : [] });
-        if (!handle) return { cancelled: true };
-        stage = 'file.read';
-        return { ok: true, value: await read(await handle.getFile(), handle, request.maxBytes) };
+    if (request.op !== 'save') {
+      const maxBytes = request.op === 'open' ? request.maxBytes : undefined;
+      if (maxBytes !== undefined && (!Number.isSafeInteger(maxBytes) || maxBytes < 0)) return { ok: false, error: { code: 'file.request', message: 'File read limits must be a nonnegative whole number of bytes.' } };
+      let file = request.op === 'open' ? request.file : undefined;
+      let handle: FileSystemFileHandle | undefined;
+      if (!file) {
+        if (ports.showOpenFilePicker) {
+          [handle] = await ports.showOpenFilePicker({ multiple: false, types: pickerTypes(request.accept) });
+          if (!handle) return { cancelled: true };
+          stage = 'file.read'; file = await handle.getFile();
+        } else file = await inputFile(request.accept, ports) ?? undefined;
       }
-      const file = await inputFile(request.accept, ports);
       if (!file) return { cancelled: true };
+      if (request.op === 'pick') return { ok: true, value: { file, ...(handle ? { handle } : {}) } };
       stage = 'file.read';
-      return { ok: true, value: await read(file, undefined, request.maxBytes) };
+      return { ok: true, value: await read(file, handle, maxBytes) };
     }
     const bytes = request.bytes instanceof Uint8Array ? [request.bytes] : request.bytes;
     let handle = request.handle;
     if (!handle && ports.showSaveFilePicker) {
       const extension = /\.[^.]+$/.exec(request.name)?.[0];
       handle = await ports.showSaveFilePicker({ suggestedName: request.name,
-        types: extension ? [{ accept: { [request.mime]: [extension] } }] : [] });
+        types: extension ? pickerTypes({ [request.mime]: [extension] }) : [] });
     }
     if (handle) {
       stage = 'file.write';

@@ -126,7 +126,7 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
         const base = current?.identity; pendingImports++; host.invalidate();
         try {
         let name: string, bytes: Uint8Array, mime: string;
-        if (file) { name = file.name; bytes = new Uint8Array(await file.arrayBuffer()); mime = file.type; }
+        if (file) { name = file.name; bytes = new Uint8Array(await file.arrayBuffer()); const ext = name.split('.').at(-1)!.toLowerCase(); mime = { mp4: 'video/mp4', m4v: 'video/mp4', mov: 'video/quicktime', webm: 'video/webm', ogv: 'video/ogg', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp' }[ext] ?? file.type; }
         else {
           const result = await fileAccess({ op: 'open', accept: MEDIA_TYPES }, files); if (disposed || 'cancelled' in result) return;
           if (!result.ok) { message = `${result.error.code}: ${result.error.message}`; refresh(); return; }
@@ -299,6 +299,7 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
       };
       return {
         bridge, flush,
+        openFile: { accept: MEDIA_TYPES, open: addMedia },
         render(snapshot) {
           const changed = snapshot?.identity !== current?.identity; current = snapshot;
           if (changed) { content = snapshot ? snapshot.value as VideoContent : null; if (selected && !content?.clips.some(c => c.id === selected)) selected = content?.clips.at(-1)?.id ?? null; if (!selected && content?.clips.length) selected = content.clips[content.clips.length - 1]!.id; syncMedia(); if (content && t > duration(content)) t = duration(content); }

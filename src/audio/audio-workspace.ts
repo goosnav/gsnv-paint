@@ -25,6 +25,7 @@ const IMPORT_RATE = 48000, MAX_IMPORT_BYTES = 128 * 1024 * 1024, MAX_PCM_BYTES =
 const labels: Record<string, string> = { cut: 'Cut audio', copy: 'Copy audio', paste: 'Paste audio', delete: 'Delete audio', trim: 'Trim to selection', fadeIn: 'Fade in', fadeOut: 'Fade out', gain: 'Volume', normalize: 'Normalize' };
 const reason = (cause: unknown) => cause instanceof Error ? cause.message : String(cause);
 const blank = (value = audioDocument({ operation: 'new' }), title = 'Untitled audio') => ({ id: crypto.randomUUID(), title, format: 'gsnv-audio', version: 1, value });
+const AUDIO_TYPES = { 'audio/*': ['.wav', '.mp3', '.m4a', '.aac', '.ogg', '.flac', '.webm'] };
 export function createAudioWorkspace(files: FilePorts): WorkspaceAdapter {
   return {
     create: () => blank(),
@@ -103,10 +104,10 @@ export function createAudioWorkspace(files: FilePorts): WorkspaceAdapter {
           validate: fields => { const n = Number((fields as { amount: unknown }).amount); return Number.isFinite(n) && n >= (normal ? .01 : 0) && n <= (normal ? 100 : 6400) ? { ok: true, value: fields } : { ok: false, error: { code: 'audio.level', message: 'Enter a percentage inside the displayed limits.' } }; }, preview() {}, cancel() {},
           commit: fields => { if (current?.identity !== identity) { show('The audio changed while this dialog was open. Select the range and try again.', true); return; } apply(operation, Number((fields as { amount: unknown }).amount) / 100, selected); } });
       }
-      async function importAudio() {
+      async function importAudio(file?: File) {
         if (busy || !available) return; const identity = current?.identity; busy = true; player.stop(); show('Choose a local audio file. Import decodes at 48000 Hz.'); refresh();
         try {
-          const opened = await fileAccess({ op: 'open', accept: { 'audio/*': ['.wav', '.mp3', '.m4a', '.aac', '.ogg', '.flac', '.webm'] } }, files);
+          const opened = await fileAccess({ op: 'open', file, maxBytes: MAX_IMPORT_BYTES, accept: AUDIO_TYPES }, files);
           if (disposed || 'cancelled' in opened) { show(''); return; } if (!opened.ok) throw new Error(opened.error.message);
           const length = opened.value.bytes.reduce((n, b) => n + b.length, 0); if (!length || length > MAX_IMPORT_BYTES) throw new Error('Choose a nonempty audio file no larger than 128 MiB.');
           const bytes = new Uint8Array(length); let offset = 0; for (const part of opened.value.bytes) { bytes.set(part, offset); offset += part.length; }
@@ -143,6 +144,7 @@ export function createAudioWorkspace(files: FilePorts): WorkspaceAdapter {
       const visibility = () => { if (document.hidden) player.stop(); }; document.addEventListener('visibilitychange', visibility);
       if (!available) show('This browser cannot decode or play audio. Native project editing and WAV export are still available.', true);
       return {
+        openFile: { accept: AUDIO_TYPES, open: importAudio },
         render(next) { const changed = next?.value !== value; if (next?.id !== current?.id) { selection = { start: 0, end: (next?.value as AudioDocument | undefined)?.frames ?? 0 }; cursor = 0; startField.removeAttribute('aria-invalid'); endField.removeAttribute('aria-invalid'); if (available) show(''); }
           current = next; value = next ? next.value as AudioDocument : null; selection = { start: Math.min(selection.start, value?.frames ?? 0), end: Math.min(selection.end, value?.frames ?? 0) }; if (changed) { player.stop(); cursor = selection.start; } cursor = Math.min(cursor, value?.frames ?? 0); refresh(); },
         model() { const item = (id: string, label: string, shortcut = '') => ({ id, label, shortcut, enabled: enabled(id) }); return { menus: [

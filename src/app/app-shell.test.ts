@@ -43,6 +43,7 @@ function fixture(workspace: Workspace) {
       const flush = () => { if (staged !== undefined) { const width = staged; staged = undefined; change(width); } };
       commits = change; invalidate = () => host.invalidate(); opener = value => host.open(value);
       return {
+        openFile: { accept: { 'image/png': ['.png'] }, async open(file) { await host.open({ id: 'raw-file', title: file.name, format: `gsnv-${workspace}`, version: 1, value: { width: 42 } }); } },
         render(document, view) { current = document; identity = document?.identity ?? ''; output.textContent = JSON.stringify({ width: (document?.value as { width: number } | undefined)?.width ?? null, view }); },
         model: () => ({ menus: [{ id: 'fixture', label: 'Fixture', items: [{ id: 'fixture.change', label, shortcut: '', enabled: !!current }] }], tools: [], panels: [] }),
         context: () => ({ viewRole: workspace === 'cad' ? 'sketch2d' : 'canvas2d', activeTool: 'fixture', status: 'Development fixture.' }),
@@ -680,4 +681,30 @@ for (const failure of ['cancelled picker', 'failed native write'] as const) test
     pickerRelease.resolve(); await first; assert.equal(s.app.snapshot().dirty.cad, true); assert.equal(s.app.snapshot().saved.cad, undefined); assert.equal(s.root.querySelector<HTMLButtonElement>('[data-command="file.save"]')!.disabled, false);
     s.files.showSaveFilePicker = async () => destination.handle; await s.app.dispatch('file.save'); assert.equal(storedWidth(destination.writes), 10); assert.equal(s.app.snapshot().dirty.cad, false);
   } finally { pickerRelease.resolve(); s.close(); await s.app.idle(); }
+});
+
+
+test('Open raw media advertises workspace types and Save never writes to the media handle', async () => {
+  const s = setup({ available: ['image'] }); await s.app.ready;
+  const source = nativeHandle(new File(['image fixture'], 'photo.PNG')), destination = nativeHandle(fileFor(packageFor('image')));
+  let picks = 0, saves = 0;
+  s.files.showOpenFilePicker = async options => { picks++; assert.deepEqual(options.types, [], 'All files keeps long native project suffixes selectable'); return [source.handle]; };
+  s.files.showSaveFilePicker = async options => { saves++; assert.match(options.suggestedName, /\.gsnv-image$/); return destination.handle; };
+  await s.app.dispatch('file.open'); assert.equal(picks, 1); assert.equal(s.app.snapshot().documents.image!.id, 'raw-file'); assert.equal(s.app.snapshot().dirty.image, true);
+  await s.app.dispatch('file.save'); assert.equal(saves, 1); assert.equal(source.writes.length, 0); assert.ok(destination.writes.length > 0);
+  await s.app.idle(); s.close();
+});
+test('Open raw media keeps replacement consent and rejects changed workspaces or revisions', async () => {
+  const s = setup(); await s.app.ready; clickWorkspace(s.root, 'image'); await s.app.dispatch('file.new'); s.fixtures.image.change(15);
+  const source = nativeHandle(new File(['image fixture'], 'photo.png'));
+  s.files.showOpenFilePicker = async () => [source.handle];
+  const replacing = s.app.dispatch('file.open'); await turn(); confirm(s.root, 'keep'); await replacing;
+  assert.deepEqual(s.app.snapshot().documents.image!.value, { width: 15 });
+  for (const switchWorkspace of [false, true]) {
+    const gate = deferred(); s.files.showOpenFilePicker = async () => { await gate.promise; return [source.handle]; };
+    const opening = s.app.dispatch('file.open');
+    if (switchWorkspace) clickWorkspace(s.root, 'cad'); else s.fixtures.image.change(16);
+    gate.resolve(); await opening; assert.notEqual(s.app.snapshot().documents.image!.id, 'raw-file'); assert.match(status(s.root), /workspace changed/i);
+  }
+  await s.app.idle(); s.close();
 });

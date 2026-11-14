@@ -167,3 +167,42 @@ test('S07 zero bytes and segmented large reads preserve exact file contents', as
     }
   }
 });
+
+test('S07 pick returns a File without reading it, with native handle or fallback cleanup', async () => {
+  for (const native of [false, true]) {
+    const file = new File([bytes], 'photo.PNG'); let reads = 0;
+    file.slice = () => { reads++; throw new Error('Picker must not read payload'); };
+    const fake = fakePorts(file), selected = handle({ file });
+    if (native) fake.ports.showOpenFilePicker = async () => [selected];
+    const result = await fileAccess({ op: 'pick', accept }, fake.ports);
+    assert.ok('ok' in result && result.ok); assert.equal(result.value.file, file);
+    assert.equal(result.value.handle, native ? selected : undefined); assert.equal(reads, 0);
+    assert.deepEqual(fake.events, native ? [] : ['remove-input']);
+  }
+});
+test('S07 an already selected file bypasses pickers and enforces limits before reads', async () => {
+  const fake = fakePorts(); fake.ports.showOpenFilePicker = async () => { throw new Error('No second picker'); };
+  const file = new File([bytes], 'photo.png');
+  assert.deepEqual(await fileAccess({ op: 'open', accept, file }, fake.ports), { ok: true, value: { name: file.name, bytes: [bytes] } });
+  let reads = 0; file.slice = () => { reads++; throw new Error('No oversized reads'); };
+  const result = await fileAccess({ op: 'open', accept, file, maxBytes: 3 }, fake.ports);
+  assert.ok('ok' in result && !result.ok); assert.equal(result.error.code, 'file.read'); assert.equal(reads, 0);
+});
+test('S07 pick cancellation and permission errors are explicit without fallback', async () => {
+  const fake = fakePorts(); assert.deepEqual(await fileAccess({ op: 'pick', accept }, fake.ports), { cancelled: true });
+  fake.ports.showOpenFilePicker = async () => { throw new DOMException('cancel', 'AbortError'); };
+  assert.deepEqual(await fileAccess({ op: 'pick', accept }, fake.ports), { cancelled: true });
+  fake.ports.showOpenFilePicker = async () => { throw new DOMException('denied', 'NotAllowedError'); };
+  const result = await fileAccess({ op: 'pick', accept }, fake.ports);
+  assert.ok('ok' in result && !result.ok); assert.equal(result.error.code, 'file.permission');
+  assert.deepEqual(fake.events, ['remove-input']);
+});
+
+test('S07 native picker supports long project suffixes without invalid API filters', async () => {
+  const fake = fakePorts(), file = new File([bytes], 'book.gsnv-spreadsheet'), selected = handle({file});
+  fake.ports.showOpenFilePicker = async options => { assert.deepEqual(options.types, []); return [selected]; };
+  const opened = await fileAccess({op:'pick',accept:{'application/octet-stream':['.gsnv-image','.gsnv-spreadsheet'],'image/png':['.png']}},fake.ports);
+  assert.ok('ok'in opened&&opened.ok); assert.equal(opened.value.file,file);
+  fake.ports.showSaveFilePicker = async options => { assert.deepEqual(options.types,[]); assert.equal(options.suggestedName,file.name); return selected; };
+  assert.ok('value'in await fileAccess({...save,name:file.name},fake.ports));
+});

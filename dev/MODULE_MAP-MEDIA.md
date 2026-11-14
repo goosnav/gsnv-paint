@@ -734,3 +734,35 @@ These are not bricks, do not evade the brick size/dependency rules, and contain 
 - Constant-rate speed changes use explicit source-frame/sample remapping; pitch preservation is not requested. If preserving pitch becomes necessary, that is a contract question rather than an implicit extra feature.
 - The M1a skill's default private-doc rule is overridden by the user asking to put this specification in the code repo. Its generic state-changing GUI quit/API example is overridden by the user's static-only application backend; shutdown remains supervisor/process lifecycle responsibility. Setup/status orchestration contains no application business logic or document API.
 - Native target smoke coverage cannot be inferred from this Linux host. M1a still requires Windows x64/ARM64, macOS Intel/Apple Silicon and Linux x86_64/ARM64 evidence. No unavailable target or codec check becomes a pass.
+
+### I59 `image/image-navigator.ts` — SHELL — GREEN
+
+Purpose: Navigate the Image canvas without a wheel (IMAGE-NAV contract).
+IN: DOM root and view callbacks; update(canvas, revision, effective view, viewport) or null.
+OUT: Zoom/center/fit requests; collapsible thumbnail, viewport frame and native controls; idempotent disposal.
+RAISES: TypeError for invalid DOM/callback ports. No document or pixel mutation.
+DEPS: none. IMAGE-APP composes S05 separately.
+TEST: `src/image/image-navigator.test.ts`; `src/image/image-navigation.browser.spec.ts`.
+DEMO: `/src/image/image-navigator.demo.html` through the dev server.
+
+### I60 `image/image-transform.ts` — CORE — GREEN
+
+Purpose: Calculate interactive raster transform geometry (IMAGE-XFORM contract).
+IN: validate(box), or drag(box, handle, start, end, shift/keep).
+OUT: Owned oriented bounds; anchored resize, move or center rotation.
+RAISES: TypeError for unknown operation/handle; RangeError for nonfinite coordinates, invalid sizes or rotated allocation above the raster limit.
+DEPS: I50 for the shared maximum pixel count only.
+TEST: `src/image/image-transform.test.ts`.
+DEMO: `node --import tsx src/image/image-transform.demo.ts`.
+
+### I61 `image/image-transform-view.ts` — SHELL — GREEN
+
+Purpose: Present on-canvas selection transform controls (IMAGE-XFORM-VIEW contract).
+IN: DOM root, lifecycle callbacks; update(bounds, active, view) or null.
+OUT: Validated geometry requests, pointer/touch handles, inline numeric inputs; update/flush/dispose.
+RAISES: Geometry or callback errors route to onError; flush errors propagate so Save retains pending work.
+DEPS: I60.
+TEST: `src/image/image-transform-view.test.ts`; `src/image/image-navigation.browser.spec.ts`; unchanged Image pixel/selection/history goldens.
+DEMO: `/src/image/image-transform-view.demo.html` through the dev server.
+
+Evidence for I59–I61 and their composition: [Open/navigation/transform checkpoint](PAINT-OPEN-NAVIGATION-EVIDENCE.md). GREEN is provisional; acceptance belongs to the owner.

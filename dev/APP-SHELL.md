@@ -16,6 +16,17 @@ The assembly contains no geometry, pixel or timeline algorithms. Its dependency 
 
 [Save/export UX](SAVE-EXPORT-UX.md) amends the assembly: Image is first and starts by default, with a first-available-adapter fallback. File → Save opens S10's side submenu; toolbar Save opens an S11 format chooser; Export opens export-only choices. S22 explicitly names only the current workspace's existing formats. Ctrl+S remains the direct native project save. Pending edits flush before either chooser or an export leaf; the current command state is checked again after the flush and at confirmation. Cancel does not write or export. Only native project save advances the saved baseline.
 
+## Ordinary-file Open
+
+[Open files](OPEN-FILES-UX.md) extends the mounted editor with an optional
+`openFile: {accept, open(file)}` seam. A-SHELL picks a File without reading payload,
+then routes ordinary extensions to the initiating workspace's existing importer
+or native files through S13. It checks the captured workspace/revision before raw
+import. Importers stage their content and call the existing replacement or commit
+ports. Only a successful native project open retains the selected native handle;
+raw input never becomes a project write target. Native filters that cannot
+represent a long project extension use All files, preserving actual filenames.
+
 ## Document and file lifecycle
 
 Each workspace keeps its own S02 history, saved revision, native file handle and view. Buttons, menus and shortcuts share availability checks; inactive or absent domain commands cannot run through shortcuts. S05/S12 bind globally for document shortcuts and separately to the active view. Switching releases the old view's captured gestures before rebinding. A modal blocks new gestures but still forwards terminal pointer cancellation to the originating view.

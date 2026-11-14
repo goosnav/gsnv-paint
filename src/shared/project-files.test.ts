@@ -37,7 +37,7 @@ const invalid = (request: unknown, ports: FilePorts) => projectFiles(request as 
 
 test('S13 golden actual S07 open decodes an independent complete container', async () => {
   const fake = portsFor(); const handle = fileHandle();
-  fake.ports.showOpenFilePicker = async options => { assert.deepEqual(options, { multiple: false, types: [{ accept }] }); return [handle]; };
+  fake.ports.showOpenFilePicker = async options => { assert.deepEqual(options, { multiple: false, types: [] }); return [handle]; };
   assert.deepEqual(await projectFiles({ operation: 'open' }, fake.ports), { ok: true, value: sample });
   assert.deepEqual(fake.calls, []);
 });
@@ -58,7 +58,7 @@ test('S13 each workspace suggests its extension and native picker type', async (
   for (const format of ['gsnv-cad', 'gsnv-image', 'gsnv-photo', 'gsnv-video', 'gsnv-document', 'gsnv-slides', 'gsnv-audio', 'gsnv-spreadsheet', 'gsnv-code'] as const) {
     const fake = portsFor(); const handle = fileHandle();
     fake.ports.showSaveFilePicker = async options => {
-      assert.deepEqual(options, { suggestedName: `Pixels.${format}`, types: [{ accept: { 'application/octet-stream': [`.${format}`] } }] });
+      assert.deepEqual(options, { suggestedName: `Pixels.${format}`, types: format === 'gsnv-spreadsheet' ? [] : [{ accept: { 'application/octet-stream': [`.${format}`] } }] });
       return handle;
     };
     const result = await projectFiles({ operation: 'save', package: { ...sample, project: { ...sample.project, format } } }, fake.ports);
@@ -195,4 +195,11 @@ test('S13 hostile error-message coercion cannot reject the file adapter promise'
   const fake = portsFor();
   assert.equal(errorOf(await invalid({ operation: 'save', package: broken }, fake.ports)).code, 'project.codec');
   assert.deepEqual(fake.calls, []);
+});
+
+test('S13 validates an already selected native file without opening another picker', async () => {
+  const fake = portsFor(); fake.ports.showOpenFilePicker = async () => { throw new Error('No second picker'); };
+  assert.deepEqual(await projectFiles({ operation: 'open', file: new File([golden], 'selected.gsnv-image') }, fake.ports), { ok: true, value: sample });
+  const result = await projectFiles({ operation: 'open', file: new File(['bad'], 'broken.gsnv-image') }, fake.ports);
+  assert.equal(errorOf(result).code, 'project.format'); assert.deepEqual(fake.calls, []);
 });

@@ -18,6 +18,7 @@ import { slidesView } from './slides-view.ts';
 import { slidesPlayback } from './slides-playback.ts';
 type Snapshot = NonNullable<Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0]>;
 const base64=(bytes:Uint8Array)=>{let text='';for(let i=0;i<bytes.length;i+=0x8000)text+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(text);};
+const PICTURE_TYPES={'image/png':['.png'],'image/jpeg':['.jpg','.jpeg'],'image/gif':['.gif'],'image/webp':['.webp']};
 export function createSlidesWorkspace(files: FilePorts): WorkspaceAdapter {
   const id=()=>crypto.randomUUID();
   const blank=()=>({id:id(),title:'Untitled presentation',format:'gsnv-slides',version:1,value:slidesDocument({operation:'new',slideId:id()})});
@@ -42,9 +43,9 @@ export function createSlidesWorkspace(files: FilePorts): WorkspaceAdapter {
         const label=action.kind==='element-update'?'Edit element':action.kind==='element-add'?`Insert ${action.element}`:action.kind.split('-').map((s,i)=>i?s:s[0]!.toUpperCase()+s.slice(1)).join(' ');
         host.commit({...current,value},label,current.identity);
       }
-      async function picture(){
-        if(!current||!slideId)return;const identity=current.identity,target=slideId;
-        const opened=await fileAccess({op:'open',accept:{'image/png':['.png'],'image/jpeg':['.jpg','.jpeg'],'image/gif':['.gif'],'image/webp':['.webp']}},files);
+      async function picture(file?:File){
+        if(!file&&(!current||!slideId))return;const identity=current?.identity,target=slideId;
+        const opened=await fileAccess({op:'open',file,maxBytes:20*1024*1024,accept:PICTURE_TYPES},files);
         if(disposed||'cancelled'in opened)return;if(!opened.ok)throw new Error(opened.error.message);
         const length=opened.value.bytes.reduce((n,b)=>n+b.byteLength,0);if(length>20*1024*1024)throw new Error('Pictures must be smaller than 20 MiB.');
         const bytes=new Uint8Array(length);let offset=0;for(const part of opened.value.bytes){bytes.set(part,offset);offset+=part.length;}
@@ -53,7 +54,9 @@ export function createSlidesWorkspace(files: FilePorts): WorkspaceAdapter {
         const data=base64(bytes),image=doc.createElement('img');image.src=`data:${mime};base64,${data}`;
         try{await image.decode();if(!image.naturalWidth||!image.naturalHeight)throw new Error('Empty image');}catch{throw new Error(`Could not read “${opened.value.name}” as a picture. Choose a valid image.`);}
         if(disposed)return;if(current?.identity!==identity||slideId!==target)throw new Error('The presentation changed before the picture was ready. Insert it again.');
-        apply({kind:'element-add',slide:target,id:id(),element:'image',image:{id:id(),mime,data,width:image.naturalWidth,height:image.naturalHeight}});
+        const imageValue={id:id(),mime,data,width:image.naturalWidth,height:image.naturalHeight};
+        if(current&&target)apply({kind:'element-add',slide:target,id:id(),element:'image',image:imageValue});
+        else {const document=blank();document.title=opened.value.name.replace(/\.[^.]+$/,'');document.value=slidesDocument({operation:'edit',value:document.value,action:{kind:'element-add',slide:document.value.slides[0]!.id,id:id(),element:'image',image:imageValue}});await host.open(document);}
       }
       function command(command:string){
         try{
@@ -74,6 +77,7 @@ export function createSlidesWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       const view=slidesView({root:editor,onAction:apply,onSelect(s,e){slideId=s;elementId=e;refresh();host.invalidate();},onCommand:command,onError:error});
       return {
+        openFile:{accept:PICTURE_TYPES,open:picture},
         render(snapshot){const replaced=snapshot?.id!==current?.id;current=snapshot;if(replaced){slideId=null;elementId=null;clear();}const content=deck();if(!content?.slides.some(s=>s.id===slideId))slideId=content?.slides[0]?.id??null;if(!content?.slides.find(s=>s.id===slideId)?.elements.some(e=>e.id===elementId))elementId=null;refresh();},
         model(){const content=deck(),slide=content?.slides.find(s=>s.id===slideId),index=content?.slides.findIndex(s=>s.id===slideId)??-1,element=slide?.elements.findIndex(e=>e.id===elementId)??-1;
           const item=(command:string,label:string,enabled=!!content)=>({id:`slides.${command}`,label,shortcut:'',enabled});

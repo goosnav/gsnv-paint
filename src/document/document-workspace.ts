@@ -21,6 +21,7 @@ import { documentContent, pageCss, pageInches, wordCount, sanitizeHtml, type Doc
 import './document-workspace.css';
 
 type Snapshot = Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
+const TEXT_TYPES = { 'text/plain': ['.txt', '.md'], 'text/html': ['.html', '.htm'] };
 const TYPING_PAUSE = 600, DPI = 96;
 const FONTS = ['Times New Roman', 'Georgia', 'Garamond', 'Arial', 'Verdana', 'Tahoma', 'Trebuchet MS', 'Courier New'];
 const SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 36, 48, 72];
@@ -145,8 +146,8 @@ export function createDocumentWorkspace(files: FilePorts): WorkspaceAdapter {
         const family = computed.fontFamily.split(',')[0]!.replace(/["']/g, '').trim(); fontSelect.value = FONTS.includes(family) ? family : '';
         const pt = Math.round(parseFloat(computed.fontSize) * 0.75 * 2) / 2; sizeSelect.value = SIZES.includes(pt) ? String(pt) : ''; if (!sizeSelect.value) { const o = sizeSelect.querySelector<HTMLOptionElement>('option[data-custom]') ?? sizeSelect.appendChild(Object.assign(make('option'), { hidden: true })); o.dataset.custom = ''; o.value = o.textContent = String(pt); sizeSelect.value = String(pt); }
       }
-      async function openFile(accept: Record<string, string[]>): Promise<{ name: string; bytes: Uint8Array } | null> {
-        const result = await fileAccess({ op: 'open', accept }, files); if (disposed || 'cancelled' in result) return null;
+      async function openFile(accept: Record<string, string[]>, file?: File): Promise<{ name: string; bytes: Uint8Array } | null> {
+        const result = await fileAccess({ op: 'open', accept, file }, files); if (disposed || 'cancelled' in result) return null;
         if (!result.ok) { setStatus(`${result.error.code}: ${result.error.message}`, true); return null; }
         return { name: result.value.name, bytes: joinParts(result.value.bytes) };
       }
@@ -162,8 +163,10 @@ export function createDocumentWorkspace(files: FilePorts): WorkspaceAdapter {
         if (current?.identity !== revision) { setStatus('The document changed before the picture was ready. Insert the picture again.', true); return; }
         exec('insertImage', image.src, 'Insert picture');
       }
-      async function importText() {
-        const file = await openFile({ 'text/plain': ['.txt', '.md'], 'text/html': ['.html', '.htm'] }); if (!file) return;
+      async function importText(selected?: File) {
+        const identity = current?.identity;
+        const file = await openFile(TEXT_TYPES, selected); if (!file) return;
+        if (current?.identity !== identity) { setStatus('The document changed while opening. Open it again.', true); return; }
         const text = new TextDecoder().decode(file.bytes), html = /\.html?$/i.test(file.name) ? parse(text).body.innerHTML : textToHtml(text);
         await host.open(blank(file.name.replace(/\.[^.]+$/, ''), html));
       }
@@ -256,6 +259,7 @@ export function createDocumentWorkspace(files: FilePorts): WorkspaceAdapter {
       const onSelection = () => { if (disposed) return; saveSelection(); syncToolbar(); };
       doc.addEventListener('selectionchange', onSelection);
       return {
+        openFile: { accept: TEXT_TYPES, open: importText },
         render(snapshot) {
           const changed = snapshot?.identity !== current?.identity;
           if (snapshot?.id !== current?.id) { status = ''; notice.textContent = ''; notice.hidden = true; }

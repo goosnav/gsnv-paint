@@ -106,7 +106,7 @@ test('IMAGE-APP layers, soft brush clipped to a selection, opacity/blend, adjust
     expect(inked).toBeGreaterThan(100);
     await expect(page.locator('.image-layer[aria-selected=true] .image-layer-name')).toHaveText('Text: Hello');
     await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight'); await page.keyboard.press('Enter'); // Nudge the selected text 2 px.
-    await page.keyboard.press('Control+t'); await dialog.getByLabel('Rotate (degrees)').fill('90'); await dialog.getByRole('button', { name: 'OK', exact: true }).click(); await page.keyboard.press('Enter');
+    await page.keyboard.press('Control+t'); await page.getByRole('spinbutton', { name: 'Transform angle', exact: true }).fill('90'); await page.getByRole('button', { name: 'Apply transform', exact: true }).click();
     await menu(page, 'Image', 'Flatten image');
     await menu(page, 'Image', 'Resize…'); await dialog.getByLabel('Width (px)').fill('400'); await dialog.getByRole('button', { name: 'OK', exact: true }).click(); expect(await size(page)).toEqual({ width: 400, height: 300 });
     await menu(page, 'Image', 'Canvas size…'); await dialog.getByLabel('Width (px)').fill('500'); await dialog.getByRole('button', { name: 'OK', exact: true }).click(); expect(await size(page)).toEqual({ width: 500, height: 300 });

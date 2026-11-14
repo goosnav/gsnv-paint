@@ -43,6 +43,7 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
         },
       });
       return{
+        openFile:{accept:{'model/step':['.step','.stp']},open(file){const content=current?cadProjectSource({operation:'read',value:current.value}):null;return importer.run({identity:current?.identity??null,units:content?.units??'mm',file});}},
         bridge:{
           prepare(role){if(disposed||importPending)throw Object.assign(new Error('Finish or cancel the STEP import before sending this view.'),{name:'BridgePendingEdit'});view.bridge?.prepare(role);},
           revision(){return importPending?'import-pending':view.bridge?.revision()??'unavailable';},

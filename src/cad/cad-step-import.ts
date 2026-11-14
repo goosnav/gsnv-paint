@@ -17,18 +17,18 @@ import { cadProjectSource, type CADSource } from './cad-project-source.ts';
 import { cadWorkerClient, type CADProtocol, type CADBuild } from './cad-worker-client.ts';
 type Ports={files:FilePorts;assets:CADProtocol['assets'];id():string;createWorker():Pick<Worker,'postMessage'|'terminate'|'addEventListener'|'removeEventListener'>;
   onStatus(state:'busy'|'ready'|'error',message:string):void;onImport(source:CADSource,preview:CADBuild,baseIdentity:string|null):void};
-export function cadSTEPImport(ports:Ports):{run(request:{identity:string|null;units:'mm'|'inch'}):Promise<void>;cancel():void;dispose():void}{
+export function cadSTEPImport(ports:Ports):{run(request:{identity:string|null;units:'mm'|'inch';file?:File}):Promise<void>;cancel():void;dispose():void}{
   if(!ports?.files||[ports.id,ports.createWorker,ports.onStatus,ports.onImport].some(v=>typeof v!=='function'))throw new TypeError('STEP import needs file/worker ports, IDs and callbacks.');
   const MAX_STEP_BYTES=64*1024*1024;
   type Job={done:Promise<void>;finish():void;worker:ReturnType<typeof cadWorkerClient>|null};
   let active:Job|null=null,disposed=false;
   const current=(job:Job)=>!disposed&&active===job;
   function stop(notify:boolean){const job=active;if(!job)return;active=null;job.worker?.dispose();job.finish();if(notify&&!disposed)ports.onStatus('ready','STEP import canceled.');}
-  async function run(request:{identity:string|null;units:'mm'|'inch'}){
+  async function run(request:{identity:string|null;units:'mm'|'inch';file?:File}){
     if(disposed)return;stop(false);let finish!:()=>void;
     const job:Job={done:new Promise<void>(resolve=>{finish=resolve;}),finish:()=>finish(),worker:null};active=job;
     try{
-      const opening=fileAccess({op:'open',accept:{'model/step':['.step','.stp']},maxBytes:MAX_STEP_BYTES},ports.files);
+      const opening=fileAccess({op:'open',file:request.file,accept:{'model/step':['.step','.stp']},maxBytes:MAX_STEP_BYTES},ports.files);
       ports.onStatus('busy','Choose a STEP file…');const selected=await Promise.race([opening,job.done]);if(!current(job)||!selected)return;
       if('cancelled' in selected){ports.onStatus('ready','STEP import canceled.');return;}
       if(!selected.ok)throw new Error(selected.error.message);

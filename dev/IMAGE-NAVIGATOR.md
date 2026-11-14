@@ -39,4 +39,4 @@ slider, typed percent, map mouse/touch drag, wheel synchronization, no accidenta
 paint/history mutation and containment at 1280x720. A touch-enabled Chromium test
 is evidence for pointer input only; physical iPad/Safari remains untested.
 
-Status: specified. Evidence pending.
+Status: provisional GREEN. See [checkpoint evidence](PAINT-OPEN-NAVIGATION-EVIDENCE.md).

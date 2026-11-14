@@ -34,7 +34,7 @@ import { createChrome, type ChromeModel } from '../shared/chrome.ts';
 import { bindInput, type CommandContext, type Gesture } from '../shared/input-adapter.ts';
 import { viewTransform, type View2D } from '../shared/view-transform.ts';
 import { showDialog, type DialogSpec } from '../shared/dialog.ts';
-import type { FilePorts } from '../shared/file-access.ts';
+import { fileAccess, type FilePorts } from '../shared/file-access.ts';
 import { recoveryStore, type RecoveryPorts } from '../shared/recovery-store.ts';
 import { capabilityProbe, type ProbeRequest, type Capability } from '../shared/capability-probe.ts';
 import { projectFiles, type ProjectFileRequest } from '../shared/project-files.ts';
@@ -53,6 +53,7 @@ type EditorView = {
   render(document: Snapshot | undefined, view: View2D): void;
   model(): Pick<ChromeModel, 'menus' | 'tools' | 'panels'>;
   context(): Pick<CommandContext, 'viewRole' | 'activeTool' | 'status'>;
+  openFile?: { accept: Record<string, string[]>; open(file: File): Promise<void> };
   command(id: string): void;
   gesture(gesture: Gesture): void;
   /** Presents effective zoom/typed pan when the adapter owns an additional view transform. */
@@ -335,7 +336,7 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
     try {
       let handle = handles[workspace];
       // Start permission/picker work before rendering or encoding can consume activation.
-      if (!handle && files.showSaveFilePicker) handle = await files.showSaveFilePicker({ suggestedName: `Untitled.gsnv-${workspace}`, types: [{ accept: { 'application/octet-stream': [`.gsnv-${workspace}`] } }] });
+      if (!handle && files.showSaveFilePicker) handle = await files.showSaveFilePicker({ suggestedName: `Untitled.gsnv-${workspace}`, types: `.gsnv-${workspace}`.length <= 16 ? [{ accept: { 'application/octet-stream': [`.gsnv-${workspace}`] } }] : [] });
       else if (handle) {
         const permission = (handle as FileSystemFileHandle & { requestPermission?: (options: { mode: 'readwrite' }) => Promise<string> }).requestPermission;
         if (permission && await permission.call(handle, { mode: 'readwrite' }) !== 'granted') throw new Error('Write permission was not granted.');
@@ -432,13 +433,27 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
     changeWorkspace(workspace); backup(workspace); if (isSaved) scheduleRemember(workspace);
   }
   async function open() {
-    opening = true; let selected: FileSystemFileHandle | undefined;
+    const initiatingWorkspace = state.workspace;
+    if (!flushView(initiatingWorkspace)) return;
+    const initialIdentity = state.documents[initiatingWorkspace]?.identity;
+    const importer = activeView()?.openFile;
+    opening = true;
     const initialEpochs = { ...epochs };
-    const ports: FilePorts = { ...files, ...(files.showOpenFilePicker ? { showOpenFilePicker: async (options: Parameters<NonNullable<FilePorts['showOpenFilePicker']>>[0]) => {
-      const selectedHandles = await files.showOpenFilePicker!(options); selected = selectedHandles[0]; return selectedHandles;
-    } } : {}) };
     try {
-      const result = await projectFiles({ operation: 'open' }, ports);
+      const picked = await fileAccess({ op: 'pick', accept: {
+        'application/octet-stream': WORKSPACES.map(workspace => `.gsnv-${workspace}`), ...importer?.accept,
+      } }, files);
+      if (disposed || 'cancelled' in picked) return;
+      if (!picked.ok) { status(`${picked.error.code}: ${picked.error.message}`); return; }
+      const { file, handle: selected } = picked.value;
+      const extension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+      if (importer && Object.values(importer.accept).some(extensions => extensions.includes(extension))) {
+        if (state.workspace !== initiatingWorkspace || state.documents[initiatingWorkspace]?.identity !== initialIdentity)
+          throw new Error('The workspace changed while choosing the file. Open it again in the intended workspace.');
+        if (candidates[initiatingWorkspace]) throw new Error('Restore or discard the pending recovery before opening another document.');
+        await importer.open(file); return;
+      }
+      const result = await projectFiles({ operation: 'open', file }, files);
       if (disposed || 'cancelled' in result) return;
       if (!result.ok) { status(`${result.error.code}: ${result.error.message}`); return; }
       const workspace = result.value.project.format.slice(5) as Workspace;

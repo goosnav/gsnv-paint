@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><title>Selection transform controls demo</title>
+<style>body{font:13px Tahoma;margin:0}main{position:relative;width:800px;height:560px;background:#ddd}#shape{position:absolute;background:#4579bd;transform-origin:center}</style>
+<main><div id="shape"></div></main>
+<script type="module">
+import './image-workspace.css';import '../shared/theme.css';import {imageTransformView} from './image-transform-view.ts';
+const root=document.querySelector('main'),shape=document.querySelector('#shape'),initial={x:200,y:200,width:180,height:100,angle:0};let box={...initial},active=false;
+const draw=()=>{Object.assign(shape.style,{left:box.x+'px',top:box.y+'px',width:box.width+'px',height:box.height+'px',transform:`rotate(${box.angle}deg)`});controls.update({box,active,view:{x:0,y:0,zoom:1}});};
+const controls=imageTransformView({root,onBegin(){active=true;draw();},onChange(next){box=next;draw();},onApply(){active=false;draw();},onCancel(){box={...initial};active=false;draw();},onError(error){console.error(error);}});draw();
+</script>

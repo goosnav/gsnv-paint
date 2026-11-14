@@ -29,6 +29,9 @@ import { imageLayersPanel, type LayerAction } from './image-layers-panel.ts';
 import { compositeLayers, maskedMerge, type CompositeLayer } from './image-composite.ts';
 import { dabLine, dab, spray, smudgeDab, applyCoverage, gradientFill, shapeMask, magicWand, combineMasks, maskBounds, type Coverage, type CoverageMode, type SmudgeCarry } from './image-brush.ts';
 import { adjustRaster, blurRaster, type AdjustOp } from './image-adjust.ts';
+import { imageTransformView } from './image-transform-view.ts';
+import type { TransformBox } from './image-transform.ts';
+import { imageNavigator } from './image-navigator.ts';
 import './image-workspace.css';
 
 type Snapshot = Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
@@ -82,7 +85,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       const make = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string) => { const node = document.createElement(tag); node.className = className; return node; };
       const stage = make('div', 'image-stage'), surface = make('div', 'image-surface'), canvas = make('canvas', 'image-canvas'), float = make('canvas', 'image-floating'), overlay = make('canvas', 'image-overlay');
       const ring = make('div', 'image-brush-ring'), hint = make('div', 'image-tool-hint'), notice = make('div', 'image-empty'), optionsPanel = document.createElement('div'), layersPanel = document.createElement('div');
-      stage.tabIndex = -1; canvas.setAttribute('aria-label', 'Image canvas'); notice.textContent = 'Choose New (Ctrl+N) to start an image, or Open (Ctrl+O) a .gsnv-image project.';
+      stage.tabIndex = -1; canvas.setAttribute('aria-label', 'Image canvas'); notice.textContent = 'Choose New (Ctrl+N) to start an image, or Open (Ctrl+O) an image or a .gsnv-image project.';
       surface.append(canvas, float, overlay); stage.append(surface, ring, notice); host.root.append(stage, hint);
       const context = canvas.getContext('2d'), floatContext = float.getContext('2d'), overlayContext = overlay.getContext('2d');
       let current: Snapshot, source: ImageContent | null = null, rasters = new Map<string, Raster>(), display: ImageData | null = null, view: View2D = { zoom: 1, pan: { x: 0, y: 0 } };
@@ -90,7 +93,8 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       let selection: Selection | null = null, floating: Floating | null = null, stroke: Stroke | null = null, shapeBase: Uint8ClampedArray | null = null, shapeDirty: Rect | null = null;
       let smudge: SmudgeCarry | null = null, cloneSource: [number, number] | null = null, opacityPreview: number | null = null, edges: Int32Array | null = null, phase = 0;
       let scale = 1, offset = { x: 0, y: 0 }, panning: { x: number; y: number } | null = null, cursor: [number, number] | null = null, message = '', disposed = false, marquee: { shape: string; points: [number, number][] } | null = null;
-      let pendingImages = 0;
+      let pendingImages = 0, rasterRevision = 0;
+      let transform: { box: TransformBox; original: Raster } | null = null;
       const pendingTransfer = () => disposed ? 'closed workspace' : floating ? 'floating selection' : stroke ? 'brush stroke' : shapeBase ? 'shape' : marquee || tool.drag ? 'selection or tool gesture' : opacityPreview !== null ? 'opacity preview' : pendingImages ? 'image import or paste' : '';
       const bridge = imageSourceAdapter({ read: () => current ? { ...current, value: current.value as ImageContent } : undefined, pending: pendingTransfer });
       const palette = imagePalette({ root: optionsPanel, onChange(change) {
@@ -111,15 +115,32 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       const fail = (cause: unknown) => { message = cause instanceof Error ? cause.message : String(cause); refresh(); };
       const fullRect = (): Rect => ({ x: 0, y: 0, width: source?.width ?? 0, height: source?.height ?? 0 });
       const area = () => selection?.bounds ?? fullRect();
+      function applyView(next: View2D) {
+        scale = next.zoom / view.zoom; offset = { x: 0, y: 0 }; const o = origin();
+        offset = { x: (next.pan.x - view.pan.x) / view.zoom - o.x, y: (next.pan.y - view.pan.y) / view.zoom - o.y }; refresh();
+      }
+      const navigator = imageNavigator({ root: host.root,
+        onZoom(zoom) { const t = placement(); applyView(viewTransform({ view: { zoom: t.z, pan: { x: t.x, y: t.y } }, range: { min: .01, max: 64 }, action: { type: 'zoom', factor: zoom / t.z, cursor: { x: stage.clientWidth / 2, y: stage.clientHeight / 2 } } })); },
+        onCenter(point) { const t = placement(); applyView({ zoom: t.z, pan: { x: stage.clientWidth / 2 - point.x * t.z, y: stage.clientHeight / 2 - point.y * t.z } }); },
+        onFit() { fitView('fit'); refresh(); },
+      });
 
+      const transformView = imageTransformView({ root: stage,
+        onBegin: freeTransform,
+        onChange(box) { if (!transform) return; transform.box = box; message = ''; layout(); },
+        onApply() { placeFloating(); message = ''; refresh(); stage.focus(); host.invalidate(); },
+        onCancel() { transform = null; floating = null; resync(); message = ''; refresh(); stage.focus(); host.invalidate(); },
+        onError: fail,
+      });
       function composite(rect: Rect | null = null) {
         if (!source || !context || !display) return;
         const r = clip(rect ?? fullRect(), source); if (!r.width || !r.height) return;
         const stack: CompositeLayer[] = source.layers.map(l => ({ raster: rasters.get(l.id)!, visible: l.visible, opacity: l.id === activeId() && opacityPreview !== null ? opacityPreview : l.opacity, blend: l.blend }));
         compositeLayers({ width: source.width, height: source.height, layers: stack, rect: r, out: display.data });
-        context.putImageData(display, 0, 0, r.x, r.y, r.width, r.height);
+        context.putImageData(display, 0, 0, r.x, r.y, r.width, r.height); rasterRevision++;
       }
       function resync() {
+        transform = null;
         if (!current) return; source = current.value as ImageContent;
         selection = source.selection;
         rasters = new Map(source.layers.map(l => [l.id, imageContent({ operation: 'raster', value: source!, layerId: l.id })]));
@@ -157,9 +178,16 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       function layout() {
         const t = placement(), z = t.z;
+        navigator.update(source ? { image: canvas, revision: rasterRevision, view: { x: t.x, y: t.y, zoom: z }, viewport: { width: stage.clientWidth, height: stage.clientHeight } } : null);
         surface.style.transform = `translate(${t.x}px,${t.y}px) scale(${z})`;
         surface.style.width = `${source?.width ?? 0}px`; surface.style.height = `${source?.height ?? 0}px`; surface.dataset.zoom = z >= 1 ? 'pixels' : 'smooth';
-        if (floating) { float.hidden = false; float.style.left = `${floating.x}px`; float.style.top = `${floating.y}px`; } else if (!document.querySelector('dialog[open]')) float.hidden = true;
+        const bounds = transform?.box ?? (floating ? { x: floating.x, y: floating.y, width: floating.raster.width, height: floating.raster.height, angle: 0 } : selection && ['move', 'select', 'ellipseSelect', 'lasso', 'wand'].includes(tool.tool) && !tool.drag ? { ...selection.bounds, angle: 0 } : null);
+        transformView.update(bounds && source ? { box: bounds, active: !!transform, view: { x: t.x, y: t.y, zoom: z } } : null);
+        if (floating) {
+          float.hidden = false;
+          if (transform) { const b = transform.box, r = transform.original; float.style.left = `${b.x + b.width / 2}px`; float.style.top = `${b.y + b.height / 2}px`; float.style.transformOrigin = '50% 50%'; float.style.transform = `translate(-50%,-50%) rotate(${b.angle}deg) scale(${b.width / r.width},${b.height / r.height})`; }
+          else { float.style.left = `${floating.x}px`; float.style.top = `${floating.y}px`; float.style.transform = ''; }
+        } else { float.style.transform = ''; if (!document.querySelector('dialog[open]')) float.hidden = true; }
       }
       function thumbnails() {
         const map = new Map<string, HTMLCanvasElement>(); if (!source) return map;
@@ -199,7 +227,12 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       function placeFloating() {
         if (!floating || !source) return;
-        const f = floating; floating = null; const raster = active();
+        const f = floating;
+        if (transform) { const b = transform.box, original = transform.original;
+          const r = affineRaster(original, { scaleX: b.width / original.width * 100, scaleY: b.height / original.height * 100, angle: b.angle });
+          f.raster = r; f.x = Math.round(b.x + b.width / 2 - r.width / 2); f.y = Math.round(b.y + b.height / 2 - r.height / 2); f.label = 'Transform'; transform = null;
+        }
+        floating = null; const raster = active();
         paintRaster(raster, { kind: 'blit', source: f.raster, x: f.x, y: f.y, mode: 'over' });
         const mask = new Uint8Array(source.width * source.height);
         for (let y = 0; y < f.raster.height; y++) for (let x = 0; x < f.raster.width; x++) { const px = x + f.x, py = y + f.y; if (px >= 0 && py >= 0 && px < source.width && py < source.height && f.raster.data[(y * f.raster.width + x) * 4 + 3]) mask[py * source.width + px] = 255; }
@@ -367,21 +400,13 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           cancel() { show(null); },
         });
       }
-      /** Free transform: scale and rotate the selection (or the whole layer) with live preview; the result floats so it can be moved. */
+      /** Start a non-destructive on-canvas transform; sample the original only on apply. */
       function freeTransform() {
-        if (!source) return;
+        if (!source || transform) return; finishStroke();
         if (!floating) lift(); if (!floating) return;
-        const f = floating, original = copyRaster(f.raster), cx = f.x + original.width / 2, cy = f.y + original.height / 2;
-        const apply = (v: Record<string, unknown>) => { const sx = Number(v.scaleX), sy = v.keep ? sx : Number(v.scaleY), r = affineRaster(original, { scaleX: sx, scaleY: sy, angle: Number(v.angle) });
-          f.raster = r; f.x = Math.round(cx - r.width / 2); f.y = Math.round(cy - r.height / 2); f.origin = { x: f.x, y: f.y };
-          float.width = r.width; float.height = r.height; floatContext?.putImageData(new ImageData(new Uint8ClampedArray(r.data), r.width, r.height), 0, 0); layout(); };
-        host.dialog({ title: 'Free transform', fields: [{ key: 'scaleX', label: 'Width (%)', type: 'number', min: 1, max: 1000, step: 1 }, { key: 'scaleY', label: 'Height (%)', type: 'number', min: 1, max: 1000, step: 1 }, { key: 'keep', label: 'Keep proportions', type: 'checkbox' }, { key: 'angle', label: 'Rotate (degrees)', type: 'number', min: -360, max: 360, step: 0.5 }],
-          initial: { scaleX: 100, scaleY: 100, keep: true, angle: 0 },
-          validate(values) { const nums = [values.scaleX, values.scaleY, values.angle].map(Number); return nums.every(Number.isFinite) && nums[0]! > 0 && nums[1]! > 0 ? { ok: true, value: values } : { ok: false, error: { code: 'image.transform', message: 'Use positive sizes and a finite angle.' } }; },
-          preview(value) { apply(value as Record<string, unknown>); },
-          commit(value) { apply(value as Record<string, unknown>); f.label = 'Transform'; tool = { tool: 'move', drag: null }; message = 'Drag to position, then press Enter (or pick another tool) to place it.'; refresh(); host.invalidate(); },
-          cancel() { floating = null; resync(); refresh(); },
-        });
+        const f = floating; transform = { original: copyRaster(f.raster), box: { x: f.x, y: f.y, width: f.raster.width, height: f.raster.height, angle: 0 } };
+        f.label = 'Transform'; tool = { tool: 'move', drag: null };
+        message = 'Drag handles to resize or rotate · Shift constrains · Enter applies · Esc cancels.'; refresh(); host.invalidate();
       }
       function transformAll(op: TransformOp, label: string) {
         if (!source) return; placeFloating(); selection = null; selectionChanged();
@@ -461,10 +486,10 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         const [x, y] = toDocument({ x: 0, y: 0 }); addLayer(pasted, 'Pasted', 'Paste', { x: Math.max(0, Math.ceil(x)), y: Math.max(0, Math.ceil(y)), select: false }); tool = { tool: 'move', drag: null }; host.invalidate();
         } finally { pendingImages--; host.invalidate(); }
       }
-      async function importImage(asLayer: boolean) {
+      async function importImage(asLayer: boolean, file?: File) {
         const identity = current?.identity; pendingImages++; host.invalidate();
         try {
-        const result = await fileAccess({ op: 'open', accept: IMAGE_TYPES }, files);
+        const result = await fileAccess({ op: 'open', accept: IMAGE_TYPES, file }, files);
         if (disposed || 'cancelled' in result) return;
         if (!result.ok) { fail(`${result.error.code}: ${result.error.message}`); return; }
         try {
@@ -512,11 +537,11 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         message = '';
         if (id === 'bridge.imageToVideo') { void host.transfer?.({ route: 'image-to-video-bin' }); return; }
         const toolId = id.startsWith('image.') ? id.slice(6) as ImageTool : null;
-        if (toolId && (IMAGE_TOOLS as readonly string[]).includes(toolId)) { if (!['select', 'ellipseSelect', 'lasso', 'move'].includes(toolId)) placeFloating(); if (toolId === 'picker' && tool.tool !== 'picker') previousTool = tool.tool; tool = imageToolInput({ state: tool, event: { kind: 'tool', tool: toolId }, inside: () => false, floating: !!floating }).state; refresh(); return; }
+        if (toolId && (IMAGE_TOOLS as readonly string[]).includes(toolId)) { if (transform) placeFloating(); if (!['select', 'ellipseSelect', 'lasso', 'move'].includes(toolId)) placeFloating(); if (toolId === 'picker' && tool.tool !== 'picker') previousTool = tool.tool; tool = imageToolInput({ state: tool, event: { kind: 'tool', tool: toolId }, inside: () => false, floating: !!floating }).state; refresh(); return; }
         if (id === 'image.transform') { freeTransform(); return; }
         if (id.startsWith('image.nudge')) {
           if (!floating && selection) lift(); if (!floating) return;
-          const d = { nudgeLeft: [-1, 0], nudgeRight: [1, 0], nudgeUp: [0, -1], nudgeDown: [0, 1] }[id.slice(6) as 'nudgeLeft']!; floating.x += d[0]!; floating.y += d[1]!; floating.origin = { x: floating.x, y: floating.y }; refresh(); return;
+          const d = { nudgeLeft: [-1, 0], nudgeRight: [1, 0], nudgeUp: [0, -1], nudgeDown: [0, 1] }[id.slice(6) as 'nudgeLeft']!; if (transform) { transform.box = { ...transform.box, x: transform.box.x + d[0]!, y: transform.box.y + d[1]! }; refresh(); return; } floating.x += d[0]!; floating.y += d[1]!; floating.origin = { x: floating.x, y: floating.y }; refresh(); return;
         }
         if (id === 'image.sizeUp' || id === 'image.sizeDown') { options = { ...options, size: Math.min(500, Math.max(1, id === 'image.sizeUp' ? Math.ceil(options.size * 1.2 + 0.5) : Math.floor(options.size / 1.2))) }; refresh(); return; }
         if (id === 'tool.cancel') { const transient = !!floating || !!stroke || !!shapeBase || !!marquee; pointer({ kind: 'cancel' }); if (transient) { floating = null; resync(); } else setSelection(null, 'replace'); refresh(); return; }
@@ -527,9 +552,10 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         if (id === 'edit.selectAll') { placeFloating(); setSelection(new Uint8Array(source.width * source.height).fill(255), 'replace', 'Select all'); refresh(); return; }
         if (id === 'image.deselect') { placeFloating(); setSelection(null, 'replace'); refresh(); return; }
         if (id === 'image.invertSelection') { placeFloating(); setSelection(selection ? Uint8Array.from(selection.mask, v => 255 - v) : new Uint8Array(source.width * source.height).fill(255), 'replace', 'Invert selection'); refresh(); return; }
+        if (transform && ['edit.copy', 'edit.cut', 'edit.delete'].includes(id)) placeFloating();
         if (id === 'edit.copy' || id === 'edit.cut') { const pixels = selectedPixels(); if (!pixels) return; clipboard = pixels; void systemCopy(pixels); if (id === 'edit.copy') { message = `Copied ${pixels.width} × ${pixels.height} pixels.`; refresh(); return; } }
         if (id === 'edit.cut' || id === 'edit.delete') {
-          if (floating) { floating = null; composite(); commitActive(id === 'edit.cut' ? 'Cut' : 'Delete'); }
+          if (floating) { transform = null; floating = null; composite(); commitActive(id === 'edit.cut' ? 'Cut' : 'Delete'); }
           else if (selection) { const raster = active(), base = new Uint8ClampedArray(raster.data); paintRaster(raster, { kind: 'clear', rect: selection.bounds, color: isBottom() ? secondary : [0, 0, 0, 0] }); maskedMerge({ target: raster, base, mask: selection.mask, rect: selection.bounds }); composite(selection.bounds); commitActive(id === 'edit.cut' ? 'Cut' : 'Delete'); }
           refresh(); return;
         }
@@ -594,6 +620,8 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       const Resize = window.ResizeObserver, observer = Resize ? new Resize(() => layout()) : null; observer?.observe(stage);
       return {
         bridge,
+        flush() { transformView.flush(); finishStroke(); placeFloating(); refresh(); },
+        openFile: { accept: IMAGE_TYPES, open: file => importImage(false, file) },
         render(snapshot, nextView) {
           const changed = snapshot?.identity !== current?.identity, opened = snapshot?.id !== current?.id; current = snapshot; view = nextView;
           if (changed) { shapeBase = null; shapeDirty = null; marquee = null; tool = { ...tool, drag: null }; if (stroke?.timer) window.clearInterval(stroke.timer); stroke = null; opacityPreview = null; }
@@ -611,7 +639,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           const index = source?.layers.findIndex(l => l.id === activeId()) ?? -1, count = source?.layers.length ?? 0;
           return {
             menus: [
-              { id: 'select', label: 'Select', items: [item('edit.selectAll', 'Select all', 'select', 'Ctrl+A'), item('image.deselect', 'Deselect', undefined, '', false, has), item('image.invertSelection', 'Invert selection'), item('edit.copy', 'Copy', 'copy', 'Ctrl+C', false, has), item('edit.cut', 'Cut', 'cut', 'Ctrl+X', false, has), item('edit.paste', 'Paste as new layer', 'paste', 'Ctrl+V'), item('edit.delete', 'Delete', 'delete', 'Delete', false, has), item('image.crop', 'Crop to selection', 'crop', '', true, has), item('image.transform', 'Free transform…', 'rotate', 'Ctrl+T'), item('image.nudgeLeft', 'Nudge left', undefined, '←', false, has), item('image.nudgeRight', 'Nudge right', undefined, '→', false, has), item('image.nudgeUp', 'Nudge up', undefined, '↑', false, has), item('image.nudgeDown', 'Nudge down', undefined, '↓', false, has)] },
+              { id: 'select', label: 'Select', items: [item('edit.selectAll', 'Select all', 'select', 'Ctrl+A'), item('image.deselect', 'Deselect', undefined, '', false, has), item('image.invertSelection', 'Invert selection'), item('edit.copy', 'Copy', 'copy', 'Ctrl+C', false, has), item('edit.cut', 'Cut', 'cut', 'Ctrl+X', false, has), item('edit.paste', 'Paste as new layer', 'paste', 'Ctrl+V'), item('edit.delete', 'Delete', 'delete', 'Delete', false, has), item('image.crop', 'Crop to selection', 'crop', '', true, has), item('image.transform', 'Free transform', 'rotate', 'Ctrl+T', true), item('image.nudgeLeft', 'Nudge left', undefined, '←', false, has), item('image.nudgeRight', 'Nudge right', undefined, '→', false, has), item('image.nudgeUp', 'Nudge up', undefined, '↑', false, has), item('image.nudgeDown', 'Nudge down', undefined, '↓', false, has)] },
               { id: 'image', label: 'Image', items: [item('image.import', 'Open image…', 'open'), item('image.importLayer', 'Import as layer…', 'layerAdd'), item('image.exportPNG', 'Export PNG…', 'export', '', true), item('bridge.imageToVideo', 'Send image to Video bin', 'video', '', false, enabled && !!host.transfer && !pendingTransfer()), item('image.resize', 'Resize…', 'fit'), item('image.canvasSize', 'Canvas size…', 'grid'),
                 item('image.rotateRight', 'Rotate right', 'rotate', '', true), item('image.rotateLeft', 'Rotate left', 'rotate'), item('image.rotate180', 'Rotate 180°', 'rotate'), item('image.flipH', 'Flip horizontal', 'flip', '', true), item('image.flipV', 'Flip vertical', 'flip'),
                 item('image.flatten', 'Flatten image', 'layers', '', false, enabled && count > 1), item('view.fit', 'Zoom to fit', 'fit', 'F'), item('image.actualSize', 'Actual pixels', 'zoomIn'), item('image.sizeUp', 'Larger brush', undefined, ']'), item('image.sizeDown', 'Smaller brush', undefined, '['), item('color.swap', 'Swap colours', undefined, 'X'), item('color.reset', 'Default colours', undefined, 'D')] },
@@ -634,6 +662,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
             else if (gesture.phase === 'up' || gesture.phase === 'cancel') { panning = null; delete stage.dataset.panning; }
             return;
           }
+          if (transform) { if (gesture.phase === 'down') { placeFloating(); refresh(); host.invalidate(); } return; }
           try {
             const point = toDocument(gesture.point); cursor = point;
             if (gesture.phase === 'cancel') { pointer({ kind: 'cancel' }); ring.hidden = true; }
@@ -641,7 +670,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           } catch (cause) { fail(cause); }
           if (gesture.phase !== 'move') host.invalidate();
         },
-        dispose() { if (disposed) return; disposed = true; window.clearInterval(antTimer); if (stroke?.timer) window.clearInterval(stroke.timer); observer?.disconnect(); palette.dispose(); layers.dispose(); host.root.replaceChildren(); },
+        dispose() { if (disposed) return; disposed = true; window.clearInterval(antTimer); if (stroke?.timer) window.clearInterval(stroke.timer); observer?.disconnect(); navigator.dispose(); transformView.dispose(); palette.dispose(); layers.dispose(); host.root.replaceChildren(); },
       };
     },
   };

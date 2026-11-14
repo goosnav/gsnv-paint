@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><title>Canvas navigator demo</title>
+<style>body{font:13px Tahoma;margin:0}main{position:relative;width:800px;height:560px;background:#888}#image{position:absolute;transform-origin:0 0}</style>
+<main><canvas id="image" width="800" height="600"></canvas></main>
+<script type="module">
+import './image-workspace.css';import '../shared/theme.css';import {imageNavigator} from './image-navigator.ts';
+const root=document.querySelector('main'),image=document.querySelector('#image'),ctx=image.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,800,600);ctx.fillStyle='#285ba6';ctx.fillRect(100,100,180,120);
+let view={x:80,y:40,zoom:.8};const draw=()=>{image.style.transform=`translate(${view.x}px,${view.y}px) scale(${view.zoom})`;nav.update({image,revision:1,view,viewport:{width:800,height:560}});};
+const nav=imageNavigator({root,onZoom(zoom){const x=(400-view.x)/view.zoom,y=(280-view.y)/view.zoom;view={x:400-x*zoom,y:280-y*zoom,zoom};draw();},onCenter({x,y}){view={...view,x:400-x*view.zoom,y:280-y*view.zoom};draw();},onFit(){view={x:80,y:40,zoom:.8};draw();}});draw();
+</script>
