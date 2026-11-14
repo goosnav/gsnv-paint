@@ -272,3 +272,10 @@ The [Save/export UX contract](SAVE-EXPORT-UX.md) amends S09/S10/S11 and A-SHELL 
 | Architecture | 03-ARCHITECTURE.md and every CORE/SHELL boundary in the three map files |
 
 Other conceptual owners are bound by the CAD and media maps. `requirements.json` keeps the stable design owner name; the table maps it to concrete files/bricks.
+
+## Open ordinary files (owner-requested amendment)
+
+[OPEN-FILES-UX.md](OPEN-FILES-UX.md) amends S07, S13 and A-SHELL plus existing
+workspace importer seams. Implement transport tests first, then routing and
+workspace integration, then browser acceptance. No new file codecs or domain
+modules. Status: specified, not yet GREEN.
