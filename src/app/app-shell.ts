@@ -86,8 +86,8 @@ type Handle = {
   dispose(): void;
 };
 
-const WORKSPACES = ['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio'] as const;
-const NAMES = { cad: 'CAD', image: 'Image', photo: 'Photo', video: 'Video', document: 'Document', slides: 'Slides', audio: 'Audio' } as const;
+const WORKSPACES = ['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code'] as const;
+const NAMES = { cad: 'CAD', image: 'Image', photo: 'Photo', video: 'Video', document: 'Document', slides: 'Slides', audio: 'Audio', spreadsheet: 'Spreadsheet', code: 'Code' } as const;
 const RANGE = { min: 0.01, max: 64 };
 const RECENT_MENU_LIMIT = 12;
 const TWO_DIMENSIONAL = new Set(['sketch2d', 'canvas2d', 'preview2d']);
@@ -107,17 +107,17 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
   const rememberQueues: Partial<Record<Workspace, Promise<boolean>>> = {};
   const remembering: Partial<Record<Workspace, { identity: string; task: Promise<boolean> }>> = {};
   const pending = new Set<Promise<unknown>>();
-  const epochs = { cad: 0, image: 0, photo: 0, video: 0, document: 0, slides: 0, audio: 0 };
-  const saving = { cad: false, image: false, photo: false, video: false, document: false, slides: false, audio: false };
-  const observed = { cad: 0, image: 0, photo: 0, video: 0, document: 0, slides: 0, audio: 0 };
-  const issued = { cad: 0, image: 0, photo: 0, video: 0, document: 0, slides: 0, audio: 0 };
-  const queues: Record<Workspace, Promise<void>> = { cad: Promise.resolve(), image: Promise.resolve(), photo: Promise.resolve(), video: Promise.resolve(), document: Promise.resolve(), slides: Promise.resolve(), audio: Promise.resolve() };
-  const stored = { cad: false, image: false, photo: false, video: false, document: false, slides: false, audio: false };
-  const recoveryBlocked = { cad: false, image: false, photo: false, video: false, document: false, slides: false, audio: false };
+  const epochs = { cad: 0, image: 0, photo: 0, video: 0, document: 0, slides: 0, audio: 0, spreadsheet: 0, code: 0 };
+  const saving = { cad: false, image: false, photo: false, video: false, document: false, slides: false, audio: false, spreadsheet: false, code: false };
+  const observed = { cad: 0, image: 0, photo: 0, video: 0, document: 0, slides: 0, audio: 0, spreadsheet: 0, code: 0 };
+  const issued = { cad: 0, image: 0, photo: 0, video: 0, document: 0, slides: 0, audio: 0, spreadsheet: 0, code: 0 };
+  const queues: Record<Workspace, Promise<void>> = { cad: Promise.resolve(), image: Promise.resolve(), photo: Promise.resolve(), video: Promise.resolve(), document: Promise.resolve(), slides: Promise.resolve(), audio: Promise.resolve(), spreadsheet: Promise.resolve(), code: Promise.resolve() };
+  const stored = { cad: false, image: false, photo: false, video: false, document: false, slides: false, audio: false, spreadsheet: false, code: false };
+  const recoveryBlocked = { cad: false, image: false, photo: false, video: false, document: false, slides: false, audio: false, spreadsheet: false, code: false };
   const recoveryErrors: Partial<Record<Workspace, string>> = {};
   const candidates: Partial<Record<Workspace, { package?: Package; error?: string }>> = {};
   const handles: Partial<Record<Workspace, FileSystemFileHandle>> = {};
-  const views: Record<Workspace, View2D> = { cad: { zoom: 1, pan: { x: 0, y: 0 } }, image: { zoom: 1, pan: { x: 0, y: 0 } }, photo: { zoom: 1, pan: { x: 0, y: 0 } }, video: { zoom: 1, pan: { x: 0, y: 0 } }, document: { zoom: 1, pan: { x: 0, y: 0 } }, slides: { zoom: 1, pan: { x: 0, y: 0 } }, audio: { zoom: 1, pan: { x: 0, y: 0 } } };
+  const views: Record<Workspace, View2D> = { cad: { zoom: 1, pan: { x: 0, y: 0 } }, image: { zoom: 1, pan: { x: 0, y: 0 } }, photo: { zoom: 1, pan: { x: 0, y: 0 } }, video: { zoom: 1, pan: { x: 0, y: 0 } }, document: { zoom: 1, pan: { x: 0, y: 0 } }, slides: { zoom: 1, pan: { x: 0, y: 0 } }, audio: { zoom: 1, pan: { x: 0, y: 0 } }, spreadsheet: { zoom: 1, pan: { x: 0, y: 0 } }, code: { zoom: 1, pan: { x: 0, y: 0 } } };
   const editors: Partial<Record<Workspace, { root: HTMLElement; view: EditorView }>> = {};
   const historyPanel = document.createElement('div'); historyPanel.dataset.panelHistory = '';
   const recoveryPanel = document.createElement('div'); recoveryPanel.dataset.panelRecovery = '';
@@ -196,6 +196,7 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
   }
   function render() {
     if (disposed || disposing || modalActive) return;
+    const ownedFocus = root.contains(document.activeElement);
     const workspace = state.workspace;
     if (!editors[workspace] && adapters[workspace]) {
       const pane = document.createElement('div'); pane.className = 'app-editor'; chrome.viewport.append(pane);
@@ -223,6 +224,8 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
       button.disabled = id === 'recovery.restore' && !candidate.package; button.onclick = () => { void dispatch(id!); }; recoveryPanel.append(button);
     }
     chrome.update(model());
+    // Replacing an editor's DOM must not send subsequent app shortcuts to the browser.
+    if (ownedFocus && document.activeElement === document.body) chrome.viewport.focus({ preventScroll: true });
   }
   function flushView(workspace: Workspace): boolean {
     try { editors[workspace]?.view.flush?.(); return true; }
@@ -390,6 +393,7 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
     if (id === 'file.save') { await save(workspace); return; }
     if (id === 'file.new') { if (await mayReplace(workspace) && !disposed && !modalActive) replace(workspace, adapters[workspace]!.create!(), false); return; }
     if (id === 'file.rename') {
+      if (!flushView(workspace)) return;
       const current = state.documents[workspace]!;
       dialog({ title: 'Rename project', fields: [{ key: 'title', label: 'Name', type: 'text' }], initial: { title: current.title },
         validate: values => String(values.title).trim() ? { ok: true, value: String(values.title).trim() } : { ok: false, error: { code: 'file.title', message: 'Type a name.' } },

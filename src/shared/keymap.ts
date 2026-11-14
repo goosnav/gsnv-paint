@@ -3,9 +3,9 @@
  * KIND       CORE
  * CONTRACT   IN: CommandEvent with normalized KeyboardEvent.key and explicit focus role.
  *            OUT: {command,preventDefault}; stable command ID or null for unhandled keys.
- *            Text editing stays native; dialogs own Enter/Escape; Video playback Space
- *            is limited to its timeline, while 2D views use Space to hold pan. In Document and
- *            Slides, Ctrl+Z/Y while typing undo the document (their text edits are document history).
+ *            Text editing stays native; dialogs own Enter/Escape; Video/Audio playback Space
+ *            is limited to timelines, while 2D views use Space to hold pan. In Document and
+ *            Slides and Code, Ctrl+Z/Y while typing undo the document (their text edits are document history).
  *            RAISES: TypeError for invalid workspace, context, key or modifier types.
  * GUARANTEES Pure, deterministic, no input mutation, no browser-event side effects.
  * TUNING     COMMON, CAD_KEYS, IMAGE_KEYS, PHOTO_KEYS and VIDEO_KEYS are shortcut tables; change only with shortcut review.
@@ -21,7 +21,7 @@
 
 export type CommandEvent = {
   key: string; ctrl: boolean; meta: boolean; shift: boolean; alt: boolean;
-  target: 'text' | 'view' | 'dialog'; workspace: 'cad' | 'image' | 'photo' | 'video' | 'document' | 'slides' | 'audio';
+  target: 'text' | 'view' | 'dialog'; workspace: 'cad' | 'image' | 'photo' | 'video' | 'document' | 'slides' | 'audio' | 'spreadsheet' | 'code';
   viewRole: 'timeline' | 'preview2d' | 'canvas2d' | 'cad3d' | 'sketch2d' | 'none';
 };
 export type CommandResult = { command: string | null; preventDefault: boolean };
@@ -46,7 +46,7 @@ const VIDEO_KEYS: Readonly<Record<string, string>> = {
 
 export function keymap(event: CommandEvent): CommandResult {
   if (!event || typeof event !== 'object' || typeof event.key !== 'string' || !event.key ||
-      !['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio'].includes(event.workspace) ||
+      !['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code'].includes(event.workspace) ||
       !['text', 'view', 'dialog'].includes(event.target) ||
       !['timeline', 'preview2d', 'canvas2d', 'cad3d', 'sketch2d', 'none'].includes(event.viewRole) ||
       [event.ctrl, event.meta, event.shift, event.alt].some(value => typeof value !== 'boolean')) {
@@ -62,7 +62,7 @@ export function keymap(event: CommandEvent): CommandResult {
   }
   if (event.target === 'text') {
     // Rich-text workspaces keep one history: typing commits to the document, so undo must be the document's.
-    if (primary && (event.workspace === 'document' || event.workspace === 'slides') && (key === 'z' || key === 'y')) return result(key === 'y' || event.shift ? 'edit.redo' : 'edit.undo');
+    if (primary && (event.workspace === 'document' || event.workspace === 'slides' || event.workspace === 'code') && (key === 'z' || key === 'y')) return result(key === 'y' || event.shift ? 'edit.redo' : 'edit.undo');
     return result(primary && !event.shift && ['s', 'o', 'n'].includes(key) ? COMMON[key] : null);
   }
   if (primary) {
@@ -75,6 +75,7 @@ export function keymap(event: CommandEvent): CommandResult {
   if (key === 'Delete') return result('edit.delete');
   if (key === ' ') {
     if (event.workspace === 'video' && event.viewRole === 'timeline') return result('video.togglePlayback');
+    if (event.workspace === 'audio' && event.viewRole === 'timeline') return result('audio.togglePlayback');
     return result(['preview2d', 'canvas2d', 'sketch2d'].includes(event.viewRole) ? 'view.panHold' : null);
   }
   if (event.workspace === 'video' && event.viewRole === 'timeline') {

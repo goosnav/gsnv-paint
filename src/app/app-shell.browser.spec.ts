@@ -112,30 +112,19 @@ test('A-SHELL actual window composes fixture editing, history, project files and
         await expect(capabilityRows.nth(index)).toHaveText(new RegExp(`^${label}: \\S.+`));
       }
       console.log('A-SHELL emitted production capability results:', await capabilityRows.evaluateAll(rows => rows.map(row => ({ state: (row as HTMLElement).dataset.state, text: row.textContent }))));
-      for (const workspace of ['CAD', 'Image', 'Video', 'Audio']) {
+      for (const [workspace, surface] of [['CAD', '.cad-stage'], ['Image', '.image-stage'], ['Photo', '.photo-stage'], ['Video', '.video-stage'], ['Document', '.doc-stage'], ['Audio', '.audio-stage'], ['Slides', '.slides-workspace'], ['Spreadsheet', '.spreadsheet-workspace'], ['Code', '.code-workspace']] as const) {
         await production.getByRole('tab', { name: workspace, exact: true }).click();
         await expect(production.locator('.gc-window')).toHaveCount(1);
         await expect(production.locator('button[data-command="fixture.edit"]')).toHaveCount(0);
-        if (workspace === 'CAD') {
-          await expect(production.locator('button[data-command="file.new"]').first()).toBeEnabled();
-          await expect(production.locator('.cad-stage')).toBeVisible();
-        } else if (workspace === 'Image') {
-          await expect(production.locator('button[data-command="file.new"]').first()).toBeEnabled();
-          await expect(production.locator('.image-stage')).toBeVisible();
-        } else if (workspace === 'Video') {
-          await expect(production.locator('button[data-command="file.new"]').first()).toBeEnabled();
-          await expect(production.locator('.video-stage')).toBeVisible();
-        } else {
-          await expect(production.locator('button[data-command="file.new"]').first()).toBeDisabled();
-          await expect(production.locator('.gc-viewport')).toContainText(`${workspace} editing is not available`);
-        }
+        await expect(production.locator(`button[data-command="${workspace === 'Photo' ? 'photo.import' : 'file.new'}"]`).first()).toBeEnabled();
+        await expect(production.locator(surface)).toBeVisible();
       }
       await production.getByRole('tab', { name: 'CAD', exact: true }).click();
       await production.screenshot({ path: 'dev/evidence/A-SHELL-production.png' });
       await testInfo.attach('emitted-production-shell-1280x720', { path: 'dev/evidence/A-SHELL-production.png', contentType: 'image/png' });
     } finally { await production.close(); }
   } finally { await built.close(); }
-  console.log('A-SHELL: emitted dist via Vite preview exposes one shell, the production CAD and Image adapters and explicitly unavailable Video editing, without fixture tools. Deployment remains untested.');
+  console.log('A-SHELL: emitted dist via Vite preview exposes one shell with nine real workspace adapters and no fixture tools. Live deployment remains untested.');
   expect(errors).toEqual([]);
   console.log('A-SHELL: one window; fixture preview/cancel/commit; undo/redo; exact downloaded container reopens; IDB recovery survives page close/reopen. Native picker interaction and product editing remain untested.');
 });

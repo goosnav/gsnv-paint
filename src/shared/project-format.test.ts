@@ -16,7 +16,7 @@ test('S03 canonical literal golden and input immutability', () => {
   assert.deepEqual(projectFormat({ op: 'decode', text: golden }), example);
 });
 
-for (const format of ['gsnv-cad', 'gsnv-image', 'gsnv-video'] as const) {
+for (const format of ['gsnv-cad', 'gsnv-image', 'gsnv-video', 'gsnv-spreadsheet', 'gsnv-code'] as const) {
   test(`S03 ${format} preserves nested JSON content`, () => {
     const project: ProjectEnvelope = {
       ...example, format,

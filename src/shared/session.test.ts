@@ -155,3 +155,12 @@ const malformed: unknown[] = [
 for (const [index, event] of malformed.entries()) test(`S02 malformed event ${index} raises TypeError`, () => {
   assert.throws(() => session({ state: opened(), event: event as SessionEvent<Part> }), TypeError);
 });
+
+for (const workspace of ['spreadsheet', 'code'] as const) test(`S02 ${workspace} edits retain independent history`, () => {
+ let state=reduce(changed(),{type:'open',workspace,snapshot:{...snapshot('w0',1,workspace),format:`gsnv-${workspace}`},isSaved:true});
+ state=reduce(state,{type:'commit',workspace,snapshot:{...snapshot('w1',2,workspace),format:`gsnv-${workspace}`},label:'Edit'});
+ state=reduce(state,{type:'undo',workspace});
+ assert.equal(state.documents[workspace]?.value.width,1);
+ assert.equal(state.dirty[workspace],false);
+ assert.equal(state.documents.cad?.value.width,120);
+});

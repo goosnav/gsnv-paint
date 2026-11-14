@@ -1,0 +1,38 @@
+{
+  "source": "src/cad/part-builder.test.ts",
+  "widthMm": 120,
+  "heightMm": 60,
+  "depthMm": 10,
+  "cornerRadiusMm": 5,
+  "holeDiameterMm": 6,
+  "holeCentersMm": [
+    [
+      10,
+      10
+    ],
+    [
+      110,
+      10
+    ],
+    [
+      110,
+      50
+    ],
+    [
+      10,
+      50
+    ]
+  ],
+  "pocketOriginMm": [
+    50,
+    20
+  ],
+  "pocketSizeMm": [
+    20,
+    20,
+    5
+  ],
+  "volumeMm3": 68654.42480810515,
+  "relativeTolerance": 0.0001,
+  "provenance": "Captured from the unchanged production golden test C37 export before original token disposal; full positions and STEP roundtrip assertions passed."
+}

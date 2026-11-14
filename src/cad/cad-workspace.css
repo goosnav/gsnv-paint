@@ -1,4 +1,8 @@
 .cad-stage { position:absolute; inset:0; background:#fff; }
+.cad-workspace-view { position:absolute; inset:0; }
+.cad-import-status { position:absolute; top:8px; left:8px; z-index:5; max-width:80%; margin:0; padding:6px 8px; border:1px solid var(--xp-field-edge); background:#ffffe1; }
+.cad-import-status[hidden] { display:none; }
+.cad-import-status[data-state="error"] { color:var(--xp-error); }
 .cad-sketch,.cad-solid { width:100%; height:100%; display:block; }
 .cad-sketch { shape-rendering:crispEdges; }
 .cad-solid[hidden] { display:none; }

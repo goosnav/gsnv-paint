@@ -94,7 +94,7 @@ test('A-SHELL golden starts one empty CAD window with unavailable editing comman
   const s = setup({ available: [] }); await s.app.ready;
   assert.deepEqual(s.app.snapshot(), { workspace: 'cad', documents: {}, histories: {}, saved: {}, dirty: {}, message: 'CAD editing is not available in this development build.' });
   assert.equal(s.root.querySelectorAll('.gc-window').length, 1);
-  assert.equal(s.root.querySelectorAll('[role="tab"]').length, 7);
+  assert.deepEqual([...s.root.querySelectorAll('[role="tab"]')].map(tab => tab.getAttribute('data-workspace')), ['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code']);
   assert.equal(s.root.querySelector<HTMLButtonElement>('[data-command="file.new"]')!.disabled, true);
   await s.app.dispatch('file.new'); await s.app.dispatch('edit.undo');
   assert.deepEqual(s.app.snapshot().documents, {});
@@ -109,6 +109,20 @@ test('A-SHELL invalidate refreshes the active editor menus without committing or
   assert.equal(s.app.snapshot(), before);
   s.fixtures.image.relabel('Hidden image label');
   assert.doesNotMatch(s.root.textContent!, /Hidden image label/); s.close();
+});
+
+test('A-SHELL project rename preserves pending editor input and has its own undo step', async () => {
+  const s = setup({ recent: recentProjects(new FakeFactory()) }); await s.app.ready; await s.app.dispatch('file.new');
+  s.fixtures.cad.stage(99); await s.app.dispatch('file.rename');
+  assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 99 }, 'flush editor input before mounting Rename');
+  const input = s.root.querySelector<HTMLInputElement>('dialog input[type="text"]')!;
+  input.value = 'Renamed model'; input.dispatchEvent(new s.window.Event('input', { bubbles: true }));
+  [...s.root.querySelectorAll<HTMLButtonElement>('dialog button')].find(button => button.textContent === 'OK')!.click();
+  assert.equal(s.app.snapshot().documents.cad!.title, 'Renamed model');
+  assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 99 });
+  await s.app.dispatch('edit.undo'); assert.equal(s.app.snapshot().documents.cad!.title, 'cad fixture');
+  assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 99 });
+  await s.app.dispatch('edit.undo'); assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 10 }); s.close();
 });
 
 test('A-SHELL editor open creates an unsaved document only after replacement consent', async () => {
@@ -441,4 +455,18 @@ test('A-SHELL a modal forwards the active pointer cancellation before further ed
   await s.app.dispatch('view.settings');
   assert.deepEqual(s.fixtures.cad.gestures.map(value => value.type === 'pointer' ? value.phase : value.type), ['down', 'cancel']);
   assert.equal(viewport.hasPointerCapture(1), false); s.close();
+});
+
+test('A-SHELL New restores keyboard scope when an editor replaces its focused view', async () => {
+  const s = setup(); await s.app.ready; await s.app.dispatch('file.new'); await s.app.dispatch('file.save');
+  const field = s.window.document.createElement('input');
+  s.root.querySelector('output')!.append(field); field.focus();
+  assert.equal(s.window.document.activeElement, field);
+  await s.app.dispatch('file.new');
+  assert.equal(field.isConnected, false);
+  assert.equal(s.window.document.activeElement, s.root.querySelector('.gc-viewport'));
+  let opened = 0;
+  s.files.showOpenFilePicker = async () => { opened++; throw new s.window.DOMException('Canceled', 'AbortError'); };
+  s.window.document.activeElement!.dispatchEvent(new s.window.KeyboardEvent('keydown', { key: 'o', ctrlKey: true, bubbles: true, cancelable: true }));
+  await s.app.idle(); assert.equal(opened, 1); s.close();
 });

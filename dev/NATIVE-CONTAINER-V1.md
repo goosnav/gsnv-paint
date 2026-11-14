@@ -29,7 +29,7 @@ This example's manifest is 197 bytes. Its header is `47534e56504b310ac5000000` i
 
 CRC32 is IEEE 802.3, reflected polynomial `0xEDB88320`, initial value `0xFFFFFFFF`, final XOR `0xFFFFFFFF`, stored as an unsigned decimal JSON number. It covers only the exact asset bytes. The empty payload has CRC 0; ASCII `123456789` has CRC `0xCBF43926` (3,421,780,262). CRC detects accidental damage; it is not an authenticity check.
 
-`project` is the S03 common envelope with exactly `content`, `format`, `id`, `title` and `version`. The format is `gsnv-cad`, `gsnv-image` or `gsnv-video`; version is currently 1. Project ID is nonempty; title may be empty. Content contains finite JSON values and cannot contain unsafe object keys (`__proto__`, `prototype`, `constructor`), non-JSON values or cycles. Workspace codecs validate their own content and asset references after transport validation.
+`project` is the S03 common envelope with exactly `content`, `format`, `id`, `title` and `version`. The format is `gsnv-cad`, `gsnv-image`, `gsnv-photo`, `gsnv-video`, `gsnv-document`, `gsnv-slides`, `gsnv-audio`, `gsnv-spreadsheet` or `gsnv-code`; version is currently 1. Project ID is nonempty; title may be empty. Content contains finite JSON values and cannot contain unsafe object keys (`__proto__`, `prototype`, `constructor`), non-JSON values or cycles. Workspace codecs validate their own content and asset references after transport validation.
 
 The encoder emits compact JSON with record keys sorted by UTF-16 code units. It embeds S03's canonical project text, preserving negative zero and deeply nested metadata. The decoder accepts ordinary JSON whitespace and key ordering, validates exact field sets, and requires valid UTF-8 without a byte-order mark. It preserves parsed negative zero through S03 validation. Future magic/version tags, malformed data, invalid checksums, truncation and trailing bytes produce errors before any package is returned.
 
@@ -43,13 +43,13 @@ Callers retain immutable ownership of all reachable input and output byte views 
 
 ## Verification
 
-Run `node --import tsx --test src/shared/native-container.test.ts` from the repository root. The suite covers a literal complete-file golden, every split and truncated prefix of it, UTF-8 splits, corruption, schemas, counts and exact size boundaries, real S03 roundtrips, and deterministic properties across all three format tags. The 2 GiB test uses repeated immutable views to verify logical framing without allocating a 2 GiB file. Run `node --import tsx src/shared/native-container.demo.ts` for a separate one-pixel transport demonstration.
+Run `node --import tsx --test src/shared/native-container.test.ts` from the repository root. The suite covers a literal complete-file golden, every split and truncated prefix of it, UTF-8 splits, corruption, schemas, counts and exact size boundaries, real S03 roundtrips, and deterministic properties across the original three format tags. Shared format/file/recovery tests cover the nine registered formats; each additional workspace tests its own native codec and editable reopen. The 2 GiB test uses repeated immutable views to verify logical framing without allocating a 2 GiB file. Run `node --import tsx src/shared/native-container.demo.ts` for a separate one-pixel transport demonstration.
 
 ## Browser file transport
 
 S13 `projectFiles` connects this format to S07 file access. Save accepts a package and optional existing file handle; it encodes before writing and returns the file result only after native close, or after fallback download handoff. Open returns a validated package without changing a document. Workspace validation still runs before the assembly replaces its document. File names do not override the decoded format tag.
 
-Native extensions are `.gsnv-cad`, `.gsnv-image` and `.gsnv-video`, all transported as `application/octet-stream`. Suggested names derive from the document title: remove one matching extension, replace filesystem-invalid characters, trim trailing dots/spaces, bound the stem to 180 UTF-8 bytes without splitting a code point, protect reserved Windows device basenames, and append the native extension once. Empty stems use `Untitled`. This changes the suggested filename, not the document title. Tests of the naming rule are not an actual Windows smoke test.
+Native extensions match the format tags above, prefixed with a dot (for example `.gsnv-spreadsheet`), and are all transported as `application/octet-stream`. Suggested names derive from the document title: remove one matching extension, replace filesystem-invalid characters, trim trailing dots/spaces, bound the stem to 180 UTF-8 bytes without splitting a code point, protect reserved Windows device basenames, and append the native extension once. Empty stems use `Untitled`. This changes the suggested filename, not the document title. Tests of the naming rule are not an actual Windows smoke test.
 
 S13 returns S07 transport failures/cancellation unchanged. Container framing/checksum failures use `project.format`; limits use `project.limit`; common metadata failures use `project.metadata`; invalid requests use `project.request`; unexpected codec exceptions use `project.codec`. A failure never yields a replacement package or a successful save result.
 
@@ -70,3 +70,19 @@ The caller binds S08's browser resources in an operation port and observes every
 S08 diagnostic codes are preserved with operation/workspace context. Malformed port responses use `recovery.corrupt`; workspace mismatches use `recovery.workspace`. Container, size and common metadata failures use `recovery.format`, `recovery.limit` and `recovery.metadata`; malformed requests use `recovery.request`. Unexpected codec or port exceptions become `recovery.codec` or `recovery.transport`. Corrupt content remains stored for explicit user action and never yields a partial package.
 
 Run `node --import tsx --test src/shared/recovery-session.test.ts` for the real S03→S15→S08→S15→S03 seam, including overlapping writes, simulated transaction interruption and corrupt content. Run `npm run test:browser -- src/shared/recovery-session.browser.spec.ts` for an actual Chrome page close/reopen/reload roundtrip, older-write rejection and persisted discard. The separate `/dev/fixtures/recovery-session.html` sample is a transport demonstration. It does not prove process-crash timing, eviction resistance, full application recovery or domain editability.
+
+## Workspace content schemas
+
+The common framing stays version 1. Workspace decoders enforce their own content schemas and reject unsupported data before replacing an open project. Native files preserve supported editable content and source assets; they do not serialize the shared undo stack.
+
+| Format | Content and schema reference |
+|---|---|
+| `gsnv-cad` | Parametric expressions/sketch/features, or one non-parametric STEP source with exact embedded bytes; [CAD import schema](CAD-STEP-IMPORT.md) |
+| `gsnv-image` | Raster layers, masks, selections and supported editable data; [image workflow](IMAGE-WORKFLOW.md) |
+| `gsnv-photo` | Original photo bytes plus nondestructive development settings; [photo workflow](PHOTO-WORKFLOW.md) |
+| `gsnv-video` | Media assets and supported timeline/clip/title properties; [video workflow](VIDEO-WORKFLOW.md) |
+| `gsnv-document` | Editable document structure, page setup and embedded images; [authoring contracts](MODULE_MAP-AUTHORING.md) |
+| `gsnv-slides` | Ordered slides, text/shape/image objects and embedded images; [slides schema](SLIDES-WORKFLOW.md) |
+| `gsnv-audio` | Float32 PCM source assets and editable sequence ranges/envelopes; [audio schema](AUDIO-WORKFLOW.md) |
+| `gsnv-spreadsheet` | Ordered sparse sheets, formula source, supported styles and layout; [workbook schema](SPREADSHEET-WORKFLOW.md) |
+| `gsnv-code` | Ordered local UTF-8 files and chosen entry point; [code schema](CODE-WORKFLOW.md) |

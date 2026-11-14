@@ -13,19 +13,21 @@
  * TESTBENCH  src/cad/cad-worker-client.test.ts -- run with: node --import tsx --test src/cad/cad-worker-client.test.ts
  */
 import type { CADContent } from './editable-cad-content.ts';
+import type { CADSource } from './cad-project-source.ts';
+import type { SolidGroup } from './solid-preview-group.ts';
 import type { SolidPreview } from './extrude-preview.ts';
-export type CADBuild = { entities: CADContent['graph']['features'][0]['definition']['sketch']['entities']; sketches?: Record<string, CADContent['graph']['features'][0]['definition']['sketch']['entities']>; dof: number; solid: SolidPreview | null };
+export type CADBuild = { entities: CADContent['graph']['features'][0]['definition']['sketch']['entities']; sketches?: Record<string, CADContent['graph']['features'][0]['definition']['sketch']['entities']>; dof: number; solid: SolidPreview | null; bodies?: SolidGroup['bodies'] };
 export type CADProtocol = {
   assets: { kernelModule: string; kernelWasm: string; solverModule: string; solverWasm: string };
-  request: { id: number; content: CADContent; assets: CADProtocol['assets'] };
+  request: { id: number; content: CADSource; assets: CADProtocol['assets'] };
   reply: { id: number; ok: true; value: CADBuild } | { id: number; ok: false; message: string };
 };
 type WorkerPort = Pick<Worker,'postMessage'|'terminate'|'addEventListener'|'removeEventListener'>;
 type Ports = { createWorker(): WorkerPort; assets: CADProtocol['assets']; onResult(identity:string,value:CADBuild):void; onError(identity:string,message:string):void };
-export function cadWorkerClient(ports:Ports): {submit(identity:string,content:CADContent):void;cancel():void;dispose():void} {
+export function cadWorkerClient(ports:Ports): {submit(identity:string,content:CADSource):void;cancel():void;dispose():void} {
   if(!ports||[ports.createWorker,ports.onResult,ports.onError].some(p=>typeof p!=='function'))throw new TypeError('CAD workers need a factory and result/error callbacks.');
   const WATCHDOG_MS=30000;
-  type Job={id:number;identity:string;content:CADContent};
+  type Job={id:number;identity:string;content:CADSource};
   let sequence=0,disposed=false,worker:WorkerPort|null=null,running:Job|null=null,pending:Job|null=null,timer:ReturnType<typeof setTimeout>|undefined;
   const stop=()=>{
     clearTimeout(timer);timer=undefined;

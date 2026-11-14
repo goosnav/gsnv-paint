@@ -7,10 +7,10 @@ from pathlib import Path
 
 root = Path(__file__).resolve().parent
 rows = json.loads((root / 'requirements.json').read_text())
-map_names = ['MODULE_MAP.md', 'MODULE_MAP-CAD.md', 'MODULE_MAP-MEDIA.md']
+map_names = ['MODULE_MAP.md', 'MODULE_MAP-CAD.md', 'MODULE_MAP-MEDIA.md', 'MODULE_MAP-AUTHORING.md']
 maps = [root / name for name in map_names]
 assert len(rows) == len({row['id'] for row in rows}) == len({row['verification'] for row in rows})
-assert {row['need'] for row in rows} == {f'N-{index:03d}' for index in range(1, 8)}
+assert {row['need'] for row in rows} == {f'N-{index:03d}' for index in range(1, 9)}
 required = ['id', 'need', 'phase', 'verificationPhase', 'statement', 'module',
             'verification', 'procedure', 'method', 'status']
 for row in rows:
@@ -24,14 +24,14 @@ for row in rows:
         assert row['id'] in (root / name).read_text(), (row['id'], name)
 contracts = {}
 for path in maps:
-    pattern = r'^#{2,3} ([SCIVD]\d{2}) ([^\n]+)\n(.*?)(?=^#{2,3} |\Z)'
+    pattern = r'^#{2,3} ([SCIVDAPEK]\d{2}) ([^\n]+)\n(.*?)(?=^#{2,3} |\Z)'
     for match in re.finditer(pattern, path.read_text(), re.M | re.S):
         key, title, body = match.groups()
         assert key not in contracts, key
         for label in ['Purpose:', 'IN:', 'OUT:', 'RAISES:', 'DEPS:']:
             assert label in body, (key, label)
         dep_line = re.search(r'DEPS:([^\n]*)', body).group(1)
-        deps = re.findall(r'\b[SCIVD]\d{2}\b', dep_line)
+        deps = re.findall(r'\b[SCIVDAPEK]\d{2}\b', dep_line)
         assert len(set(deps)) <= 3, (key, deps)
         contracts[key] = deps
 for key, deps in contracts.items():
@@ -61,7 +61,7 @@ combined_maps = '\n'.join(path.read_text() for path in maps)
 owners = {row['module'] for row in rows}
 for owner in owners:
     assert owner in combined_maps, owner
-print(f'TRACE PASS: {len(rows)} unique requirements, {len(rows)} unique verification procedures, 7 needs; metadata and Markdown closure valid.')
+print(f'TRACE PASS: {len(rows)} unique requirements, {len(rows)} unique verification procedures, 8 needs; metadata and Markdown closure valid.')
 print(f'MAP PASS: {len(contracts)} unique contracts; all required fields; known dependencies; maximum 3 collaborators; no cycles.')
 print(f'LINK PASS: local document links resolve; all {len(owners)} conceptual design owners bound.')
 counts = collections.Counter(row['status'] for row in rows)

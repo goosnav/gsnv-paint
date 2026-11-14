@@ -18,7 +18,7 @@
 
 export type IconRequest = { document: Document; name: string; label: string; size: number };
 export const iconCatalog: readonly string[] = Object.freeze([
-  'app', 'cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'play', 'pause', 'split', 'bold', 'italic', 'underline', 'listBullet', 'listNumber', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'indent', 'outdent', 'link', 'strike', 'table', 'pageBreak', 'pdf', 'new', 'open', 'save', 'undo', 'redo', 'cut', 'copy', 'paste',
+  'app', 'cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code', 'play', 'pause', 'split', 'bold', 'italic', 'underline', 'listBullet', 'listNumber', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'indent', 'outdent', 'link', 'strike', 'table', 'pageBreak', 'pdf', 'new', 'open', 'save', 'undo', 'redo', 'cut', 'copy', 'paste',
   'delete', 'select', 'hand', 'zoomIn', 'zoomOut', 'fit', 'history', 'properties', 'layers',
   'grid', 'ruler', 'line', 'rectangle', 'extrude',
   'pencil', 'brush', 'eraser', 'fill', 'picker', 'ellipse', 'text', 'crop', 'rotate', 'flip',
@@ -26,6 +26,8 @@ export const iconCatalog: readonly string[] = Object.freeze([
 ]);
 
 const PATHS: Readonly<Record<string, string>> = {
+  spreadsheet: 'M3 3h18v18H3zM3 8h18M3 13h18M3 18h18M8 3v18M14 8v13',
+  code: 'M3 4h18v16H3zM6 9l4 3-4 3M12 16h6',
   app: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM17.5 13l4.5 4.5-4.5 4.5-4.5-4.5z',
   cad: 'M12 2.5 21 7.5v10L12 22l-9-4.5v-10zM3 7.5l9 5 9-5M12 12.5V22M7.5 5l9 5',
   image: 'M3 4h18v16H3zM3 16l5-6 5 6 3-3 5 5M15 8a1.5 1.5 0 1 0 3 0 1.5 1.5 0 1 0-3 0',

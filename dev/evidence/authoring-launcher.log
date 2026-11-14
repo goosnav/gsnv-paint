@@ -1,0 +1,5 @@
+
+> gsnv-paint@0.1.0 test:launcher
+> node launcher/start.test.mjs
+
+launcher smoke: PASS

@@ -18,7 +18,7 @@ import type { SolidPreview } from './extrude-preview.ts';
 import type { View2D } from '../shared/view-transform.ts';
 import type { LinearEntity } from './sketch-linear-primitives.ts';
 type Drawn = LinearEntity|SketchEntity;
-export type CADView = {content:CADContent|null;sketch?:Sketch|undefined;context?:readonly Drawn[];entities:readonly Drawn[];view:View2D;selected:string[];preview:readonly Drawn[];solid:SolidPreview|null;mode:'sketch'|'solid';state:'under'|'fully'|'error'};
+export type CADView = {content:CADContent|null;sketch?:Sketch|undefined;context?:readonly Drawn[];entities:readonly Drawn[];view:View2D;selected:string[];preview:readonly Drawn[];solid:SolidPreview|null;mode:'sketch'|'solid';state:'under'|'fully'|'error';emptyMessage?:string};
 type Handle={update(model:CADView):void;fit():void;point(point:{x:number;y:number}):[number,number];hit(point:{x:number;y:number}):string|null;dispose():void};
 export function cadViewport(host:HTMLElement):Handle {
   if(!host?.ownerDocument)throw new TypeError('CAD viewport needs a live DOM host.');
@@ -121,7 +121,7 @@ export function cadViewport(host:HTMLElement):Handle {
         mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:0xa8bfd6,metalness:.08,roughness:.6}));scene.add(mesh);
         edges=new THREE.LineSegments(new THREE.EdgesGeometry(geometry),new THREE.LineBasicMaterial({color:0x1d3b5c}));scene.add(edges);lastSolid=value.solid;fit();
       }}
-      if(!value.solid)notice.textContent='No solid to display. Create a closed sketch, then extrude it.';drawSolid();
+      if(!value.solid)notice.textContent=value.emptyMessage??'No solid to display. Create a closed sketch, then extrude it.';drawSolid();
     },fit,
     point(p){const zoom=model?.view.zoom??1,pan=model?.view.pan??{x:0,y:0};return[((p.x-pan.x)/zoom-base().x)/scale,(base().y-(p.y-pan.y)/zoom)/scale];},
     hit(p){const rect=host.getBoundingClientRect(),target=document.elementFromPoint?.(rect.left+p.x,rect.top+p.y);return target&&host.contains(target)?target.closest('[data-entity-id]')?.getAttribute('data-entity-id')??null:null;},

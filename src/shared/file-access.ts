@@ -3,6 +3,7 @@
  * KIND       SHELL
  * CONTRACT   IN: FileRequest and FilePorts; caller supplies user activation and immutable
  *            byte parts. Native pickers are primary; input/download are fallback.
+ *            Optional open maxBytes rejects File.size before reading any payload chunks.
  *            OUT: Promise<FileOutcome>; successful bytes are segmented Uint8Array parts,
  *            native writes resolve only after close; cancellation is explicit.
  *            RAISES: none; picker/read/write/download failures return stable file codes.
@@ -22,7 +23,7 @@
  */
 
 export type FileRequest =
-  | { op: 'open'; accept: Record<string, string[]> }
+  | { op: 'open'; accept: Record<string, string[]>; maxBytes?: number }
   | { op: 'save'; name: string; mime: string; bytes: Uint8Array | readonly Uint8Array[]; handle?: FileSystemFileHandle };
 type PickerType = { accept: Record<string, string[]> };
 export type FilePorts = {
@@ -53,7 +54,8 @@ function inputFile(accept: Record<string, string[]>, ports: FilePorts): Promise<
   });
 }
 
-async function read(file: File, handle?: FileSystemFileHandle): Promise<FileResult> {
+async function read(file: File, handle?: FileSystemFileHandle, maxBytes?: number): Promise<FileResult> {
+  if (maxBytes !== undefined && file.size > maxBytes) throw new RangeError(`The selected file exceeds the limit of ${maxBytes} bytes.`);
   const bytes: Uint8Array[] = [];
   for (let offset = 0; offset < file.size; offset += READ_CHUNK_BYTES) {
     bytes.push(new Uint8Array(await file.slice(offset, Math.min(file.size, offset + READ_CHUNK_BYTES)).arrayBuffer()));
@@ -84,16 +86,17 @@ export async function fileAccess(request: FileRequest, ports: FilePorts): Promis
   let writable: FileSystemWritableFileStream | undefined;
   try {
     if (request.op === 'open') {
+      if (request.maxBytes !== undefined && (!Number.isSafeInteger(request.maxBytes) || request.maxBytes < 0)) return { ok: false, error: { code: 'file.request', message: 'File read limits must be a nonnegative whole number of bytes.' } };
       if (ports.showOpenFilePicker) {
         const [handle] = await ports.showOpenFilePicker({ multiple: false, types: Object.keys(request.accept).length ? [{ accept: request.accept }] : [] });
         if (!handle) return { cancelled: true };
         stage = 'file.read';
-        return { ok: true, value: await read(await handle.getFile(), handle) };
+        return { ok: true, value: await read(await handle.getFile(), handle, request.maxBytes) };
       }
       const file = await inputFile(request.accept, ports);
       if (!file) return { cancelled: true };
       stage = 'file.read';
-      return { ok: true, value: await read(file) };
+      return { ok: true, value: await read(file, undefined, request.maxBytes) };
     }
     const bytes = request.bytes instanceof Uint8Array ? [request.bytes] : request.bytes;
     let handle = request.handle;

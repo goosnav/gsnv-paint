@@ -38,7 +38,7 @@ test('S14 golden real S03/S15/S08 roundtrip returns exact package and journal me
 
 test('S14 missing recovery and serialized discard return null without touching other workspaces', async () => {
   const { port } = resources(); assert.deepEqual(await recoverySession(recover, port), { ok: true, value: null });
-  for (const workspace of ['cad', 'image', 'video'] as const) {
+  for (const workspace of ['cad', 'image', 'video', 'spreadsheet', 'code'] as const) {
     const packageValue: Package = { ...sample, project: { ...sample.project, format: `gsnv-${workspace}`, title: workspace } };
     assert.deepEqual(await recoverySession({ operation: 'save', workspace, generation: 1, package: packageValue }, port), { ok: true, value: packageValue });
   }

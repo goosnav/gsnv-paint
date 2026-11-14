@@ -10,7 +10,7 @@ const sample = {
 };
 const goldenManifest = '{"assets":[{"crc32":459412726,"id":"tile-0","length":3,"mime":"application/octet-stream"}],"project":{"content":{"height":1,"width":1},"format":"gsnv-image","id":"p1","title":"Pixels","version":1}}';
 const golden = new Uint8Array(Buffer.concat([Buffer.from('47534e56504b310ac5000000', 'hex'), Buffer.from(goldenManifest), new Uint8Array([0, 255, 1])]));
-const accept = { 'application/octet-stream': ['.gsnv-cad', '.gsnv-image', '.gsnv-photo', '.gsnv-video', '.gsnv-document', '.gsnv-slides', '.gsnv-audio'] };
+const accept = { 'application/octet-stream': ['.gsnv-cad', '.gsnv-image', '.gsnv-photo', '.gsnv-video', '.gsnv-document', '.gsnv-slides', '.gsnv-audio', '.gsnv-spreadsheet', '.gsnv-code'] };
 function portsFor(selected: File | null = null) {
   const calls: string[] = []; let blob: Blob | undefined;
   class Input extends EventTarget {
@@ -51,11 +51,11 @@ test('S13 fallback save/open preserves exact metadata and binary bytes through r
   assert.equal(fake.blob().type, 'application/octet-stream'); assert.equal(fake.anchor.download, 'Pixels.gsnv-image');
   const reopen = portsFor(new File([fake.blob()], 'opaque.bin'));
   assert.deepEqual(await projectFiles({ operation: 'open' }, reopen.ports), { ok: true, value: sample });
-  assert.equal(reopen.input.accept, '.gsnv-cad,.gsnv-image,.gsnv-photo,.gsnv-video,.gsnv-document,.gsnv-slides,.gsnv-audio');
+  assert.equal(reopen.input.accept, '.gsnv-cad,.gsnv-image,.gsnv-photo,.gsnv-video,.gsnv-document,.gsnv-slides,.gsnv-audio,.gsnv-spreadsheet,.gsnv-code');
 });
 
 test('S13 each workspace suggests its extension and native picker type', async () => {
-  for (const format of ['gsnv-cad', 'gsnv-image', 'gsnv-photo', 'gsnv-video', 'gsnv-document', 'gsnv-slides', 'gsnv-audio'] as const) {
+  for (const format of ['gsnv-cad', 'gsnv-image', 'gsnv-photo', 'gsnv-video', 'gsnv-document', 'gsnv-slides', 'gsnv-audio', 'gsnv-spreadsheet', 'gsnv-code'] as const) {
     const fake = portsFor(); const handle = fileHandle();
     fake.ports.showSaveFilePicker = async options => {
       assert.deepEqual(options, { suggestedName: `Pixels.${format}`, types: [{ accept: { 'application/octet-stream': [`.${format}`] } }] });

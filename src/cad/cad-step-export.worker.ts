@@ -1,14 +1,23 @@
 /** STEP-APP assembly: a fresh worker rebuilds the requested source and exports its B-rep. */
 import {kernelRuntime} from './kernel-runtime.ts';
 import {solverRuntime} from './solver-runtime.ts';
-import {editableCADContent,bossOf} from './editable-cad-content.ts';
+import {bossOf} from './editable-cad-content.ts';
+import {cadProjectSource,isSTEPSource} from './cad-project-source.ts';
 import {buildPart} from './part-builder.ts';
 import {stepExchange} from './step-exchange.ts';
 import type {CADProtocol} from './cad-worker-client.ts';
 type Request=Pick<CADProtocol['request'],'content'|'assets'>;
 const port=globalThis as unknown as {onmessage:((event:MessageEvent<Request>)=>void)|null;postMessage(value:unknown,transfer?:Transferable[]):void};
 async function exportSource(request:Request){
- const content=editableCADContent({operation:'read',value:request.content}),boss=bossOf(content);
+ const content=cadProjectSource({operation:'read',value:request.content});
+ if(isSTEPSource(content)){
+  const loaded=await kernelRuntime({action:'open',config:{moduleUrl:request.assets.kernelModule,wasmUrl:request.assets.kernelWasm,mode:'single',tolerance:content.tolerance}}),session=loaded.session;
+  if(!session)throw new Error(loaded.status.diagnostics.map(d=>d.message).join(' '));
+  const bodies=stepExchange({action:'import',session,units:content.units,bytes:content.assets[0].bytes}).bodies!;
+  const file=stepExchange({action:'export',session,units:content.units,bodies}).file!;
+  for(const body of bodies.shapes)session.release(body.token);return file;
+ }
+ const boss=bossOf(content);
  if(!boss)throw new Error('Create an extrusion before exporting STEP.');
  const opened=await solverRuntime({action:'open',moduleUrl:request.assets.solverModule,wasmUrl:request.assets.solverWasm}),solver=opened.session;
  if(!solver)throw new Error(opened.diagnostics.map(d=>d.message).join(' '));

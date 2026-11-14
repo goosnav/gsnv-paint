@@ -1,0 +1,181 @@
+[
+  {
+    "package": "codemirror",
+    "version": "6.0.2",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-6.0.2.LICENSE.txt"
+  },
+  {
+    "package": "style-mod",
+    "version": "4.1.4",
+    "license": "MIT",
+    "notice": "/licenses/style-mod-4.1.4.LICENSE.txt"
+  },
+  {
+    "package": "w3c-keyname",
+    "version": "2.2.8",
+    "license": "MIT",
+    "notice": "/licenses/w3c-keyname-2.2.8.LICENSE.txt"
+  },
+  {
+    "package": "crelt",
+    "version": "1.0.7",
+    "license": "MIT",
+    "notice": "/licenses/crelt-1.0.7.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/autocomplete",
+    "version": "6.20.4",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-autocomplete-6.20.4.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/commands",
+    "version": "6.11.1",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-commands-6.11.1.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/lang-css",
+    "version": "6.3.1",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-lang-css-6.3.1.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/lang-html",
+    "version": "6.4.12",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-lang-html-6.4.12.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/lang-javascript",
+    "version": "6.2.5",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-lang-javascript-6.2.5.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/lang-python",
+    "version": "6.2.1",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-lang-python-6.2.1.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/language",
+    "version": "6.13.1",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-language-6.13.1.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/lint",
+    "version": "6.9.8",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-lint-6.9.8.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/search",
+    "version": "6.7.2",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-search-6.7.2.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/state",
+    "version": "6.7.6",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-state-6.7.6.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/streamparser",
+    "version": "6.0.0",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-streamparser-6.0.0.LICENSE.txt"
+  },
+  {
+    "package": "@codemirror/view",
+    "version": "6.43.15",
+    "license": "MIT",
+    "notice": "/licenses/codemirror-view-6.43.15.LICENSE.txt"
+  },
+  {
+    "package": "@lezer/common",
+    "version": "1.5.5",
+    "license": "MIT",
+    "notice": "/licenses/lezer-common-1.5.5.LICENSE.txt"
+  },
+  {
+    "package": "@lezer/css",
+    "version": "1.3.9",
+    "license": "MIT",
+    "notice": "/licenses/lezer-css-1.3.9.LICENSE.txt"
+  },
+  {
+    "package": "@lezer/highlight",
+    "version": "1.2.5",
+    "license": "MIT",
+    "notice": "/licenses/lezer-highlight-1.2.5.LICENSE.txt"
+  },
+  {
+    "package": "@lezer/html",
+    "version": "1.3.13",
+    "license": "MIT",
+    "notice": "/licenses/lezer-html-1.3.13.LICENSE.txt"
+  },
+  {
+    "package": "@lezer/javascript",
+    "version": "1.5.6",
+    "license": "MIT",
+    "notice": "/licenses/lezer-javascript-1.5.6.LICENSE.txt"
+  },
+  {
+    "package": "@lezer/lr",
+    "version": "1.4.12",
+    "license": "MIT",
+    "notice": "/licenses/lezer-lr-1.4.12.LICENSE.txt"
+  },
+  {
+    "package": "@lezer/python",
+    "version": "1.1.19",
+    "license": "MIT",
+    "notice": "/licenses/lezer-python-1.1.19.LICENSE.txt"
+  },
+  {
+    "package": "@marijn/find-cluster-break",
+    "version": "1.0.4",
+    "license": "MIT",
+    "notice": "/licenses/marijn-find-cluster-break-1.0.4.LICENSE.txt"
+  },
+  {
+    "package": "pyodide",
+    "version": "314.0.7",
+    "asset": "pyodide.asm.wasm",
+    "bytes": 9598218,
+    "sha256": "cc36e3cab04fdfc9a63ff13eb52eae2b911bf46c025cc7b281f394bd3de1d5e6"
+  },
+  {
+    "package": "pyodide",
+    "version": "314.0.7",
+    "asset": "pyodide.asm.mjs",
+    "bytes": 1250344,
+    "sha256": "f7cdc8ece80678ceb712f8e65ebe6d3a83203a180c399865f49612a051693635"
+  },
+  {
+    "package": "pyodide",
+    "version": "314.0.7",
+    "asset": "pyodide.mjs",
+    "bytes": 17931,
+    "sha256": "6f1d60f7bf529beb300f0f47983c921d3982363640ba20af0e38efdddbc66109"
+  },
+  {
+    "package": "pyodide",
+    "version": "314.0.7",
+    "asset": "python_stdlib.zip",
+    "bytes": 2545637,
+    "sha256": "fa1957e5777068fc4f7437f96d860ae2fbe9c19732ba06c84e004ec16dd7dd7a"
+  },
+  {
+    "package": "pyodide",
+    "version": "314.0.7",
+    "asset": "pyodide-lock.json",
+    "bytes": 119077,
+    "sha256": "5dc2fc119108bc148c7457dc86e7675b5c87e1cafd420b9c34c1eaef7b36c010"
+  }
+]

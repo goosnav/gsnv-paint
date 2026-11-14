@@ -1,0 +1,50 @@
+[
+  {
+    "test": "audio-workspace.browser-AU-63c3f-nvalid-import-retains-edits",
+    "errors": [],
+    "external": [],
+    "failed": [],
+    "urls": [
+      "http://127.0.0.1:4187/",
+      "http://127.0.0.1:4187/assets/index-DJRcDC_I.js",
+      "http://127.0.0.1:4187/assets/index-BGXBcfW4.css",
+      "http://127.0.0.1:4187/assets/app-icon-C0NVVvbT.svg",
+      "http://127.0.0.1:4187/assets/pixel-tahoma-bold-CcfyHzC-.woff2",
+      "http://127.0.0.1:4187/assets/pixel-tahoma-6h5M2JtG.woff2",
+      "http://127.0.0.1:4187/favicon.svg"
+    ],
+    "crossOriginIsolated": true
+  },
+  {
+    "test": "audio-workspace.browser-AU-cef70-sing-Web-Audio-are-explicit",
+    "errors": [],
+    "external": [],
+    "failed": [],
+    "urls": [
+      "http://127.0.0.1:4187/",
+      "http://127.0.0.1:4187/assets/index-DJRcDC_I.js",
+      "http://127.0.0.1:4187/assets/index-BGXBcfW4.css",
+      "http://127.0.0.1:4187/assets/app-icon-C0NVVvbT.svg",
+      "http://127.0.0.1:4187/assets/pixel-tahoma-bold-CcfyHzC-.woff2",
+      "http://127.0.0.1:4187/assets/pixel-tahoma-6h5M2JtG.woff2",
+      "http://127.0.0.1:4187/favicon.svg"
+    ],
+    "crossOriginIsolated": true
+  },
+  {
+    "test": "audio-workspace.browser-AU-da5dc--native-reopen-and-recovery",
+    "errors": [],
+    "external": [],
+    "failed": [],
+    "urls": [
+      "http://127.0.0.1:4187/",
+      "http://127.0.0.1:4187/assets/index-DJRcDC_I.js",
+      "http://127.0.0.1:4187/assets/index-BGXBcfW4.css",
+      "http://127.0.0.1:4187/assets/app-icon-C0NVVvbT.svg",
+      "http://127.0.0.1:4187/assets/pixel-tahoma-bold-CcfyHzC-.woff2",
+      "http://127.0.0.1:4187/assets/pixel-tahoma-6h5M2JtG.woff2",
+      "http://127.0.0.1:4187/favicon.svg"
+    ],
+    "crossOriginIsolated": true
+  }
+]

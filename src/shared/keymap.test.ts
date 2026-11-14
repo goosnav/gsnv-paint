@@ -17,7 +17,7 @@ test('S05 golden shortcut transcript', () => {
 });
 
 test('S05 complete common Ctrl/Meta table across all workspaces', () => {
-  for (const workspace of ['cad', 'image', 'video'] as const) {
+  for (const workspace of ['cad', 'image', 'video', 'spreadsheet', 'code'] as const) {
     for (const modifier of ['ctrl', 'meta'] as const) {
       for (const [key, command] of Object.entries({ n: 'file.new', o: 'file.open', s: 'file.save', z: 'edit.undo', y: 'edit.redo', c: 'edit.copy', x: 'edit.cut', v: 'edit.paste', a: 'edit.selectAll' })) {
         assert.deepEqual(mapped(key, { workspace, [modifier]: true }), handled(command));
@@ -32,7 +32,7 @@ test('S05 complete common Ctrl/Meta table across all workspaces', () => {
 });
 
 test('S05 ordinary text editing stays native; document file shortcuts still work', () => {
-  for (const workspace of ['cad', 'image', 'video'] as const) {
+  for (const workspace of ['cad', 'image', 'video', 'spreadsheet'] as const) {
     for (const key of ['z', 'y', 'c', 'x', 'v', 'a', 'ArrowLeft', 'Home', 'End', 'Delete', 'Enter', ' ']) {
       for (const ctrl of [false, true]) assert.deepEqual(mapped(key, { target: 'text', workspace, ctrl }), unhandled);
     }
@@ -40,7 +40,7 @@ test('S05 ordinary text editing stays native; document file shortcuts still work
       assert.deepEqual(mapped(key, { target: 'text', workspace, ctrl: true }), handled(command));
     }
   }
-  for (const workspace of ['document', 'slides'] as const) {
+  for (const workspace of ['document', 'slides', 'code'] as const) {
     assert.deepEqual(mapped('z', { target: 'text', workspace, ctrl: true }), handled('edit.undo'));
     assert.deepEqual(mapped('y', { target: 'text', workspace, ctrl: true }), handled('edit.redo'));
     assert.deepEqual(mapped('Z', { target: 'text', workspace, ctrl: true, shift: true }), handled('edit.redo'));
@@ -56,14 +56,17 @@ test('S05 dialogs map Enter and Escape and shield workspace commands', () => {
   }
 });
 
-test('S05 Space pans every 2D view but plays only a Video timeline', () => {
-  for (const workspace of ['cad', 'image', 'video'] as const) {
+test('S05 Space pans every 2D view and plays the focused Video or Audio timeline', () => {
+  for (const workspace of ['cad', 'image', 'video', 'spreadsheet', 'code'] as const) {
     for (const viewRole of ['canvas2d', 'preview2d', 'sketch2d'] as const) {
       assert.deepEqual(mapped(' ', { workspace, viewRole }), handled('view.panHold'));
     }
     for (const viewRole of ['cad3d', 'none'] as const) assert.deepEqual(mapped(' ', { workspace, viewRole }), unhandled);
   }
   assert.deepEqual(mapped(' ', { workspace: 'video', viewRole: 'timeline' }), handled('video.togglePlayback'));
+  assert.deepEqual(mapped(' ', { workspace: 'audio', viewRole: 'timeline' }), handled('audio.togglePlayback'));
+  assert.deepEqual(mapped(' ', { workspace: 'audio', viewRole: 'timeline', target: 'text' }), unhandled);
+  assert.deepEqual(mapped(' ', { workspace: 'audio', viewRole: 'timeline', target: 'dialog' }), unhandled);
   assert.deepEqual(mapped(' ', { workspace: 'cad', viewRole: 'timeline' }), unhandled);
 });
 

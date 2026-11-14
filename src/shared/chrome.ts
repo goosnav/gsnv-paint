@@ -24,7 +24,7 @@
 
 import { iconCatalog, renderIcon } from './icons.ts';
 
-type Workspace = 'cad' | 'image' | 'photo' | 'video' | 'document' | 'slides' | 'audio';
+type Workspace = 'cad' | 'image' | 'photo' | 'video' | 'document' | 'slides' | 'audio' | 'spreadsheet' | 'code';
 type MenuItem = { id: string; label: string; shortcut: string; enabled: boolean; icon?: string; toolbar?: boolean };
 type Menu = { id: string; label: string; items: readonly MenuItem[] };
 type Tool = { id: string; label: string; shortcut: string; icon: string; status: string; enabled: boolean; active?: boolean };
@@ -41,7 +41,7 @@ function validate(model: ChromeModel): void {
   const text = (value: unknown) => typeof value === 'string';
   const id = (value: unknown) => typeof value === 'string' && value.length > 0;
   const glyph = (value: unknown) => typeof value === 'string' && iconCatalog.includes(value);
-  if (!model || !['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio'].includes(model.workspace) || !text(model.title) ||
+  if (!model || !['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code'].includes(model.workspace) || !text(model.title) ||
       !text(model.status) || typeof model.dirty !== 'boolean' ||
       ![model.menus, model.tools, model.panels, model.capabilities].every(Array.isArray)) throw new TypeError('Invalid window view model.');
   for (const menu of model.menus) {
@@ -85,8 +85,8 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
   const panels = get<HTMLElement>('.gc-panels');
   const status = get<HTMLElement>('.gc-status');
   get<HTMLElement>('.gc-app-icon').append(renderIcon({ document, name: 'app', label: 'gsnv-paint', size: 20 }));
-  const workspaceNames = { cad: 'CAD', image: 'Image', photo: 'Photo', video: 'Video', document: 'Document', slides: 'Slides', audio: 'Audio' } as const;
-  const workspaceButtons = (['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio'] as const).map(workspace => {
+  const workspaceNames = { cad: 'CAD', image: 'Image', photo: 'Photo', video: 'Video', document: 'Document', slides: 'Slides', audio: 'Audio', spreadsheet: 'Spreadsheet', code: 'Code' } as const;
+  const workspaceButtons = (['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code'] as const).map(workspace => {
     const button = make('button', 'gc-workspace'); button.type = 'button'; button.dataset.workspace = workspace;
     button.dataset.focusKey = `workspace:${workspace}`; button.setAttribute('role', 'tab'); button.setAttribute('aria-label', workspaceNames[workspace]);
     button.append(renderIcon({ document, name: workspace, label: workspaceNames[workspace], size: 18 }), make('span', '', workspaceNames[workspace]));

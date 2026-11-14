@@ -28,3 +28,22 @@ required. No prohibition on modifying/debugging these libraries is imposed.
 This development build is not an M1a accepted release. Exact corresponding
 source/build archives and the release license checklist remain a packaging
 gate recorded in dev/DECISIONS.md; these notices do not certify that gate.
+
+CodeMirror and its language/parser/UI dependencies — MIT
+Exact versioned notices are in /licenses/codemirror-*.LICENSE.txt,
+/licenses/lezer-*.LICENSE.txt and the style-mod, w3c-keyname, crelt and
+marijn-find-cluster-break notice files. Versions are pinned by package-lock.json.
+Source: https://github.com/codemirror/dev and https://github.com/lezer-parser
+
+SheetJS CE 0.20.3 — Apache-2.0
+License: /licenses/sheetjs-0.20.3.LICENSE.txt
+Original source distribution: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
+The original tarball is vendored in this repository; no library modifications.
+
+Pyodide 314.0.7 — MPL-2.0; Python 3.14.2 — PSF and bundled notices
+Licenses: /licenses/pyodide-314.0.7.LICENSE.txt and /licenses/python-3.14.2.LICENSE.txt
+Corresponding Pyodide source: https://github.com/pyodide/pyodide/tree/314.0.7
+Python source: https://github.com/python/cpython/tree/v3.14.2
+The unmodified engine, WebAssembly and Python standard library are separate local assets.
+Replace the pinned package and rebuild the static application to replace them.
+Complete transitive compiled-library source/notices remain part of the release packaging gate.

@@ -1,6 +1,6 @@
 # Consumer STEP import contract
 
-Status: approved bounded map extension; contracts and testbench specified before implementation, 2026-11-13. C66–C69 and CAD-IMPORT are PLANNED. Parent commits this map before the existing phase BATCH proceeds. Only the owner grants ACCEPTED. This extension implements the working-editor path for CAD-116 and the reimport portion of CAD-124; it does not complete all remaining CAD requirements or C36's general project codec.
+Status: C66–C69 and CAD-IMPORT are GREEN, 2026-11-13, with focused and coordinated-production evidence below. The parent committed the preimplementation contract as `48fabce`; the existing phase BATCH authorized implementation. Only the owner grants ACCEPTED. This extension implements the working-editor path for CAD-116 and the reimport portion of CAD-124; it does not complete all remaining CAD requirements or C36's general project codec. Existing C65 remains `kernel-features.ts` as recorded in `CAD-FEATURES.md`.
 
 ## Scope and persisted source
 
@@ -30,7 +30,7 @@ content = {
 
 The feature tree labels the source **Imported STEP — non-parametric** and shows its filename and solid count. It does not offer sketch dimensions, fillets or other parametric editing for imported bodies. Users can inspect the entire model and individual bodies, orbit/pan/zoom/fit, change displayed units, save/reopen the native source, and export STEP or the displayed STL triangulation. Unit changes increment the document revision without rewriting STEP bytes or changing canonical millimeter geometry. Shared undo/redo, save, recovery and replacement behavior apply normally.
 
-## C66 cad-project-source — CORE — PLANNED
+## C66 cad-project-source — CORE — GREEN
 
 File `src/cad/cad-project-source.ts`; public `cadProjectSource(request)`, type `CADSource`, and type guard `isSTEPSource(source)`. Runtime dependency: C50 only. The guard discriminates already validated sources; it is not an untrusted-input validator.
 
@@ -53,7 +53,7 @@ RAISES: `CADSourceError` with an actionable field/reason for malformed imported 
 
 Testbench before code: legacy C50 encode/decode equivalence; literal imported native roundtrip with exact bytes; caller/output ownership; all unknown/missing fields, MIME/reference/length/extra-asset failures; multiple feature/nonidentity placement rejection; unit roundtrip with identical bytes; atomic failure and revision exhaustion. `node --import tsx --test src/cad/cad-project-source.test.ts`; demo `node --import tsx src/cad/cad-project-source.demo.ts`.
 
-## C67 solid-preview-group — CORE — PLANNED
+## C67 solid-preview-group — CORE — GREEN
 
 File `src/cad/solid-preview-group.ts`; public `combineSolidPreviews(bodies)`. No runtime brick dependencies; C54 `SolidPreview` is a type-only boundary. Input is a nonempty ordered list `{id:string,solid:SolidPreview}` with unique IDs. Output is an owned aggregate `SolidPreview` plus ordered per-body `{id,volume,area,center}` measurements.
 
@@ -63,7 +63,7 @@ RAISES: `SolidPreviewError` for empty input, duplicate/empty IDs, nonfinite or n
 
 Testbench before code: two literal offset triangles with different volumes and known weighted center; exact index/order retention; all malformed boundaries, overflow and aliasing. `node --import tsx --test src/cad/solid-preview-group.test.ts`; demo `node --import tsx src/cad/solid-preview-group.demo.ts`.
 
-## C68 step-preview — SHELL — PLANNED
+## C68 step-preview — SHELL — GREEN
 
 File `src/cad/step-preview.ts`; public `stepPreview({session,bytes,units})`. Runtime dependencies C37, C54 and C67. Input uses a live worker-local C01 session and bounded source bytes. C37 strictly imports all solids; C54 consumes each retained token while producing its B-rep measurements and display triangles; C67 combines the complete ordered group. Output contains only owned geometry buffers and measurements.
 
@@ -73,7 +73,7 @@ Testbench before code: real-kernel import of the exact existing 120 mm golden ac
 
 The fixture `src/cad/fixtures/acceptance-plate-120mm.step` will be captured from the **unchanged existing** `part-builder.test.ts` production golden's actual C37 export, using a temporary test harness. Its manifest records the source test, dimensions, measured volume and fixture provenance. Construction logic will not be copied into another permanent golden builder. The original golden test and its positional assertions stay unchanged.
 
-## C69 cad-step-import — SHELL — PLANNED
+## C69 cad-step-import — SHELL — GREEN
 
 File `src/cad/cad-step-import.ts`; public `cadSTEPImport(ports)` returns `run({identity,units})`, `cancel()` and `dispose()`. Runtime dependencies S07, C66 and C55. Ports supply FilePorts, worker factory/asset URLs, caller-issued IDs, status callback and `onImport(source,preview,baseIdentity)`. The callback offers a fully validated candidate to assembly; it does not bypass shared replacement consent.
 
@@ -105,4 +105,19 @@ node --import tsx --test src/cad/cad-worker-client.test.ts src/cad/cad-step-expo
 node_modules/.bin/playwright test --config src/cad/playwright.step-import.config.ts
 ```
 
-No implementation, passing tests or acceptance is asserted by this initial contract record. Results, limitations and exact commands will be recorded after execution.
+## Executed evidence
+
+Testbenches preceded each leaf and the imported view. The missing-module runs were RED before implementation; all final focused checks are GREEN. The native fault-injection harness uses a function Proxy to preserve the pinned binding's overload table while injecting a second-body failure.
+
+- `node --import tsx --test src/cad/cad-project-source.test.ts src/cad/solid-preview-group.test.ts src/cad/step-preview.test.ts src/cad/cad-step-import.test.ts src/cad/cad-imported-view.test.ts src/cad/cad-worker-client.test.ts src/cad/cad-step-export.test.ts src/cad/part-builder.test.ts`: **33/33 passed, zero skips**, 6.1 seconds. The unchanged golden completed both 100/120 mm widths in mm → inch → mm, including dependent hole/pocket placement and STEP roundtrips. Its source file has no diff.
+- C66–C69 modular checker: **4/4 passed**. New leaf files are 94, 39, 32 and 53 physical lines; the imported view is 85 and the routing facade 58. The moved parametric adapter is 206 physical lines and retains its previous implementation except the private factory name.
+- Targeted strict TypeScript check of all new leaves/tests/demos, browser test, imported view, facade and both workers: **exit 0**. Flags match the repository's strict, noUncheckedIndexedAccess and exactOptionalPropertyTypes settings. The parent owns whole-repository checks and production builds.
+- C66/C67/C68 demos ran successfully. The real C68 demo imported the captured acceptance plate at **68,654.42480810556 mm³**, generated **572 triangles**, and retained **zero native tokens**. C69's real browser demo is `/src/cad/cad-step-import.demo.html` under the development server; its workflow is exercised by production below.
+- `node_modules/.bin/playwright test --config src/cad/playwright.step-import.config.ts`: **3/3 passed in 11.0 seconds** against the parent's frozen successful production build on port 4188. No runtime source changed after that build. Test output is isolated in `test-results/step-import`.
+- A concurrent general browser run subsequently cleaned the common `test-results` root. Repeating only the golden workflow with `--grep 'production golden' --output /tmp/gsnv-paint-step-import-results` passed **1/1 in 6.5 seconds** and preserved the reviewed screenshot at [`evidence/CAD-IMPORT-production.png`](evidence/CAD-IMPORT-production.png).
+
+Production evidence covers the actual 120 mm acceptance STEP: one explicitly non-parametric feature, B-rep volume, visible 3D canvas, orbit/fit, mm/inch switching and shared undo/redo; inch STEP export independently reimported with real C37; binary STL retained a 120 mm X extent; native save → new parametric project → reopen retained the exact original embedded bytes and native metadata. STEP export did not change history. The happy path recorded no page/console errors or external HTTP requests and no page overflow.
+
+A second production fixture contains two spatially separated solids in an inch STEP file. Both are displayed and inspected as **6,000 and 210 mm³**, total **6,210 mm³**, and both survive independent STEP export readback. Corrupting only the second solid produces a visible error while the previous project's native bytes, title and history remain unchanged. Pending real worker imports are terminated by Escape and New; late worker responses cannot open a project.
+
+The native ownership tests repeatedly leave zero retained tokens on success, clean the second and subsequent bodies after an ordinary preview failure, and make no subsequent session/native calls after injected numeric, WebAssembly runtime or unknown binding faults. The parent owns the final broad regression/build and human acceptance. Native OS file chooser behavior and maximum-size performance are not claimed by headless browser evidence.

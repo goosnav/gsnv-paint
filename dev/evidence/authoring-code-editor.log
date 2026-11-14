@@ -1,0 +1,14 @@
+
+Running 6 tests using 1 worker
+
+(node:816504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/code/code-editor.browser.spec.ts:21:1 › K03 source editing, indentation, syntax and search never execute source (738ms)
+  ✓  2 src/code/code-editor.browser.spec.ts:30:1 › K03 switching files retains caret; external render emits no change; keyboard exits and flushes (524ms)
+K04 isolated production assets: 14230811 bytes
+  ✓  3 src/code/code-workspace.browser.spec.ts:29:1 › K04 immediate native save, shared undo, multi-file edits/import/export and reopen preserve source (1.3s)
+  ✓  4 src/code/code-workspace.browser.spec.ts:41:1 › K04 immediate shared project rename keeps pending source in the renamed revision (708ms)
+  ✓  5 src/code/code-workspace.browser.spec.ts:46:1 › K04 explicit JS/Python run, errors, real Stop/restart and HTML/CSS preview work through controls (5.7s)
+  ✓  6 src/code/code-workspace.browser.spec.ts:58:1 › K04 invalid paths, duplicate imports and oversized pending edits preserve source; file tabs support keyboard travel (2.8s)
+
+  6 passed (13.3s)

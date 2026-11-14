@@ -9,6 +9,7 @@ const panels = {
   image: [panel('layers', 'Layers', 'No image document open.'), panel('history', 'History', 'Document edits will appear here.')],
   photo: [panel('develop', 'Develop', 'No photo open.'), panel('history', 'History', 'Document edits will appear here.')],
   document: [panel('format', 'Format', 'No document open.')], slides: [panel('slide', 'Slide', 'No deck open.')], audio: [panel('audio', 'Audio', 'No audio open.')],
+  spreadsheet: [panel('cells', 'Cells', 'No workbook open.')], code: [panel('files', 'Files', 'No code project open.')],
   video: [panel('media', 'Media', 'No Video project open.'), panel('properties', 'Properties', 'Nothing selected.')],
 };
 let model: ChromeModel = {

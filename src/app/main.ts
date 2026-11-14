@@ -3,6 +3,10 @@ import { createImageWorkspace } from '../image/image-workspace.ts';
 import { createPhotoWorkspace } from '../photo/photo-workspace.ts';
 import { createVideoWorkspace } from '../video/video-workspace.ts';
 import { createDocumentWorkspace } from '../document/document-workspace.ts';
+import { createSlidesWorkspace } from '../slides/slides-workspace.ts';
+import { createAudioWorkspace } from '../audio/audio-workspace.ts';
+import { createCodeWorkspace } from '../code/code-workspace.ts';
+import { createSpreadsheetWorkspace } from '../spreadsheet/spreadsheet-workspace.ts';
 import { mountApp } from './app-shell.ts';
 import { recentProjects } from '../shared/recent-projects.ts';
 import type { FilePorts } from '../shared/file-access.ts';
@@ -10,6 +14,7 @@ import type { RecoveryPorts } from '../shared/recovery-store.ts';
 import '../shared/chrome.css';
 import '../shared/dialog.css';
 import './app.css';
+import '../spreadsheet/spreadsheet-workspace.css';
 
 const browser = window as Window & Pick<FilePorts, 'showOpenFilePicker' | 'showSaveFilePicker'>;
 const recovery: RecoveryPorts = {};
@@ -23,7 +28,7 @@ try {
     ...(browser.showOpenFilePicker ? { showOpenFilePicker: browser.showOpenFilePicker.bind(window) } : {}),
     ...(browser.showSaveFilePicker ? { showSaveFilePicker: browser.showSaveFilePicker.bind(window) } : {}),
   };
-  const app = mountApp({ root, adapters: { cad: createCADWorkspace(files), image: createImageWorkspace(files), photo: createPhotoWorkspace(files), video: createVideoWorkspace(files), document: createDocumentWorkspace(files) }, recovery, recent: recentProjects(recovery.indexedDB), probe: { environment: window, codecRequests: [] }, files });
+  const app = mountApp({ root, adapters: { cad: createCADWorkspace(files), image: createImageWorkspace(files), photo: createPhotoWorkspace(files), video: createVideoWorkspace(files), document: createDocumentWorkspace(files), slides: createSlidesWorkspace(files), audio: createAudioWorkspace(files), spreadsheet: createSpreadsheetWorkspace(files), code: createCodeWorkspace(files) }, recovery, recent: recentProjects(recovery.indexedDB), probe: { environment: window, codecRequests: [] }, files });
   root.tabIndex = -1;
   void app.ready.then(() => { if (document.activeElement === document.body) root.focus(); });
   window.addEventListener('pagehide', () => app.dispose(), { once: true });

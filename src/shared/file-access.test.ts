@@ -42,6 +42,15 @@ test('S07 fallback input reads the file and removes the temporary element', asyn
   assert.equal(input.accept, '.bin');
   assert.deepEqual(events, ['remove-input']);
 });
+test('S07 optional read bounds reject both picker paths before allocating payload chunks',async()=>{
+ for(const native of[false,true]){
+  let reads=0;const file=new File([bytes],'large.bin');file.slice=()=>{reads++;throw new Error('Must not read an oversized file');};const {ports}=fakePorts(file);
+  if(native)ports.showOpenFilePicker=async()=>[handle({file})];
+  const result=await fileAccess({op:'open',accept,maxBytes:3},ports);assert.ok('ok'in result&&!result.ok);assert.equal(result.error.code,'file.read');assert.match(result.error.message,/3 bytes/);assert.equal(reads,0);
+ }
+ const {ports}=fakePorts(new File([bytes],'valid.bin'));assert.ok('value'in await fileAccess({op:'open',accept,maxBytes:4},ports));
+ for(const maxBytes of[-1,1.5,Infinity,NaN]){const invalid=await fileAccess({op:'open',accept,maxBytes},ports);assert.ok('ok'in invalid&&!invalid.ok);assert.equal(invalid.error.code,'file.request');}
+});
 
 test('S07 native and fallback picker cancellation are explicit', async () => {
   const fake = fakePorts();

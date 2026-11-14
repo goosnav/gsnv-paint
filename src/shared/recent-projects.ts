@@ -12,7 +12,7 @@
  * LIMITS     Browser storage can be evicted; File > Save to file is the durable copy.
  * TESTBENCH  src/shared/recent-projects.test.ts -- run with: node --import tsx --test src/shared/recent-projects.test.ts
  */
-export type RecentEntry = { id: string; workspace: 'cad' | 'image' | 'photo' | 'video' | 'document' | 'slides' | 'audio'; title: string; updated: number };
+export type RecentEntry = { id: string; workspace: 'cad' | 'image' | 'photo' | 'video' | 'document' | 'slides' | 'audio' | 'spreadsheet' | 'code'; title: string; updated: number };
 export type RecentPort = {
   list(): Promise<RecentEntry[]>;
   save(entry: RecentEntry & { parts: readonly Uint8Array[] }): Promise<void>;
@@ -52,7 +52,7 @@ export function recentProjects(factory: IDBFactory | undefined): RecentPort {
       });
     },
     async save(entry) {
-      if (!entry.id || !['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio'].includes(entry.workspace) || !Number.isFinite(entry.updated) || !entry.parts.length) throw new Error('Invalid recent project.');
+      if (!entry.id || !['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code'].includes(entry.workspace) || !Number.isFinite(entry.updated) || !entry.parts.length) throw new Error('Invalid recent project.');
       await run('readwrite', store => { store.put({ ...meta(entry), parts: entry.parts.map(p => p.slice()) }); });
     },
     async load(id) {

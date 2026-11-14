@@ -27,11 +27,13 @@ A creator can edit local documents, slides, audio, workbooks and code alongside 
 
 Daily-use spreadsheet formula scope for this increment: arithmetic/comparison/concatenation; A1 and sheet references; ranges; SUM, AVERAGE, MIN, MAX, COUNT, COUNTA, IF, AND, OR, NOT, ROUND, ABS, SUMIF and COUNTIF. Unsupported formulas remain visible with an error, never replaced by a misleading cached answer. XLSX interoperability must preserve supported formulas, values, names and basic formats, report unsupported content, and never execute macros or external links. These concrete choices are implementation defaults for the requested Excel-style editor.
 
+Conceptual design owner: **Authoring** binds DOC, SLD, AUD, SHEET, CODE and AUTH requirements to the bricks below plus the existing Document/shared assemblies.
+
 ## Boundaries and bricks
 
 All new implementations keep pure document/math logic separate from DOM, Canvas, audio, runtime and file adapters. One brick per implementation file, at most three public symbols, soft 200/hard 300 implementation lines; split before exceeding the hard limit. Assemblies wire verified bricks and shared ports. Each brick has a sibling `.test.ts`; browser-only shells add `.browser.spec.ts`. No placeholder command may claim success.
 
-### A01 audio-document — CORE — PLANNED
+### A01 audio-document — CORE — GREEN
 Purpose: validate and serialize editable PCM sources and a non-destructive piece sequence.
 IN: new, validated import, encode or untrusted native decode; finite equal-length Float32 channels, sample rate, explicit source IDs and pieces.
 OUT: owned document metadata and immutable source buffers; native metadata plus little-endian Float32 assets; reopened equivalent samples.
@@ -39,7 +41,7 @@ RAISES: AudioContentError for malformed buffers, references, nonfinite samples, 
 DEPS: none. Native framing is shared S15 at assembly.
 Contract: pieces refer to source-frame ranges and carry gain/fade envelopes. History shares immutable source audio instead of copying the entire recording per edit. One rate/channel layout per document; cross-document paste must reject incompatible layouts or explicitly resample in the shell.
 
-### A02 audio-edits — CORE — PLANNED
+### A02 audio-edits — CORE — GREEN
 Purpose: immutable selection editing, clipboard splices and gain envelopes.
 IN: A01 document and sample-index edit; valid half-open selection [start,end), caller-issued IDs for imports.
 OUT: new piece sequence, selection and clipboard value as appropriate; no mutation of document or source audio.
@@ -47,91 +49,91 @@ RAISES: AudioEditError for invalid range, empty operation or incompatible paste.
 DEPS: A01, A03.
 Contract: trim retains the selection; delete/ripple closes its gap; paste replaces the selection or inserts at cursor; fade spans exactly the selection; normalize targets a supplied peak without changing silence. All changes are one shared-history transaction.
 
-### A03 audio-samples — CORE — PLANNED
+### A03 audio-samples — CORE — GREEN
 Purpose: read the piece sequence deterministically, compute waveform min/max and serialize WAV.
 IN: A01 document; waveform bucket count, render range or PCM16-WAV request.
 OUT: sample arrays, per-channel min/max buckets or WAV bytes with explicit clipping/rounding.
 RAISES: AudioSampleError for out-of-range requests and RIFF size overflow.
 DEPS: A01. No Web Audio or Canvas.
 
-### A04 audio-workspace — SHELL assembly — PLANNED
+### A04 audio-workspace — SHELL assembly — GREEN
 Purpose: waveform view, native decoding/playback, numeric controls, menus and shared-project adapter.
 IN: shared host/FilePorts, Web Audio capability and A01–A03 values.
 OUT: usable waveform editor, export downloads and visible decode/playback errors.
 RAISES: construction errors for invalid ports; operational failures stay visible and preserve the document.
 DEPS: A01, A02, A03; shared host and file adapters are assembly wiring. Split waveform and playback into shells if needed before 300 lines.
 
-### P01 slides-document — CORE — PLANNED
+### P01 slides-document — CORE — GREEN
 Purpose: validate and edit ordered slides and positioned text/image/shape elements.
 IN: document, IDs and typed edits; native metadata/assets on decode.
 OUT: immutable deck with stable IDs, explicit aspect ratio, theme colors, element geometry/style and image asset references.
 RAISES: SlidesContentError/SlidesEditError for malformed data, missing references, invalid geometry and unavailable targets.
 DEPS: none.
 
-### P02 slides-view — SHELL — PLANNED
+### P02 slides-view — SHELL — GREEN
 Purpose: render deck/element controls, pointer selection and drag previews without changing document policy.
 IN: P01 deck, selected IDs and intent callbacks.
 OUT: DOM view with keyboard controls, tooltips and pointer intents; stable focus on refresh.
 RAISES: TypeError for invalid host; invalid images are reported before a commit.
 DEPS: P01.
 
-### P03 slides-workspace — SHELL assembly — PLANNED
+### P03 slides-workspace — SHELL assembly — GREEN
 Purpose: wire shared files/history, typed properties, image import, presentation and print-to-PDF.
 IN: host, files and P01/P02.
 OUT: fully editable native deck; presentation navigation; printable pages matching aspect ratio.
 RAISES: operational failures remain visible; cancelled dialogs preserve the deck.
 DEPS: P01, P02; shared ports at assembly. Split print/present shell if size requires.
 
-### E01 workbook-document — CORE — PLANNED
+### E01 workbook-document — CORE — GREEN
 Purpose: validate sparse sheets/cells, immutable workbook edits and native persistence.
 IN: typed cell/range/sheet/row/column/format/sort/filter edits or native metadata.
 OUT: workbook with source values/formulas preserved; independent edit results and predictable selection changes.
 RAISES: WorkbookError for invalid names, coordinates, sizes, unknown format fields or missing targets.
 DEPS: E02.
 
-### E02 sheet-formulas — CORE — PLANNED
+### E02 sheet-formulas — CORE — GREEN
 Purpose: safely parse/evaluate the declared formula subset and translate relative references for fill.
 IN: formula source, current cell and read-only cell lookup across sheets.
 OUT: finite number, text, boolean or explicit spreadsheet error; dependencies/cycle result.
 RAISES: invalid API contract only; user formula failures are cell errors.
 DEPS: none; no host eval/new Function, networking or DOM. Split parser, evaluator and reference translation before the size cap.
 
-### E03 workbook-files — SHELL — PLANNED
+### E03 workbook-files — SHELL — GREEN
 Purpose: CSV/XLSX import/export using pinned SheetJS CE and explicit supported-value mapping.
 IN: local bytes or E01 workbook.
 OUT: validated workbook or downloadable bytes, with unsupported-content diagnostics.
 RAISES: readable import/export errors; current workbook remains untouched.
 DEPS: E01, E02; vendor SheetJS CE license/asset review required before installation.
 
-### E04 spreadsheet-workspace — SHELL assembly — PLANNED
+### E04 spreadsheet-workspace — SHELL assembly — GREEN
 Purpose: virtual grid, formula bar, sheet tabs, range selection and numeric formatting controls.
 IN: shared host/files and E01–E03.
 OUT: keyboard/pointer spreadsheet, native/export files and honest error feedback.
 RAISES: operational errors visible; selection-only actions do not pollute document history.
 DEPS: E01, E02, E03. Grid interaction is split into a view shell before the cap.
 
-### K01 code-document — CORE — PLANNED
+### K01 code-document — CORE — GREEN
 Purpose: validate/edit a project of UTF-8 source files and encode native content.
 IN: new/read/edit with safe relative paths, contents, language and entry-file selection.
 OUT: immutable project with source preserved and unique paths; no executable side effects.
 RAISES: CodeContentError for invalid paths, duplicates, unsupported encodings or size limits.
 DEPS: none.
 
-### K02 code-runtime — SHELL — PLANNED
+### K02 code-runtime — SHELL — GREEN
 Purpose: isolate and control browser JavaScript/Python execution and HTML preview.
 IN: explicit run request, project files, locally bundled engine assets; stop/dispose.
 OUT: validated bounded console/error/status messages; sandboxed preview; reliable cancellation.
 RAISES: visible capability/load/runtime errors. No automatic execution on file open.
 DEPS: K01; Pyodide pending license, offline payload and isolation spike. Never run untrusted code in an editor-origin worker. Use opaque-origin execution and a minimal validated message boundary; block outbound network and editor storage access. Infinite-loop stop must be demonstrated in a real browser before GREEN.
 
-### K03 code-editor — SHELL — PLANNED
+### K03 code-editor — SHELL — GREEN
 Purpose: syntax-aware source editing/search using a pinned locally bundled CodeMirror dependency.
 IN: host, source file and change/command callbacks.
 OUT: keyboard-accessible editor with tabs/indentation, search and preserved cursor/focus.
 RAISES: invalid-host error; no code execution.
 DEPS: K01; CodeMirror license review before installation.
 
-### K04 code-workspace — SHELL assembly — PLANNED
+### K04 code-workspace — SHELL assembly — GREEN
 Purpose: file tree/tabs, Run/Stop, console and web preview, source/native file handling.
 IN: shared host/files and K01–K03.
 OUT: usable browser coding workspace; explicit runtime status and saved editable projects.

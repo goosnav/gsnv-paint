@@ -2,3 +2,5 @@
 *.sh text eol=lf
 *.command text eol=lf
 *.sha256 text eol=lf
+# Native STEP goldens retain exact kernel bytes, including exporter whitespace.
+src/cad/fixtures/*.step binary

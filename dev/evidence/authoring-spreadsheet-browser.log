@@ -1,0 +1,20 @@
+
+Running 9 tests using 1 worker
+
+(node:846128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:12:1 › SHEET-APP cells, ranges, formulas, fill, formats, sorting/filtering, shared history and native recovery (3.8s)
+  ✓  2 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:23:1 › SHEET-APP real XLSX/CSV interchange, literal formulas, invalid import and immediate-save input (1.8s)
+  ✓  3 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:31:1 › SHEET-APP pointer ranges, clipboard references, structural edits and distant virtual cells (1.6s)
+(node:846769) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  4 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:12:1 › SHEET-APP cells, ranges, formulas, fill, formats, sorting/filtering, shared history and native recovery (3.5s)
+  ✓  5 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:23:1 › SHEET-APP real XLSX/CSV interchange, literal formulas, invalid import and immediate-save input (1.5s)
+  ✓  6 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:31:1 › SHEET-APP pointer ranges, clipboard references, structural edits and distant virtual cells (1.6s)
+(node:847126) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  7 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:12:1 › SHEET-APP cells, ranges, formulas, fill, formats, sorting/filtering, shared history and native recovery (3.5s)
+  ✓  8 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:23:1 › SHEET-APP real XLSX/CSV interchange, literal formulas, invalid import and immediate-save input (1.5s)
+  ✓  9 src/spreadsheet/spreadsheet-workspace.browser.spec.ts:31:1 › SHEET-APP pointer ranges, clipboard references, structural edits and distant virtual cells (1.6s)
+
+  9 passed (23.7s)

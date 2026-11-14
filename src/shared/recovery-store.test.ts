@@ -41,12 +41,12 @@ test('S08 golden write/read roundtrip stores only journal metadata in localStora
 test('S08 missing, empty payload, independent workspaces, and remove are explicit', async () => {
   const { ports, journal } = resources();
   assert.deepEqual(await recoveryStore({ op: 'read', workspace: 'cad' }, ports), { ok: true, value: null });
-  for (const workspace of ['cad', 'image', 'video'] as const) {
+  for (const workspace of ['cad', 'image', 'video', 'spreadsheet', 'code'] as const) {
     assert.deepEqual(await recoveryStore({ op: 'write', record: { ...record(1, workspace), payload: [] } }, ports), { ok: true, value: { ...record(1, workspace), payload: [] } });
   }
   assert.deepEqual(await recoveryStore({ op: 'remove', workspace: 'image' }, ports), { ok: true, value: null });
   assert.deepEqual(await recoveryStore({ op: 'read', workspace: 'image' }, ports), { ok: true, value: null });
-  assert.equal(journal.size, 2);
+  assert.equal(journal.size, 4);
   assert.deepEqual(await recoveryStore({ op: 'read', workspace: 'cad' }, ports), { ok: true, value: { ...record(), payload: [] } });
 });
 

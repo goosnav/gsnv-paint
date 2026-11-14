@@ -1,0 +1,67 @@
+import { test, expect, type Page } from '@playwright/test';
+import { build, preview, type PreviewServer } from 'vite';
+import { mkdtempSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { nativeContainer } from '../shared/native-container.ts';
+import type { CodeDocument } from './code-document.ts';
+let server: PreviewServer, outDir: string; const fullApp = process.env.CODE_WORKSPACE_APP === '1', failures = new WeakMap<Page, string[]>();
+test.beforeAll(async () => {
+  if (fullApp) { server = await preview({ logLevel: 'error', preview: { host: '127.0.0.1', port: 4191, strictPort: true } }); return; }
+  outDir = mkdtempSync(join(process.env.CODE_RUNTIME_TEST_TMP ?? tmpdir(), 'gsnv-code-workspace-'));
+  await build({ configFile: false, publicDir: false, logLevel: 'error', build: { outDir, emptyOutDir: true, assetsInlineLimit: 0, rollupOptions: { input: fileURLToPath(new URL('./code-workspace-fixture.ts', import.meta.url)), output: { entryFileNames: 'workspace.js' } } } });
+  const built = readdirSync(outDir, { recursive: true }).map(String), css = built.filter(path => path.endsWith('.css')).map(path => `<link rel="stylesheet" href="/${path}">`).join('');
+  const bytes = built.map(path => statSync(join(outDir, path))).filter(stat => stat.isFile()).reduce((sum, stat) => sum + stat.size, 0); expect(bytes).toBeLessThan(25 * 1024 * 1024); console.log(`K04 isolated production assets: ${bytes} bytes`);
+  const headers = { 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Embedder-Policy': 'require-corp', 'Cross-Origin-Resource-Policy': 'same-origin' };
+  server = await preview({ configFile: false, logLevel: 'error', build: { outDir }, preview: { host: '127.0.0.1', port: 4191, strictPort: true, headers }, plugins: [{ name: 'workspace-fixture', configurePreviewServer(vite) { vite.middlewares.use((req, res, next) => {
+    if (req.url === '/__code_workspace__') { for (const [key, value] of Object.entries(headers)) res.setHeader(key, value); res.setHeader('Content-Type', 'text/html'); res.end(`<!doctype html><link rel="icon" href="data:,">${css}<div id="app"></div><script type="module" src="/workspace.js"></script>`); return; } next();
+  }); } }] });
+});
+test.afterAll(async () => { if (server) await new Promise<void>(resolve => server.httpServer.close(() => resolve())); if (outDir) rmSync(outDir, { recursive: true, force: true }); });
+test.beforeEach(async ({ page, context }) => { const errors: string[] = []; failures.set(page, errors); page.on('pageerror', error => errors.push(error.message)); page.on('request', request => { if (/^https?:/.test(request.url()) && new URL(request.url()).origin !== 'http://127.0.0.1:4191') errors.push(request.url()); }); await context.addInitScript(() => { Object.defineProperty(window, 'showSaveFilePicker', { value: undefined }); Object.defineProperty(window, 'showOpenFilePicker', { value: undefined }); }); await page.goto(`http://127.0.0.1:4191/${fullApp ? '' : '__code_workspace__'}`); await page.getByRole('tab', { name: 'Code', exact: true }).click(); await page.getByRole('button', { name: 'New JavaScript project', exact: true }).click(); await expect(page.locator('iframe')).toHaveCount(0); expect(page.workers()).toHaveLength(0); });
+test.afterEach(async ({ page }) => { expect(failures.get(page)).toEqual([]); });
+const input = (page: Page) => page.getByRole('textbox', { name: 'Source code' });
+async function source(page: Page, text: string) { await input(page).click(); await page.keyboard.press('Control+a'); await page.keyboard.insertText(text); }
+async function add(page: Page, path: string, language: string) { await page.getByRole('button', { name: 'New file', exact: true }).click(); const dialog = page.getByRole('dialog'); await dialog.getByLabel('File path').fill(path); await dialog.getByLabel('Language', { exact: true }).selectOption(language); await dialog.getByRole('button', { name: 'OK', exact: true }).click(); }
+const tree = (page: Page, path: string) => page.getByRole('navigation', { name: 'Project files' }).getByRole('button', { name: path, exact: true });
+test('K04 immediate native save, shared undo, multi-file edits/import/export and reopen preserve source', async ({ page }) => {
+  await source(page, 'console.log("immediate source");'); const saving = page.waitForEvent('download'); await page.keyboard.press('Control+s'); const saved = await saving;
+  const pkg = nativeContainer({ op: 'decode', parts: [await readFile((await saved.path())!)] }); expect((pkg.project.content as unknown as CodeDocument).files[0]!.text).toBe('console.log("immediate source");');
+  await page.keyboard.press('Control+z'); await expect(input(page)).toContainText('Hello, world!'); await page.keyboard.press('Control+y'); await expect(input(page)).toHaveText('console.log("immediate source");');
+  await add(page, 'lib/helper.py', 'python'); await source(page, 'answer = 42\n'); await page.getByRole('button', { name: 'Rename file', exact: true }).click(); await page.getByRole('dialog').getByLabel('File path').fill('lib/value.py'); await page.getByRole('dialog').getByRole('button', { name: 'OK', exact: true }).click(); await expect(tree(page, 'lib/value.py')).toBeVisible();
+  await page.getByLabel('Entry file', { exact: true }).selectOption('lib/value.py'); const exporting = page.waitForEvent('download'); await page.getByRole('button', { name: 'Export source', exact: true }).click(); expect(await readFile((await (await exporting).path())!, 'utf8')).toBe('answer = 42\n');
+  await page.getByRole('button', { name: 'Delete file', exact: true }).click(); await expect(tree(page, 'lib/value.py')).toHaveCount(0); await page.keyboard.press('Control+z'); await expect(tree(page, 'lib/value.py')).toBeVisible();
+  let choosing = page.waitForEvent('filechooser'); await page.getByRole('button', { name: 'Import source', exact: true }).click(); await (await choosing).setFiles({ name: 'data.py', mimeType: 'text/plain', buffer: Buffer.from('data = 7\n') }); await expect(tree(page, 'data.py')).toBeVisible();
+  choosing = page.waitForEvent('filechooser'); await page.getByRole('button', { name: 'Import source', exact: true }).click(); await (await choosing).setFiles({ name: 'invalid.py', mimeType: 'text/plain', buffer: Buffer.from([255, 254, 0]) }); await expect(page.locator('.code-notice[role="alert"]')).toContainText('UTF-8'); await expect(tree(page, 'invalid.py')).toHaveCount(0);
+  const native = page.waitForEvent('download'); await page.keyboard.press('Control+s'); const project = await native, bytes = await readFile((await project.path())!); expect((nativeContainer({ op: 'decode', parts: [bytes] }).project.content as unknown as CodeDocument).files).toHaveLength(3);
+  await page.keyboard.press('Control+n'); await expect(tree(page, 'data.py')).toHaveCount(0); choosing = page.waitForEvent('filechooser'); await page.keyboard.press('Control+o'); await (await choosing).setFiles({ name: project.suggestedFilename(), mimeType: 'application/octet-stream', buffer: bytes }); await expect(tree(page, 'data.py')).toBeVisible(); await expect(page.locator('iframe')).toHaveCount(0); await expect(page.getByLabel('Code output', { exact: true })).toHaveText('');
+});
+test('K04 immediate shared project rename keeps pending source in the renamed revision', async ({ page }) => {
+  await source(page, '// pending project rename'); await page.getByRole('menuitem', { name: 'File', exact: true }).click(); await page.getByRole('menuitem', { name: 'Rename…', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Rename project' }); await dialog.getByLabel('Name', { exact: true }).fill('My code'); await dialog.getByRole('button', { name: 'OK', exact: true }).click();
+  await expect(input(page)).toHaveText('// pending project rename'); const saving = page.waitForEvent('download'); await page.keyboard.press('Control+s'); const pkg = nativeContainer({ op: 'decode', parts: [await readFile((await (await saving).path())!)] }); expect(pkg.project.title).toBe('My code'); expect((pkg.project.content as unknown as CodeDocument).files[0]!.text).toBe('// pending project rename');
+});
+test('K04 explicit JS/Python run, errors, real Stop/restart and HTML/CSS preview work through controls', async ({ page }) => {
+  const output = page.getByLabel('Code output', { exact: true }), run = page.getByRole('button', { name: 'Run entry', exact: true });
+  await source(page, 'console.log(6*7)'); await run.click(); await expect(output).toContainText('42');
+  await source(page, 'throw Error("fixture error")'); await run.click(); await expect(output).toContainText('fixture error');
+  await source(page, 'while(true){}'); await run.click(); await expect(page.locator('.code-run-status')).toContainText('Running'); await page.getByRole('button', { name: 'Stop', exact: true }).click(); await expect(page.locator('.code-run-status')).toContainText('Stopped'); await expect.poll(() => page.workers().length).toBe(0);
+  await source(page, 'console.log("restarted")'); await run.click(); await expect(output).toContainText('restarted');
+  await add(page, 'helper.py', 'python'); await source(page, 'answer = 42'); await add(page, 'main.py', 'python'); await source(page, 'from helper import answer\nprint(answer)'); await page.getByLabel('Entry file', { exact: true }).selectOption('main.py'); await run.click(); await expect(output).toContainText('42', { timeout: 30000 });
+  await add(page, 'style.css', 'css'); await source(page, 'h1 {color:rgb(1, 2, 3)}'); await add(page, 'index.html', 'html'); await source(page, '<link rel="stylesheet" href="style.css"><h1>Static preview</h1><script>parent.hacked=true</script>'); await page.getByLabel('Entry file', { exact: true }).selectOption('index.html'); await run.click();
+  await expect(page.frameLocator('iframe[title="HTML/CSS preview"]').locator('h1')).toHaveCSS('color', 'rgb(1, 2, 3)'); await expect(page.locator('.code-capabilities')).toContainText('HTML/CSS preview does not run scripts.'); expect(await page.evaluate(() => 'hacked' in window)).toBe(false);
+  await input(page).click(); await page.keyboard.press('Escape'); await expect(run).toBeFocused();
+  await page.screenshot({ path: join(process.env.CODE_RUNTIME_TEST_TMP ?? tmpdir(), 'code-workspace-1280.png') });
+});
+test('K04 invalid paths, duplicate imports and oversized pending edits preserve source; file tabs support keyboard travel', async ({ page }) => {
+  await source(page, 'console.log("keep me")'); await add(page, 'second.py', 'python');
+  const tabs = page.getByRole('tablist', { name: 'Source files' }), first = tabs.getByRole('tab', { name: 'main.js', exact: true }), second = tabs.getByRole('tab', { name: 'second.py', exact: true });
+  await first.focus(); await page.keyboard.press('ArrowRight'); await expect(second).toBeFocused(); await expect(second).toHaveAttribute('aria-selected', 'true'); await page.keyboard.press('Home'); await expect(first).toBeFocused(); await expect(input(page)).toHaveText('console.log("keep me")');
+  await page.getByRole('button', { name: 'Rename file', exact: true }).click(); const dialog = page.getByRole('dialog'); await dialog.getByLabel('File path').fill('../escape.js'); await expect(dialog.getByRole('button', { name: 'OK', exact: true })).toBeDisabled(); await dialog.getByRole('button', { name: 'Cancel', exact: true }).click(); await expect(tree(page, 'main.js')).toBeVisible();
+  const choosing = page.waitForEvent('filechooser'); await page.getByRole('button', { name: 'Import source', exact: true }).click(); await (await choosing).setFiles({ name: 'main.js', mimeType: 'text/javascript', buffer: Buffer.from('console.log("replacement")') }); await expect(page.locator('.code-notice[role="alert"]')).toContainText('already exists'); await expect(input(page)).toHaveText('console.log("keep me")');
+  const downloads: string[] = []; page.on('download', download => downloads.push(download.suggestedFilename())); const large = '//' + 'a'.repeat(1024 * 1024); await source(page, large); await page.keyboard.press('Control+s'); await expect(page.locator('.code-notice[role="alert"]')).toContainText('1 MiB'); expect(downloads).toEqual([]); await page.keyboard.press('Control+Home'); await expect(input(page)).toContainText('//aaaa');
+  await source(page, 'console.log("repaired")'); const saving = page.waitForEvent('download'); await page.keyboard.press('Control+s'); const saved = await saving; const pkg = nativeContainer({ op: 'decode', parts: [await readFile((await saved.path())!)] }); expect((pkg.project.content as unknown as CodeDocument).files[0]!.text).toBe('console.log("repaired")');
+  if (!fullApp) { await source(page, large); await page.evaluate(() => { window.codeFixture.dispose(); window.codeFixture.dispose(); }); await expect(page.locator('.code-workspace')).toHaveCount(0); expect(page.workers()).toHaveLength(0); }
+});

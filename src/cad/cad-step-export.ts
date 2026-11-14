@@ -2,7 +2,7 @@
  * PURPOSE    Deliver a cancellable STEP export through browser file access.
  * KIND       SHELL
  * CONTRACT   IN: S07 file ports, same-origin CAD asset URLs, worker factory and
- *            status callback. run receives owned C50 source plus a .step filename
+ *            status callback. run receives owned C66 source plus a .step filename
  *            under user activation. OUT: run/cancel/dispose; one fresh worker per
  *            job; native picker starts before asynchronous computation, fallback
  *            download otherwise. Canceled jobs cannot save or report success;
@@ -21,11 +21,11 @@
  * TESTBENCH  src/cad/cad-step-export.test.ts -- run with: node --import tsx --test src/cad/cad-step-export.test.ts
  */
 import { fileAccess, type FilePorts } from '../shared/file-access.ts';
-import type { CADContent } from './editable-cad-content.ts';
+import type { CADSource } from './cad-project-source.ts';
 import type { CADProtocol } from './cad-worker-client.ts';
 type WorkerPort=Pick<Worker,'postMessage'|'terminate'|'addEventListener'|'removeEventListener'>;
 export type STEPExportPorts={files:FilePorts;assets:CADProtocol['assets'];createWorker():WorkerPort;onStatus(state:'busy'|'ready'|'error',message:string):void};
-export type STEPExportHandle={run(request:{content:CADContent;name:string}):Promise<void>;cancel():void;dispose():void};
+export type STEPExportHandle={run(request:{content:CADSource;name:string}):Promise<void>;cancel():void;dispose():void};
 export function cadSTEPExport(ports:STEPExportPorts):STEPExportHandle {
   if(!ports?.files||typeof ports.createWorker!=='function'||typeof ports.onStatus!=='function')throw new TypeError('STEP export needs file ports, a worker factory and status callback.');
   const WATCHDOG_MS=30000;
@@ -62,7 +62,7 @@ export function cadSTEPExport(ports:STEPExportPorts):STEPExportHandle {
       const value=Reflect.get(target,key,target);return typeof value==='function'?value.bind(target):value;
     }});
   }
-  async function run(request:{content:CADContent;name:string}):Promise<void>{
+  async function run(request:{content:CADSource;name:string}):Promise<void>{
     if(disposed||!stop(true))return;
     let cancel!:()=>void;
     const job:Job={cancelled:new Promise<void>(resolve=>{cancel=resolve;}),cancel:()=>cancel(),cleanup(){},abortWrite:null,committing:false};active=job;

@@ -169,7 +169,7 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-003 | CAD-113 | 2 | 2 | CADExchange | V-CAD-113 | T | UNTESTED |
 | N-003 | CAD-114 | 2 | 2 | CADExchange | V-CAD-114 | T | UNTESTED |
 | N-003 | CAD-115 | 2 | 2 | CADExchange | V-CAD-115 | T | UNTESTED |
-| N-003 | CAD-116 | 2 | 2 | CADExchange | V-CAD-116 | T | UNTESTED |
+| N-003 | CAD-116 | 2 | 2 | CADExchange | V-CAD-116 | T | PASS |
 | N-003 | CAD-117 | 2 | 2 | CADExchange | V-CAD-117 | T | UNTESTED |
 | N-003 | CAD-118 | 2 | 2 | CADExchange | V-CAD-118 | T | UNTESTED |
 | N-003 | CAD-119 | 2 | 2 | CADExchange | V-CAD-119 | T | UNTESTED |
@@ -408,6 +408,22 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | PERF | 4 | 0 | 0 | 4 |
 | REL | 32 | 0 | 0 | 32 |
 | **Total** | **386** | **0** | **0** | **386** |
+| N-008 | DOC-001 | 5 | 5 | Authoring | V-DOC-001 | T | PASS |
+| N-008 | DOC-002 | 5 | 5 | Authoring | V-DOC-002 | T | PASS |
+| N-008 | DOC-003 | 5 | 5 | Authoring | V-DOC-003 | T | PASS |
+| N-008 | SLD-001 | 5 | 5 | Authoring | V-SLD-001 | T | PASS |
+| N-008 | SLD-002 | 5 | 5 | Authoring | V-SLD-002 | T | PASS |
+| N-008 | SLD-003 | 5 | 5 | Authoring | V-SLD-003 | T | PASS |
+| N-008 | AUD-001 | 5 | 5 | Authoring | V-AUD-001 | T | PASS |
+| N-008 | AUD-002 | 5 | 5 | Authoring | V-AUD-002 | T | PASS |
+| N-008 | AUD-003 | 5 | 5 | Authoring | V-AUD-003 | T | PASS |
+| N-008 | SHEET-001 | 5 | 5 | Authoring | V-SHEET-001 | T | PASS |
+| N-008 | SHEET-002 | 5 | 5 | Authoring | V-SHEET-002 | T | PASS |
+| N-008 | SHEET-003 | 5 | 5 | Authoring | V-SHEET-003 | T | PASS |
+| N-008 | CODE-001 | 5 | 5 | Authoring | V-CODE-001 | T | PASS |
+| N-008 | CODE-002 | 5 | 5 | Authoring | V-CODE-002 | T | PASS |
+| N-008 | CODE-003 | 5 | 5 | Authoring | V-CODE-003 | T | PASS |
+| N-008 | AUTH-001 | 5 | 5 | Authoring | V-AUTH-001 | T | UNTESTED |
 
 ## Need-to-requirement closure
 
@@ -420,10 +436,11 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-005 | 74 |
 | N-006 | 3 |
 | N-007 | 39 |
+| N-008 | 16 |
 
 ## Open items
 
 - No requirement has a missing need, procedure, method, or conceptual design owner in this authored baseline. Mechanical consistency checking is separate from capability verification.
 - The module-map owner must bind these conceptual owner names to final map IDs before implementation; aliases must not create unowned requirements.
 - Performance fixture/hardware and the visible-brush-lag threshold remain verification-contract open items.
-- Every product requirement remains untested. Future reports must preserve FAIL and UNTESTED entries instead of reducing the list to passing checks.
+- Original baseline capabilities began untested. Current recorded statuses above require evidence; later reports preserve FAIL and UNTESTED entries instead of reducing the list to passing checks.

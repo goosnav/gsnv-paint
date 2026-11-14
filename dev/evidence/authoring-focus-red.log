@@ -1,0 +1,38 @@
+✖ A-SHELL New restores keyboard scope when an editor replaces its focused view (247.453783ms)
+Not implemented: navigation to another Document
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1212.559004
+
+✖ failing tests:
+
+test at src/app/app-shell.test.ts:1:31363
+✖ A-SHELL New restores keyboard scope when an editor replaces its focused view (247.453783ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be reference-equal to "expected":
+  + actual - expected
+
+  + HTMLBodyElement {
+  - HTMLDivElement {
+      Symbol(SameObject caches): [Object: null prototype] {
+  +     dataset: DOMStringMap {}
+  -     style: CSSStyleProperties {}
+      }
+    }
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:467:10)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: {},
+    expected: {},
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

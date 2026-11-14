@@ -35,7 +35,7 @@ test('S10 golden shared window exposes the requested regions and view model', ()
     workspaces: [...f.root.querySelectorAll('[role="tab"]')].map(node => [node.getAttribute('aria-label'), node.getAttribute('aria-selected')]),
     panels: [...f.root.querySelectorAll('h2')].map(node => node.textContent),
     status: f.root.querySelector('[role="status"]')?.textContent,
-  }, { title: 'Test document *', menus: ['File', 'Edit'], workspaces: [['CAD', 'true'], ['Image', 'false'], ['Photo', 'false'], ['Video', 'false'], ['Document', 'false'], ['Slides', 'false'], ['Audio', 'false']], panels: ['Properties'], status: 'Ready' });
+  }, { title: 'Test document *', menus: ['File', 'Edit'], workspaces: [['CAD', 'true'], ['Image', 'false'], ['Photo', 'false'], ['Video', 'false'], ['Document', 'false'], ['Slides', 'false'], ['Audio', 'false'], ['Spreadsheet', 'false'], ['Code', 'false']], panels: ['Properties'], status: 'Ready' });
   assert.equal(f.root.querySelector('.gc-brand')?.textContent, 'gsnv-paint');
   assert.ok(f.root.querySelector('.gc-app-header [role=tablist]'));
   assert.equal(chrome.viewport.getAttribute('aria-label'), 'CAD workspace view');

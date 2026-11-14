@@ -1,16 +1,20 @@
 # gsnv-paint
 
-One creative suite with Image, Video and CAD workspaces. The same static browser build will run on the web and from a local launcher. Work stays on the device.
+One local creative suite with CAD, Image, Photo, Video, Document, Slides, Audio, Spreadsheet and Code workspaces. The web site and local launcher serve the same static browser build. Work stays on the device.
 
-Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MODULE_MAP.md). The interface uses Windows XP-inspired Luna colours, pixel-crisp Tahoma text and original cursors within a web application ([design](dev/DESIGN-XP.md)). Five workspaces work today:
+Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MODULE_MAP.md). The interface uses Windows XP-inspired Luna colours, pixel-crisp Tahoma text and original cursors within a web application ([design](dev/DESIGN-XP.md)). The current workflows are:
 
 - **Image:** a layered Paint/Photoshop-style editor with brushes, selections (rectangle, ellipse, lasso, magic wand), clone and blur brushes, gradients, layers with blend modes, adjustments and filters ([details](dev/IMAGE-WORKFLOW.md)).
 - **Photo:** a Lightroom-style editor that develops camera RAW files (via LibRaw) or JPEGs: Auto, presets, light/colour/presence, tone curve, colour mixer, detail, effects, crop and full-size export ([details](dev/PHOTO-WORKFLOW.md)).
 - **Video:** a basic editor: clips and stills in sequence, trim, split, reorder, fades, volume, titles and export to MP4 or WebM ([details](dev/VIDEO-WORKFLOW.md)).
-- **CAD:** line/rectangle/circle sketches, driving dimensions, named variables and formula-driven placement, relationship constraints, OpenCascade extrusions with holes, cuts, fillets and chamfers, metric or imperial units; STEP and STL export ([consumer verification](dev/CONSUMER-REPAIR-CHECKPOINT.md), [features](dev/CAD-FEATURES.md)).
+- **CAD:** line/rectangle/circle sketches, driving dimensions, named variables and formula-driven placement, relationship constraints, OpenCascade extrusions with holes, cuts, fillets and chamfers, metric or imperial units; STEP import with all-body inspection, STEP and STL export ([consumer verification](dev/CONSUMER-REPAIR-CHECKPOINT.md), [STEP import](dev/CAD-STEP-IMPORT.md)).
 - **Document:** styled text, headings, lists, tables, local images, page setup, editable projects, HTML/text export and print/PDF output.
+- **Slides:** editable text, images and shapes, slide order, typed or dragged geometry, themes, presentation controls and PDF output ([details](dev/SLIDES-WORKFLOW.md)).
+- **Audio:** waveform selection and playback, cut/copy/paste/delete/trim, fades, normalize, volume and sample-verified WAV export ([details](dev/AUDIO-WORKFLOW.md)).
+- **Spreadsheet:** multiple sheets, formulas, copy/paste/fill, formats, row/column edits, sort/filter and CSV/XLSX interchange ([supported formulas and limits](dev/SPREADSHEET-WORKFLOW.md)).
+- **Code:** file tree, syntax-aware editor tabs and search, JavaScript/Python Run and Stop with bounded console output, and HTML/CSS preview ([details](dev/CODE-WORKFLOW.md)). JavaScript runs the entry file in a worker; Python supports local modules and its bundled standard library. HTML/CSS preview does not run scripts.
 
-All of them have save/open, undo/redo, stored projects and local recovery. Failed browser backups keep unsaved work open with a Save instruction. Slides, Audio, Spreadsheet and Code are in progress; the full original CAD/Image/Video scope, offline installation and packaged release remain unfinished. [Readiness ledger](dev/CONSUMER-READINESS.md).
+All use shared save/open, undo/redo, stored projects and local recovery. Failed browser backups keep unsaved work open with a Save instruction. These are verified working subsets; the full original CAD/Image/Video scope, offline installation and packaged release remain unfinished. [Readiness ledger](dev/CONSUMER-READINESS.md).
 
 ## Run it
 
@@ -56,7 +60,7 @@ C07 constructs points, lines, corner/center rectangles and regular polygons as p
 4. Use Ctrl+Z/Ctrl+Y for history and Ctrl+S/Ctrl+O for editable `.gsnv-cad` files. On reload, choose Restore recovery if needed.
 5. Choose **Export STEP** to save the solid for other CAD software. Esc cancels an export that is still running.
 
-V selects sketch edges, L draws lines, R draws a rectangle, C draws a circle, F fits the view. Rectangle drawing replaces the current outline and keeps circles; Undo restores it. Circles inside the outline become holes; Sketch → Circle dimensions… places an exact hole. Add a variable such as `width = 100`, then use `width - 10` for a hole center or `width / 2 - 10` for a centered 20 mm pocket's corner. Changing units preserves physical dimensions. Solid → Export STL saves a file for 3D printing. The current model supports an XY sketch, a blind boss, separate through/blind cuts and fillet/chamfer edge groups. Other planes, general face/edge selection, STEP import UI, 3MF/DXF export and drawing sheets remain unfinished. See [consumer repair evidence](dev/CONSUMER-REPAIR-CHECKPOINT.md) for the real acceptance-plate and STEP re-import checks.
+V selects sketch edges, L draws lines, R draws a rectangle, C draws a circle, F fits the view. Rectangle drawing replaces the current outline and keeps circles; Undo restores it. Circles inside the outline become holes; Sketch → Circle dimensions… places an exact hole. Add a variable such as `width = 100`, then use `width - 10` for a hole center or `width / 2 - 10` for a centered 20 mm pocket's corner. Changing units preserves physical dimensions. Solid → Export STL saves a file for 3D printing. Import STEP opens existing models as explicitly non-parametric solids; all bodies and original STEP bytes are retained in the native project. The current parametric model supports an XY sketch, a blind boss, separate through/blind cuts and fillet/chamfer edge groups. Other planes, general face/edge selection, 3MF/DXF export and drawing sheets remain unfinished. See [consumer repair evidence](dev/CONSUMER-REPAIR-CHECKPOINT.md) for the real acceptance-plate checks.
 
 ## First image
 

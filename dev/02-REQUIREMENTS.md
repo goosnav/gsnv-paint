@@ -17,6 +17,7 @@ Each row inherits its rationale from its parent need below. The exact original b
 | N-005 | Daily timeline editing, audiovisual preview, and media export. |
 | N-006 | Transfer creative results between workspaces without an external service. |
 | N-007 | A traceable, maintainable product distributed as a static site and local candidate. |
+| N-008 | Local document, slide, waveform-audio, workbook and browser-code authoring under the later owner extension. |
 
 ## Verification conventions
 
@@ -869,3 +870,45 @@ Performance requirements retain the user’s targets. The reference hardware and
 Total: **386 requirements**, all initially **UNTESTED**. Status changes require a dated evidence record naming the exact command or inspection, environment, output, and relevant commit.
 
 Open verification definitions: reference desktop hardware; CAD viewport statistical frame criterion; Image brush latency acceptance; native codec availability matrix; video preset/frame-rate detail beyond the explicitly enumerated presets; GIF frame policy; feature-reference/deletion policy; numerical and export tolerances. These are design/test-contract questions, not permission to omit a requested function.
+
+## Authorized authoring extension — 2026-11-13
+
+These 16 requirements were contracted in the committed authoring map before implementation. Their evidence is maintained in `AUTHORING-CHECKPOINT.md`; their statuses do not weaken the original 386 requirements.
+
+| ID | Need | Introduced | Full verification | Requirement |
+|---|---|---:|---:|---|
+| DOC-001 | N-008 | 5 | 5 | The Document workspace shall edit headings, paragraphs, lists, alignment and styled text with images and page setup. |
+| DOC-002 | N-008 | 5 | 5 | The Document workspace shall reopen editable native content and export HTML/text and a correctly sized PDF via printing. |
+| DOC-003 | N-008 | 5 | 5 | Invalid images or unsafe pasted markup shall not damage the current document or silently report success. |
+| SLD-001 | N-008 | 5 | 5 | Slides shall support add, duplicate, delete and reorder of slides with editable text, image and rectangle/ellipse elements. |
+| SLD-002 | N-008 | 5 | 5 | Every slide element position and size shall be draggable and numerically editable with shared undo and native reopen. |
+| SLD-003 | N-008 | 5 | 5 | Slides shall present with keyboard navigation and print one PDF page per slide at the selected aspect ratio. |
+| AUD-001 | N-008 | 5 | 5 | Audio shall import locally decoded audio, show a waveform and allow pointer or numeric range selection and playback. |
+| AUD-002 | N-008 | 5 | 5 | Audio shall cut, copy, paste, delete, trim, fade, normalize and change volume without mutating earlier history. |
+| AUD-003 | N-008 | 5 | 5 | Audio shall export PCM WAV with the expected sample rate, channel count, duration and samples. |
+| SHEET-001 | N-008 | 5 | 5 | Spreadsheet shall edit multiple named sheets with cell/range selection, copy/paste/fill and relative/absolute formula references. |
+| SHEET-002 | N-008 | 5 | 5 | Spreadsheet shall recalculate arithmetic, ranges, aggregation and conditional formulas with readable errors and cycle detection. |
+| SHEET-003 | N-008 | 5 | 5 | Spreadsheet shall format cells, resize/insert/delete rows and columns, sort/filter and reopen supported workbook data. |
+| CODE-001 | N-008 | 5 | 5 | Code shall provide a local file tree, editor tabs, syntax highlighting, search, and native/source-file open/save. |
+| CODE-002 | N-008 | 5 | 5 | Code shall explicitly run/stop JavaScript and Python and show bounded output/errors, plus HTML/CSS preview. |
+| CODE-003 | N-008 | 5 | 5 | User code shall run outside the editor origin, without access to saved projects, network uploads or automatic execution on open. |
+| AUTH-001 | N-008 | 5 | 5 | All added workspaces shall retain at least 100 undo steps, immediate save, recovery and independent project context. |
+
+| Verification | Method | Procedure |
+|---|---|---|
+| V-DOC-001 | T | `node --import tsx --test src/document/document-content.test.ts`; browser edit and keyboard workflow |
+| V-DOC-002 | T | Document browser suite; parse saved container and printed PDF |
+| V-DOC-003 | T | Document core and browser negative cases |
+| V-SLD-001 | T | Slides core literal fixture and browser editing workflow |
+| V-SLD-002 | T | Core transforms and browser drag/typed/save/reopen regression |
+| V-SLD-003 | T | Browser present/escape and parsed two-page PDF |
+| V-AUD-001 | T | Real WAV browser fixture; cursor/selection and Web Audio state checks |
+| V-AUD-002 | T | Audio core sample-exact golden; undo and reopened project |
+| V-AUD-003 | T | Parse RIFF header/data and compare golden PCM, browser download |
+| V-SHEET-001 | T | Formula and workbook literal goldens; browser keyboard/pointer edit |
+| V-SHEET-002 | T | Formula engine valid, invalid, cycle, reference and fill tests |
+| V-SHEET-003 | T | Core edits; native/CSV/XLSX round trips plus browser workflow |
+| V-CODE-001 | T | Code document tests and browser multi-file save/reopen workflow |
+| V-CODE-002 | T | Real browser JavaScript/Python success, error, infinite-loop stop and web preview |
+| V-CODE-003 | T | Adversarial browser origin/storage/network/auto-run tests; runtime policy inspection |
+| V-AUTH-001 | T | Shared shell suite plus each workspace native reopen and pending-input save |

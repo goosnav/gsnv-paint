@@ -1,0 +1,17 @@
+
+Running 8 tests using 1 worker
+
+(node:777546) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+K02 isolated production assets: 13548224 bytes
+K02 demo output: answer 42 undefined
+  ✓  1 src/code/code-runtime.browser.spec.ts:34:1 › K02 explicit-only JavaScript output, errors and no DOM (559ms)
+  ✓  2 src/code/code-runtime.browser.spec.ts:42:1 › K02 Python stdlib/local imports, errors and repeat run (6.0s)
+  ✓  3 src/code/code-runtime.browser.spec.ts:47:1 › K02 real infinite-loop Stop remains responsive and restart works in both engines (6.5s)
+  ✓  4 src/code/code-runtime.browser.spec.ts:56:1 › K02 opaque worker denies editor IndexedDB and network even through Python JS bridge (3.2s)
+  ✓  5 src/code/code-runtime.browser.spec.ts:66:1 › K02 direct empty-message floods are capped and disposal settles a running promise (471ms)
+  ✓  6 src/code/code-runtime.browser.spec.ts:74:1 › K02 cached local Python assets work with browser offline and console output is capped (6.1s)
+  ✓  7 src/code/code-runtime.browser.spec.ts:80:1 › K02 missing local runtime asset reports an error and retries without changing source (4.2s)
+  ✓  8 src/code/code-runtime.browser.spec.ts:86:1 › K02 HTML/CSS preview is script-free and blocks navigation/remote resources (411ms)
+
+  8 passed (28.8s)
