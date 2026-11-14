@@ -1,0 +1,202 @@
+✖ C78 constructs the signed local axis, owns one output and cleans every temporary before retention (3.042584ms)
+✖ C78 rejects every ordinary native failure with a readable reason and complete ownership cleanup (4.435511ms)
+✖ C78 requires finite positive native volume and never substitutes mesh volume (0.813027ms)
+✖ C78 stops at every native, cleanup and retain boundary for unknown and native fault values (0.350577ms)
+✖ C78 cleanup failure during ordinary rejection stops immediately, including undefined faults (0.609053ms)
+✖ C78 rejects a closed session before constructing the face or allocating anything (0.55474ms)
+✖ C78 native full and signed quarter tubes match analytic measures, cap positions and STEP in mm/inch (271.740486ms)
+✖ C78 native cylinder and full/signed quarter torus preserve curved extrema, caps, mass and STEP (205.737202ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 0
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 752.292426
+
+✖ failing tests:
+
+test at src/cad/kernel-revolve.test.ts:1:1461
+✖ C78 constructs the signed local axis, owns one output and cleans every temporary before retention (3.042584ms)
+  Error: C78 contract stub
+      at buildRevolvedSolid (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.ts:39:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:30:19)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/cad/kernel-revolve.test.ts:1:2855
+✖ C78 rejects every ordinary native failure with a readable reason and complete ownership cleanup (4.435511ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   message: 'C78 contract stub',
+  +   name: 'Error'
+  -   message: /wire|outline|profile/i,
+  -   name: 'RevolveError'
+    }
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:57:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: C78 contract stub
+        at buildRevolvedSolid (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.ts:39:9)
+        at assert.throws.name (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:57:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:57:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    expected: { name: 'RevolveError', message: /wire|outline|profile/i },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/kernel-revolve.test.ts:1:3973
+✖ C78 requires finite positive native volume and never substitutes mesh volume (0.813027ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   message: 'C78 contract stub',
+  +   name: 'Error'
+  -   message: /volume/i,
+  -   name: 'RevolveError'
+    }
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:70:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: C78 contract stub
+        at buildRevolvedSolid (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.ts:39:9)
+        at assert.throws.name (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:70:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:70:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    expected: { name: 'RevolveError', message: /volume/i },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/kernel-revolve.test.ts:1:4521
+✖ C78 stops at every native, cleanup and retain boundary for unknown and native fault values (0.350577ms)
+  Error: C78 contract stub
+      at buildRevolvedSolid (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.ts:39:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:83:5)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/kernel-revolve.test.ts:1:5480
+✖ C78 cleanup failure during ordinary rejection stops immediately, including undefined faults (0.609053ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   name: 'Error'
+  -   name: 'RevolveError'
+    }
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:97:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: C78 contract stub
+        at buildRevolvedSolid (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.ts:39:9)
+        at assert.throws.name (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:97:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:97:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    expected: { name: 'RevolveError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/kernel-revolve.test.ts:1:6379
+✖ C78 rejects a closed session before constructing the face or allocating anything (0.55474ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   message: 'C78 contract stub',
+  +   name: 'Error'
+  -   message: /closed/i,
+  -   name: 'DisposedSessionError'
+    }
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:110:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: C78 contract stub
+        at buildRevolvedSolid (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.ts:39:9)
+        at assert.throws.name (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:110:23)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:110:10)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    expected: { name: 'DisposedSessionError', message: /closed/i },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/cad/kernel-revolve.test.ts:1:6700
+✖ C78 native full and signed quarter tubes match analytic measures, cap positions and STEP in mm/inch (271.740486ms)
+  Error: C78 contract stub
+      at buildRevolvedSolid (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.ts:39:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:119:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/cad/kernel-revolve.test.ts:1:8589
+✖ C78 native cylinder and full/signed quarter torus preserve curved extrema, caps, mass and STEP (205.737202ms)
+  Error: C78 contract stub
+      at buildRevolvedSolid (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.ts:39:9)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/cad/kernel-revolve.test.ts:158:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

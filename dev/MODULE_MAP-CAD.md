@@ -813,7 +813,7 @@ OUT: `{ok:true,face:TopoDS_Face}` with one caller-owned raw wrapper after all ot
 RAISES: `DisposedSessionError`; unexpected/native/cleanup exceptions propagate unchanged and forbid further native calls until worker termination.
 DEPS: C01, C64.
 File `src/cad/kernel-profile-face.ts`; no source compilation, region inference, tolerance repair, session retention or revolve policy. C59's polygon/circle/hole/negative-prism and STEP goldens must stay unchanged.
-The characterized extraction, lifetime amendment and C65 caller regression are verified in [profile-face evidence](CAD-PROFILE-FACE-EVIDENCE.md). GREEN is not human acceptance; C78 remains CONTRACTED.
+The characterized extraction, lifetime amendment and C65 caller regression are verified in [profile-face evidence](CAD-PROFILE-FACE-EVIDENCE.md). GREEN is not human acceptance.
 
 ### C79 revolve-recipe — CORE — GREEN
 Purpose: Compile a bounded +V-axis revolve source into evaluated parameters or a solved native-ready section.
@@ -824,10 +824,11 @@ DEPS: C03, C64.
 File `src/cad/revolve-recipe.ts`; no reflection, modulo normalization, dropped holes, native access or source mutation. Parameters mode validates source edits without pretending to solve geometry.
 The [recipe checkpoint](CAD-REVOLVE-INCREMENT.md#c79-recipe-checkpoint--green-not-accepted) records 17 RED → 17 GREEN, 940 passing unit tests, type/module checks, demo and independent review. No connected revolve feature or additional whole-product requirement is claimed.
 
-### C78 kernel-revolve — SHELL — CONTRACTED
+### C78 kernel-revolve — SHELL — GREEN
 Purpose: Execute one validated bounded revolve recipe in OpenCascade.
 IN: `{session:KernelSession,recipe:C79 profile result}`; local XY section and radians, live C01 session.
 OUT: One retained valid positive-volume single solid token after temporary cleanup; caller consumes/releases it. No target body is fused or consumed.
 RAISES: `RevolveError` for known builder/null/non-solid/invalid-volume rejection, `DisposedSessionError`; unexpected/native/cleanup faults propagate with no further native calls.
 DEPS: C01, C77, C79.
 File `src/cad/kernel-revolve.ts`; real cylinder/tube/torus signed-sweep, analytic mass/bounds/caps and STEP fixtures; exact ownership/fault traces and no token before completed cleanup.
+The [executor checkpoint](CAD-REVOLVE-INCREMENT.md#c78-native-executor-checkpoint--green-not-accepted) records observed RED, native/ownership GREEN, cumulative extrusion seams, type/module checks and independent review. Source editing, worker/export routing and connected UI remain unverified; no additional requirement or human acceptance is claimed.

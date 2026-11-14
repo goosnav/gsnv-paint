@@ -1,0 +1,16 @@
+✔ C78 constructs the signed local axis, owns one output and cleans every temporary before retention (5.143973ms)
+✔ C78 rejects every ordinary native failure with a readable reason and complete ownership cleanup (5.885813ms)
+✔ C78 requires finite positive native volume and never substitutes mesh volume (1.236424ms)
+✔ C78 stops at every native, cleanup and retain boundary for unknown and native fault values (41.831747ms)
+✔ C78 cleanup failure during ordinary rejection stops immediately, including undefined faults (57.232975ms)
+✔ C78 rejects a closed session before constructing the face or allocating anything (0.313713ms)
+✔ C78 native full and signed quarter tubes match analytic measures, cap positions and STEP in mm/inch (889.811473ms)
+✔ C78 native cylinder and full/signed quarter torus preserve curved extrema, caps, mass and STEP (540.218599ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2112.5549

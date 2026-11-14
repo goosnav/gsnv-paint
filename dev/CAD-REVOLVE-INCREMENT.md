@@ -1,9 +1,9 @@
 # Production revolve — Mode A contract
 
 Reviewed by the parent, 2026-11-13. **Connected workflow CONTRACTED; not accepted.**
-Current progress: step 1 (C77 plus characterized C59 integration) and step 2
-(C79 recipe) are GREEN; see [profile-face evidence](CAD-PROFILE-FACE-EVIDENCE.md)
-and the C79 checkpoint below. C78 and connected production revolve remain
+Current progress: steps 1–3 (C77 plus characterized C59 integration, C79 recipe,
+and C78 native executor) are GREEN; see [profile-face evidence](CAD-PROFILE-FACE-EVIDENCE.md)
+and the C79/C78 checkpoints below. Connected production revolve remains
 contracted/unverified. The original contract follows, with checkpoint evidence
 appended. GREEN does not mean human ACCEPTED.
 This document closes the proposed gate 4 of [CAD-NEXT-INCREMENT.md](CAD-NEXT-INCREMENT.md)
@@ -455,6 +455,54 @@ No new browser/build run is claimed for this unconnected leaf. The previous
 passes and a [successful Cloudflare build check](evidence/profile-face-cloudflare-check.json).
 No requirement status changes: 46 PASS, 0 FAIL, 356 UNTESTED. In particular
 `CAD-071 / V-CAD-071` remains UNTESTED until the connected workflow is verified.
+
+## C78 native executor checkpoint — GREEN, not accepted
+
+The executor uses C77's analytic face and C79's canonical recipe. It requires a
+completed operation, a non-null exact SOLID, native validity and finite positive
+volume. All temporary wrappers are deleted in reverse order before retention;
+an unknown, native, cleanup or retain exception stops every further native call.
+Runtime size is 79 physical lines, two public symbols, three direct collaborators.
+No source union, worker or UI is connected by this leaf.
+
+| Command | Observed output / exit | Evidence |
+| --- | --- | --- |
+| `node --import tsx --test src/cad/kernel-revolve.test.ts` against the stub | 8 failed, 0 passed; exit 1 (expected RED) | [RED](evidence/kernel-revolve-red.log) |
+| Same command after implementation | 8 passed; 0 failed, cancelled, skipped or todo; exit 0 | [first implementation](evidence/kernel-revolve-first-run.log) |
+| `node --import tsx --test src/cad/kernel-revolve.test.ts src/cad/revolve-recipe.test.ts src/cad/kernel-profile-face.test.ts src/cad/kernel-linear-prism.test.ts src/cad/kernel-prism-characterization.test.ts src/cad/kernel-prism-ownership.test.ts` | 42 passed; 0 failed, cancelled, skipped or todo; exit 0 | [cumulative seams](evidence/kernel-revolve-seams.log) |
+| `npm test` | 948 passed; 0 failed, cancelled, skipped or todo; exit 0 | [full unit run](evidence/kernel-revolve-unit.log) |
+| `npm run typecheck` | TypeScript completed; exit 0 | [types](evidence/kernel-revolve-types.log) |
+| Method checker on `src/cad/kernel-revolve.ts` | `PASS: src/cad/kernel-revolve.ts`; exit 0 | [module check](evidence/kernel-revolve-module.log) |
+| `node --import tsx src/cad/kernel-revolve.demo.ts` | −90° torus: 888.264396098042 mm³, 648.7249318299778 mm², COM `(12.804015171742984,6,12.804015171742984)`; zero retained tokens after release; exit 0 | [demo](evidence/kernel-revolve-demo.log) |
+| Cumulative seams above, with additional negative-full-turn, circular-cap and circle-rejection assertions | 42 passed; 0 failed, cancelled, skipped or todo; exit 0 | [final seams](evidence/kernel-revolve-final-seams.log) |
+| `npm run typecheck` after those additional assertions | TypeScript completed; exit 0 | [final types](evidence/kernel-revolve-final-types.log) |
+| `npm test` after those additional assertions | 948 passed; 0 failed, cancelled, skipped or todo; exit 0 | [final unit run](evidence/kernel-revolve-final-unit.log) |
+| `npm run test:spec` | 402 requirements/procedures, 214 acyclic contracts; 46 PASS, 0 FAIL, 356 UNTESTED; exit 0 | [trace audit](evidence/kernel-revolve-spec.log) |
+
+Real native fixtures check volume, surface area, center of mass, analytic curve
+extrema, exact single-solid type, face counts and radial cap vertices. Twenty-eight
+geometry/unit cases include ±360° and signed quarter tubes at outer radii 20/25,
+an axis-touching cylinder at ±360°, and full/signed quarter tori. Every case is exported
+to STEP and independently re-imported in mm and inch with the same analytic
+oracles; all retained tokens are released between cases. The previous extrusion
+and plate oracles are unchanged. Fake traces inject eight fault values at every
+call boundary in both polygon and circle construction, and inject cleanup faults
+on each ordinary-rejection path for both section types. Each native quarter-torus
+inspection also requires exactly two planar caps, each with area `9π`, one
+circular boundary of radius 3 and centers `(20,6,0)` / `(0,6,∓20)`, before and
+after STEP in both units. The fake is an ownership oracle only.
+
+Independent read-only review found no concrete defect. Its focused C78/C77/C59
+run passed 23 tests, with zero failed/cancelled/skipped/todo. Additional in-memory
+probes passed 468 circle-path rejection/cleanup injections, eight quarter-torus
+cap inspections and six negative-full-turn cases with twelve native measurements
+before/after STEP. The parent retained those boundary checks in the regression
+suite above; no tolerance was widened. Reviewed runtime SHA-256:
+`7ba589b5d7d3c5d831a415f2ef4ee64ff7edd68bc603c780ab6be599df7906da`.
+
+The `ce02b36435a2087045f26427960b84e2f96c5dd0` recipe checkpoint also has a
+[successful Cloudflare build check](evidence/revolve-recipe-cloudflare-check.json).
+These are component tests, not production browser evidence or full CAD acceptance.
   Revisit if the general C19 recipe layer replaces this bounded path.
 - Use a tagged ordinary C77 rejection and fail-stop unknown faults. Alternative:
   caller cleanup based only on exception name. Rejected because an unknown
