@@ -52,8 +52,8 @@ async function playable(page: Page, movie: { name: string; bytes: Buffer }) {
 
 for (const surface of ['inspector', 'toolbar'] as const) for (const activation of ['mouse', 'keyboard'] as const)
   test(`VIDEO focus ${surface} ${activation} Export retains immediate native Save and New shortcuts`, async ({ page }) => {
-    const button = surface === 'inspector' ? inspectorExport(page) : page.locator('.gc-standard [data-command="video.export"]');
-    const movie = await download(page, async () => { if (activation === 'keyboard') { await button.focus(); await page.keyboard.press('Enter'); } else await button.click(); });
+    const button = surface === 'inspector' ? inspectorExport(page) : page.locator('.gc-standard [data-command="file.export"]');
+    const movie = await download(page, async () => { if (activation === 'keyboard') { await button.focus(); await page.keyboard.press('Enter'); } else await button.click(); if(surface==='toolbar')await page.getByRole('dialog').getByRole('button',{name:'Continue',exact:true}).click(); });
     expect(await page.evaluate(() => document.querySelector('#app')!.contains(document.activeElement))).toBe(true);
     const saved = await download(page, () => page.keyboard.press('Control+s')); expect(saved.bytes).toEqual(original);
     await page.keyboard.press('Control+n'); await expect(page.locator('.video-clip')).toHaveCount(0); await expect(page.locator('.video-empty')).toBeVisible();

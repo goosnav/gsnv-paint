@@ -1,6 +1,6 @@
 # gsnv-paint
 
-One local creative suite with CAD, Image, Photo, Video, Document, Slides, Audio, Spreadsheet and Code workspaces. The web site and local launcher serve the same static browser build. Work stays on the device.
+One local creative suite with Image, CAD, Photo, Video, Document, Slides, Audio, Spreadsheet and Code workspaces. The web site and local launcher serve the same static browser build. Work stays on the device.
 
 Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MODULE_MAP.md). The interface uses Windows XP-inspired Luna colours, pixel-crisp Tahoma text and original cursors within a web application ([design](dev/DESIGN-XP.md)). The current workflows are:
 
@@ -14,7 +14,11 @@ Development follows the [specification](dev/00-INDEX.md) and [module map](dev/MO
 - **Spreadsheet:** multiple sheets, formulas, copy/paste/fill, formats, row/column edits, sort/filter and CSV/XLSX interchange ([supported formulas and limits](dev/SPREADSHEET-WORKFLOW.md)).
 - **Code:** file tree, syntax-aware editor tabs and search, JavaScript/Python Run and Stop with bounded console output, and HTML/CSS preview ([details](dev/CODE-WORKFLOW.md)). JavaScript runs the entry file in a worker; Python supports local modules and its bundled standard library. HTML/CSS preview does not run scripts.
 
+Image opens first. **Save…** in the toolbar opens a choice of editable project or exported file; **File → Save…** offers the same choices in a submenu. **Export…** opens the export formats directly. **Ctrl+S** still saves the editable project. Exported images, PDFs and other files do not replace the native project.
+
 All use shared save/open, undo/redo, stored projects and local recovery. Failed browser backups keep unsaved work open with a Save instruction. Send Image composites to the Video bin, current Video frames to Image, or transparent CAD views to Image through each workspace's menus. These are working subsets; the full original CAD/Image/Video scope and packaged release remain unfinished. [Readiness ledger](dev/CONSUMER-READINESS.md).
+
+The [Save/export UI checkpoint](dev/SAVE-EXPORT-UX.md) passes 993 unit tests and 93 combined browser checks, plus local Cloudflare hosting and a cold offline workflow through all nine editors. It adds the Save choices, Image-first startup and locally bundled pixel Paint icons. This UI work does not change the broader readiness ledger.
 
 The [connected revolve checkpoint](dev/CAD-REVOLVE-EVIDENCE.md) passes 978 unit tests, 91 combined browser checks, nine offline checks, local Cloudflare hosting, the Linux source launcher and deployment dry-run. It adds editable native revolves and strengthens native-kernel fault handling while preserving the original plate golden. The ledger records 47 PASS, 0 FAIL and 355 UNTESTED requirements; full consumer and packaged-release acceptance remain open. Earlier [modeling/offline](dev/MODELING-OFFLINE-CHECKPOINT.md) and [profile-face](dev/CAD-PROFILE-FACE-EVIDENCE.md) results are historical. CAD Open timeouts and the test chooser-interception correction remain in the [diagnosis](dev/CAD-REOPEN-DIAGNOSIS.md); that correction changed test setup, not application behavior.
 
@@ -44,7 +48,7 @@ After `npm run build`, the recorded combined gate selects the production Audio, 
 AUDIO_PRODUCTION=1 SHEET_PRODUCTION=1 CODE_WORKSPACE_APP=1 BRIDGE_WORKSPACE_APP=1 node_modules/.bin/playwright test
 ```
 
-Its 91 checks combine production workflows with component fixtures; they are not 91 separate end-to-end journeys. Two cover the connected revolve increment.
+Its checks combine production workflows with component fixtures. The [Save/export UI checkpoint](dev/SAVE-EXPORT-UX.md) records the latest count; the connected revolve checkpoint remains the preceding baseline.
 
 The dedicated offline gate needs an explicit Chrome for Testing 158 override on this host. System Chrome 154 independently crashes on a download after persistent-profile restarts, even in a reproducer with no app or service worker. It is not recorded as passing that gate, and the harness does not silently switch browsers. With Playwright's browser executable already installed, inspect its version and select it explicitly:
 
@@ -54,7 +58,7 @@ offline_chrome_path="$(node -e "process.stdout.write(require('playwright').chrom
 GSNV_OFFLINE_CHROME_PATH="$offline_chrome_path" npm run test:offline
 ```
 
-The verified executable here is `/home/goosnav/.cache/ms-playwright/chromium-1254/chrome-linux64/chrome`, version **158.0.8127.18**. The override applies to both persistent production profiles and small offline fixtures; it does not change `npm run test:browser`. The [offline evidence](dev/OFFLINE-WORKFLOW.md) retains the separate Chrome 154 failure, Chrome 158 browser-only success and application recovery regression. See the [current checkpoint](dev/CAD-REVOLVE-EVIDENCE.md) for the final candidate result, and the [shell contract](dev/APP-SHELL.md) for persistence scope.
+The verified executable here is `/home/goosnav/.cache/ms-playwright/chromium-1254/chrome-linux64/chrome`, version **158.0.8127.18**. The override applies to both persistent production profiles and small offline fixtures; it does not change `npm run test:browser`. The [offline evidence](dev/OFFLINE-WORKFLOW.md) retains the separate Chrome 154 failure, Chrome 158 browser-only success and application recovery regression. See the [Save/export checkpoint](dev/SAVE-EXPORT-UX.md) for this UI result and the [connected revolve checkpoint](dev/CAD-REVOLVE-EVIDENCE.md) for the preceding full offline run, and the [shell contract](dev/APP-SHELL.md) for persistence scope.
 
 ## Cloudflare deployment
 

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { iconCatalog } from './icons.ts';
 
-test('S09 original glyph sheet renders local accessible SVG at desktop size', async ({ page }, testInfo) => {
+test('S09 local glyph sheet renders local accessible SVG at desktop size', async ({ page }, testInfo) => {
   const remote: string[] = [];
   const errors: string[] = [];
   page.on('request', request => { if (!request.url().startsWith('http://127.0.0.1:4173')) remote.push(request.url()); });
@@ -14,5 +14,5 @@ test('S09 original glyph sheet renders local accessible SVG at desktop size', as
   expect(remote).toEqual([]);
   expect(errors).toEqual([]);
   await page.screenshot({ path: 'dev/evidence/S09-glyph-sheet.png', fullPage: true });
-  await testInfo.attach('original-glyph-sheet', { path: 'dev/evidence/S09-glyph-sheet.png', contentType: 'image/png' });
+  await testInfo.attach('local-glyph-sheet', { path: 'dev/evidence/S09-glyph-sheet.png', contentType: 'image/png' });
 });

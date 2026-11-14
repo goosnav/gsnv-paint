@@ -1,0 +1,14 @@
+{"directory":"/tmp/gsnv-offline-acceptance-KpswpK","buildA":"a44d80844f29e798cf6fc664ab4f1880c8c6450005862be19db6d5d3e6d740e0","buildB":"fcb166c4d35140aee6f1103c648a46a7e0d2782c1a1629c4120b77dc61414026","files":56,"bytes":41190531}
+
+Running 1 test using 1 worker
+
+(node:1699979) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+COLD root ready after complete browser restart, server stopped.
+COLD CAD solver/kernel/native/STEP complete.
+COLD Document/Slides/Spreadsheet edit/native/export complete.
+COLD Image/RAW/Audio/Video edit/native/export complete.
+COLD JS/Python stdlib/HTML/CSS/Stop/native/export complete.
+  ✓  1 src/shared/offline.browser.spec.ts:70:1 › OFFLINE production survives complete Chrome shutdown and first-use editing/export in all nine workspaces with the server stopped (35.0s)
+
+  1 passed (36.2s)

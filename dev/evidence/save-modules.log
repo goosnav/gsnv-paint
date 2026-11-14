@@ -1,0 +1,6 @@
+WARN: src/shared/chrome.ts
+  ~ 242 implementation lines exceeds the soft cap of 200
+PASS: src/shared/save-choices.ts
+PASS: src/shared/dialog.ts
+PASS: src/shared/chrome.ts
+PASS: src/shared/icons.ts

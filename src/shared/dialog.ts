@@ -8,6 +8,7 @@
  *            Cancel/Esc/native dismissal cancels once, closes and restores focus.
  *            Invalid values show an error, disable OK and never preview or commit.
  *            Tab stays inside the modal. Blank numbers are invalid; omitted step=any.
+ *            Optional description and confirmLabel are literal text; confirmation defaults to OK.
  *            RAISES: TypeError for invalid root, fields, initial values or callbacks.
  * GUARANTEES No domain decisions, initial-value mutation or implicit document commit.
  *            Supplied labels are text; terminal actions and disposal are idempotent.
@@ -29,13 +30,14 @@ type Values = Record<string, string | number | boolean>;
 type FieldBase = { key: string; label: string };
 type Field = FieldBase & ({ type: 'text'; placeholder?: string; multiline?: boolean } | { type: 'number'; min?: number; max?: number; step?: number } | { type: 'checkbox' } | { type: 'select'; choices: readonly { value: string; label: string }[] });
 export type DialogSpec = {
-  title: string; fields: readonly Field[]; initial: Values;
+  title: string; description?: string; confirmLabel?: string; fields: readonly Field[]; initial: Values;
   validate(values: Values): { ok: true; value: Json } | { ok: false; error: { code: string; message: string } };
   preview(value: Json): void; commit(value: Json): void; cancel(): void;
 };
 export type DialogRequest = { root: HTMLElement; spec: DialogSpec };
 function validateSpec(root: HTMLElement, spec: DialogSpec): void {
   if (!root?.ownerDocument || root.nodeType !== 1 || !root.isConnected || !spec || typeof spec.title !== 'string' ||
+      (spec.description !== undefined && typeof spec.description !== 'string') || (spec.confirmLabel !== undefined && (typeof spec.confirmLabel !== 'string' || !spec.confirmLabel.trim())) ||
       !Array.isArray(spec.fields) || !spec.initial || typeof spec.initial !== 'object' ||
       ![spec.validate, spec.preview, spec.commit, spec.cancel].every(callback => typeof callback === 'function')) throw new TypeError('A live dialog root, fields, values and callbacks are required.');
   const keys = new Set<string>();
@@ -70,6 +72,7 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   if (typeof dialog.showModal !== 'function') throw new TypeError('Modal dialogs are unavailable in this browser.');
   const title = document.createElement('h2'); title.className = 'gc-dialog-title'; title.textContent = spec.title;
   const body = document.createElement('div'); body.className = 'gc-dialog-body';
+  if (spec.description) { const description=document.createElement('p');description.className='gc-dialog-description';description.textContent=spec.description;body.append(description); }
   const controls = new Map<string, HTMLInputElement | HTMLSelectElement>();
   for (const field of spec.fields) {
     const label = document.createElement('label'); label.className = 'gc-dialog-field';
@@ -94,7 +97,7 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   }
   const error = document.createElement('p'); error.className = 'gc-dialog-error'; error.setAttribute('role', 'alert');
   const buttons = document.createElement('div'); buttons.className = 'gc-dialog-buttons';
-  const ok = document.createElement('button'); ok.type = 'button'; ok.textContent = 'OK'; ok.title = 'OK (Enter)';
+  const ok = document.createElement('button'); ok.type = 'button'; ok.textContent = spec.confirmLabel ?? 'OK'; ok.title = `${ok.textContent} (Enter)`;
   const cancel = document.createElement('button'); cancel.type = 'button'; cancel.textContent = 'Cancel'; cancel.title = 'Cancel (Esc)';
   buttons.append(ok, cancel); body.append(error, buttons); dialog.append(title, body);
   let settled = false; let valid = false; let validated: Json = null; let revision = 0;

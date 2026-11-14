@@ -1,0 +1,79 @@
+✖ S22 Image choices name the editable project and PNG without inventing JPEG (0.863587ms)
+✖ S22 every workspace exposes only its declared present formats in stable order (0.320911ms)
+✖ S22 disabled exporters remain disabled and unavailable exporters are absent (0.116371ms)
+✖ S22 rejects malformed input and duplicate commands (1.881732ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 207.123553
+
+✖ failing tests:
+
+test at src/shared/save-choices.test.ts:1:111
+✖ S22 Image choices name the editable project and PNG without inventing JPEG (0.863587ms)
+  Error: Contract not implemented
+      at saveChoices (/home/goosnav/Desktop/code/gsnv-paint/src/shared/save-choices.ts:17:80)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/save-choices.test.ts:6:20)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/shared/save-choices.test.ts:1:643
+✖ S22 every workspace exposes only its declared present formats in stable order (0.320911ms)
+  Error: Contract not implemented
+      at saveChoices (/home/goosnav/Desktop/code/gsnv-paint/src/shared/save-choices.ts:17:80)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/save-choices.test.ts:16:22)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/shared/save-choices.test.ts:1:1593
+✖ S22 disabled exporters remain disabled and unavailable exporters are absent (0.116371ms)
+  Error: Contract not implemented
+      at saveChoices (/home/goosnav/Desktop/code/gsnv-paint/src/shared/save-choices.ts:17:80)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/save-choices.test.ts:23:17)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/shared/save-choices.test.ts:1:1892
+✖ S22 rejects malformed input and duplicate commands (1.881732ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "TypeError". Received "Error"
+
+  Error message:
+
+  Contract not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/save-choices.test.ts:27:376)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Contract not implemented
+        at saveChoices (/home/goosnav/Desktop/code/gsnv-paint/src/shared/save-choices.ts:17:80)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/save-choices.test.ts:27:387)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/save-choices.test.ts:27:376)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }

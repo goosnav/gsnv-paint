@@ -10,7 +10,7 @@ test('CAD-APP production: constrain, extrude, preview/cancel, rebuild, undo, fil
  page.on('pageerror',e=>errors.push(e.message));
  await context.addInitScript(()=>{Object.defineProperty(window,'showSaveFilePicker',{value:undefined});Object.defineProperty(window,'showOpenFilePicker',{value:undefined});});
  try{
- await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();
+ await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();
  await page.keyboard.press('Control+n');await tool(page,'cad.rectangle');const dialog=page.getByRole('dialog');
  await expect(dialog).toBeVisible();await dialog.getByLabel('Width (mm)',{exact:true}).fill('100');await dialog.getByLabel('Height (mm)',{exact:true}).fill('60');await ready(page);await dialog.getByRole('button',{name:'OK',exact:true}).click();await ready(page);
  await page.keyboard.press('e');await expect(dialog).toBeVisible();await volume(page,'60000.000');await dialog.getByRole('button',{name:'OK',exact:true}).click();await volume(page,'60000.000');
@@ -24,7 +24,7 @@ test('CAD-APP production: constrain, extrude, preview/cancel, rebuild, undo, fil
  await expect(page.locator('button[data-command="file.open"]:visible').first()).toBeEnabled();const choosing=page.waitForEvent('filechooser',{timeout:10000});await page.keyboard.press('Control+o');await(await choosing).setFiles({name:download.suggestedFilename(),mimeType:'application/octet-stream',buffer:bytes});
  // Replacing never prompts: the previous part is already kept in File > Recent.
  await ready(page);await tool(page,'cad.solid');await volume(page,'72000.000');
- await expect(page.locator('.gc-panel').filter({has:page.getByRole('heading',{name:'Recovery',exact:true})})).toContainText('Local recovery enabled');await page.reload();await expect(page.locator('[data-command="file.recent.0"]')).toHaveCount(1);await ready(page);await tool(page,'cad.solid');await volume(page,'72000.000');
+ await expect(page.locator('.gc-panel').filter({has:page.getByRole('heading',{name:'Recovery',exact:true})})).toContainText('Local recovery enabled');await page.reload();await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('[data-command="file.recent.0"]')).toHaveCount(1);await ready(page);await tool(page,'cad.solid');await volume(page,'72000.000');
  expect(await page.evaluate(()=>crossOriginIsolated)).toBe(true);expect(await page.evaluate(()=>document.body.scrollWidth<=innerWidth&&document.body.scrollHeight<=innerHeight)).toBe(true);
  await page.screenshot({path:'dev/evidence/CAD-APP-production.png'});await testInfo.attach('CAD production solid',{path:'dev/evidence/CAD-APP-production.png',contentType:'image/png'});
  console.log(`CAD-APP Chrome ${context.browser()!.version()} ${process.platform}/${process.arch}: exact 60000/72000 mm3, live cancel, undo/redo, editable native file, recovery.`);
@@ -35,7 +35,7 @@ test('CAD-APP production: constrain, extrude, preview/cancel, rebuild, undo, fil
 test('CAD-APP pointer tools and invalid sketch produce a visible failure with no stale solid',async({page})=>{
  test.setTimeout(60000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}});
  try{
- await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');await page.keyboard.press('l');
+ await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');await page.keyboard.press('l');
  const box=(await page.locator('.cad-stage').boundingBox())!;await page.mouse.click(box.x+100,box.y+200);await page.mouse.click(box.x+300,box.y+200);await ready(page);
  await expect(page.locator('[data-entity-id]')).toHaveCount(1);await page.keyboard.press('e');await expect(page.locator('.cad-build-status')).toHaveAttribute('data-state','error');await expect(page.locator('.cad-build-status')).toContainText('closed profile');
  await page.getByRole('dialog').getByRole('button',{name:'Cancel',exact:true}).click();await ready(page);await tool(page,'cad.rectangle');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();await ready(page);await page.keyboard.press('v');const edge=(await page.locator('[data-entity-id]').first().boundingBox())!;await page.mouse.click(edge.x+edge.width/2,edge.y+edge.height/2);
@@ -47,7 +47,7 @@ test('CAD-APP pointer tools and invalid sketch produce a visible failure with no
 test('CAD-APP keyboard selects one or several sketch entities without losing focus on redraw',async({page})=>{
  test.setTimeout(60000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}});
  try{
-  await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();
+  await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();
   await page.keyboard.press('Control+n');await tool(page,'cad.rectangle');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();await ready(page);
   const lines=page.locator('.cad-sketch [data-entity-id][role="button"]');await expect(lines).toHaveCount(4);
   await lines.nth(0).focus();await page.keyboard.press('Enter');await expect(lines.nth(0)).toBeFocused();await expect(lines.nth(0)).toHaveAttribute('aria-pressed','true');
@@ -64,7 +64,7 @@ test('CAD-APP exact sketch tools, H/V solving and displayed dimension editing',a
  test.setTimeout(60000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}});
  await context.addInitScript(()=>{Object.defineProperty(window,'showSaveFilePicker',{value:undefined});Object.defineProperty(window,'showOpenFilePicker',{value:undefined});});
  try{
- await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');await tool(page,'cad.line');
+ await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');await tool(page,'cad.line');
  const box=(await page.locator('.cad-stage').boundingBox())!;const click=async(x:number,y:number)=>page.mouse.click(box.x+70+x*4,box.y+box.height-70-y*4);
  await click(0,0);await click(20,10);await ready(page);
  const save=async()=>{const result=page.waitForEvent('download');await page.keyboard.press('Control+s');const d=await result;return nativeContainer({op:'decode',parts:[await readFile((await d.path())!)]});};
@@ -85,7 +85,7 @@ test('CAD-APP plate with circular holes extrudes exact B-rep volume and exports 
  test.setTimeout(60000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await context.addInitScript(()=>{Object.defineProperty(window,'showSaveFilePicker',{value:undefined});Object.defineProperty(window,'showOpenFilePicker',{value:undefined});});
  try{
- await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
+ await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
  const dialog=page.getByRole('dialog');await tool(page,'cad.rectangle');await dialog.getByRole('button',{name:'OK',exact:true}).click();await ready(page);
  await page.getByRole('menuitem',{name:'Sketch',exact:true}).click();await page.getByRole('menuitem',{name:'Circle dimensions…'}).click();
  await dialog.getByLabel('Diameter (mm or expression)').fill('10');await dialog.getByLabel('Center X (mm)').fill('20');await dialog.getByLabel('Center Y (mm)').fill('30');await dialog.getByRole('button',{name:'OK',exact:true}).click();await ready(page);
@@ -110,7 +110,7 @@ test('CAD-APP plate with circular holes extrudes exact B-rep volume and exports 
 test('CAD-APP failing fillet is flagged, readable and editable without a stale solid',async({page})=>{
  test.setTimeout(60000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}});
  try{
-  await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
+  await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
   await tool(page,'cad.rectangle');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();await ready(page);await page.keyboard.press('e');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();await volume(page,'60000.000');
   await page.locator('.cad-properties').getByRole('button',{name:'Fillet…',exact:true}).click();await page.getByRole('dialog').getByLabel('Radius (mm or expression)').fill('100');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();
   await expect(page.locator('.cad-build-status')).toHaveAttribute('data-state','error');await expect(page.locator('.cad-build-status')).toContainText(/Fillet 1: .+/);await expect(page.locator('.cad-feature-tree li[data-failed="true"]')).toContainText('Fillet 1');
@@ -122,7 +122,7 @@ test('CAD-APP failing fillet is flagged, readable and editable without a stale s
 test('CAD-APP cut, fillet, chamfer, imperial units and parallel/perpendicular/equal constraints',async({page})=>{
  test.setTimeout(90000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  try{
- await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
+ await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
  const dialog=page.getByRole('dialog'),props=page.locator('.cad-properties');
  await tool(page,'cad.rectangle');await dialog.getByRole('button',{name:'OK',exact:true}).click();await ready(page);
  await page.keyboard.press('e');await dialog.getByRole('button',{name:'OK',exact:true}).click();await volume(page,'60000.000');

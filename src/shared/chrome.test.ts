@@ -35,7 +35,7 @@ test('S10 golden shared window exposes the requested regions and view model', ()
     workspaces: [...f.root.querySelectorAll('[role="tab"]')].map(node => [node.getAttribute('aria-label'), node.getAttribute('aria-selected')]),
     panels: [...f.root.querySelectorAll('h2')].map(node => node.textContent),
     status: f.root.querySelector('[role="status"]')?.textContent,
-  }, { title: 'Test document *', menus: ['File', 'Edit'], workspaces: [['CAD', 'true'], ['Image', 'false'], ['Photo', 'false'], ['Video', 'false'], ['Document', 'false'], ['Slides', 'false'], ['Audio', 'false'], ['Spreadsheet', 'false'], ['Code', 'false']], panels: ['Properties'], status: 'Ready' });
+  }, { title: 'Test document *', menus: ['File', 'Edit'], workspaces: [['Image', 'false'], ['CAD', 'true'], ['Photo', 'false'], ['Video', 'false'], ['Document', 'false'], ['Slides', 'false'], ['Audio', 'false'], ['Spreadsheet', 'false'], ['Code', 'false']], panels: ['Properties'], status: 'Ready' });
   assert.equal(f.root.querySelector('.gc-brand')?.textContent, 'gsnv-paint');
   assert.ok(f.root.querySelector('.gc-app-header [role=tablist]'));
   assert.equal(chrome.viewport.getAttribute('aria-label'), 'CAD workspace view');
@@ -288,4 +288,50 @@ test('S10 removed focused commands return to the viewport and background updates
   const outside = button(f.document, '#outside'); outside.focus();
   chrome.update(f.model); assert.equal(f.document.activeElement, outside);
   chrome.dispose(); f.dom.window.close();
+});
+
+function submenuFixture() {
+  const f=fixture(); const parent={id:'file.saveOptions',label:'Save',shortcut:'',enabled:true,icon:'save',toolbar:true,children:[
+    {id:'file.save',label:'Save project file…',shortcut:'Ctrl+S',enabled:true,icon:'save'},
+    {id:'image.exportPNG',label:'Save PNG image…',shortcut:'',enabled:true,icon:'image'},
+    {id:'disabled',label:'Unavailable',shortcut:'',enabled:false},
+  ]};
+  const model:ChromeModel={...f.model,menus:[{id:'file',label:'File',items:[parent]}]};
+  const chrome=createChrome({...f.args,model});const trigger=button(f.root,'.gc-menubar [data-command="file.saveOptions"]');
+  const key=(value:string)=>f.document.activeElement!.dispatchEvent(new f.dom.window.KeyboardEvent('keydown',{key:value,bubbles:true,cancelable:true}));
+  button(f.root,'[data-menu="file"]').click();return {...f,chrome,parent,model,trigger,key};
+}
+
+test('S10 nested Save uses a side menu, keyboard stays at its level and Escape returns to its parent',()=>{
+  const f=submenuFixture();f.trigger.focus();f.key('ArrowRight');
+  const child=button(f.root,'.gc-submenu [data-command="file.save"]');assert.equal(f.document.activeElement,child);
+  assert.equal(f.trigger.getAttribute('aria-expanded'),'true');assert.deepEqual(f.commands,[]);
+  f.key('End');assert.equal((f.document.activeElement as HTMLElement).dataset.command,'image.exportPNG');f.key('ArrowDown');assert.equal(f.document.activeElement,child);
+  f.key('Escape');assert.equal(f.document.activeElement,f.trigger);assert.equal(f.trigger.getAttribute('aria-expanded'),'false');
+  f.key('ArrowRight');f.key('ArrowLeft');assert.equal(f.document.activeElement,f.trigger);
+  f.trigger.click();button(f.root,'.gc-submenu [data-command="image.exportPNG"]').click();assert.deepEqual(f.commands,['image.exportPNG']);
+  button(f.root,'.gc-standard [data-command="file.saveOptions"]').click();assert.deepEqual(f.commands,['image.exportPNG','file.saveOptions']);f.chrome.dispose();
+});
+test('S10 submenu hover, disabled children, live update identity and removed-child focus are coherent',()=>{
+  const f=submenuFixture();f.trigger.dispatchEvent(new f.dom.window.MouseEvent('pointerover',{bubbles:true}));
+  const child=button(f.root,'.gc-submenu [data-command="image.exportPNG"]');assert.equal(f.trigger.getAttribute('aria-expanded'),'true');child.focus();
+  f.chrome.update({...f.model,status:'Background work complete'});assert.equal(f.document.activeElement,child);assert.equal(child.closest<HTMLElement>('.gc-submenu')!.hidden,false);
+  button(f.root,'.gc-submenu [data-command="disabled"]').dispatchEvent(new f.dom.window.MouseEvent('click',{bubbles:true}));assert.deepEqual(f.commands,[]);
+  f.chrome.update({...f.model,menus:[{id:'file',label:'File',items:[{...f.parent,children:[f.parent.children[0]!]}]}]});
+  assert.equal(f.document.activeElement,f.trigger);f.key('Tab');assert.equal(f.trigger.closest('.gc-menu-popup')!.hasAttribute('hidden'),true);f.chrome.dispose();
+});
+test('S10 rejects empty, nested and malformed submenu lists',()=>{
+  for(const children of [[],[null],[{id:'x',label:'X',shortcut:'',enabled:true,children:[]}],[{id:'x',label:'X',shortcut:'',enabled:'yes'}]]) {
+    const f=fixture();const menus=[{id:'file',label:'File',items:[{id:'x',label:'X',shortcut:'',enabled:true,children}]}];
+    assert.throws(()=>createChrome({...f.args,model:{...f.model,menus} as never}),TypeError);
+  }
+});
+test('S10 Image is the first tab and workspace arrows follow the rendered order',()=>{
+  const f=fixture(),chrome=createChrome(f.args);assert.equal(f.root.querySelector('[role="tab"]')!.getAttribute('aria-label'),'Image');
+  const image=button(f.root,'[data-workspace="image"]');image.focus();image.dispatchEvent(new f.dom.window.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));assert.equal(f.workspaces.at(-1),'cad');chrome.dispose();
+});
+
+test('S10 clicking a Save parent already opened by hover keeps it open and focuses its first choice',()=>{
+ const f=submenuFixture();f.trigger.dispatchEvent(new f.dom.window.MouseEvent('pointerover',{bubbles:true}));f.trigger.focus();f.trigger.click();
+ assert.equal(f.trigger.getAttribute('aria-expanded'),'true');assert.equal((f.document.activeElement as HTMLElement).dataset.command,'file.save');assert.deepEqual(f.commands,[]);f.chrome.dispose();
 });

@@ -39,5 +39,5 @@ export async function codeJourney(page: Page, evidence: string) {
   await add('style.css', 'css', 'h1 { color: rgb(1,2,3); }'); await add('index.html', 'html', '<link rel="stylesheet" href="style.css"><h1>Offline HTML</h1><script>parent.hacked=true</script>');
   await page.getByLabel('Entry file', { exact: true }).selectOption('index.html'); await run.click();
   await expect(page.frameLocator('iframe[title="HTML/CSS preview"]').locator('h1')).toHaveCSS('color', 'rgb(1, 2, 3)');
-  expect(await page.evaluate(() => 'hacked' in window)).toBe(false); await download(page, () => command(page, 'file.save').click()); await page.screenshot({ path: `${evidence}/offline-code.png` });
+  expect(await page.evaluate(() => 'hacked' in window)).toBe(false); await download(page, async () => { await command(page, 'file.saveOptions').click(); await page.getByRole('dialog').getByRole('button', { name: 'Continue', exact: true }).click(); }); await page.screenshot({ path: `${evidence}/offline-code.png` });
 }

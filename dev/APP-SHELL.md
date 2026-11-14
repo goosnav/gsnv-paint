@@ -12,6 +12,10 @@ An adapter owns its optional new-document factory, native-package decode/encode 
 
 The assembly contains no geometry, pixel or timeline algorithms. Its dependency count reflects composition, not a new black-box brick. The brick checker applies to the 15 shared bricks; A-SHELL is checked through its seam testbench, strict typecheck, static build and actual browser smoke.
 
+## Save discovery and startup
+
+[Save/export UX](SAVE-EXPORT-UX.md) amends the assembly: Image is first and starts by default, with a first-available-adapter fallback. File → Save opens S10's side submenu; toolbar Save opens an S11 format chooser; Export opens export-only choices. S22 explicitly names only the current workspace's existing formats. Ctrl+S remains the direct native project save. Pending edits flush before either chooser or an export leaf; the current command state is checked again after the flush and at confirmation. Cancel does not write or export. Only native project save advances the saved baseline.
+
 ## Document and file lifecycle
 
 Each workspace keeps its own S02 history, saved revision, native file handle and view. Buttons, menus and shortcuts share availability checks; inactive or absent domain commands cannot run through shortcuts. S05/S12 bind globally for document shortcuts and separately to the active view. Switching releases the old view's captured gestures before rebinding. A modal blocks new gestures but still forwards terminal pointer cancellation to the originating view.

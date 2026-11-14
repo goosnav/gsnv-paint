@@ -1,0 +1,11 @@
+✔ A-SHELL Image starts first and Save popup cancellation never writes or exports (245.631921ms)
+✔ A-SHELL Save/export choices flush edits and keep exports separate from project saved state (82.802543ms)
+✔ A-SHELL Export popup offers exports only and rechecks live availability before dispatch (44.435301ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1231.639039

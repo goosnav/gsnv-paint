@@ -1,0 +1,63 @@
+{
+  "source": "https://github.com/halfmage/pixelarticons",
+  "commit": "c9ecc2da61afde85dbe539025e3d931c6152ad75",
+  "license": "MIT",
+  "integration": "Concatenate original path d values; render with currentColor at native 24px. No remote loads. Eight additional paint glyphs are original to gsnv-paint.",
+  "files": [
+    {
+      "glyph": "paintMove",
+      "file": "move.svg",
+      "sha256": "9b30b88045c0db8f7d73fe2995afb4d5606dc30f849b11425d94cd21040dda1f"
+    },
+    {
+      "glyph": "paintSelect",
+      "file": "square-dashed-cursor.svg",
+      "sha256": "160f56f3d5ed89553f771296784be0c748609bed425a3938407b0a5d834fe208"
+    },
+    {
+      "glyph": "paintLasso",
+      "file": "lasso.svg",
+      "sha256": "06cbadc9a6aa534a2a62d854a5849e13bf43bcbd910a95d9d245b088718759e3"
+    },
+    {
+      "glyph": "paintWand",
+      "file": "wand.svg",
+      "sha256": "e3c6818e0a057c6ebee70471142939c849cd94c78d3c2d696ffa1a90a68c0240"
+    },
+    {
+      "glyph": "paintPencil",
+      "file": "pencil.svg",
+      "sha256": "de547af9cc67017b1c6228f65ab317f681558cdca67b0afeeb22709136de80a2"
+    },
+    {
+      "glyph": "paintBrush",
+      "file": "brush.svg",
+      "sha256": "1d6216bb9118b9077e7d22386a34a4fef4e7e6d9b8ccdeac650f515b0cccf95e"
+    },
+    {
+      "glyph": "paintAirbrush",
+      "file": "spray.svg",
+      "sha256": "d1cbdc1f33aec57ec16f0864eadee0770aa13a1cd72fab48b9ad2be55db793b7"
+    },
+    {
+      "glyph": "paintEraser",
+      "file": "eraser.svg",
+      "sha256": "e9e3b02534a4dfa052274192b6570889f0547fafb6b40f93d8eacb0b8b2a3949"
+    },
+    {
+      "glyph": "paintSmudge",
+      "file": "hand.svg",
+      "sha256": "689c868cf9a693cb4af4f238ad21dd6559e84edecc93ed11c5d85d5a3fbe42a2"
+    },
+    {
+      "glyph": "paintRectangle",
+      "file": "square.svg",
+      "sha256": "9cf9c572e331353cc64f505b366b5e94a8f820048c9e55286b838fef58a94b09"
+    },
+    {
+      "glyph": "paintEllipse",
+      "file": "circle.svg",
+      "sha256": "1e3dfd105946da90b169d0b7e0707d47e9ac4e75cbcadf125a7e0d913ee767d2"
+    }
+  ]
+}

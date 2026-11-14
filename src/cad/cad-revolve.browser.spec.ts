@@ -31,7 +31,7 @@ test('Revolve production: live signed preview, variables, undo, native reopen an
  test.setTimeout(150000);const server=await start(),errors:string[]=[],external:string[]=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(!r.url().startsWith('http://127.0.0.1:4197/')&&!r.url().startsWith('blob:')&&!r.url().startsWith('data:'))external.push(r.url());});
  try{
-  await page.goto(server.resolvedUrls!.local[0]!);await expect(command(page,'file.new')).toBeEnabled();await page.keyboard.press('Control+n');
+  await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(command(page,'file.new')).toBeEnabled();await page.keyboard.press('Control+n');
   await variable(page,'outer','20');await variable(page,'sweep','360','angle');await rectangle(page,'outer - 10');
   const props=page.locator('.cad-properties'),dialog=page.getByRole('dialog'),before=await history(page);
   await props.getByRole('button',{name:'Revolve…',exact:true}).click();await expect(dialog).toBeVisible();
@@ -55,7 +55,7 @@ test('Revolve production: live signed preview, variables, undo, native reopen an
   expect(sourceOf((await save(page)).bytes)).toEqual(source);
   await props.getByRole('button',{name:'Imperial (in)',exact:true}).click();await ready(page);await volume(page,1575*Math.PI);await props.getByRole('button',{name:'Metric (mm)',exact:true}).click();await ready(page);await volume(page,1575*Math.PI);
   const rebound=sourceOf((await save(page)).bytes),r=rebound.graph.features[1]!;if(r.kind!=='revolve')throw Error('fixture');expect(r.definition.angle.source).toBe('sweep');
-  await expect(page.locator('[data-panel-recovery]')).toContainText('Local recovery enabled');await page.reload();await ready(page);await volume(page,1575*Math.PI);expect(sourceOf((await save(page)).bytes)).toEqual(rebound);
+  await expect(page.locator('[data-panel-recovery]')).toContainText('Local recovery enabled');await page.reload();await page.getByRole('tab',{name:'CAD',exact:true}).click();await ready(page);await volume(page,1575*Math.PI);expect(sourceOf((await save(page)).bytes)).toEqual(rebound);
   await props.getByRole('button',{name:/^outer = /}).click();await dialog.getByLabel('Value or expression').fill('20 mm');await accept(page);await volume(page,900*Math.PI);
   await menu(page,'Solid','Solid view');await page.keyboard.press('f');await expect(page.getByLabel('CAD solid viewport')).toBeVisible();
   expect(await page.evaluate(()=>document.body.scrollWidth<=innerWidth&&document.body.scrollHeight<=innerHeight)).toBe(true);await page.screenshot({path:'dev/evidence/CAD-revolve-production.png'});await testInfo.attach('Revolved part at 1280×720',{path:'dev/evidence/CAD-revolve-production.png',contentType:'image/png'});
@@ -65,7 +65,7 @@ test('Revolve production: live signed preview, variables, undo, native reopen an
 test('Revolve production: STEP world placement, failed feature readiness, explicit replacement and removal',async({page,context})=>{
  test.setTimeout(150000);const server=await start(),fixture=await kernelFixture();const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  try{
-  await page.goto(server.resolvedUrls!.local[0]!);await expect(command(page,'file.new')).toBeEnabled();await page.keyboard.press('Control+n');await rectangle(page);
+  await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(command(page,'file.new')).toBeEnabled();await page.keyboard.press('Control+n');await rectangle(page);
   const props=page.locator('.cad-properties'),dialog=page.getByRole('dialog');await page.keyboard.press('Shift+e');await dialog.getByLabel('Angle (degrees or expression)').fill('90 deg');await accept(page);
   const centroid=280/(9*Math.PI),expectedCenters={XY:[centroid,6,-centroid],XZ:[centroid,centroid,6],YZ:[-centroid,centroid,6]};
   for(const plane of ['XY','XZ','YZ'] as const){

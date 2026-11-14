@@ -1,15 +1,15 @@
 /**
- * PURPOSE    Render original local interface glyphs as accessible SVG elements.
+ * PURPOSE    Render local interface glyphs as accessible SVG elements.
  * KIND       SHELL
  * CONTRACT   IN: IconRequest; document, catalog name, text label, size 12–64 CSS px.
  *            OUT: SVGSVGElement with 24-unit viewBox, accessible label and local paths.
  *            RAISES: RangeError for unknown glyph or nonfinite/out-of-range size.
  * GUARANTEES No fetched imagery, Microsoft assets, markup injection or shared DOM nodes.
- * TUNING     PATHS is the original glyph catalog; STROKE_WIDTH controls optical weight. Glyphs render
+ * TUNING     PATHS and PAINT_PATHS are the local glyph catalogs; STROKE_WIDTH controls optical weight. Glyphs render
  *            with crisp (aliased) edges for the XP pixel look; colour per glyph comes from chrome.css.
- * DECISIONS  D1: Draw app-specific paths rather than ship a stock icon package, keeping
- *            the visual vocabulary original and locally available. Revisit if: the
- *            owner changes the original-assets requirement.
+ * DECISIONS  D1: Use original paths plus the owner-authorized MIT Pixelarticons subset.
+ *            Alternative: runtime icon package/CDN; local paths keep offline behavior.
+ *            Upstream originals, pinned hashes and license live in vendor/pixelarticons.
  *            D2: Use aria-label plus a text title, avoiding generated title IDs and their
  *            collision risk. Alternative: aria-labelledby; Revisit if: a proven AT gap emerges.
  * LIMITS     Labels/tooltips and active/disabled styling are supplied by the chrome.
@@ -22,6 +22,7 @@ export const iconCatalog: readonly string[] = Object.freeze([
   'delete', 'select', 'hand', 'zoomIn', 'zoomOut', 'fit', 'history', 'properties', 'layers',
   'grid', 'ruler', 'line', 'rectangle', 'extrude', 'revolve',
   'pencil', 'brush', 'eraser', 'fill', 'picker', 'ellipse', 'text', 'crop', 'rotate', 'flip',
+  'paintMove', 'paintSelect', 'paintLasso', 'paintWand', 'paintPencil', 'paintBrush', 'paintAirbrush', 'paintEraser', 'paintSmudge', 'paintRectangle', 'paintEllipse', 'paintEllipseSelect', 'paintClone', 'paintBlur', 'paintFill', 'paintGradient', 'paintPicker', 'paintText', 'paintLine',
   'move', 'ellipseSelect', 'lasso', 'wand', 'airbrush', 'clone', 'blur', 'gradient', 'layerAdd', 'smudge', 'export', 'close', 'help', 'chevronRight', 'chevronDown',
 ]);
 
@@ -104,21 +105,43 @@ const PATHS: Readonly<Record<string, string>> = {
   chevronRight: 'M8 4l8 8-8 8',
   chevronDown: 'M4 8l8 8 8-8',
 };
+const PAINT_PATHS: Readonly<Record<string,string>> = {
+  paintMove: 'M13 2h2v2h2v2h-4v5h5V7h2v2h2v2h2v2h-2v2h-2v2h-2v-4h-5v5h4v2h-2v2h-2v2h-2v-2H9v-2H7v-2h4v-5H6v4H4v-2H2v-2H0v-2h2V9h2V7h2v4h5V6H7V4h2V2h2V0h2v2Z',
+  paintSelect: 'M12 10h2v12h-2zm2 0h2v2h-2zm2 2h2v2h-2zm2 2h2v2h-2zm2 2h2v2h-2zm-6 4h2v2h-2zm2-2h6v2h-6zM2 16h2v4H2zm2 4h2v2H4zm4 0h2v2H8zM2 10h2v4H2zm0-6h2v4H2zm2-2h2v2H4zm4 0h4v2H8zm6 0h4v2h-4zm6 2h2v4h-2zm0 6h2v2h-2z',
+  paintLasso: 'M4 12h2v2H4zm-2 2h2v2H2zm2 2h2v4H4zm2-2h4v2H6zm0 6h2v2H6zm4-4h4v2h-4zm0-14h4v2h-4zm4 12h4v2h-4zm4-2h2v2h-2zm0-6h2v2h-2zM6 4h4v2H6zM4 6h2v2H4zm10-2h4v2h-4zm6 4h2v4h-2zM2 8h2v4H2z',
+  paintWand: 'M14 22H12V20H14V22ZM20 22H18V20H20V22ZM5 19H9V21H3V15H5V19ZM18 20H16V18H18V20ZM22 20H20V18H22V20ZM11 19H9V16H11V19ZM20 18H18V16H20V18ZM13 16H11V13H13V16ZM8 15H5V13H8V15ZM11 13H8V11H11V13ZM15 13H13V11H15V13ZM21 13H19V11H21V13ZM4 12H2V10H4V12ZM13 11H11V9H13V11ZM17 11H15V9H17V11ZM15 9H13V7H15V9ZM19 9H17V7H19V9ZM6 8H4V6H6V8ZM17 7H15V5H17V7ZM21 7H19V5H17V3H21V7ZM4 6H2V4H4V6ZM8 6H6V4H8V6ZM13 5H11V3H13V5ZM6 4H4V2H6V4Z',
+  paintPencil: 'M4 16H6V18H8V20H10V22H2V14H4V16ZM12 20H10V18H12V20ZM14 18H12V16H14V18ZM10 16H8V14H10V16ZM16 16H14V14H16V16ZM6 14H4V12H6V14ZM12 14H10V12H12V14ZM18 14H16V12H18V14ZM8 12H6V10H8V12ZM14 12H12V10H14V12ZM20 12H18V10H20V12ZM10 10H8V8H10V10ZM18 10H16V8H18V10ZM22 10H20V8H22V10ZM12 8H10V6H12V8ZM16 8H14V6H16V8ZM20 8H18V6H20V8ZM14 6H12V4H14V6ZM18 6H16V4H18V6ZM16 4H14V2H16V4Z',
+  paintBrush: 'M7 2h10v2H7zM5 4h2v10H5zm12-2h2v12h-2z M13 2h2v6h-2zM9 2h2v4H9zm-4 8h14v2H5zm2 4h10v2H7zm2 2h2v4H9zm4 0h2v4h-2zm-4 4h6v2H9z',
+  paintAirbrush: 'M4 9h6v2H4zm2-2h2v2H6zm-4 4h2v10H2zm2 8h6v2H4zm6-8h2v10h-2zm2-4h2v2h-2zm2-2h2v2h-2zm0 6h2V9h-2zm2-8h2v2h-2zm0 10h2v-2h-2zm2-12h2v2h-2zm0 14h2v-2h-2zm-2-8h2v2h-2zm2-2h2v2h-2zm0 4h2v2h-2z',
+  paintEraser: 'M15 18h6v2H7v-2h6v-2h2v2Zm-8 0H5v-2h2v2Zm-2-2H3v-2h2v2Zm12 0h-2v-2h2v2ZM7 14H5v-2h2v2Zm8 0h-2v-2h2v2Zm4 0h-2v-2h2v2ZM9 12H7v-2h2v2Zm4 0h-2v-2h2v2Zm8 0h-2v-2h2v2Zm-10-2H9V8h2v2Zm8 0h-2V8h2v2Zm-6-2h-2V6h2v2Zm4 0h-2V6h2v2Zm-2-2h-2V4h2v2Z',
+  paintSmudge: 'M21 7h2v5h-2zm-4-2h2v7h-2zm-4-2h2v8h-2zM9 3h2v8H9zM5 5h2v8H5zm14 0h2v2h-2zm-4-2h2v2h-2zm-4-2h2v2h-2zM7 3h2v2H7zm-4 8h2v2H3zm-2 2h2v2H1zm0 2h2v2H1zm2 2h2v2H3zm2 2h2v2H5zm2 2h12v2H7zm12-2h2v2h-2zm2-7h2v7h-2zM5 13h2v2H5zm2 2h2v2H7z',
+  paintRectangle: 'M2 4h2v16H2zm2 16h16v2H4zM20 4h2v16h-2zM4 2h16v2H4z',
+  paintEllipse: 'M6 2h12v2H6zm0 18h12v2H6zM2 6h2v12H2zm18 0h2v12h-2zm-2-2h2v2h-2zm0 14h2v2h-2zM4 4h2v2H4zm0 14h2v2H4z',
+  paintEllipseSelect: 'M8 2h4v2H8zM16 4h4v2h-4zM20 8h2v4h-2zM18 16h4v2h-4zM12 20h4v2h-4zM4 18h4v2H4zM2 12h2v4H2zM2 6h4v2H2z',
+  paintClone: 'M8 2h8v2h2v6h-2v2h-2v4h4v2h4v4H2v-4h4v-2h4v-4H8v-2H6V4h2z',
+  paintBlur: 'M10 2h4v4h2v4h2v4h2v4h-2v2h-2v2H8v-2H6v-2H4v-4h2v-4h2V6h2zM10 10v4H8v4h2v2h4v-2h2v-4h-2v-4z',
+  paintFill: 'M8 2h2v2h2v2h2v2h2v2h2v4h-2v2h-2v2h-2v2H8v-2H6v-2H4v-2H2v-4h2V8h2V6h2zM8 8H6v2H4v2h12v-2h-2V8h-2V6h-2v4H8zM20 14h2v4h2v4h-6v-4h2z',
+  paintGradient: 'M2 4h2v16H2zM4 2h16v2H4zM20 4h2v16h-2zM4 20h16v2H4zM4 4h4v16H4zM10 4h2v4h-2zM10 10h2v4h-2zM10 16h2v4h-2zM14 6h2v2h-2zM14 12h2v2h-2zM14 18h2v2h-2zM18 4h2v2h-2zM18 10h2v2h-2zM18 16h2v2h-2z',
+  paintPicker: 'M16 2h4v2h2v4h-2v2h-2V8h-2V6h-2V4h2zM12 6h2v2h2v2h2v2h-2v-2h-2v2h-2v2h-2v2H8v2H6v2H2v-4h2v-2h2v-2h2v-2h2V8h2zM10 12H8v2H6v2H4v2h2v-2h2v-2h2z',
+  paintText: 'M2 3h20v4h-2V5h-6v14h4v2H6v-2h4V5H4v2H2z',
+  paintLine: 'M20 2h2v4h-2v2h-2v2h-2v2h-2v2h-2v2h-2v2H8v2H6v2H2v-2h2v-2h2v-2h2v-2h2v-2h2v-2h2V8h2V6h2V4h2z',
+};
 const STROKE_WIDTH = 1.5;
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 export function renderIcon({ document, name, label, size }: IconRequest): SVGSVGElement {
-  if (!Object.hasOwn(PATHS, name)) throw new RangeError(`Unknown glyph: ${name}.`);
+  if (!Object.hasOwn(PATHS, name) && !Object.hasOwn(PAINT_PATHS, name)) throw new RangeError(`Unknown glyph: ${name}.`);
   if (!Number.isFinite(size) || size < 12 || size > 64) throw new RangeError('Glyph size must be between 12 and 64 CSS pixels.');
   const svg = document.createElementNS(SVG_NAMESPACE, 'svg');
+  const pixel=Object.hasOwn(PAINT_PATHS,name);
   const attributes = { viewBox: '0 0 24 24', width: String(size), height: String(size), role: 'img',
-    'aria-label': label, focusable: 'false', fill: 'none', stroke: 'currentColor',
+    'aria-label': label, focusable: 'false', fill: pixel ? 'currentColor' : 'none', stroke: pixel ? 'none' : 'currentColor',
     'stroke-width': String(STROKE_WIDTH), 'stroke-linecap': 'square', 'stroke-linejoin': 'miter', 'shape-rendering': 'crispEdges', 'data-icon': name };
   for (const [key, value] of Object.entries(attributes)) svg.setAttribute(key, value);
   const title = document.createElementNS(SVG_NAMESPACE, 'title');
   title.textContent = label;
   const path = document.createElementNS(SVG_NAMESPACE, 'path');
-  path.setAttribute('d', PATHS[name]!);
+  path.setAttribute('d', (pixel ? PAINT_PATHS : PATHS)[name]!);
   svg.append(title, path);
   return svg;
 }

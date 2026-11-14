@@ -28,5 +28,5 @@ export async function authoringJourneys(page: Page, evidence: string) {
   await expect(page.locator('[data-cell="A3"]')).toHaveText('15'); await roundtrip(page, 'gsnv-spreadsheet', () => expect(page.locator('[data-cell="A3"]')).toHaveText('15'));
   const csv = await download(page, () => menu(page, 'Workbook', 'Export active sheet as CSV…')); expect(csv.bytes.toString()).toMatch(/7\r?\n8\r?\n15/);
   const xlsx = await download(page, () => menu(page, 'Workbook', 'Export XLSX…')); expect(xlsx.bytes.subarray(0, 2).toString()).toBe('PK');
-  await page.screenshot({ path: `${evidence}/offline-spreadsheet.png` }); await command(page, 'file.save').focus();
+  await page.screenshot({ path: `${evidence}/offline-spreadsheet.png` }); await command(page, 'file.saveOptions').focus();
 }

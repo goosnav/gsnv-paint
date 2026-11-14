@@ -22,7 +22,7 @@ test('CAD consumer golden: dependent holes/pocket, live variables, unit conversi
   const shapes = new Map<number, ReturnType<KernelSession['resolve']>>(); let sequence = 0;
   const session: KernelSession = { library, generation: 1, isClosed: () => false, retain(shape) { const id = ++sequence; shapes.set(id, shape); return { id, generation: 1 }; }, resolve(token) { return shapes.get(token.id)!; }, release(token) { shapes.get(token.id)!.delete(); shapes.delete(token.id); } };
   try {
-    await page.goto(server.resolvedUrls!.local[0]!); await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled(); await page.keyboard.press('Control+n');
+    await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click(); await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled(); await page.keyboard.press('Control+n');
     const props = page.locator('.cad-properties'), dialog = page.getByRole('dialog');
     await props.getByRole('button', { name: 'Add variable…', exact: true }).click(); await dialog.getByLabel('Name', { exact: true }).fill('width'); await dialog.getByLabel('Value or expression').fill('100'); await ok(page);
     await page.locator('button[data-command="cad.rectangle"]:visible').first().click(); await dialog.getByLabel('Width (mm)', { exact: true }).fill('width'); await ok(page); await ready(page);

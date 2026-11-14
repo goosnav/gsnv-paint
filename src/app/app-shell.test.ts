@@ -82,6 +82,8 @@ function setup(options: { storage?: ReturnType<typeof resource>; available?: Wor
     return [workspace, options.viewSettings && workspace === 'cad' ? { ...adapter, mount: (host: Parameters<WorkspaceAdapter['mount']>[0]) => ({ ...adapter.mount(host), viewSettings: options.viewSettings! }) } : adapter];
   }));
   const app = mountApp({ root, adapters, files, recovery: storage, probe: { environment: {}, codecRequests: [] }, ...(options.recent ? { recent: options.recent } : {}) });
+  // These recovery/history journeys explicitly exercise CAD; startup is covered separately.
+  if (adapters.cad) clickWorkspace(root, 'cad');
   return { app, root, dom, window, files, storage, fixtures, close: () => { app.dispose(); dom.window.close(); } };
 }
 function status(root: HTMLElement) { return root.querySelector('[role="status"]')!.textContent!; }
@@ -100,11 +102,11 @@ async function recoveryParts(storage: ReturnType<typeof resource>) {
 }
 const unload = (s: ReturnType<typeof setup>) => { const event = new s.window.Event('beforeunload', { cancelable: true }); s.window.dispatchEvent(event); return event.defaultPrevented; };
 
-test('A-SHELL golden starts one empty CAD window with unavailable editing commands', async () => {
+test('A-SHELL golden starts one empty Image window with unavailable editing commands', async () => {
   const s = setup({ available: [] }); await s.app.ready;
-  assert.deepEqual(s.app.snapshot(), { workspace: 'cad', documents: {}, histories: {}, saved: {}, dirty: {}, message: 'CAD editing is not available in this development build.' });
+  assert.deepEqual(s.app.snapshot(), { workspace: 'image', documents: {}, histories: {}, saved: {}, dirty: {}, message: 'Image editing is not available in this development build.' });
   assert.equal(s.root.querySelectorAll('.gc-window').length, 1);
-  assert.deepEqual([...s.root.querySelectorAll('[role="tab"]')].map(tab => tab.getAttribute('data-workspace')), ['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code']);
+  assert.deepEqual([...s.root.querySelectorAll('[role="tab"]')].map(tab => tab.getAttribute('data-workspace')), ['image', 'cad', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code']);
   assert.equal(s.root.querySelector<HTMLButtonElement>('[data-command="file.new"]')!.disabled, true);
   await s.app.dispatch('file.new'); await s.app.dispatch('edit.undo');
   assert.deepEqual(s.app.snapshot().documents, {});
@@ -470,7 +472,7 @@ test('A-SHELL a modal forwards the active pointer cancellation before further ed
 test('A-SHELL New restores keyboard scope when an editor replaces its focused view', async () => {
   const s = setup(); await s.app.ready; await s.app.dispatch('file.new'); await s.app.dispatch('file.save');
   const field = s.window.document.createElement('input');
-  s.root.querySelector('output')!.append(field); field.focus();
+  s.root.querySelector('.app-editor:not([hidden]) output')!.append(field); field.focus();
   assert.equal(s.window.document.activeElement, field);
   await s.app.dispatch('file.new');
   assert.equal(field.isConnected, false);

@@ -10,7 +10,7 @@ async function command(page: Page, id: string) {
   const item = page.locator(selector).first(); await expect(item).toBeAttached();
   const menu = await item.evaluate(node => node.closest('.gc-menu-wrap')?.querySelector<HTMLElement>('[data-menu]')?.dataset.menu);
   expect(menu, `A visible menu must own command ${id}`).toBeTruthy();
-  await page.locator(`button[data-menu="${menu}"]`).click(); await expect(item).toBeVisible(); await item.click();
+  await page.locator(`button[data-menu="${menu}"]`).click(); if (id === 'file.save') await page.locator('.gc-menubar [data-submenu-trigger="file.saveOptions"]').click(); await expect(item).toBeVisible(); await item.click();
 }
 const idle = (page: Page) => page.evaluate(() => window.__appShellFixture!.idle());
 const snapshot = (page: Page) => page.evaluate(() => window.__appShellFixture!.snapshot());
@@ -86,7 +86,7 @@ test('A-SHELL actual window composes fixture editing, history, project files and
   await expect(value(page)).toHaveText('77'); expect((await snapshot(page)).dirty.cad).toBe(true);
   await page.close();
   const reopened = await context.newPage(); reopened.on('pageerror', error => errors.push(error.message));
-  await reopened.goto('/dev/fixtures/app-shell.html'); await expect(reopened.locator('#fixture-ready')).toHaveText('Integration fixture ready'); await idle(reopened);
+  await reopened.goto('/dev/fixtures/app-shell.html'); await expect(reopened.locator('#fixture-ready')).toHaveText('Integration fixture ready'); await idle(reopened); await reopened.getByRole('tab',{name:'CAD',exact:true}).click();
   expect((await snapshot(reopened)).documents.cad).toBeUndefined();
   await command(reopened, 'recovery.restore'); await idle(reopened); await expect(value(reopened)).toHaveText('77');
   expect((await snapshot(reopened)).documents.cad?.value).toEqual({ fixture: 'gsnv-paint/a-shell-integration/v1', width: 1, height: 1, value: 77, rgba: [77, 90, 160, 255] });

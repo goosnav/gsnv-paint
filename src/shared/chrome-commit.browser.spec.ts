@@ -13,7 +13,8 @@ test('S10 production mouse Save and File menu survive a property commit on blur'
     const field = page.locator('.slides-properties').getByLabel('Text', { exact: true });
     await field.fill('Save this last edit by mouse');
     let download = page.waitForEvent('download', { timeout: 5_000 });
-    await page.locator('.gc-standard [data-command="file.save"]').click();
+    await page.locator('.gc-standard [data-command="file.saveOptions"]').click();
+    await page.getByRole('dialog').getByRole('button',{name:'Continue',exact:true}).click();
     let saved = await download;
     let pack = nativeContainer({ op: 'decode', parts: [await readFile((await saved.path())!)] });
     expect(JSON.stringify(pack.project.content)).toContain('Save this last edit by mouse');
@@ -21,7 +22,8 @@ test('S10 production mouse Save and File menu survive a property commit on blur'
     await page.locator('.gc-menu-trigger[data-menu="file"]').click();
     await expect(page.locator('.gc-menu-trigger[data-menu="file"]')).toHaveAttribute('aria-expanded', 'true');
     download = page.waitForEvent('download', { timeout: 5_000 });
-    await page.locator('.gc-menu-popup [data-command="file.save"]:visible').click(); saved = await download;
+    await page.locator('.gc-menubar [data-submenu-trigger="file.saveOptions"]').click();
+    await page.locator('.gc-submenu [data-command="file.save"]:visible').click(); saved = await download;
     pack = nativeContainer({ op: 'decode', parts: [await readFile((await saved.path())!)] });
     expect(JSON.stringify(pack.project.content)).toContain('Save this second edit through File');
     await expect(page.locator('[data-window-title]')).not.toContainText('*');

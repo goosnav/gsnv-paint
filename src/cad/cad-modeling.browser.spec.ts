@@ -16,7 +16,7 @@ test.beforeEach(async({context})=>{await context.addInitScript(()=>{Object.defin
 test('CAD modeling production: centered formula profile, planes, units, editable native reopen and STEP world position',async({page},testInfo)=>{
  test.setTimeout(90000);const server=await start(),errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  try {
-  await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('[data-command="file.new"]:visible').first()).toBeEnabled();await newPart(page);
+  await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('[data-command="file.new"]:visible').first()).toBeEnabled();await newPart(page);
   const props=page.locator('.cad-properties'),dialog=page.getByRole('dialog');
   await props.getByRole('button',{name:'XZ',exact:true}).click();await expect(props.getByRole('button',{name:'XZ',exact:true})).toHaveAttribute('aria-pressed','true');
   await props.getByRole('button',{name:'Add variable…'}).click();await dialog.getByLabel('Name',{exact:true}).fill('width');await dialog.getByLabel('Value or expression').fill('30');await dialog.getByRole('button',{name:'OK',exact:true}).click();
@@ -40,7 +40,7 @@ test('CAD modeling production: centered formula profile, planes, units, editable
 test('CAD modeling production: pointer profiles, keyboard group selection, detach/undo and construction exclusion',async({page})=>{
  test.setTimeout(90000);const server=await start();
  try{
-  await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('[data-command="file.new"]:visible').first()).toBeEnabled();await newPart(page);
+  await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('[data-command="file.new"]:visible').first()).toBeEnabled();await newPart(page);
   await page.locator('[data-command="cad.centerRectangleTool"]').click();
   const box=(await page.locator('.cad-stage').boundingBox())!,click=(u:number,v:number)=>page.mouse.click(box.x+70+u*4,box.y+box.height-70-v*4);
   await click(10,10);await click(25,20);await ready(page);await expect(page.locator('[data-entity-id][role="button"]')).toHaveCount(4);
@@ -61,7 +61,7 @@ test('CAD modeling production: pointer profiles, keyboard group selection, detac
 test('CAD modeling production: numeric polygon radius/rotation edits and a circle hole on YZ',async({page})=>{
  test.setTimeout(90000);const server=await start();
  try{
-  await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('[data-command="file.new"]:visible').first()).toBeEnabled();await newPart(page);
+  await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('[data-command="file.new"]:visible').first()).toBeEnabled();await newPart(page);
   const props=page.locator('.cad-properties'),dialog=page.getByRole('dialog');await props.getByRole('button',{name:'YZ',exact:true}).click();
   await menu(page,'Sketch','Regular polygon dimensions…');await dialog.getByLabel('Radius (mm or expression)').fill('10');await dialog.getByLabel('Rotation (degrees or expression)').fill('30');await accept(page);
   await menu(page,'Sketch','Circle dimensions…');await dialog.getByLabel('Diameter (mm or expression)').fill('4');await dialog.getByLabel('Center X (mm)').fill('30');await dialog.getByLabel('Center Y (mm)').fill('30');await accept(page);
@@ -73,7 +73,7 @@ test('CAD modeling production: numeric polygon radius/rotation edits and a circl
 test('CAD modeling production: exact hexagon and independent construction-line native reopen fixtures',async({page})=>{
  test.setTimeout(90000);const server=await start();
  try{
-  await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('[data-command="file.new"]:visible').first()).toBeEnabled();await newPart(page);
+  await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('[data-command="file.new"]:visible').first()).toBeEnabled();await newPart(page);
   const dialog=page.getByRole('dialog');await page.locator('[data-command="cad.polygonTool"]').click();await dialog.getByLabel('Sides').fill('6');await dialog.getByRole('button',{name:'OK',exact:true}).click();
   const box=(await page.locator('.cad-stage').boundingBox())!,click=(u:number,v:number)=>page.mouse.click(box.x+70+u*4,box.y+box.height-70-v*4);await click(0,0);await click(10,0);await ready(page);
   const file=await save(page),source=editableCADContent({operation:'read',value:nativeContainer({op:'decode',parts:[file.bytes]}).project.content}),sketch=source.graph.features[0].definition.sketch;

@@ -1,0 +1,12 @@
+✔ S22 Image choices name the editable project and PNG without inventing JPEG (2.454674ms)
+✔ S22 every workspace exposes only its declared present formats in stable order (1.380754ms)
+✔ S22 disabled exporters remain disabled and unavailable exporters are absent (0.221054ms)
+✔ S22 rejects malformed input and duplicate commands (0.651317ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 225.931302

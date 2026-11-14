@@ -1,0 +1,42 @@
+[WebServer] (node:1676977) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:1677011) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Save/export Chrome 154.0.8037.97 linux/x64, 1280×720
+  ✘  1 src/app/save-export.browser.spec.ts:15:1 › Save discovery: Image first, clear popup, real PNG/project output, reopen and keyboard submenu (891ms)
+(node:1677207) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Save/export Chrome 154.0.8037.97 linux/x64, 1280×720
+  ✓  2 src/app/save-export.browser.spec.ts:44:1 › Save discovery: Document and Slides PDF choices reach their real printable output (1.5s)
+  ✓  3 src/shared/chrome-commit.browser.spec.ts:6:1 › S10 production mouse Save and File menu survive a property commit on blur (1.0s)
+
+
+  1) src/app/save-export.browser.spec.ts:15:1 › Save discovery: Image first, clear popup, real PNG/project output, reopen and keyboard submenu
+
+    Error: locator.fill: Error: strict mode violation: locator('[data-option="size"]') resolved to 2 elements:
+        1) <input min="1" step="1" max="500" type="range" class="xp-range" data-option="size" id="image-option-size"/> aka getByRole('slider', { name: 'Size' })
+        2) <input min="1" step="1" max="500" type="number" class="xp-field" data-option="size" aria-label="Size (px)"/> aka getByRole('spinbutton', { name: 'Size (px)' })
+
+    Call log:
+      - waiting for locator('[data-option="size"]')
+
+
+      17 |  await expect(page.getByRole('tab').first()).toHaveAttribute('aria-label','Image');await expect(page.getByRole('tab').first()).toHaveAttribute('aria-selected','true');
+      18 |  await expect(toolbar(page,'file.export')).toBeDisabled();await toolbar(page,'file.new').click();await expect(page.locator('.image-canvas')).toBeVisible();
+    > 19 |  await page.locator('.gc-palette [data-command="image.pencil"]').click();await page.locator('[data-option="size"]').fill('3');await page.keyboard.press('Enter');
+         |                                                                                                                     ^
+      20 |  const canvas=page.locator('.image-canvas'),box=(await canvas.boundingBox())!;
+      21 |  await page.mouse.move(box.x+80,box.y+80);await page.mouse.down();await page.mouse.move(box.x+220,box.y+160,{steps:10});await page.mouse.up();
+      22 |  const pixels=await canvas.evaluate((c:HTMLCanvasElement)=>[...c.getContext('2d')!.getImageData(0,0,c.width,c.height).data]);expect(pixels.some((v,i)=>i%4===0&&v===0)).toBe(true);
+        at /home/goosnav/Desktop/code/gsnv-paint/src/app/save-export.browser.spec.ts:19:117
+
+    Error Context: test-results/app-save-export.browser-Sa-22896-reopen-and-keyboard-submenu/error-context.md
+
+    Error Context: test-results/app-save-export.browser-Sa-22896-reopen-and-keyboard-submenu/error-context.md
+
+  1 failed
+    src/app/save-export.browser.spec.ts:15:1 › Save discovery: Image first, clear popup, real PNG/project output, reopen and keyboard submenu
+  2 passed (6.0s)

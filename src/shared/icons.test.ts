@@ -24,7 +24,7 @@ test('S09 golden accessible original close glyph', () => {
   });
 });
 
-test('S09 every catalog glyph has unique original local path data and an accessible name', () => {
+test('S09 every catalog glyph has unique local path data and an accessible name', () => {
   const paths = new Set<string>();
   assert.equal(new Set(iconCatalog).size, iconCatalog.length);
   for (const name of iconCatalog) {

@@ -28,6 +28,17 @@ function fixture(patch: Partial<DialogSpec> = {}) {
   return { dom, document, root, opener, spec, previews, commits, get cancels() { return cancels; }, open, field, button, key, input };
 }
 
+test('S11 save choice copy is literal text and the named confirmation retains Enter/Cancel behavior', () => {
+  const f=fixture({description:'Keep <layers> editable.',confirmLabel:'Continue'});f.open();
+  assert.equal(f.root.querySelector('.gc-dialog-description')?.textContent,'Keep <layers> editable.');
+  assert.equal(f.root.querySelector('.gc-dialog-description layers'),null);
+  assert.equal(f.button('Continue').title,'Continue (Enter)');f.key('Enter');assert.equal(f.commits.length,1);
+  const g=fixture({confirmLabel:'Save'});g.open();g.key('Escape');assert.equal(g.cancels,1);assert.equal(g.commits.length,0);
+});
+test('S11 rejects malformed optional copy', () => {
+  for(const patch of [{description:9},{confirmLabel:false},{confirmLabel:''}]) assert.throws(()=>fixture(patch as never).open(),TypeError);
+});
+
 test('S11 golden modal renders typed fields and previews normalized initial values', () => {
   const f = fixture(); f.open();
   assert.deepEqual({ title: f.root.querySelector('dialog')?.getAttribute('aria-label'),

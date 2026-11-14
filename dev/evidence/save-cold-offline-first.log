@@ -1,0 +1,41 @@
+{"directory":"/tmp/gsnv-offline-acceptance-SN6HAf","buildA":"a44d80844f29e798cf6fc664ab4f1880c8c6450005862be19db6d5d3e6d740e0","buildB":"9448ed7257b68c07966a1016ea8a126c5ab2a6b4a0daadfece4c6d132bf52e5e","files":56,"bytes":41190531}
+
+Running 1 test using 1 worker
+
+(node:1698850) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+COLD root ready after complete browser restart, server stopped.
+COLD CAD solver/kernel/native/STEP complete.
+  ✘  1 src/shared/offline.browser.spec.ts:70:1 › OFFLINE production survives complete Chrome shutdown and first-use editing/export in all nine workspaces with the server stopped (24.3s)
+
+
+  1) src/shared/offline.browser.spec.ts:70:1 › OFFLINE production survives complete Chrome shutdown and first-use editing/export in all nine workspaces with the server stopped
+
+    TimeoutError: locator.focus: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for locator('button[data-command="file.save"]:visible').first()
+
+
+       at ../../dev/offline-authoring-journeys.ts:31
+
+      29 |   const csv = await download(page, () => menu(page, 'Workbook', 'Export active sheet as CSV…')); expect(csv.bytes.toString()).toMatch(/7\r?\n8\r?\n15/);
+      30 |   const xlsx = await download(page, () => menu(page, 'Workbook', 'Export XLSX…')); expect(xlsx.bytes.subarray(0, 2).toString()).toBe('PK');
+    > 31 |   await page.screenshot({ path: `${evidence}/offline-spreadsheet.png` }); await command(page, 'file.save').focus();
+         |                                                                                                            ^
+      32 | }
+      33 |
+        at authoringJourneys (/home/goosnav/Desktop/code/gsnv-paint/dev/offline-authoring-journeys.ts:31:108)
+        at /home/goosnav/Desktop/code/gsnv-paint/src/shared/offline.browser.spec.ts:84:5
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-pr-9bb29-ces-with-the-server-stopped/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-pr-9bb29-ces-with-the-server-stopped/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-pr-9bb29-ces-with-the-server-stopped/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    src/shared/offline.browser.spec.ts:70:1 › OFFLINE production survives complete Chrome shutdown and first-use editing/export in all nine workspaces with the server stopped

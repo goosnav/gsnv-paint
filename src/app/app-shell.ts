@@ -15,7 +15,7 @@
  *            RAISES: TypeError for invalid mounting resources. Operational failures
  *            become visible status messages; no late UI updates after disposal.
  * GUARANTEES No unbuilt domain tools, invented document schema, upload or server logic.
- * TUNING     Initial workspace is CAD; view range is 1%–6400%. Domain adapters own
+ * TUNING     Initial workspace is Image (or the first available adapter); view range is 1%–6400%. Domain adapters own
  *            their document factories and codecs. File chooser starts at Untitled.
  * DECISIONS  D1: Keep per-workspace epochs in addition to persisted IDs; same-ID reopen
  *            can otherwise inherit a late save. Revisit if: document lifecycle is atomic.
@@ -40,6 +40,7 @@ import { capabilityProbe, type ProbeRequest, type Capability } from '../shared/c
 import { projectFiles, type ProjectFileRequest } from '../shared/project-files.ts';
 import { recoverySession, type RecoveryPort } from '../shared/recovery-session.ts';
 import { nativeContainer } from '../shared/native-container.ts';
+import { saveChoices } from '../shared/save-choices.ts';
 import type { RecentEntry, RecentPort } from '../shared/recent-projects.ts';
 import { createWorkspaceBridge, type EditorBridge, type BridgeResult } from '../bridge/workspace-bridge.ts';
 import type { TransferIntent } from '../bridge/transfer-contract.ts';
@@ -96,7 +97,7 @@ type Handle = {
   dispose(): void;
 };
 
-const WORKSPACES = ['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code'] as const;
+const WORKSPACES = ['image', 'cad', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code'] as const;
 const NAMES = { cad: 'CAD', image: 'Image', photo: 'Photo', video: 'Video', document: 'Document', slides: 'Slides', audio: 'Audio', spreadsheet: 'Spreadsheet', code: 'Code' } as const;
 const RANGE = { min: 0.01, max: 64 };
 const RECENT_MENU_LIMIT = 12;
@@ -118,7 +119,8 @@ function samePayload(left: readonly Uint8Array[], right: readonly Uint8Array[]):
 export function mountApp({ root, adapters, files, recovery, probe, recent }: Request): Handle {
   if (!root?.isConnected || !root.ownerDocument.defaultView) throw new TypeError('A live application root is required.');
   const document = root.ownerDocument; const window = document.defaultView!;
-  let state: Session<unknown> = { workspace: 'cad', documents: {}, histories: {}, saved: {}, dirty: {}, message: adapters.cad ? 'Ready. Create or open a project.' : 'CAD editing is not available in this development build.' };
+  const initialWorkspace=WORKSPACES.find(workspace=>adapters[workspace])??'image';
+  let state: Session<unknown> = { workspace: initialWorkspace, documents: {}, histories: {}, saved: {}, dirty: {}, message: adapters[initialWorkspace] ? 'Ready. Create or open a project.' : 'Image editing is not available in this development build.' };
   let disposed = false; let disposing = false; let initialized = false; let opening = false; let sequence = 0;
   let modal: { close(): void } | null = null; let modalActive = false;
   let capabilities: Capability[] = []; let viewInput = () => {};
@@ -242,12 +244,15 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
   function model(): ChromeModel {
     const workspace = state.workspace; const editor = activeView()?.model(); const current = state.documents[workspace]; const history = state.histories[workspace];
     const item = (id: string, label: string, shortcut: string, enabled: boolean, icon?: string) => ({ id, label, shortcut, enabled, ...(icon ? { icon, toolbar: true } : {}) });
+    const choices=saveChoices({workspace,projectEnabled:!!current&&!saving[workspace],commands:editor?.menus.flatMap(menu=>menu.items)??[]});
+    const exportIds=new Set(choices.slice(1).map(choice=>choice.id));
     return { title: current?.title ?? 'No document', workspace, dirty: state.dirty[workspace] ?? false, capabilities, status: state.message,
       menus: [
         { id: 'file', label: 'File', items: [
           item('file.new', 'New', 'Ctrl+N', initialized && !!adapters[workspace]?.create, 'new'),
           item('file.open', 'Open', 'Ctrl+O', initialized && Object.keys(adapters).length > 0 && !opening, 'open'),
-          item('file.save', 'Save', 'Ctrl+S', !!current && !saving[workspace], 'save'),
+          {...item('file.saveOptions','Save…','',!!current&&choices.some(choice=>choice.enabled),'save'),children:choices},
+          item('file.export','Export…','',!!current&&choices.slice(1).some(choice=>choice.enabled),'export'),
           ...(recent ? [item('file.rename', 'Rename…', '', !!current),
             ...recentEntries.slice(0, RECENT_MENU_LIMIT).map((entry, index) => item(`file.recent.${index}`, `${index + 1}  ${entry.title} (${NAMES[entry.workspace]})`, '', initialized)),
             item('file.stored', 'Open stored project…', '', initialized && recentEntries.length > 0),
@@ -257,9 +262,19 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
         ] },
         { id: 'edit', label: 'Edit', items: [item('edit.undo', 'Undo', 'Ctrl+Z', !!history?.past.length, 'undo'), item('edit.redo', 'Redo', 'Ctrl+Y', !!history?.future.length, 'redo')] },
         { id: 'view', label: 'View', items: [item('view.settings', 'View settings', '', !!current && is2D())] },
-        ...(editor?.menus ?? []),
+        ...(editor?.menus??[]).map(menu=>({...menu,items:menu.items.map(item=>exportIds.has(item.id)&&workspace!=='cad'?{...item,toolbar:false}:item)})),
       ], tools: editor?.tools ?? [], panels: [...(editor?.panels ?? []), { id: 'history', title: 'History', content: historyPanel }, { id: 'recovery', title: 'Recovery', content: recoveryPanel }],
     };
+  }
+  function saveOptions(exportsOnly: boolean) {
+    const workspace=state.workspace;if(!flushView(workspace))return;
+    const choices=saveChoices({workspace,projectEnabled:!!state.documents[workspace]&&!saving[workspace],commands:activeView()?.model().menus.flatMap(menu=>menu.items)??[]}).filter(choice=>choice.enabled&&(!exportsOnly||choice.id!=='file.save'));
+    if(!choices.length){status('No export format is currently available.');return;}
+    dialog({title:exportsOnly?'Export a file':'Save your work',description:exportsOnly?'Export a file to use outside gsnv-paint. Your editable project stays open.':'Save a project file to keep editing later. Export a copy to use in other apps.',confirmLabel:'Continue',
+      fields:[{key:'format',label:'File type',type:'select',choices:choices.map(choice=>({value:choice.id,label:choice.label.replace(/…$/,'')}))}],initial:{format:choices[0]!.id},
+      validate:values=>choices.some(choice=>choice.id===values.format)?{ok:true,value:String(values.format)}:{ok:false,error:{code:'save.format',message:'Choose a file type.'}},preview(){},cancel(){},
+      commit:value=>{const id=String(value),latest=model().menus.flatMap(menu=>menu.items.flatMap(item=>[item,...item.children??[]])).find(item=>item.id===id);if(state.workspace!==workspace||!latest?.enabled){status('That file format is no longer available. Try Save again.');return;}void dispatch(id);},
+    });
   }
   function render() {
     if (disposed || disposing || modalActive) return;
@@ -482,10 +497,13 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
     if (id === 'tool.cancel') { activeView()?.command(id); return; }
     if (id === 'tool.confirm') { activeView()?.command(id); return; }
     if ((id === 'edit.undo' || id === 'edit.redo') && !flushView(state.workspace)) return;
-    const menu = model(); const entry = [...menu.menus.flatMap(group => group.items), ...menu.tools].find(item => item.id === id);
+    const exportChoice = saveChoices({ workspace: state.workspace, projectEnabled: false, commands: activeView()?.model().menus.flatMap(group => group.items) ?? [] }).some(choice => choice.id === id && id !== 'file.save');
+    if (exportChoice && !flushView(state.workspace)) return;
+    const menu = model(); const entry = [...menu.menus.flatMap(group => group.items.flatMap(item=>[item,...item.children??[]])), ...menu.tools].find(item => item.id === id);
     if (!entry?.enabled) return;
     const workspace = state.workspace;
     if (id === 'file.open') return open();
+    if(id==='file.saveOptions'||id==='file.export'){saveOptions(id==='file.export');return;}
     if (id === 'file.save') { await save(workspace); return; }
     if (id === 'file.new') { if (await mayReplace(workspace) && !disposed && !modalActive) replace(workspace, adapters[workspace]!.create!(), false); return; }
     if (id === 'file.rename') {

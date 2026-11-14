@@ -1,0 +1,125 @@
+✖ S10 golden shared window exposes the requested regions and view model (131.511363ms)
+✔ S10 toolbar/palette route enabled commands once and never activate disabled tools (31.3182ms)
+✔ S10 menus open, route enabled items, close on outside interaction and restore focus on Escape (51.459496ms)
+✔ S10 menu keyboard navigation skips disabled items and wraps (26.976782ms)
+✖ S10 workspace controls emit the exact target and reflect updates (22.720571ms)
+✔ S10 workspace keyboard navigation reaches every tab and wraps in both directions (41.34956ms)
+✔ S10 updates retain viewport, mounted renderer, panel content and focused control identity (17.328495ms)
+✔ S10 tool focus displays next action and blur restores current status (16.880312ms)
+✔ S10 supplied strings are literal text and panel elements keep their listeners (19.808172ms)
+✔ S10 dispose is idempotent and removes frame and all listeners (18.419304ms)
+✔ S10 invalid root/callbacks/model raise TypeError before damaging current DOM (21.088088ms)
+✔ S10 focus departure closes menus and preserves panel text navigation (26.022359ms)
+✔ S10 background updates keep an open menu and its focused command; vanished commands return focus to the trigger (22.221799ms)
+✔ S10 rejects empty IDs from every view-model collection before updating DOM (13.609275ms)
+✔ S10 palette tools expose their optional active state and reject non-boolean values (13.670539ms)
+✔ S10 offline status slot keeps caller content and keyboard focus across chrome updates (16.28479ms)
+✔ S10 keeps native command targets connected when a field blur commits before its click (25.03972ms)
+✔ S10 reconciles command order and labels while removed, disabled or old-workspace targets stay inert (16.951977ms)
+✔ S10 keeps distinct duplicate occurrences and removes unused command nodes (14.572195ms)
+✔ S10 disabled focused toolbar hands focus to the viewport even when activeElement remains stale (15.845681ms)
+✔ S10 disabled focused tool hands focus to the viewport even when activeElement remains stale (14.423535ms)
+✔ S10 removed focused commands return to the viewport and background updates keep outside focus (19.758224ms)
+✔ S10 nested Save uses a side menu, keyboard stays at its level and Escape returns to its parent (40.63551ms)
+✔ S10 submenu hover, disabled children, live update identity and removed-child focus are coherent (49.004668ms)
+✔ S10 rejects empty, nested and malformed submenu lists (23.967575ms)
+✔ S10 Image is the first tab and workspace arrows follow the rendered order (14.789751ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 24
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1610.38567
+
+✖ failing tests:
+
+test at src/shared/chrome.test.ts:1:1744
+✖ S10 golden shared window exposes the requested regions and view model (131.511363ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+
+    {
+      menus: [
+        'File',
+        'Edit'
+      ],
+  ...
+        [
+  +       'Image',
+  +       'false'
+  +     ],
+  +     [
+          'CAD',
+          'true'
+        ],
+        [
+  -       'Image',
+  -       'false'
+  -     ],
+  -     [
+          'Photo',
+          'false'
+        ],
+        [
+          'Video',
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/chrome.test.ts:32:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: {
+      title: 'Test document *',
+      menus: [ 'File', 'Edit' ],
+      workspaces: [
+        [Array], [Array],
+        [Array], [Array],
+        [Array], [Array],
+        [Array], [Array],
+        [Array]
+      ],
+      panels: [ 'Properties' ],
+      status: 'Ready'
+    },
+    expected: {
+      title: 'Test document *',
+      menus: [ 'File', 'Edit' ],
+      workspaces: [
+        [Array], [Array],
+        [Array], [Array],
+        [Array], [Array],
+        [Array], [Array],
+        [Array]
+      ],
+      panels: [ 'Properties' ],
+      status: 'Ready'
+    },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/chrome.test.ts:1:5311
+✖ S10 workspace controls emit the exact target and reflect updates (22.720571ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  null !== 'true'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/chrome.test.ts:89:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'true',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

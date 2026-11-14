@@ -246,3 +246,12 @@ pinned kernel does not establish safe calls on a faulted instance. Revisit only
 with a verified kernel recovery/stack-restoration contract. The source graph,
 public interfaces, geometry tolerances and STEP unit oracles stay unchanged.
 See [revolve contracts and evidence](CAD-REVOLVE-INCREMENT.md).
+
+
+## D30 — discoverable saving, Image first and licensed pixel tools (2026-11-14)
+
+The owner requested a File → Save submenu, a toolbar Save popup, clearer export access, Image before CAD and familiar pixel-style Paint icons. S22 is a pure explicit map of the nine workspaces' existing format commands. S10 presents one level of submenu children; S11 adds optional description/confirmation copy. A-SHELL routes choices to the existing native-save and export handlers after flushing edits and rechecking availability. Ctrl+S remains a direct project save; exports do not mark an editable project saved. The global Export button opens export-only choices. CAD retains its direct STEP/STL toolbar actions for frequent modeling output. Alternative: infer formats from command labels or add new exporters in this change; rejected because availability and supported formats must stay explicit.
+
+Image is the first workspace and startup adapter; if absent in a test/embedded host, the first available adapter in the rendered order starts instead. CAD-specific tests now explicitly select CAD. This does not change document formats or recovery ownership.
+
+The owner's request permits free web icons, superseding the original all-original-glyph rule for this bounded subset. Use 11 free MIT [Pixelarticons](https://github.com/halfmage/pixelarticons/tree/c9ecc2da61afde85dbe539025e3d931c6152ad75) SVGs pinned at `c9ecc2da61afde85dbe539025e3d931c6152ad75`, copyright Gerrit Halfmann, with eight original matching glyphs. Retain unmodified source SVGs, hashes and LICENSE in `vendor/pixelarticons/`; ship the copyright/license in `public/licenses/pixelarticons.LICENSE.txt` and THIRD_PARTY_NOTICES. Paths are bundled locally at build time. No package execution, remote runtime loads, paid assets or Microsoft/Adobe assets. Alternative: borrow original OS/application icon bitmaps; rejected because they are not covered by this free license. Native 24 px rendering preserves the intended pixel shapes; larger 32 px buttons make the tools readable and easier to select.

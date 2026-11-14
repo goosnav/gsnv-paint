@@ -47,3 +47,8 @@ Python source: https://github.com/python/cpython/tree/v3.14.2
 The unmodified engine, WebAssembly and Python standard library are separate local assets.
 Replace the pinned package and rebuild the static application to replace them.
 Complete transitive compiled-library source/notices remain part of the release packaging gate.
+Pixelarticons — MIT License, Copyright (c) 2019 Gerrit Halfmann.
+Selected Paint tool glyphs from https://github.com/halfmage/pixelarticons
+Pinned source: c9ecc2da61afde85dbe539025e3d931c6152ad75.
+Full license: licenses/pixelarticons.LICENSE.txt
+Source SVGs and SHA-256 provenance are retained in vendor/pixelarticons.

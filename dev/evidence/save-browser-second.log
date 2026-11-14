@@ -1,0 +1,38 @@
+[WebServer] (node:1677736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:1677769) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Save/export Chrome 154.0.8037.97 linux/x64, 1280×720
+  ✘  1 src/app/save-export.browser.spec.ts:15:1 › Save discovery: Image first, clear popup, real PNG/project output, reopen and keyboard submenu (31.7s)
+(node:1678349) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Save/export Chrome 154.0.8037.97 linux/x64, 1280×720
+  ✓  2 src/app/save-export.browser.spec.ts:44:1 › Save discovery: Document and Slides PDF choices reach their real printable output (1.5s)
+  ✓  3 src/shared/chrome-commit.browser.spec.ts:6:1 › S10 production mouse Save and File menu survive a property commit on blur (1.0s)
+
+
+  1) src/app/save-export.browser.spec.ts:15:1 › Save discovery: Image first, clear popup, real PNG/project output, reopen and keyboard submenu
+
+    Test timeout of 30000ms exceeded.
+
+    Error: keyboard.press: Test timeout of 30000ms exceeded.
+
+      35 |  const choosing=page.waitForEvent('filechooser');await toolbar(page,'file.open').click();await(await choosing).setFiles({name:project.name,mimeType:'application/octet-stream',buffer:project.bytes});await expect(page.locator('.image-layer')).toHaveCount(1);
+      36 |  expect(await canvas.evaluate((c:HTMLCanvasElement)=>[...c.getContext('2d')!.getImageData(0,0,c.width,c.height).data])).toEqual(pixels);
+    > 37 |  await page.locator('.gc-viewport').focus();await page.keyboard.press('F10');await page.keyboard.press('ArrowDown');await page.keyboard.press('ArrowDown');await page.keyboard.press('ArrowDown');
+         |                                                                 ^
+      38 |  await expect(page.locator('.gc-menubar [data-submenu-trigger="file.saveOptions"]')).toBeFocused();await page.keyboard.press('ArrowRight');await expect(page.locator('.gc-submenu [data-command="file.save"]')).toBeFocused();await page.keyboard.press('End');await expect(page.locator('.gc-submenu [data-command="image.exportPNG"]')).toBeFocused();
+      39 |  await page.keyboard.press('Escape');await expect(page.locator('.gc-menubar [data-submenu-trigger="file.saveOptions"]')).toBeFocused();await page.keyboard.press('Escape');
+      40 |  const direct=await downloaded(page,()=>page.keyboard.press('Control+s'));expect(direct.bytes).toEqual(project.bytes);await expect(page.getByRole('dialog')).toHaveCount(0);
+        at /home/goosnav/Desktop/code/gsnv-paint/src/app/save-export.browser.spec.ts:37:65
+
+    Error Context: test-results/app-save-export.browser-Sa-22896-reopen-and-keyboard-submenu/error-context.md
+
+    Error Context: test-results/app-save-export.browser-Sa-22896-reopen-and-keyboard-submenu/error-context.md
+
+  1 failed
+    src/app/save-export.browser.spec.ts:15:1 › Save discovery: Image first, clear popup, real PNG/project output, reopen and keyboard submenu
+  2 passed (36.9s)

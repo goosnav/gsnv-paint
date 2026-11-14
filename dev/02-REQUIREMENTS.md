@@ -76,7 +76,7 @@ Performance requirements retain the user’s targets. The reference hardware and
 | CTL-001 | N-002 | 1 | 4 | The shell shall use an original Windows XP-inspired web application interface with blue application navigation, lightly beveled buttons, a menu bar, icon toolbars, a left tool palette, right docked panels, a status bar and modal dialogs, without simulated OS taskbars, desktop framing or window-management controls. |
 | CTL-002 | N-002 | 1 | 1 | The UI font stack shall use a Tahoma-style desktop appearance. |
 | CTL-003 | N-002 | 1 | 4 | The shell shall keep chrome and interaction conventions identical while swapping menus, toolbars, and panels for the selected workspace. |
-| CTL-004 | N-002 | 1 | 4 | Every tool shall have an original icon. |
+| CTL-004 | N-002 | 1 | 4 | Every tool shall have an app-authored icon or a free licensed icon with recorded provenance, as authorized for the Paint palette. |
 | CTL-005 | N-002 | 1 | 4 | Every tool shall have a tooltip containing its shortcut. |
 | CTL-006 | N-002 | 1 | 4 | Every active tool shall show a status-bar instruction describing what the next click does. |
 | CTL-007 | N-002 | 1 | 4 | Every value set by dragging shall also accept typed input. |
@@ -109,7 +109,7 @@ Performance requirements retain the user’s targets. The reference hardware and
 | V-CTL-001 | T | Capture every workspace at 1280 by 720 and compare each listed chrome component against the approved visual checklist; all eight components must be present. |
 | V-CTL-002 | T | Inspect the declared font stack and computed UI font; assert Tahoma or its documented metric-compatible fallback is applied to menus, panels, tooltips, and dialogs. |
 | V-CTL-003 | T | Switch Image to Video to CAD to Image; assert shell layout and control behavior are shared while each workspace exposes its own relevant commands. |
-| V-CTL-004 | T | Enumerate registered tools and inspect each icon asset; assert each tool resolves to an app-authored graphic with recorded provenance. |
+| V-CTL-004 | T | Enumerate registered tools and inspect each icon asset; assert each tool resolves to an app-authored graphic or an owner-authorized free licensed graphic, with provenance and any required distributed notice. |
 | V-CTL-005 | T | Enumerate registered tools, hover each toolbar/palette entry, and assert its tooltip names the tool and its assigned shortcut; invoke that shortcut in the relevant context. |
 | V-CTL-006 | T | Activate each tool and advance its interaction states; assert every state exposes a nonempty next-click instruction matching the expected action. |
 | V-CTL-007 | T | For every registered draggable value, set a known value by drag, then type an exact value; assert the resulting model uses the typed value. |
@@ -813,7 +813,7 @@ Performance requirements retain the user’s targets. The reference hardware and
 | REL-014 | N-007 | 0 | 0 | The workflow shall never force-push. |
 | REL-015 | N-007 | 0 | 0 | A push or deployment credential failure shall stop that operation and be reported. |
 | REL-016 | N-007 | 1 | 5 | Naming, copy voice, and invariants shall follow the Goosnav Comics branding skill while XP visual chrome overrides its visual chrome guidance. |
-| REL-017 | N-007 | 1 | 5 | All shipped icons and graphics shall be original artwork drawn for this application. |
+| REL-017 | N-007 | 1 | 5 | Shipped icons and graphics shall be original artwork drawn for this application, except for owner-authorized free licensed Paint icons with retained source and license notices. |
 | REL-018 | N-007 | 1 | 5 | The application shall ship no Microsoft logos, wallpapers, sounds, or icon bitmaps. |
 | REL-019 | N-007 | 5 | 5 | The local application shall be distributed as an M1a universal ZIP. |
 | REL-020 | N-007 | 5 | 5 | The local backend shall only serve static files and open the build in the browser. |
@@ -848,7 +848,7 @@ Performance requirements retain the user’s targets. The reference hardware and
 | V-REL-014 | I | Inspect push commands and remote history; assert no force or lease-forced ref update was used. |
 | V-REL-015 | I | Inject or observe a credential rejection in a controlled workflow check; assert no bypass/retry using unrelated credentials occurs and the report includes the blocked operation. |
 | V-REL-016 | I | Inspect displayed product copy, names, and applicable brand invariants against the recorded skill baseline; assert the documented visual override is used without importing unrelated branded assets. |
-| V-REL-017 | I | Inspect the asset manifest and source artwork; assert each icon/graphic has app-specific original provenance. |
+| V-REL-017 | I | Inspect the asset manifest and source artwork; assert each icon/graphic has app-specific original provenance or a recorded owner-authorized free license with its required source and notices. |
 | V-REL-018 | I | Inspect all packaged assets and their provenance; assert none belongs to the four prohibited Microsoft asset categories. |
 | V-REL-019 | I | Inspect the ZIP layout against the productization skill manifest; extract and exercise the required launchers on each actually available OS, recording untested OS checks as untested. |
 | V-REL-020 | I | Inspect server code and route behavior; assert it serves the shared static payload, opens the local browser URL, and exposes no editing, upload, account, or processing API. |

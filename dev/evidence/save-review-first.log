@@ -1,0 +1,123 @@
+✔ A-SHELL Image starts first and Save popup cancellation never writes or exports (244.226644ms)
+✔ A-SHELL Save/export choices flush edits and keep exports separate from project saved state (131.442149ms)
+✔ A-SHELL Export popup offers exports only and rechecks live availability before dispatch (72.917929ms)
+✔ A-SHELL File Save export commits pending input and aborts failed or invalidating flushes (171.725557ms)
+✔ A-SHELL golden starts one empty Image window with unavailable editing commands (194.956178ms)
+✔ A-SHELL invalidate refreshes the active editor menus without committing or touching other workspaces (97.433652ms)
+✔ A-SHELL project rename preserves pending editor input and has its own undo step (113.121257ms)
+✔ A-SHELL editor open creates an unsaved document only after replacement consent (83.609187ms)
+✔ A-SHELL with recent projects: New never prompts, edits autosave to File > Recent and reopen from there (895.246218ms)
+✔ A-SHELL unavailable recent backup keeps dirty work on New and Open and warns on unload (57.001422ms)
+✔ A-SHELL NotAllowedError recent backup keeps dirty work on New and Open and warns on unload (53.850058ms)
+✔ A-SHELL QuotaExceededError recent backup keeps dirty work on New and Open and warns on unload (43.03269ms)
+✔ A-SHELL unload protects the exact dirty revision until its recent backup succeeds (48.700581ms)
+✔ A-SHELL a changed revision during replacement backup stays open (43.080106ms)
+✔ A-SHELL overlapping recent writes cannot leave an older revision stored last (45.368897ms)
+✔ A-SHELL Undo cannot acknowledge a stored revision while queued writes can still replace it (54.835746ms)
+✔ A-SHELL disposal accepts pending view edits and finishes their stored backup (29.327181ms)
+✔ A-SHELL all retained projects remain reachable beyond the newest 12 menu entries (45.777351ms)
+✔ A-SHELL opening an older file with the same project id preserves displaced unsaved work (53.053975ms)
+✔ A-SHELL real sessions keep 100 edits, independent workspaces and exactly-once keyboard history (249.297177ms)
+✔ A-SHELL native Open validates domain before replacement and preserves handles on rejection (38.395487ms)
+✔ A-SHELL Open protects its target workspace, including dirty replacement consent (50.755611ms)
+✔ A-SHELL save binds the written revision while later edits remain dirty (32.950789ms)
+✔ A-SHELL late native save cannot bind its handle to a reopened document with the same ID (40.701468ms)
+✔ A-SHELL denied write permission fails before serialization and preserves dirty state (34.18653ms)
+✔ A-SHELL Save-then-replace proceeds only after a successful write of the protected revision (51.23427ms)
+✔ A-SHELL recovery is offered explicitly and restores editable data as dirty (56.005865ms)
+✔ A-SHELL corrupt recovery remains readable and its observed generation is exceeded after discard (26.101197ms)
+✔ A-SHELL discard runs after queued autosaves without recreating a recovery record (36.377238ms)
+✔ A-SHELL stale editor callbacks and post-disposal file completions cannot replace documents (39.092123ms)
+✔ A-SHELL unavailable browser recovery does not block editing or explicit project saves (26.98899ms)
+✔ A-SHELL Open completion during another modal settles without a hidden replacement prompt (30.841292ms)
+✔ A-SHELL a new edit after pending discard makes the resulting recovery available again (31.946155ms)
+✔ A-SHELL a modal forwards the active pointer cancellation before further editing (27.849083ms)
+Not implemented: navigation to another Document
+✖ A-SHELL New restores keyboard scope when an editor replaces its focused view (30.309259ms)
+✔ A-SHELL view settings delegates to an adapter-owned transform without changing document state (36.243755ms)
+✔ A-SHELL restored storage plus native Save repairs the current recovery before close and reopen (64.918716ms)
+✔ A-SHELL Recent never advances past failed recovery, and a retry commits recovery before Recent (33.120913ms)
+✔ A-SHELL native Save stays successful with a truthful warning when Recent fails after recovery (34.400366ms)
+✔ A-SHELL delayed file Save retries the newer current revision without marking it saved (42.888583ms)
+✔ A-SHELL returned generation 1 and width 77 cannot acknowledge the attempted recovery (30.789478ms)
+✔ A-SHELL returned generation 100 and width 77 cannot acknowledge the attempted recovery (32.01278ms)
+✔ A-SHELL returned generation 100 and width 10 cannot acknowledge the attempted recovery (30.513879ms)
+Not implemented: navigation to another Document
+✔ A-SHELL startup conflict 61/62 stays read-only and recovery opens as an editable copy (69.121081ms)
+Not implemented: navigation to another Document
+✔ A-SHELL startup conflict 62/61 stays read-only and recovery opens as an editable copy (74.376275ms)
+✔ A-SHELL startup with identical Recent performs no writes on startup or no-edit disposal (25.847339ms)
+✔ A-SHELL startup with absent Recent performs no writes on startup or no-edit disposal (23.272824ms)
+✔ A-SHELL startup with unreadable Recent performs no writes on startup or no-edit disposal (24.320864ms)
+✔ A-SHELL startup with invalid Recent performs no writes on startup or no-edit disposal (25.596198ms)
+✔ A-SHELL startup with unlisted Recent performs no writes on startup or no-edit disposal (22.849037ms)
+✔ A-SHELL explicit recovery discard is not undone by Recent flush; a later edit resumes recovery (31.867256ms)
+✔ A-SHELL obsolete queued snapshots are never encoded into recovery, including during disposal (28.852729ms)
+✔ A-SHELL an initiated native Save can finish current browser persistence after disposal without late UI (39.585214ms)
+✔ A-SHELL an editor import cannot silently remove an unresolved recovery conflict (23.971663ms)
+✔ A-SHELL a pending browser backup permits the next Save without releasing its newer native write guard (38.391073ms)
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+✔ A-SHELL download handoff releases Save while its browser persistence remains pending (42.68798ms)
+✔ A-SHELL cancelled picker releases only its file guard and a later Save succeeds (43.179957ms)
+✔ A-SHELL failed native write releases only its file guard and a later Save succeeds (27.490741ms)
+✔ S10 golden shared window exposes the requested regions and view model (136.154247ms)
+✔ S10 toolbar/palette route enabled commands once and never activate disabled tools (34.601951ms)
+✔ S10 menus open, route enabled items, close on outside interaction and restore focus on Escape (81.223757ms)
+✔ S10 menu keyboard navigation skips disabled items and wraps (32.350099ms)
+✔ S10 workspace controls emit the exact target and reflect updates (30.937806ms)
+✔ S10 workspace keyboard navigation reaches every tab and wraps in both directions (71.605753ms)
+✔ S10 updates retain viewport, mounted renderer, panel content and focused control identity (32.746376ms)
+✔ S10 tool focus displays next action and blur restores current status (19.097029ms)
+✔ S10 supplied strings are literal text and panel elements keep their listeners (32.966326ms)
+✔ S10 dispose is idempotent and removes frame and all listeners (27.739222ms)
+✔ S10 invalid root/callbacks/model raise TypeError before damaging current DOM (35.487944ms)
+✔ S10 focus departure closes menus and preserves panel text navigation (32.179685ms)
+✔ S10 background updates keep an open menu and its focused command; vanished commands return focus to the trigger (24.481718ms)
+✔ S10 rejects empty IDs from every view-model collection before updating DOM (16.279061ms)
+✔ S10 palette tools expose their optional active state and reject non-boolean values (18.640039ms)
+✔ S10 offline status slot keeps caller content and keyboard focus across chrome updates (28.256271ms)
+✔ S10 keeps native command targets connected when a field blur commits before its click (28.235578ms)
+✔ S10 reconciles command order and labels while removed, disabled or old-workspace targets stay inert (17.822177ms)
+✔ S10 keeps distinct duplicate occurrences and removes unused command nodes (12.177757ms)
+✔ S10 disabled focused toolbar hands focus to the viewport even when activeElement remains stale (14.687691ms)
+✔ S10 disabled focused tool hands focus to the viewport even when activeElement remains stale (13.707161ms)
+✔ S10 removed focused commands return to the viewport and background updates keep outside focus (21.3009ms)
+✔ S10 nested Save uses a side menu, keyboard stays at its level and Escape returns to its parent (46.618596ms)
+✔ S10 submenu hover, disabled children, live update identity and removed-child focus are coherent (22.347365ms)
+✔ S10 rejects empty, nested and malformed submenu lists (23.33247ms)
+✔ S10 Image is the first tab and workspace arrows follow the rendered order (15.644848ms)
+✔ S10 clicking a Save parent already opened by hover keeps it open and focuses its first choice (14.939074ms)
+ℹ tests 85
+ℹ suites 0
+ℹ pass 84
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4673.564077
+
+✖ failing tests:
+
+test at src/app/app-shell.test.ts:1:32200
+✖ A-SHELL New restores keyboard scope when an editor replaces its focused view (30.309259ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" to be reference-equal to "expected":
+  + actual - expected
+
+  + HTMLBodyElement {
+  +   Symbol(SameObject caches): [Object: null prototype] {
+  +     dataset: DOMStringMap {}
+  +   }
+  + }
+  - HTMLInputElement {}
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:476:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: {},
+    expected: {},
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

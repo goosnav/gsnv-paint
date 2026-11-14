@@ -1,0 +1,32 @@
+✔ S11 save choice copy is literal text and the named confirmation retains Enter/Cancel behavior (157.502768ms)
+✔ S11 rejects malformed optional copy (25.060894ms)
+✔ S11 golden modal renders typed fields and previews normalized initial values (16.709104ms)
+✔ S11 valid edits preview typed normalized values without mutating the initial record (15.400718ms)
+✔ S11 invalid numeric input "" blocks preview and commit (15.156796ms)
+✔ S11 invalid numeric input "-1" blocks preview and commit (19.16471ms)
+✔ S11 invalid numeric input "101" blocks preview and commit (16.897036ms)
+✔ S11 invalid numeric input "Infinity" blocks preview and commit (15.433854ms)
+✔ S11 step and domain validation errors recover after valid edits (27.228159ms)
+✔ S11 Enter commits once and later terminal actions are inert (10.382914ms)
+✔ S11 button cancels exactly once and restores opener (9.540915ms)
+✔ S11 escape cancels exactly once and restores opener (11.057931ms)
+✔ S11 native-cancel cancels exactly once and restores opener (10.420451ms)
+✔ S11 native-close cancels exactly once and restores opener (10.217028ms)
+✔ S11 handle cancels exactly once and restores opener (9.601494ms)
+✔ S11 Tab wraps, IME Enter/Escape remain native and terminal callback can reenter safely (11.87501ms)
+✔ S11 empty field list supports confirmation and safe literal copy (17.796494ms)
+✔ S11 rejects malformed fields, initial values, bounds and callbacks before mounting (96.029739ms)
+✔ S11 Enter on Cancel cancels rather than committing (10.844251ms)
+✔ S11 a reentrant preview cannot enable commit after a newer invalid edit (10.799387ms)
+✔ S11 cancellation inside validation suppresses post-cancel previews (10.016779ms)
+✔ S11 newer valid edits replace a reentrant validator result (10.14468ms)
+✔ S11 initial preview cancellation never opens or retains the modal (8.172026ms)
+✔ S11 missing modal support and disconnected roots produce readable errors without preview (6.930166ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1491.716422

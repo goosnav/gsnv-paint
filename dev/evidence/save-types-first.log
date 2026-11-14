@@ -1,0 +1,7 @@
+
+> gsnv-paint@0.1.0 typecheck
+> tsc --noEmit
+
+src/app/app-save.test.ts(13,202): error TS2322: Type 'string' is not assignable to type '"gsnv-audio" | "gsnv-cad" | "gsnv-code" | "gsnv-document" | "gsnv-image" | "gsnv-photo" | "gsnv-slides" | "gsnv-spreadsheet" | "gsnv-video"'.
+src/app/app-save.test.ts(13,250): error TS2322: Type 'unknown' is not assignable to type 'Json'.
+src/shared/chrome.ts(59,129): error TS7006: Parameter 'item' implicitly has an 'any' type.

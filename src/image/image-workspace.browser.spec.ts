@@ -48,7 +48,7 @@ test('IMAGE-APP production: paint tools, selection move, undo, layered native fi
     expect(pkg.project.format).toBe('gsnv-image'); expect(content.encoding).toBe('rgba8-layers-v2'); expect(content.layers.map(l => l.name)).toEqual(['Background', 'Layer 2']);
     const offset = (340 * 800 + 450) * 4; expect([...pkg.assets[0]!.bytes.slice(offset, offset + 4)]).toEqual([0, 0, 255, 255]); expect(pkg.assets[1]!.bytes[offset + 3]).toBe(0);
 
-    const exporting = page.waitForEvent('download'); await page.locator('.gc-standard button[data-command="image.exportPNG"]').click(); const png = await exporting;
+    const exporting = page.waitForEvent('download'); await page.locator('.gc-standard button[data-command="file.export"]').click(); await page.getByRole('dialog').getByRole('button',{name:'Continue',exact:true}).click(); const png = await exporting;
     const pngBytes = await readFile((await png.path())!); expect([...pngBytes.subarray(0, 8)]).toEqual([137, 80, 78, 71, 13, 10, 26, 10]); expect(pngBytes.readUInt32BE(16)).toBe(800);
     await page.waitForTimeout(1000); const choosing = page.waitForEvent('filechooser'); await menu(page, 'Image', 'Open image…');
     await (await choosing).setFiles({ name: 'photo.png', mimeType: 'image/png', buffer: pngBytes });

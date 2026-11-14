@@ -1,0 +1,72 @@
+✖ S11 save choice copy is literal text and the named confirmation retains Enter/Cancel behavior (129.824139ms)
+✖ S11 rejects malformed optional copy (18.259566ms)
+✔ S11 golden modal renders typed fields and previews normalized initial values (19.611417ms)
+✔ S11 valid edits preview typed normalized values without mutating the initial record (15.530054ms)
+✔ S11 invalid numeric input "" blocks preview and commit (14.633801ms)
+✔ S11 invalid numeric input "-1" blocks preview and commit (13.069254ms)
+✔ S11 invalid numeric input "101" blocks preview and commit (13.402889ms)
+✔ S11 invalid numeric input "Infinity" blocks preview and commit (13.354985ms)
+✔ S11 step and domain validation errors recover after valid edits (30.638934ms)
+✔ S11 Enter commits once and later terminal actions are inert (14.45715ms)
+✔ S11 button cancels exactly once and restores opener (14.94226ms)
+✔ S11 escape cancels exactly once and restores opener (8.171627ms)
+✔ S11 native-cancel cancels exactly once and restores opener (9.235074ms)
+✔ S11 native-close cancels exactly once and restores opener (10.06038ms)
+✔ S11 handle cancels exactly once and restores opener (10.665845ms)
+✔ S11 Tab wraps, IME Enter/Escape remain native and terminal callback can reenter safely (12.626933ms)
+✔ S11 empty field list supports confirmation and safe literal copy (9.302973ms)
+✔ S11 rejects malformed fields, initial values, bounds and callbacks before mounting (111.879651ms)
+✔ S11 Enter on Cancel cancels rather than committing (10.782403ms)
+✔ S11 a reentrant preview cannot enable commit after a newer invalid edit (11.650849ms)
+✔ S11 cancellation inside validation suppresses post-cancel previews (10.167924ms)
+✔ S11 newer valid edits replace a reentrant validator result (10.172851ms)
+✔ S11 initial preview cancellation never opens or retains the modal (8.906961ms)
+✔ S11 missing modal support and disconnected roots produce readable errors without preview (7.92676ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 22
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1521.785181
+
+✖ failing tests:
+
+test at src/shared/dialog.test.ts:1:2162
+✖ S11 save choice copy is literal text and the named confirmation retains Enter/Cancel behavior (129.824139ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'Keep <layers> editable.'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/dialog.test.ts:33:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'Keep <layers> editable.',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/dialog.test.ts:1:2764
+✖ S11 rejects malformed optional copy (18.259566ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (TypeError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/dialog.test.ts:39:87)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }

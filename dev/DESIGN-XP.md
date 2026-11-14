@@ -45,7 +45,7 @@ Things XP had that the web app deliberately omits (prior owner direction): no St
 
 - No glow, blur, glass or soft "floating" shadow; shadows are hard 3–4 px offsets.
 - No pillowed radii: 0 px for faces and toolbox buttons, 3 px for push buttons, 7 px for title-bar tops.
-- No emoji icons. Glyphs are original SVG paths drawn with crisp edges.
+- No emoji icons. Paint tools use filled 24 px pixel glyphs from a pinned MIT Pixelarticons subset plus matching original paths, drawn at native size in 32 px targets. Other glyphs and cursors remain original. Source, hashes and license are in `vendor/pixelarticons/`; the static build includes the license. See D30 and [Save/export UX](SAVE-EXPORT-UX.md).
 - Only the pixel UI sizes: 11 px (and 22 px for large type).
 - Gradients only where XP's own material has them (title bar, taskbar buttons, task-pane headers, push buttons, rebar). The Luna gradients are the World, not decoration.
 

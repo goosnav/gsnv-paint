@@ -1,0 +1,10 @@
+{
+  "build": "a44d80844f29e798cf6fc664ab4f1880c8c6450005862be19db6d5d3e6d740e0",
+  "browser": "158.0.8127.18",
+  "executablePath": "/home/goosnav/.cache/ms-playwright/chromium-1254/chrome-linux64/chrome",
+  "files": 56,
+  "bytes": 41190531,
+  "offlinePageErrors": [],
+  "noUnexpectedTraffic": true,
+  "note": "All nine editor journeys completed after complete browser shutdown and with the server stopped; see save-cold-offline-green.log. This is the cold workflow check only, not a rerun of the other eight offline tests."
+}

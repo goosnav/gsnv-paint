@@ -1,0 +1,22 @@
+✔ S09 golden accessible original close glyph (2.172217ms)
+✔ S09 every catalog glyph has unique local path data and an accessible name (2.74288ms)
+✔ S09 labels are literal text, repeated instances share no nodes or IDs (0.434418ms)
+✔ S09 inclusive size bounds and fractional CSS pixel sizes (0.206583ms)
+✔ S09 rejects invalid size 0 (0.405635ms)
+✔ S09 rejects invalid size 11.9 (0.114809ms)
+✔ S09 rejects invalid size 64.1 (0.09422ms)
+✔ S09 rejects invalid size NaN (0.162252ms)
+✔ S09 rejects invalid size Infinity (0.142865ms)
+✔ S09 rejects invalid size -Infinity (0.211939ms)
+✔ S09 rejects unknown name unknown (0.159626ms)
+✔ S09 rejects unknown name  (0.077234ms)
+✔ S09 rejects unknown name __proto__ (0.148447ms)
+✔ S09 rejects unknown name constructor (0.074928ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 213.481189

@@ -9,6 +9,9 @@
  *            menu and its focused command (focus returns to the trigger if it vanished);
  *            same-workspace command/menu IDs retain their nodes and unchanged glyphs.
  *            Disabled or removed toolbar/tool focus returns to the stable viewport.
+ *            Menu items accept one nonempty leaf-only children level. Menu activation
+ *            opens it; toolbar activation dispatches the parent. Arrow/escape navigation,
+ *            focus and open submenu state survive updates; disabled leaves never dispatch.
  *            dispose is idempotent and removes all installed event listeners.
  *            RAISES: TypeError for invalid root/model/callbacks.
  * GUARANTEES No domain decisions or fake tool actions; supplied strings are text;
@@ -30,7 +33,8 @@
 import { iconCatalog, renderIcon } from './icons.ts';
 
 type Workspace = 'cad' | 'image' | 'photo' | 'video' | 'document' | 'slides' | 'audio' | 'spreadsheet' | 'code';
-type MenuItem = { id: string; label: string; shortcut: string; enabled: boolean; icon?: string; toolbar?: boolean };
+type MenuLeaf = { id: string; label: string; shortcut: string; enabled: boolean; icon?: string; toolbar?: boolean };
+type MenuItem = MenuLeaf & { children?: readonly MenuLeaf[] };
 type Menu = { id: string; label: string; items: readonly MenuItem[] };
 type Tool = { id: string; label: string; shortcut: string; icon: string; status: string; enabled: boolean; active?: boolean };
 type Panel = { id: string; title: string; content: HTMLElement };
@@ -51,9 +55,12 @@ function validate(model: ChromeModel): void {
       ![model.menus, model.tools, model.panels, model.capabilities].every(Array.isArray)) throw new TypeError('Invalid window view model.');
   for (const menu of model.menus) {
     if (!menu || !id(menu.id) || !text(menu.label) || !Array.isArray(menu.items)) throw new TypeError('Invalid menu.');
-    for (const item of menu.items) {
+    for (const parent of menu.items) {
+      if (parent?.children !== undefined && (!Array.isArray(parent.children) || !parent.children.length || parent.children.some((item: MenuLeaf) => !item || 'children' in item))) throw new TypeError('Submenus need a nonempty list of leaf items.');
+      for (const item of [parent, ...(parent?.children ?? [])]) {
       if (!item || !id(item.id) || !text(item.label) || !text(item.shortcut) || typeof item.enabled !== 'boolean' ||
           (item.icon !== undefined && !glyph(item.icon)) || (item.toolbar === true && !glyph(item.icon))) throw new TypeError('Invalid menu item.');
+      }
     }
   }
   for (const tool of model.tools) {
@@ -91,7 +98,7 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
   const status = get<HTMLElement>('.gc-status');
   get<HTMLElement>('.gc-app-icon').append(renderIcon({ document, name: 'app', label: 'gsnv-paint', size: 20 }));
   const workspaceNames = { cad: 'CAD', image: 'Image', photo: 'Photo', video: 'Video', document: 'Document', slides: 'Slides', audio: 'Audio', spreadsheet: 'Spreadsheet', code: 'Code' } as const;
-  const workspaceButtons = (['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code'] as const).map(workspace => {
+  const workspaceButtons = (['image', 'cad', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code'] as const).map(workspace => {
     const button = make('button', 'gc-workspace'); button.type = 'button'; button.dataset.workspace = workspace;
     button.dataset.focusKey = `workspace:${workspace}`; button.setAttribute('role', 'tab'); button.setAttribute('aria-label', workspaceNames[workspace]);
     button.append(renderIcon({ document, name: workspace, label: workspaceNames[workspace], size: 18 }), make('span', '', workspaceNames[workspace]));
@@ -100,6 +107,7 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
   let current = model;
   let disposed = false;
   let activeMenu = -1;
+  let branch: HTMLElement | undefined;
   let menuNodes: { wrap: HTMLElement; button: HTMLButtonElement; popup: HTMLElement }[] = [];
   let panelCache: Panel[] = [];
   const presentation = new WeakMap<HTMLButtonElement, string>();
@@ -108,7 +116,20 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     children.forEach((child, index) => { if (parent.children[index] !== child) parent.insertBefore(child, parent.children[index] ?? null); });
     while (parent.children.length > children.length) parent.lastElementChild!.remove();
   };
+  const closeBranch = (focus = false) => {
+    if (!branch) return; const trigger=branch.querySelector<HTMLButtonElement>('button')!;
+    branch.querySelector<HTMLElement>('.gc-submenu')!.hidden=true; trigger.setAttribute('aria-expanded','false');branch=undefined;if(focus)trigger.focus();
+  };
+  const choices = (popup: HTMLElement) => [...popup.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')].filter(button => !button.closest('.gc-submenu') || button.closest('.gc-submenu') === popup);
+  const openBranch = (trigger: HTMLButtonElement, focus = false) => {
+    if(trigger.disabled)return; closeBranch();branch=trigger.parentElement!;const popup=branch.querySelector<HTMLElement>('.gc-submenu')!;
+    popup.hidden=false;trigger.setAttribute('aria-expanded','true');const rect=trigger.getBoundingClientRect(),size=popup.getBoundingClientRect();
+    popup.style.left=`${Math.max(2,rect.right+size.width>document.documentElement.clientWidth?rect.left-size.width:rect.right)}px`;
+    popup.style.top=`${Math.max(2,Math.min(rect.top,document.documentElement.clientHeight-size.height-2))}px`;
+    if(focus)choices(popup)[0]?.focus();
+  };
   const closeMenu = (focus = false) => {
+    closeBranch();
     const previous = menuNodes[activeMenu];
     for (const item of menuNodes) { item.popup.hidden = true; item.button.setAttribute('aria-expanded', 'false'); }
     activeMenu = -1;
@@ -117,24 +138,27 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
   const openMenu = (index: number, focus = false, last = false) => {
     closeMenu(); const item = menuNodes[index]; if (!item) return;
     activeMenu = index; item.popup.hidden = false; item.button.setAttribute('aria-expanded', 'true');
-    const choices = [...item.popup.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')];
-    if (focus) (last ? choices.at(-1) : choices[0])?.focus();
+    const items = choices(item.popup);
+    if (focus) (last ? items.at(-1) : items[0])?.focus();
   };
   const commandButton = (item: MenuItem | Tool, surface: string, previous: HTMLButtonElement[]) => {
     const index = previous.findIndex(button => button.dataset.command === item.id);
-    const button = index < 0 ? make('button', surface === 'menu' ? 'gc-menu-item' : 'gc-icon-button') : previous.splice(index, 1)[0]!;
+    const isMenu=surface==='menu'||surface.startsWith('submenu:');
+    const button = index < 0 ? make('button', isMenu ? 'gc-menu-item' : 'gc-icon-button') : previous.splice(index, 1)[0]!;
     button.type = 'button';
     button.disabled = !item.enabled; button.dataset.command = item.id; button.dataset.focusKey = `${surface}:${item.id}`;
     button.title = item.shortcut ? `${item.label} (${item.shortcut})` : item.label;
     button.setAttribute('aria-label', button.title);
+    if ('children' in item && item.children) { button.setAttribute('aria-haspopup',isMenu?'menu':'dialog');if(isMenu){button.dataset.submenuTrigger=item.id;button.setAttribute('aria-expanded','false');} }
+    else {delete button.dataset.submenuTrigger;button.removeAttribute('aria-haspopup');button.removeAttribute('aria-expanded');}
     if ('status' in item) button.dataset.status = item.status;
     if ('active' in item && item.active !== undefined) button.setAttribute('aria-pressed', String(item.active)); else button.removeAttribute('aria-pressed');
     const signature = JSON.stringify([item.icon, item.label, item.shortcut, surface]);
     if (presentation.get(button) !== signature) {
       button.replaceChildren();
-      if (item.icon) button.append(renderIcon({ document, name: item.icon, label: item.label, size: 18 }));
+      if (item.icon) button.append(renderIcon({ document, name: item.icon, label: item.label, size: surface==='tool'&&item.icon.startsWith('paint')?24:18 }));
       if (surface === 'toolbar') button.append(make('span', 'gc-command-label', item.label));
-      if (surface === 'menu') { button.setAttribute('role', 'menuitem'); button.append(make('span', 'gc-menu-label', item.label), make('span', 'gc-key', item.shortcut)); }
+      if (isMenu) { button.setAttribute('role', 'menuitem'); button.append(make('span', 'gc-menu-label', item.label), make('span', 'gc-key', item.shortcut)); }
       presentation.set(button, signature);
     }
     return button;
@@ -145,6 +169,7 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     let focusKey = focused?.dataset.focusKey;
     // Background updates (worker results, autosave) keep an open menu open with the same focused command.
     const openId = activeMenu >= 0 ? menuNodes[activeMenu]!.button.dataset.menu : undefined;
+    const branchId=branch?.dataset.branch;
     const popupFocused = activeMenu >= 0 && menuNodes[activeMenu]!.popup.contains(focused);
     const sameWorkspace = current.workspace === next.workspace;
     const oldMenus = sameWorkspace ? [...menuNodes] : [];
@@ -153,6 +178,7 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     closeMenu(); current = next;
     get<HTMLElement>('[data-window-title]').textContent = `${next.title || 'Untitled'}${next.dirty ? ' *' : ''}`;
     viewport.setAttribute('aria-label', `${workspaceNames[next.workspace]} workspace view`);
+    frame.dataset.activeWorkspace=next.workspace;
     workspaceButtons.forEach(button => { const selected = button.dataset.workspace === next.workspace; button.setAttribute('aria-selected', String(selected)); button.tabIndex = selected ? 0 : -1; });
     menuNodes = []; const toolbarButtons: HTMLButtonElement[] = [];
     for (const menu of next.menus) {
@@ -164,9 +190,13 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
       button.setAttribute('aria-haspopup', 'menu'); button.setAttribute('aria-expanded', 'false');
       const popup = old?.popup ?? make('div', 'gc-menu-popup'); popup.setAttribute('role', 'menu'); popup.setAttribute('aria-label', menu.label); popup.hidden = true;
       const oldItems = [...popup.querySelectorAll<HTMLButtonElement>('button')];
+      const oldBranches=[...popup.querySelectorAll<HTMLElement>('.gc-menu-branch')];
       reconcile(popup, menu.items.map(item => {
         if (item.toolbar) toolbarButtons.push(commandButton(item, 'toolbar', oldToolbar));
-        return commandButton(item, 'menu', oldItems);
+        const trigger=commandButton(item,'menu',oldItems);if(!item.children)return trigger;
+        const wrap=oldBranches.find(node=>node.dataset.branch===item.id)??make('div','gc-menu-branch');wrap.dataset.branch=item.id;
+        const child=wrap.querySelector<HTMLElement>('.gc-submenu')??make('div','gc-menu-popup gc-submenu');child.hidden=true;child.setAttribute('role','menu');child.setAttribute('aria-label',item.label);
+        reconcile(child,item.children.map(leaf=>commandButton(leaf,`submenu:${item.id}`,oldItems)));reconcile(wrap,[trigger,child]);return wrap;
       }));
       if (!old) wrap.append(button, popup); menuNodes.push({ wrap, button, popup });
     }
@@ -189,8 +219,10 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     for (const capability of next.capabilities) { const row = make('p', 'gc-capability', `${capability.label}: ${capability.message}`); row.dataset.state = capability.status; list.append(row); }
     const reopen = openId === undefined ? -1 : menuNodes.findIndex(item => item.button.dataset.menu === openId);
     if (reopen >= 0) openMenu(reopen);
+    const restoredBranch=reopen<0?undefined:[...menuNodes[reopen]!.popup.querySelectorAll<HTMLButtonElement>('[data-submenu-trigger]')].find(node=>node.dataset.submenuTrigger===branchId&&!node.disabled);
+    if(restoredBranch)openBranch(restoredBranch);
     // A focused command that is gone or now disabled hands focus back to its visible trigger.
-    if (popupFocused && (reopen < 0 || ![...menuNodes[reopen]!.popup.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')].some(item => item.dataset.focusKey === focusKey))) focusKey = reopen >= 0 ? menuNodes[reopen]!.button.dataset.focusKey : `menu:${openId}`;
+    if (popupFocused && (reopen < 0 || ![...menuNodes[reopen]!.popup.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')].some(item => item.dataset.focusKey === focusKey&&!item.closest<HTMLElement>('.gc-submenu')?.hidden))) focusKey = restoredBranch?.dataset.focusKey ?? (reopen >= 0 ? menuNodes[reopen]!.button.dataset.focusKey : `menu:${openId}`);
     if (focusKey) {
       const replacement = focused && frame.contains(focused) && focused.dataset.focusKey === focusKey ? focused :
         [...frame.querySelectorAll<HTMLElement>('[data-focus-key]')].find(element => element.dataset.focusKey === focusKey);
@@ -203,6 +235,7 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     const button = (event.target as Element).closest?.('button'); if (!button || button.disabled || !frame.contains(button)) return;
     if (button.dataset.menu !== undefined) { const index = menuNodes.findIndex(item => item.button === button); activeMenu === index ? closeMenu() : openMenu(index); }
     else if (button.dataset.workspace) { closeMenu(); onWorkspace(button.dataset.workspace as Workspace); }
+    else if(button.dataset.submenuTrigger){openBranch(button,true);}
     else if (button.dataset.command) { closeMenu(true); onCommand(button.dataset.command); }
   };
   const keyed = (event: KeyboardEvent) => {
@@ -214,18 +247,20 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
       const next = workspaceButtons[(currentIndex + (event.key === 'ArrowRight' ? 1 : count - 1)) % count]!;
       next.focus(); onWorkspace(next.dataset.workspace as Workspace); event.preventDefault(); return;
     }
+    if ((event.key === 'Escape'||event.key==='ArrowLeft'&&!!target.closest('.gc-submenu')) && branch) { closeBranch(true); event.preventDefault();event.stopPropagation();return; }
     if (event.key === 'Escape' && activeMenu >= 0) { closeMenu(true); event.preventDefault(); event.stopPropagation(); return; }
     if (event.key === 'Tab' && activeMenu >= 0) { closeMenu(true); return; }
     if (event.key === 'F10') { openMenu(0); menuNodes[0]?.button.focus(); event.preventDefault(); return; }
     if (index >= 0 && ['ArrowDown', 'ArrowUp'].includes(event.key)) { openMenu(index, true, event.key === 'ArrowUp'); event.preventDefault(); return; }
     if (activeMenu < 0 || !menuBar.contains(target)) return;
+    if(event.key==='ArrowRight'&&target.dataset.submenuTrigger){openBranch(target as HTMLButtonElement,true);event.preventDefault();return;}
     if (['ArrowLeft', 'ArrowRight'].includes(event.key)) { openMenu((activeMenu + (event.key === 'ArrowRight' ? 1 : menuNodes.length - 1)) % menuNodes.length, true); event.preventDefault(); return; }
-    const choices = [...menuNodes[activeMenu]!.popup.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')];
-    const selected = choices.indexOf(target as HTMLButtonElement);
-    const next = event.key === 'Home' ? 0 : event.key === 'End' ? choices.length - 1 : event.key === 'ArrowDown' ? (selected + 1) % choices.length : event.key === 'ArrowUp' ? (selected + choices.length - 1) % choices.length : -1;
-    if (next >= 0) { choices[next]?.focus(); event.preventDefault(); }
+    const items = choices(target.closest<HTMLElement>('.gc-submenu')??menuNodes[activeMenu]!.popup);
+    const selected = items.indexOf(target as HTMLButtonElement);
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : event.key === 'ArrowDown' ? (selected + 1) % items.length : event.key === 'ArrowUp' ? (selected + items.length - 1) % items.length : -1;
+    if (next >= 0) { items[next]?.focus(); event.preventDefault(); }
   };
-  const hint = (event: Event) => { const control = (event.target as Element).closest?.<HTMLElement>('[data-status]'); status.textContent = control && !control.hasAttribute('disabled') ? control.dataset.status! : current.status; };
+  const hint = (event: Event) => { const target=(event.target as Element).closest?.<HTMLButtonElement>('button');if(event.type==='pointerover'&&target?.dataset.submenuTrigger&&branch!==target.parentElement)openBranch(target);else if(event.type==='pointerover'&&target?.classList.contains('gc-menu-item')&&!target.closest('.gc-submenu')&&!target.dataset.submenuTrigger)closeBranch();const control = (event.target as Element).closest?.<HTMLElement>('[data-status]'); status.textContent = control && !control.hasAttribute('disabled') ? control.dataset.status! : current.status; };
   const resetHint = () => { status.textContent = current.status; };
   const outside = (event: Event) => { if (!menuBar.contains(event.target as Node)) closeMenu(); };
   frame.addEventListener('click', clicked); frame.addEventListener('keydown', keyed);

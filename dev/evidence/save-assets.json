@@ -1,0 +1,15 @@
+{
+  "build": "a44d80844f29e798cf6fc664ab4f1880c8c6450005862be19db6d5d3e6d740e0",
+  "cachedAssets": 56,
+  "emittedFiles": 59,
+  "totalBytes": 41222225,
+  "largest": {
+    "path": "assets/replicad_single-g5eiaENB.wasm",
+    "bytes": 22942327,
+    "sha256": "a9335919fa64bfeaee3e241d3139ad134022682429c6688e20d8ca12093d33d9"
+  },
+  "boundBytes": 26214400,
+  "underLimit": true,
+  "limitSource": "https://developers.cloudflare.com/pages/platform/limits/",
+  "limitVerified": "2026-11-14"
+}

@@ -102,8 +102,8 @@ TEST: fake crash between writes, old generation, corruption/quota plus real brow
 
 ## S09 icons — SHELL — GREEN
 
-Purpose: Render original interface glyphs.
-IN: `{document:Document,name:string,label:string,size:number}`; name belongs to supplied original glyph catalog, size 12–64 CSS px.
+Purpose: Render local interface glyphs (original plus the owner-authorized MIT Paint subset, D30).
+IN: `{document:Document,name:string,label:string,size:number}`; name belongs to the supplied local glyph catalog, size 12–64 CSS px.
 OUT: `SVGElement` with correct viewbox, accessible labeling and local path data; no fetched imagery or Microsoft assets.
 RAISES: `RangeError` for unknown glyph/size.
 DEPS: none.
@@ -254,13 +254,13 @@ Rung 1: S01 history → S02 session; S03 metadata codec is verified independentl
 
 Human ACCEPTED set: empty. Human acceptance ladder: 0. Provisional GREEN assembly rungs 1–4 pass cumulatively, including S05→S12→A-SHELL, S09→S10 and S11 preview transactions. S01–S15 and A-SHELL are GREEN with evidence in PHASE-1.md. Phase 1's shared-component scope is complete; full workspace requirements remain open. Its checkpoint halted before Phase 2 after repairing assembly lifecycle findings and build typing. Phase 2 has since reached C01–C04, independent C07–C08, C37, C50–C61, CAD-A1, CAD-APP and STEP-APP GREEN; the CAD provisional ladder is 3. C08 and C61 remain geometry leaves awaiting full sketch integration; C62/C63 are planned under D19. The C61 checkpoint stops after repaired review findings under the retained batch halt rule. C05 is next on the feature-history path. BATCH is halted before C05 pending the explicit revision-exhaustion contract amendment in PHASE-2.md. Current evidence is in PHASE-2.md and MODULE_MAP-CAD.md. Contract changes or unexpected failed checks halt the authorized batch and identify affected downstream bricks.
 
-## S22 save-choices — CORE — CONTRACTED
+## S22 save-choices — CORE — GREEN
 Purpose: Describe the available save formats for a workspace.
 IN: `{workspace,projectEnabled,commands:readonly {id:string,enabled:boolean}[]}`; known workspace and unique command IDs.
 OUT: Owned ordered `{id,label,description,shortcut,icon,enabled}[]`, native project then existing supported exports; no invented capabilities or command-label inference.
 RAISES: TypeError for unknown workspace, invalid booleans/commands or duplicate IDs.
 DEPS: none.
-The [Save/export UX contract](SAVE-EXPORT-UX.md) amends S09/S10/S11 and A-SHELL under the owner's explicit request. Implement S22, S11, S10, then assembly and icon presentation; tests precede each behavior change. Existing persistence/export contracts remain.
+The [Save/export UX contract](SAVE-EXPORT-UX.md) amends S09/S10/S11 and A-SHELL under the owner's explicit request. S22, S11, S10, assembly and icon presentation are implemented in that order with regression tests. The linked report records verification and limits. Existing persistence/export contracts remain.
 
 ## Shared conceptual bindings
 

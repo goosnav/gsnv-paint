@@ -4,6 +4,15 @@ For a desktop creator, gsnv-paint turns local models, images, footage, documents
 
 Authority: original requirements in `requirements.json`, the owner's additions in [the current plan](PLAN-2026-11-12.md), and the 2026-11-13 request for consumer usability, Spreadsheet and Code. The [modeling and offline checkpoint](MODELING-OFFLINE-CHECKPOINT.md) owns the pushed `9496858` candidate's combined results. The subsequent [profile-face increment](CAD-PROFILE-FACE-EVIDENCE.md) records the C77/C59 integration and C65 native-fault caller repair. Baseline inspected commit `73405de` and the earlier repair/authoring counts below are historical. Later evidence supersedes them only within its stated scope.
 
+## Save/export UI checkpoint — bounded gates GREEN
+
+The [Save/export evidence](SAVE-EXPORT-UX.md) records the owner's 2026-11-14
+request: a File → Save submenu, a toolbar Save chooser, visible Export, Image
+first and licensed pixel Paint tools. All 993 unit and 93 combined browser
+checks pass, with local Cloudflare static hosting and the cold all-nine-editor
+offline workflow. The original ledger remains 47 PASS, 0 FAIL, 355 UNTESTED.
+This adds no new export format or original CAD/Image/Video requirement credit.
+
 ## Connected revolve checkpoint — bounded combined gates GREEN
 
 The [connected revolve evidence](CAD-REVOLVE-EVIDENCE.md) records 978/978 unit

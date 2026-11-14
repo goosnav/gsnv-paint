@@ -30,7 +30,7 @@ test('CAD-IMPORT production golden: exact source, units, undo, STEP/STL export a
   await context.addInitScript(()=>{Object.defineProperty(window,'showOpenFilePicker',{value:undefined});Object.defineProperty(window,'showSaveFilePicker',{value:undefined});});
   const bytes=await readFile(new URL('./fixtures/acceptance-plate-120mm.step',import.meta.url)),expected=68654.42480810515;
   try{
-    await page.goto(server.resolvedUrls!.local[0]!);await importFile(page,bytes,'acceptance-plate-120mm.step');await ready(page);
+    await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await importFile(page,bytes,'acceptance-plate-120mm.step');await ready(page);
     const panel=page.locator('.cad-imported-properties');await expect(panel).toContainText('Imported STEP — non-parametric');await expect(panel).toContainText('68654.425 mm³');await expect(panel.locator('.cad-feature-tree li')).toHaveCount(1);await expect(panel.locator('[data-body-id]')).toHaveCount(1);await expect(panel).not.toContainText('Sketch 1');
     await expect(page.getByLabel('CAD solid viewport')).toBeVisible();const canvas=page.locator('.cad-solid canvas'),box=(await canvas.boundingBox())!;
     await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down({button:'middle'});await page.mouse.move(box.x+box.width/2+70,box.y+box.height/2+30,{steps:4});await page.mouse.up({button:'middle'});await page.keyboard.press('f');
@@ -52,7 +52,7 @@ test('CAD-IMPORT production preserves every source solid and rejects a damaged s
   test.setTimeout(60000);const server=await serve(),native=await kernel(),bytes=native.twoBodies();
   await context.addInitScript(()=>{Object.defineProperty(window,'showOpenFilePicker',{value:undefined});Object.defineProperty(window,'showSaveFilePicker',{value:undefined});});
   try{
-    await page.goto(server.resolvedUrls!.local[0]!);await importFile(page,bytes,'two-solids-inches.step');await ready(page);const panel=page.locator('.cad-imported-properties');
+    await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await importFile(page,bytes,'two-solids-inches.step');await ready(page);const panel=page.locator('.cad-imported-properties');
     await expect(panel).toContainText('2 solids');await expect(panel).toContainText('6210.000 mm³');await expect(panel.locator('[data-body-id]')).toHaveCount(2);await expect(panel.locator('[data-body-id]').nth(0)).toContainText('6000.000 mm³');await expect(panel.locator('[data-body-id]').nth(1)).toContainText('210.000 mm³');
     const step=await download(page,()=>tool(page,'cad.exportSTEP').click());const volumes=native.measure(step.bytes).sort((a,b)=>a-b);expect(volumes).toHaveLength(2);expect(volumes[0]).toBeCloseTo(210,5);expect(volumes[1]).toBeCloseTo(6000,5);
     await page.locator('.cad-stage').focus();const saved=await download(page,()=>page.keyboard.press('Control+s')),pkg=nativeContainer({op:'decode',parts:[saved.bytes]});expect(pkg.assets[0]!.bytes).toEqual(bytes);
@@ -70,7 +70,7 @@ test('CAD-IMPORT production cancellation and project replacement terminate pendi
   await page.route('**/cad-workspace.worker*.js',async route=>{if(hold)await new Promise<void>(r=>releases.push(r));try{await route.continue();}catch{/* A canceled native job cancels its module request. */}});
   const counts=()=>page.evaluate(()=>(window as unknown as {__importWorkers:{started:number;terminated:number}}).__importWorkers);
   try{
-    await page.goto(server.resolvedUrls!.local[0]!);await page.keyboard.press('Control+n');const before=await history(page);
+    await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await page.keyboard.press('Control+n');const before=await history(page);
     await importFile(page,bytes);await expect.poll(async()=>(await counts()).started).toBe(1);await expect.poll(()=>releases.length,{message:'Import worker request is held before Escape'}).toBe(1);await page.keyboard.press('Escape');await expect.poll(async()=>(await counts()).terminated).toBe(1);await expect(page.locator('.cad-import-status')).toContainText('canceled');expect(await history(page)).toEqual(before);await expect(page.locator('.cad-imported-properties')).toHaveCount(0);
     releases.splice(0).forEach(r=>r());await importFile(page,bytes);await expect.poll(async()=>(await counts()).started).toBe(2);await expect.poll(()=>releases.length,{message:'Import worker request is held before New'}).toBe(1);await page.keyboard.press('Control+n');await expect.poll(async()=>(await counts()).terminated).toBe(2);hold=false;releases.splice(0).forEach(r=>r());await expect(page.locator('.cad-imported-properties')).toHaveCount(0);await expect(page.locator('.cad-properties')).toContainText('Draw a closed sketch');
   }finally{hold=false;releases.splice(0).forEach(r=>r());await page.close();await server.close();}

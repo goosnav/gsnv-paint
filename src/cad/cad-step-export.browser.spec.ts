@@ -17,7 +17,7 @@ test('STEP-APP production downloads the actual solid and rebuilt dimensions with
   const props=new library.GProp_GProps();library.BRepGProp.VolumeProperties(session.resolve(imported.shapes[0]!.token),props,true,false,false);const value=props.Mass();props.delete();imported.shapes.forEach(b=>session.release(b.token));return value;
  };
  try{
-  await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
+  await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
   await page.locator('button[data-command="cad.rectangle"]:visible').first().click();await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();
   await page.keyboard.press('e');await expect(page.locator('.cad-properties')).toContainText('60000.000 mm³',{timeout:30000});await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();
   for(const [width,expected]of [[100,60000],[120,72000]]){
@@ -55,7 +55,7 @@ test('STEP-APP cancels real workers on Esc/source changes and reports invalid so
  const count=()=>page.evaluate(()=>(window as unknown as {__stepWorkers:Spy}).__stepWorkers);
  const start=async(n:number)=>{await page.locator('button[data-command="cad.exportSTEP"]:visible').first().click();await expect.poll(async()=>(await count()).started).toBe(n);if(hold)await expect.poll(()=>releases.length,{message:'Export worker request is held before cancellation'}).toBe(1);};
  try{
-  await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
+  await page.goto(server.resolvedUrls!.local[0]!);await page.getByRole('tab',{name:'CAD',exact:true}).click();await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
   await page.locator('button[data-command="cad.rectangle"]:visible').first().click();await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();await page.keyboard.press('e');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();
   await expect(page.locator('.cad-properties')).toContainText('60000.000 mm³',{timeout:30000});
   await start(1);await page.keyboard.press('Escape');await expect.poll(async()=>(await count()).terminated).toBe(1);await expect(page.locator('.cad-tool-hint')).toContainText('canceled');releases.splice(0).forEach(resolve=>resolve());

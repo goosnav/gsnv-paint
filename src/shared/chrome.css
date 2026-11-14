@@ -38,6 +38,9 @@
 .gc-menu-trigger:hover,.gc-menu-trigger[aria-expanded=true] { background:var(--xp-highlight); color:var(--xp-highlight-text); }
 .gc-menu-popup { position:absolute; top:21px; left:0; min-width:220px; padding:2px; background:#fff; border:1px solid var(--xp-shadow); box-shadow:3px 3px 0 #0000003d; }
 .gc-menu-popup[hidden] { display:none; }
+.gc-menu-branch { position:relative; }
+.gc-submenu { position:fixed; z-index:8; min-width:255px; }
+.gc-menu-item[aria-haspopup=menu] .gc-key::after { content:'▶'; font:9px sans-serif; }
 .gc-menu-item { display:grid; grid-template-columns:20px minmax(60px,1fr) auto; align-items:center; gap:6px; width:100%; min-height:22px; border:0; background:transparent; padding:1px 10px 1px 3px; text-align:left; white-space:nowrap; }
 .gc-menu-item svg { width:16px; height:16px; }
 .gc-menu-item:not(:disabled):hover,.gc-menu-item:not(:disabled):focus { background:var(--xp-highlight); color:var(--xp-highlight-text); outline:none; }
@@ -51,7 +54,7 @@
 .gc-icon-button:not(:disabled):active { border-color:#9d9b8d; background:#e3e2da; box-shadow:inset 1px 1px 1px #b7b4a6; }
 
 /* Toolbox, canvas well and task pane */
-.gc-main { display:grid; grid-template-columns:62px minmax(0,1fr) 290px; min-height:0; min-width:0; }
+.gc-main { display:grid; grid-template-columns:var(--palette-width,62px) minmax(0,1fr) 290px; min-height:0; min-width:0; }
 .gc-main:not(:has(.gc-palette button)) { grid-template-columns:minmax(0,1fr) 290px; }
 .gc-palette { align-content:start; display:grid; grid-template-columns:repeat(2,26px); gap:2px; justify-content:center; padding:6px 0; background:var(--xp-face); border-right:1px solid var(--xp-shadow); overflow:auto; scrollbar-width:none; }
 .gc-palette:not(:has(button)) { display:none; }
@@ -59,6 +62,14 @@
 .gc-palette .gc-icon-button:not(:disabled):hover { border-color:#fff var(--xp-dark) var(--xp-dark) #fff; background:#f4f2e8; }
 .gc-palette .gc-icon-button[aria-pressed=true] { border-color:var(--xp-dark) #fff #fff var(--xp-dark); background:repeating-conic-gradient(#fff 0 25%,var(--xp-face) 0 50%) 0 0/2px 2px; }
 .gc-palette-label { display:none; }
+.gc-window[data-active-workspace=image] { --palette-width:74px; }
+.gc-window[data-active-workspace=image] .gc-palette { grid-template-columns:repeat(2,32px); gap:2px; }
+.gc-window[data-active-workspace=image] .gc-palette .gc-icon-button { width:32px; height:32px; }
+.gc-palette svg[data-icon^=paint] { width:24px; height:24px; color:#252b32; }
+.gc-palette svg[data-icon=paintPencil] { color:#926013; }
+.gc-palette svg[data-icon=paintBrush],.gc-palette svg[data-icon=paintFill] { color:#245aa2; }
+.gc-palette svg[data-icon=paintEraser] { color:#ac4267; }
+.gc-palette svg[data-icon=paintPicker] { color:#684384; }
 .gc-viewport { min-width:0; min-height:0; position:relative; overflow:hidden; background:var(--xp-workspace); box-shadow:inset 1px 1px 0 var(--xp-dark),inset -1px -1px 0 #fff; outline:none; }
 .gc-viewport > .app-editor { z-index:0; }
 .gc-viewport:focus-visible { outline:1px dotted #fff; outline-offset:-4px; }
@@ -91,11 +102,11 @@ svg[data-icon=crop],svg[data-icon=rotate],svg[data-icon=flip] { color:#0b6a6a; }
 @media (max-width:800px) {
   .gc-window .gc-workspace { min-width:0; padding:0 6px; } .gc-window .gc-workspace span { display:none; }
   .gc-command-label { display:none; }
-  .gc-main { grid-template-columns:62px minmax(0,1fr) 220px; }
+  .gc-main { grid-template-columns:var(--palette-width,62px) minmax(0,1fr) 220px; }
   .gc-main:not(:has(.gc-palette button)) { grid-template-columns:minmax(0,1fr) 220px; }
 }
 @media (max-width:500px) {
-  .gc-main,.gc-main:not(:has(.gc-palette button)) { grid-template-columns:62px minmax(0,1fr); grid-template-rows:minmax(0,1fr) 170px; }
+  .gc-main,.gc-main:not(:has(.gc-palette button)) { grid-template-columns:var(--palette-width,62px) minmax(0,1fr); grid-template-rows:minmax(0,1fr) 170px; }
   .gc-main:not(:has(.gc-palette button)) { grid-template-columns:minmax(0,1fr); }
   .gc-main,.gc-main:not(:has(.gc-palette button)) { grid-template-rows:minmax(0,1fr) 210px; }
   .gc-panels { grid-column:1/-1; flex-direction:row; align-items:stretch; padding:8px; overflow-x:auto; overflow-y:hidden; }

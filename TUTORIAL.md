@@ -2,11 +2,21 @@
 
 ## What you get today
 
-gsnv-paint is a browser application with XP-inspired menus and toolbars. The workspace buttons open CAD, Image, Photo, Video, Document, Slides, Audio, Spreadsheet and Code. Each workspace shares project files, History and Recovery. Editing stays on your computer; there are no accounts or API keys. Wait for “Ready offline” before relying on a network-free browser restart.
+gsnv-paint is a browser application with XP-inspired menus and toolbars. The workspace buttons open Image, CAD, Photo, Video, Document, Slides, Audio, Spreadsheet and Code. Each workspace shares project files, History and Recovery. Editing stays on your computer; there are no accounts or API keys. Wait for “Ready offline” before relying on a network-free browser restart.
+
+## Paint a first image
+
+1. Image opens first. Choose New (Ctrl+N). An 800 × 600 white canvas opens.
+2. Pick a tool in the toolbox on the left. Hover a tool to see its name and shortcut: V move, S/M/Q/W selections, P pencil, B brush, A airbrush, E eraser, C clone, U blur, G fill, N gradient, I pick colour, T text, L/R/O shapes.
+3. In "Colours and tool options", click a swatch for the primary colour, or right-click one for the secondary. Set size, hardness, opacity and the other options with the trackbars, or type an exact value in the box beside each one and press Enter. `[` and `]` also change brush size.
+4. Hold Shift for squares, circles and 45° lines. With a selection tool, Shift adds to the selection and Ctrl subtracts. Painting stays inside the selection. Esc deselects.
+5. Layers: use the Layers panel or the Layer menu to add, duplicate, reorder, hide, rename, set opacity and blend mode, merge or flatten.
+6. Adjustments and Filters (menus) preview live; OK applies, Cancel restores.
+7. Click Save… and choose Save PNG image for a flattened picture, or Save project file to keep layers editable. File → Save… offers the same choices in a side menu. The Export… button opens export choices directly. Ctrl+S saves the editable `.gsnv-image` project immediately.
 
 ## Make a first CAD part
 
-1. Choose New (Ctrl+N), then Rectangle dimensions. Width 100 and height 60 create a fully constrained sketch.
+1. Choose the CAD tab, then New (Ctrl+N) and Rectangle dimensions. Width 100 and height 60 create a fully constrained sketch.
 2. Choose Extrude (E). Depth 10 previews a real solid. OK commits; Cancel restores the prior part.
 3. Click Width or Height in the Part panel to edit it. The extrusion rebuilds automatically.
 4. Save with Ctrl+S. Open the `.gsnv-cad` file with Ctrl+O to continue editing. Restore recovery on reload if offered.
@@ -24,16 +34,6 @@ Choose XY, XZ or YZ in the Part panel. Add named variables there and use express
 4. Edit the Width dimension or click Revolve 1 in the feature tree to change the angle. Named angle variables work too. Save an editable project with Ctrl+S, or export the rebuilt solid as STEP.
 
 Use one closed polygon on the nonnegative side of the sketch's U axis, or one circle clear of the axis. Polygon edges may touch the axis. Holes in the section, other axes, revolve cuts and features after a revolve are not supported yet. Replacing a lone extrusion is explicitly labeled; Undo restores it. An extrusion with downstream features cannot be replaced.
-
-## Paint a first image
-
-1. Choose the Image tab, then New (Ctrl+N). An 800 × 600 white canvas opens.
-2. Pick a tool in the toolbox on the left. Hover a tool to see its name and shortcut: V move, S/M/Q/W selections, P pencil, B brush, A airbrush, E eraser, C clone, U blur, G fill, N gradient, I pick colour, T text, L/R/O shapes.
-3. In "Colours and tool options", click a swatch for the primary colour, or right-click one for the secondary. Set size, hardness, opacity and the other options with the trackbars, or type an exact value in the box beside each one and press Enter. `[` and `]` also change brush size.
-4. Hold Shift for squares, circles and 45° lines. With a selection tool, Shift adds to the selection and Ctrl subtracts. Painting stays inside the selection. Esc deselects.
-5. Layers: use the Layers panel or the Layer menu to add, duplicate, reorder, hide, rename, set opacity and blend mode, merge or flatten.
-6. Adjustments and Filters (menus) preview live; OK applies, Cancel restores.
-7. Image → Export PNG saves a flattened picture. Ctrl+S saves an editable `.gsnv-image` project with its layers.
 
 ## Develop a photo
 
