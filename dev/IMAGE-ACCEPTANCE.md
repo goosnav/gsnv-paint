@@ -1,0 +1,81 @@
+# Image golden and persistent selection increment
+
+Mode A map for the already requested IMG-103/IMG-104 and shared undo/recovery
+behavior. The user preauthorizes BATCH after this map is committed. No brick
+is human-ACCEPTED. The existing I51/IMAGE-APP are GREEN implementations under
+rework; their revised contracts become GREEN only after the gates below.
+
+## I58 `image/image-selection-state.ts` — CORE — CONTRACTED
+
+Purpose: produce an owned, canonical selection snapshot.
+
+IN: `{width:number,height:number,mask:Uint8Array|null}`. Sizes are positive
+integers, total at most 16,777,216 pixels. A supplied mask has exactly one byte
+per pixel, uses an ordinary ArrayBuffer and is not detached. Zero means
+excluded, 255 fully selected, intermediate bytes preserve partial coverage.
+
+OUT: `ImageSelection|null`, where `ImageSelection={mask:Uint8Array,bounds:Rect}`.
+The output owns a byte copy. Its record and bounds are frozen; callers treat
+reachable bytes as immutable. Empty masks and null canonicalize to null.
+Bounds are the smallest integer rectangle containing all nonzero coverage.
+
+RAISES: RangeError for invalid dimensions, mask type/length or shared backing
+memory. DEPS: none. No I/O, mutation, randomness, or selection-shape decisions.
+Tests: literal partial-coverage rectangle, one pixel, empty/null, edges,
+dimensions at both limits, malformed/detached/shared masks, ownership and
+round-trip/idempotence. Run: `node --import tsx --test src/image/image-selection-state.test.ts`.
+
+## I51 selection contract revision — CORE — CONTRACTED
+
+The immutable document gains `selection:ImageSelection|null`. New and legacy
+documents have null. A new `selection` operation accepts `{previous,mask}`
+and uses I58; updates and same-size stack changes retain the selection.
+Resizing the stack clears it. Existing raster ownership/tile-sharing remains.
+
+The common native envelope stays version 1; the domain layout is explicitly
+versioned as `encoding:'rgba8-layers-v2'`. Its required selection field is null
+or `{encoding:'gray8',asset:'selection'}`. A non-null selection has a separate
+raw gray8 asset of exactly width×height bytes. Decode validates exact fields,
+references, dimensions, duplicate/missing assets and coverage bytes before
+returning any document. `rgba8` and `rgba8-layers` still migrate with null
+selection. Unknown future layouts fail readably. Encode preserves every
+layer byte, including RGB underneath zero alpha, and owns the selection
+asset bytes. Selection bounds are derived, never trusted from a file.
+
+DEPS: I50, I54, I58. Tests extend `image-content.test.ts`: literal v2 records
+and bytes, legacy migration, invalid assets/schema, immutable history sharing,
+all-byte round-trip, partial selection preservation and resize invalidation.
+
+## IMAGE-APP assembly revision — CONTRACTED
+
+Each completed selection replace/add/subtract/invert/all/none is one history
+entry only when bytes change. Marquee preview and floating moves remain
+uncommitted. Completed moves/text placement commit their resulting selection
+together with pixels; no nested commit during render. Cancel restores the
+committed selection. Painting and layer changes preserve it. Undo/redo,
+native Open and recovery restore the selection in the same snapshot as the
+pixels; opening a different same-size image cannot inherit an old selection.
+
+On geometry transforms, the current implementation deliberately clears the
+selection in the same history entry; undo restores it. This bounded revision
+does not implement the broader I20 selection-transform contract. Existing
+adjustment/filter formulas and transparent pixel values must not change.
+
+## Acceptance gates
+
+1. IMG-103 runs the exact recorded 32×24 sequence through real CORE modules
+   and production browser controls. Compare all 3,072 composite bytes with
+   `src/image/fixtures/acceptance-rgba.json`, independently derived/reviewed.
+2. I58 RED→GREEN, then I51 revised tests RED→GREEN, then assembly tests.
+3. IMG-104 saves/reopens the exact golden and compares canonical layer names,
+   IDs/order, visibility/opacity/blend, active layer, all layer bytes, selection
+   bytes and resulting composite. It edits a retained layer after reopening.
+   This fixture has no text or layer masks; separate text/mask requirements
+   remain untested, never inferred from this result.
+4. Browser checks prove selection undo/redo, Esc cancellation of a floating
+   move, selection-only autosave/recovery, and legacy/different document Open.
+   Full previous Image browser cases remain cumulative; history expectations
+   explicitly add completed selection operations, never discard pixel checks.
+
+Status and exact evidence will be appended after execution. Product acceptance
+and untested platforms remain with the user.
