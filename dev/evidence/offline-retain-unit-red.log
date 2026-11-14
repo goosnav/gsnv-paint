@@ -1,0 +1,580 @@
+✖ S18 publishes a complete golden build and audits only once across asset fetches (37.925699ms)
+✔ S18 fetches only the HTML entry through the canonical root without following index redirects (10.362184ms)
+✖ S18 every quota boundary and failed candidate preserve published A exactly (27.131981ms)
+✔ S18 installation rejects network, HTML fallback, missing headers, redirect and corrupt bytes (20.790811ms)
+✔ S18 stops oversized streams and cancellation before publication (1.793615ms)
+✔ S18 detects eviction and corruption; repair uses a fresh generation (3.195ms)
+✔ S18 exact Request matching preserves ranges and never consumes file/blob or foreign URLs (2.863518ms)
+✔ S18 cleanup retains current and newest other complete build and leaves unrelated caches (3.889036ms)
+✔ S18 interrupted candidates are never served and fresh concurrent candidates survive cleanup (2.939822ms)
+✔ S18 timeout and storage denial produce stable errors and normalize decoded transport headers (2.257228ms)
+✔ S20 ready requires the matching controlling worker; unsupported setup settles visibly (34.693771ms)
+✔ S20 failed candidate retains active A readiness and waiting B cannot reload or replace it (4.560977ms)
+✔ S20 rejects wrong build identity, malformed progress and unregistered message sources (1.6808ms)
+✔ S20 answers only known worker identity handshakes and readiness follows controllerchange (3.073099ms)
+✔ S20 registration failure and request timeout settle with actionable errors; retry can recover (22.447038ms)
+✔ S20 check audits explicitly and disposal ends ports/listeners without late state delivery (1.483288ms)
+✖ S20 Retry preserves freshly verified A when the subsequent update request rejects (4.609786ms)
+✖ S20 Retry preserves the actual active audit failure alongside a failed update check (2.977254ms)
+✖ S20 failed Retry update with waiting B preserves A and never requests activation (3.263002ms)
+✔ S20 initial Retry failure does not invent readiness and disposal suppresses a late rejection (2.78559ms)
+✖ S18 retains independently verified A when newer B loses its generation (48.207064ms)
+✖ S18 retains independently verified A when newer B loses its lazy asset (8.964509ms)
+✖ S18 excludes corrupt asset bytes from fallback selection and preserves valid A (7.481033ms)
+✖ S18 excludes wrong MIME from fallback selection and preserves valid A (5.084758ms)
+✖ S18 excludes missing isolation from fallback selection and preserves valid A (5.81912ms)
+✖ S18 excludes missing manifest from fallback selection and preserves valid A (6.418007ms)
+✖ S18 excludes bad manifest digest from fallback selection and preserves valid A (8.531037ms)
+✖ S18 excludes invalid JSON from fallback selection and preserves valid A (5.061823ms)
+✖ S18 excludes invalid manifest schema from fallback selection and preserves valid A (4.607485ms)
+✖ S18 excludes different manifest build from fallback selection and preserves valid A (5.83101ms)
+✖ S18 excludes different file count from fallback selection and preserves valid A (5.257794ms)
+✖ S18 excludes different byte count from fallback selection and preserves valid A (5.665222ms)
+✖ S18 excludes bad receipt binding from fallback selection and preserves valid A (3.921854ms)
+✖ S18 historical manifest has a strict UTF-8 byte bound and cancels an oversized stream (5.221205ms)
+✔ S18 accepts a valid manifest one UTF-8 byte below the bound and never serves its private key (203.775844ms)
+✖ S18 freshly audits current C before cleanup rather than trusting its earlier install (7.340183ms)
+✔ S18 deterministic equal-time fallback uses generation-name order (11.105261ms)
+✖ S18 legacy published generations survive normal cleanup and absent verified fallback (3.599003ms)
+✖ S18 invalid JSON public metadata never makes a published generation eligible as abandoned (3.296048ms)
+✖ S18 bad receipt public metadata never makes a published generation eligible as abandoned (2.674755ms)
+✖ S18 mismatched build public metadata never makes a published generation eligible as abandoned (2.441011ms)
+✖ S18 oversized metadata public metadata never makes a published generation eligible as abandoned (2.604676ms)
+✖ S18 open read failure aborts cleanup without deleting published generations (3.210114ms)
+✖ S18 completion read failure aborts cleanup without deleting published generations (2.989194ms)
+✖ S18 manifest read failure aborts cleanup without deleting published generations (2.919172ms)
+✖ S18 asset read failure aborts cleanup without deleting published generations (2.781882ms)
+✖ S18 stream read failure aborts cleanup without deleting published generations (3.052459ms)
+✖ S18 digest read failure aborts cleanup without deleting published generations (4.232287ms)
+✖ S18 candidate marker read failure aborts cleanup without deleting published generations (3.281459ms)
+ℹ tests 49
+ℹ suites 0
+ℹ pass 17
+ℹ fail 32
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 643.134888
+
+✖ failing tests:
+
+test at src/shared/offline-cache.test.ts:1:1313
+✖ S18 publishes a complete golden build and audits only once across asset fetches (37.925699ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+      build: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+      bytes: 10,
+      complete: true,
+      files: 2,
+      generation: 'gsnv-paint:offline:v1:build:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:attempt1',
+  -   manifestSha256: '73146d8aca03a07a6744a1bff9a53044417bbacd19e072e7bfd4a41b3b2d8887',
+      publishedAt: 100,
+      schema: 1
+    }
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-cache.test.ts:23:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { schema: 1, build: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', generation: 'gsnv-paint:offline:v1:build:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:attempt1', files: 2, bytes: 10, publishedAt: 100, complete: true },
+    expected: { schema: 1, build: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', generation: 'gsnv-paint:offline:v1:build:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:attempt1', files: 2, bytes: 10, publishedAt: 100, complete: true, manifestSha256: '73146d8aca03a07a6744a1bff9a53044417bbacd19e072e7bfd4a41b3b2d8887' },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-cache.test.ts:1:3640
+✖ S18 every quota boundary and failed candidate preserve published A exactly (27.131981ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-cache.test.ts:59:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-client.test.ts:1:6836
+✖ S20 Retry preserves freshly verified A when the subsequent update request rejects (4.609786ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'error' !== 'ready'
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-client.test.ts:95:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'error',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-client.test.ts:1:7415
+✖ S20 Retry preserves the actual active audit failure alongside a failed update check (2.977254ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'offline.network'
+  - 'offline.incomplete'
+             ^
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-client.test.ts:106:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'offline.network',
+    expected: 'offline.incomplete',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-client.test.ts:1:7973
+✖ S20 failed Retry update with waiting B preserves A and never requests activation (3.263002ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'error' !== 'ready'
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-client.test.ts:115:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'error',
+    expected: 'ready',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:1893
+✖ S18 retains independently verified A when newer B loses its generation (48.207064ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:40:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:1893
+✖ S18 retains independently verified A when newer B loses its lazy asset (8.964509ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:40:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:3835
+✖ S18 excludes corrupt asset bytes from fallback selection and preserves valid A (7.481033ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:3835
+✖ S18 excludes wrong MIME from fallback selection and preserves valid A (5.084758ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:3835
+✖ S18 excludes missing isolation from fallback selection and preserves valid A (5.81912ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:3835
+✖ S18 excludes missing manifest from fallback selection and preserves valid A (6.418007ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:3835
+✖ S18 excludes bad manifest digest from fallback selection and preserves valid A (8.531037ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:3835
+✖ S18 excludes invalid JSON from fallback selection and preserves valid A (5.061823ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:3835
+✖ S18 excludes invalid manifest schema from fallback selection and preserves valid A (4.607485ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:3835
+✖ S18 excludes different manifest build from fallback selection and preserves valid A (5.83101ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:3835
+✖ S18 excludes different file count from fallback selection and preserves valid A (5.257794ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:3835
+✖ S18 excludes different byte count from fallback selection and preserves valid A (5.665222ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:3835
+✖ S18 excludes bad receipt binding from fallback selection and preserves valid A (3.921854ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:4096
+✖ S18 historical manifest has a strict UTF-8 byte bound and cancels an oversized stream (5.221205ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:74:28)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:5224
+✖ S18 freshly audits current C before cleanup rather than trusting its earlier install (7.340183ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:86:41)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:5976
+✖ S18 legacy published generations survive normal cleanup and absent verified fallback (3.599003ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok((await f.storage.keys()).includes(ar.generation))
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:99:28)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:6667
+✖ S18 invalid JSON public metadata never makes a published generation eligible as abandoned (3.296048ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:109:41)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:6667
+✖ S18 bad receipt public metadata never makes a published generation eligible as abandoned (2.674755ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:109:41)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:6667
+✖ S18 mismatched build public metadata never makes a published generation eligible as abandoned (2.441011ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:109:41)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:6667
+✖ S18 oversized metadata public metadata never makes a published generation eligible as abandoned (2.604676ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:109:41)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:7391
+✖ S18 open read failure aborts cleanup without deleting published generations (3.210114ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:131:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:7391
+✖ S18 completion read failure aborts cleanup without deleting published generations (2.989194ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:131:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:7391
+✖ S18 manifest read failure aborts cleanup without deleting published generations (2.919172ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:131:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:7391
+✖ S18 asset read failure aborts cleanup without deleting published generations (2.781882ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:131:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:7391
+✖ S18 stream read failure aborts cleanup without deleting published generations (3.052459ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:131:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:7391
+✖ S18 digest read failure aborts cleanup without deleting published generations (4.232287ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:131:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at src/shared/offline-retain.test.ts:1:7391
+✖ S18 candidate marker read failure aborts cleanup without deleting published generations (3.281459ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  SecurityError: Read denied
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:131:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: SecurityError: Read denied
+        at new DOMException (node:internal/per_context/domexception:76:18)
+        at Object.match (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:126:131)
+        at Object.retain (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-cache.ts:180:89)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:131:3)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    operator: 'rejects',
+    diff: 'simple'
+  }

@@ -30,7 +30,7 @@ test('I-CONTENT native encode/decode is byte exact per layer and still opens sin
   const base = imageContent({ operation: 'new', width: 3, height: 2, fill: [1, 2, 3, 4] });
   const doc = imageContent({ operation: 'layers', previous: base, width: 3, height: 2, activeLayerId: 'top', layers: [{ meta: meta('background') }, { meta: meta('top', { name: 'Top', visible: false, opacity: 0.25, blend: 'screen' }), raster: createRaster(3, 2, [9, 8, 7, 6]) }] });
   const encoded = imageContent({ operation: 'encode', value: doc });
-  assert.equal(encoded.content.encoding, 'rgba8-layers'); assert.deepEqual(encoded.assets.map(a => a.id), ['pixels-0', 'pixels-1']); assert.deepEqual([...encoded.assets[1]!.bytes.slice(0, 4)], [9, 8, 7, 6]);
+  assert.equal(encoded.content.encoding, 'rgba8-layers-v2'); assert.deepEqual(encoded.assets.map(a => a.id), ['pixels-0', 'pixels-1']); assert.deepEqual([...encoded.assets[1]!.bytes.slice(0, 4)], [9, 8, 7, 6]);
   const decoded = imageContent({ operation: 'decode', content: JSON.parse(JSON.stringify(encoded.content)), assets: encoded.assets.map(a => ({ id: a.id, bytes: a.bytes.slice() })) });
   assert.deepEqual(decoded, doc);
   const legacy = imageContent({ operation: 'decode', content: { width: 3, height: 2, encoding: 'rgba8', asset: 'pixels' }, assets: [{ id: 'pixels', bytes: new Uint8Array(24).fill(5) }] });
@@ -38,4 +38,45 @@ test('I-CONTENT native encode/decode is byte exact per layer and still opens sin
   for (const content of [null, [], { ...encoded.content, extra: 1 }, { ...encoded.content, width: 0 }, { ...encoded.content, layers: [{ ...encoded.content.layers[0], blend: 'hue' }] }, { ...encoded.content, activeLayerId: 'missing' }])
     assert.throws(() => imageContent({ operation: 'decode', content, assets: encoded.assets }), ImageContentError);
   assert.throws(() => imageContent({ operation: 'decode', content: encoded.content, assets: [encoded.assets[0]!] }), ImageContentError);
+});
+
+test('I51 selection is owned, retained by pixel/layer edits, cleared by resize, and encoded exactly', () => {
+  const before = imageContent({ operation: 'new', width: 3, height: 2, fill: [9, 8, 7, 0] });
+  const mask = new Uint8Array([0, 1, 128, 0, 255, 0]);
+  const selected = imageContent({ operation: 'selection', previous: before, mask });
+  assert.equal(before.selection, null); assert.deepEqual([...selected.selection!.mask], [0, 1, 128, 0, 255, 0]);
+  mask.fill(0); assert.equal(selected.selection!.mask[1], 1);
+  assert.equal(imageContent({ operation: 'selection', previous: selected, mask: selected.selection!.mask.slice() }), selected, 'unchanged coverage is a no-op history snapshot');
+  assert.equal(imageContent({ operation: 'selection', previous: before, mask: new Uint8Array(6) }), before, 'empty and null selections are the same state');
+  const raster = imageContent({ operation: 'raster', value: selected, layerId: 'background' }); raster.data[0] = 30;
+  const painted = imageContent({ operation: 'update', previous: selected, layerId: 'background', raster });
+  assert.equal(painted.selection, selected.selection);
+  const stacked = imageContent({ operation: 'layers', previous: painted, width: 3, height: 2, activeLayerId: 'background', layers: [{ meta: meta('background', { opacity: 0.5 }) }] });
+  assert.equal(stacked.selection, selected.selection);
+  const encoded = imageContent({ operation: 'encode', value: stacked });
+  assert.deepEqual(encoded.content, { width: 3, height: 2, encoding: 'rgba8-layers-v2', activeLayerId: 'background',
+    layers: [{ id: 'background', name: 'background', visible: true, opacity: 0.5, blend: 'normal', asset: 'pixels-0' }], selection: { encoding: 'gray8', asset: 'selection' } });
+  assert.deepEqual(encoded.assets.map(a => [a.id, [...a.bytes]]), [
+    ['pixels-0', [30, 8, 7, 0, 9, 8, 7, 0, 9, 8, 7, 0, 9, 8, 7, 0, 9, 8, 7, 0, 9, 8, 7, 0]], ['selection', [0, 1, 128, 0, 255, 0]],
+  ]);
+  assert.deepEqual(imageContent({ operation: 'decode', ...encoded }), stacked);
+  encoded.assets[1]!.bytes.fill(0); assert.equal(stacked.selection!.mask[1], 1);
+  const resized = imageContent({ operation: 'layers', previous: selected, width: 2, height: 2, activeLayerId: 'background', layers: [{ meta: meta('background'), raster: createRaster(2, 2, [0, 0, 0, 0]) }] });
+  assert.equal(resized.selection, null);
+  assert.equal(imageContent({ operation: 'selection', previous: selected, mask: new Uint8Array(6) }).selection, null);
+  assert.throws(() => imageContent({ operation: 'selection', previous: selected, mask: new Uint8Array(5) }), RangeError);
+});
+
+test('I51 legacy layers migrate with no selection and malformed v2 selection assets fail atomically', () => {
+  const value = imageContent({ operation: 'new', width: 2, height: 1, fill: [1, 2, 3, 4] });
+  const encoded = imageContent({ operation: 'encode', value: imageContent({ operation: 'selection', previous: value, mask: new Uint8Array([0, 255]) }) });
+  const { selection: _selection, ...fields } = encoded.content;
+  const legacy = imageContent({ operation: 'decode', content: { ...fields, encoding: 'rgba8-layers' }, assets: encoded.assets.slice(0, 1) });
+  assert.deepEqual(legacy, value);
+  for (const selection of [{ encoding: 'other', asset: 'selection' }, { encoding: 'gray8', asset: 'pixels-0' }, { encoding: 'gray8', asset: 'missing' }, { encoding: 'gray8', asset: 'selection', bounds: {} }, 'selection'])
+    assert.throws(() => imageContent({ operation: 'decode', content: { ...encoded.content, selection }, assets: encoded.assets }), ImageContentError);
+  for (const assets of [encoded.assets.slice(0, 1), [...encoded.assets, encoded.assets[1]!], [encoded.assets[0]!, { id: 'selection', bytes: new Uint8Array(3) }]])
+    assert.throws(() => imageContent({ operation: 'decode', content: encoded.content, assets }), ImageContentError);
+  assert.throws(() => imageContent({ operation: 'decode', content: { ...encoded.content, encoding: 'rgba8-layers-v3' }, assets: encoded.assets }), ImageContentError);
+  assert.deepEqual(imageContent({ operation: 'decode', ...encoded }).selection!.bounds, { x: 1, y: 0, width: 1, height: 1 });
 });

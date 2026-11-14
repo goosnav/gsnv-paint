@@ -1,0 +1,40 @@
+✔ S20 ready requires the matching controlling worker; unsupported setup settles visibly (33.06674ms)
+✔ S20 failed candidate retains active A readiness and waiting B cannot reload or replace it (4.289069ms)
+✔ S20 rejects wrong build identity, malformed progress and unregistered message sources (1.239855ms)
+✔ S20 answers only known worker identity handshakes and readiness follows controllerchange (2.735447ms)
+✔ S20 registration failure and request timeout settle with actionable errors; retry can recover (22.135646ms)
+✔ S20 check audits explicitly and disposal ends ports/listeners without late state delivery (1.350398ms)
+✔ S20 Retry preserves freshly verified A when the subsequent update request rejects (1.21913ms)
+✔ S20 Retry preserves the actual active audit failure alongside a failed update check (0.881245ms)
+✔ S20 failed Retry update with waiting B preserves A and never requests activation (2.256477ms)
+✔ S20 initial Retry failure does not invent readiness and disposal suppresses a late rejection (2.464319ms)
+✖ S20 Retry update failure without any installed worker reports initial setup failure (5.040334ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 10
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 336.496638
+
+✖ failing tests:
+
+test at src/shared/offline-client.test.ts:1:9371
+✖ S20 Retry update failure without any installed worker reports initial setup failure (5.040334ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'installing'
+  - 'error'
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-client.test.ts:132:34)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'installing',
+    expected: 'error',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

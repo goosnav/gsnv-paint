@@ -4,10 +4,11 @@
  * CONTRACT   IN: S07 file ports and browser DOM/Canvas. OUT: WorkspaceAdapter for gsnv-image.
  *            Pixel decisions belong to raster-ops, image-brush, image-adjust and image-composite; gestures to
  *            image-tool-input; snapshots to image-content. Each completed stroke, shape, fill, gradient, text,
- *            move, adjustment, filter or layer change commits one history entry; drags, adjustment previews
+ *            move, selection, adjustment, filter or layer change commits one history entry; drags, adjustment previews
  *            and floating moves stay outside history. Painting is clipped to the selection mask.
  *            RAISES: invalid project content from decode; operational failures show in the hint.
- * GUARANTEES Saved files contain the exact committed layers; undo/redo/open resynchronize every layer.
+ * GUARANTEES Saved files contain committed layers and selection; undo/redo/open/recovery restore both.
+ *            Typed zoom uses effective pixel scale at viewport center; Cancel restores the prior view.
  * TUNING     NEW_SIZE, MARGIN, SPRAY_INTERVAL_MS and text defaults below.
  * DECISIONS  D1: One working raster per layer, mutated during a drag from a per-stroke base copy, committed
  *            as shared tiles. D2: A moved selection floats until placed (click outside, Enter, tool change);
@@ -16,7 +17,8 @@
  * TESTBENCH  src/image/image-workspace.browser.spec.ts -- run with: npm run test:browser -- src/image/image-workspace.browser.spec.ts
  */
 import type { WorkspaceAdapter } from '../app/app-shell.ts';
-import type { View2D } from '../shared/view-transform.ts';
+import { imageSourceAdapter } from '../bridge/image-source-adapter.ts';
+import { viewTransform, type View2D } from '../shared/view-transform.ts';
 import type { DialogSpec } from '../shared/dialog.ts';
 import { fileAccess, type FilePorts } from '../shared/file-access.ts';
 import { imageContent, type ImageContent, type LayerMeta } from './image-content.ts';
@@ -86,8 +88,11 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       let current: Snapshot, source: ImageContent | null = null, rasters = new Map<string, Raster>(), display: ImageData | null = null, view: View2D = { zoom: 1, pan: { x: 0, y: 0 } };
       let tool: ImageToolState = { tool: 'brush', drag: null }, previousTool: ImageTool = 'brush', primary = BLACK, secondary = WHITE, options: ToolOptions = { ...DEFAULT_OPTIONS };
       let selection: Selection | null = null, floating: Floating | null = null, stroke: Stroke | null = null, shapeBase: Uint8ClampedArray | null = null, shapeDirty: Rect | null = null;
-      let pendingSelect: { x: number; y: number; raster: Raster } | null = null, smudge: SmudgeCarry | null = null, cloneSource: [number, number] | null = null, opacityPreview: number | null = null, edges: Int32Array | null = null, phase = 0;
+      let smudge: SmudgeCarry | null = null, cloneSource: [number, number] | null = null, opacityPreview: number | null = null, edges: Int32Array | null = null, phase = 0;
       let scale = 1, offset = { x: 0, y: 0 }, panning: { x: number; y: number } | null = null, cursor: [number, number] | null = null, message = '', disposed = false, marquee: { shape: string; points: [number, number][] } | null = null;
+      let pendingImages = 0;
+      const pendingTransfer = () => disposed ? 'closed workspace' : floating ? 'floating selection' : stroke ? 'brush stroke' : shapeBase ? 'shape' : marquee || tool.drag ? 'selection or tool gesture' : opacityPreview !== null ? 'opacity preview' : pendingImages ? 'image import or paste' : '';
+      const bridge = imageSourceAdapter({ read: () => current ? { ...current, value: current.value as ImageContent } : undefined, pending: pendingTransfer });
       const palette = imagePalette({ root: optionsPanel, onChange(change) {
         if (change.kind === 'primary') primary = change.color; else if (change.kind === 'secondary') secondary = change.color;
         else if (change.kind === 'swap') [primary, secondary] = [secondary, primary]; else if (change.kind === 'option') options = { ...options, [change.key]: change.value };
@@ -116,6 +121,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       function resync() {
         if (!current) return; source = current.value as ImageContent;
+        selection = source.selection;
         rasters = new Map(source.layers.map(l => [l.id, imageContent({ operation: 'raster', value: source!, layerId: l.id })]));
         for (const c of [canvas, overlay]) { c.width = source.width; c.height = source.height; }
         display = new ImageData(source.width, source.height); composite(); selectionChanged();
@@ -180,12 +186,15 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       function commitActive(label: string) {
         if (!current || !source) return;
-        try { const value = imageContent({ operation: 'update', previous: source, layerId: activeId(), raster: active() }); source = value; message = ''; host.commit({ ...current, value }, label, current.identity); }
+        try { const value = withSelection(imageContent({ operation: 'update', previous: source, layerId: activeId(), raster: active() })); source = value; selection = value.selection; message = ''; host.commit({ ...current, value }, label, current.identity); }
         catch (cause) { fail(cause); }
+      }
+      function withSelection(value: ImageContent) {
+        return value.selection === selection ? value : imageContent({ operation: 'selection', previous: value, mask: selection?.mask ?? null });
       }
       function commitStack(label: string, stack: { meta: LayerMeta; raster?: Raster; from?: string }[], activeLayerId: string, size = { width: source!.width, height: source!.height }) {
         if (!current || !source) return;
-        try { const value = imageContent({ operation: 'layers', previous: source, width: size.width, height: size.height, layers: stack, activeLayerId }); message = ''; host.commit({ ...current, value }, label, current.identity); }
+        try { const value = withSelection(imageContent({ operation: 'layers', previous: source, width: size.width, height: size.height, layers: stack, activeLayerId })); message = ''; host.commit({ ...current, value }, label, current.identity); }
         catch (cause) { fail(cause); }
       }
       function placeFloating() {
@@ -265,10 +274,12 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         composite(rect);
         if (commit) { shapeBase = null; shapeDirty = null; if (dirty) commitActive(t === 'gradient' ? 'Gradient' : `Draw ${TOOLS[t].label.toLowerCase()}`); }
       }
-      function setSelection(mask: Uint8Array | null, mode: SelectMode) {
-        if (!source) return;
+      function setSelection(mask: Uint8Array | null, mode: SelectMode, label = mode === 'replace' ? (mask ? 'Select' : 'Deselect') : `${mode === 'add' ? 'Add' : mode === 'subtract' ? 'Subtract' : 'Intersect'} selection`) {
+        if (!source || !current) return;
         const next = mask ? combineMasks(selection?.mask ?? null, mask, mode) : mode === 'replace' ? null : selection?.mask ?? null;
-        const bounds = next ? maskBounds(next, source.width) : null; selection = next && bounds ? { mask: next, bounds } : null; selectionChanged();
+        const value = imageContent({ operation: 'selection', previous: source, mask: next });
+        selection = value.selection; selectionChanged();
+        if (value !== source) { source = value; host.commit({ ...current, value }, label, current.identity); }
       }
       function fillAt(point: [number, number], button: 0 | 2) {
         if (!source) return;
@@ -350,7 +361,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
             try {
               const v = style(value as Record<string, unknown>), r = rasterizeText(v, color); if (!r || !source) return;
               // Text goes on its own layer and stays selected, so the Move tool can drag it straight away.
-              pendingSelect = { x: at.x, y: at.y, raster: r }; tool = { tool: 'move', drag: null }; addLayer(r, `Text: ${v.text.split('\n')[0]!.slice(0, 24)}`, 'Text', at.x, at.y);
+              tool = { tool: 'move', drag: null }; addLayer(r, `Text: ${v.text.split('\n')[0]!.slice(0, 24)}`, 'Text', { x: at.x, y: at.y, select: true });
             } catch (cause) { fail(cause); }
           },
           cancel() { show(null); },
@@ -427,31 +438,44 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       let clipboard: Raster | null = null;
       async function systemCopy(r: Raster) { const clip = window.navigator.clipboard as Clipboard | undefined, Item = (window as Window & { ClipboardItem?: typeof ClipboardItem }).ClipboardItem; if (!clip?.write || !Item) return; try { await clip.write([new Item({ 'image/png': png(r) })]); } catch { /* The in-app clipboard still holds the pixels. */ } }
-      function addLayer(raster: Raster, name: string, label: string, x = 0, y = 0) {
+      function addLayer(raster: Raster, name: string, label: string, placement = { x: 0, y: 0, select: false }) {
         if (!source) return; placeFloating();
+        const { x, y } = placement;
         const id = newId(), layer = createRaster(source.width, source.height, [0, 0, 0, 0]); paintRaster(layer, { kind: 'blit', source: raster, x, y, mode: 'replace' });
+        if (placement.select) {
+          const mask = Uint8Array.from({ length: source.width * source.height }, (_, p) => layer.data[p * 4 + 3] ? 255 : 0);
+          const bounds = maskBounds(mask, source.width); selection = bounds ? { mask, bounds } : null;
+        }
         const index = source.layers.findIndex(l => l.id === activeId()), stack: { meta: LayerMeta; raster?: Raster }[] = source.layers.map(l => ({ meta: meta(l) }));
         stack.splice(index + 1, 0, { meta: { id, name, visible: true, opacity: 1, blend: 'normal' }, raster: layer }); commitStack(label, stack, id);
       }
       async function paste() {
+        const identity = current?.identity; pendingImages++; host.invalidate();
+        try {
         let pasted: Raster | null = null;
         try { for (const item of (await window.navigator.clipboard?.read?.()) ?? []) { const type = item.types.find(t => t.startsWith('image/')); if (type) { pasted = await decodeImage(await item.getType(type)); break; } } } catch { /* Permission denied or no image. */ }
         pasted ??= clipboard ? copyRaster(clipboard) : null;
         if (disposed || !source) return;
+        if (identity !== current?.identity) { fail('The Image changed while reading the clipboard. Paste again into the current project.'); return; }
         if (!pasted) { message = 'Nothing to paste. Copy a selection or an image first.'; refresh(); return; }
-        const [x, y] = toDocument({ x: 0, y: 0 }); addLayer(pasted, 'Pasted', 'Paste', Math.max(0, Math.ceil(x)), Math.max(0, Math.ceil(y))); tool = { tool: 'move', drag: null }; host.invalidate();
+        const [x, y] = toDocument({ x: 0, y: 0 }); addLayer(pasted, 'Pasted', 'Paste', { x: Math.max(0, Math.ceil(x)), y: Math.max(0, Math.ceil(y)), select: false }); tool = { tool: 'move', drag: null }; host.invalidate();
+        } finally { pendingImages--; host.invalidate(); }
       }
       async function importImage(asLayer: boolean) {
+        const identity = current?.identity; pendingImages++; host.invalidate();
+        try {
         const result = await fileAccess({ op: 'open', accept: IMAGE_TYPES }, files);
         if (disposed || 'cancelled' in result) return;
         if (!result.ok) { fail(`${result.error.code}: ${result.error.message}`); return; }
         try {
           const next = await decodeImage(new Blob(result.value.bytes.map(b => b.slice())));
           if (disposed) return;
+          if (identity !== current?.identity) { fail('The Image changed while importing. Open the image again into the current project.'); return; }
           if (asLayer && source) { addLayer(next, basename(result.value.name), 'Import as layer'); return; }
           const value = imageContent({ operation: 'layers', previous: null, width: next.width, height: next.height, layers: [{ meta: { id: 'background', name: 'Background', visible: true, opacity: 1, blend: 'normal' }, raster: next }], activeLayerId: 'background' });
           await host.open({ id: crypto.randomUUID(), title: basename(result.value.name), format: 'gsnv-image', version: 1, value });
         } catch (cause) { fail(`This image could not be opened: ${cause instanceof Error ? cause.message : String(cause)}`); }
+        } finally { pendingImages--; host.invalidate(); }
       }
       async function exportPNG() {
         if (!source || !current) return; placeFloating();
@@ -486,6 +510,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       function command(id: string) {
         if (!source || !current) return;
         message = '';
+        if (id === 'bridge.imageToVideo') { void host.transfer?.({ route: 'image-to-video-bin' }); return; }
         const toolId = id.startsWith('image.') ? id.slice(6) as ImageTool : null;
         if (toolId && (IMAGE_TOOLS as readonly string[]).includes(toolId)) { if (!['select', 'ellipseSelect', 'lasso', 'move'].includes(toolId)) placeFloating(); if (toolId === 'picker' && tool.tool !== 'picker') previousTool = tool.tool; tool = imageToolInput({ state: tool, event: { kind: 'tool', tool: toolId }, inside: () => false, floating: !!floating }).state; refresh(); return; }
         if (id === 'image.transform') { freeTransform(); return; }
@@ -494,14 +519,14 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           const d = { nudgeLeft: [-1, 0], nudgeRight: [1, 0], nudgeUp: [0, -1], nudgeDown: [0, 1] }[id.slice(6) as 'nudgeLeft']!; floating.x += d[0]!; floating.y += d[1]!; floating.origin = { x: floating.x, y: floating.y }; refresh(); return;
         }
         if (id === 'image.sizeUp' || id === 'image.sizeDown') { options = { ...options, size: Math.min(500, Math.max(1, id === 'image.sizeUp' ? Math.ceil(options.size * 1.2 + 0.5) : Math.floor(options.size / 1.2))) }; refresh(); return; }
-        if (id === 'tool.cancel') { pointer({ kind: 'cancel' }); if (floating) { floating = null; resync(); } else { selection = null; selectionChanged(); } refresh(); return; }
+        if (id === 'tool.cancel') { const transient = !!floating || !!stroke || !!shapeBase || !!marquee; pointer({ kind: 'cancel' }); if (transient) { floating = null; resync(); } else setSelection(null, 'replace'); refresh(); return; }
         if (id === 'tool.confirm') { placeFloating(); refresh(); return; }
         if (id === 'color.swap') { [primary, secondary] = [secondary, primary]; refresh(); return; }
         if (id === 'color.reset') { primary = BLACK; secondary = WHITE; refresh(); return; }
         if (id === 'view.fit' || id === 'image.actualSize') { fitView(id === 'view.fit' ? 'fit' : 'actual'); refresh(); return; }
-        if (id === 'edit.selectAll') { placeFloating(); setSelection(new Uint8Array(source.width * source.height).fill(255), 'replace'); refresh(); return; }
+        if (id === 'edit.selectAll') { placeFloating(); setSelection(new Uint8Array(source.width * source.height).fill(255), 'replace', 'Select all'); refresh(); return; }
         if (id === 'image.deselect') { placeFloating(); setSelection(null, 'replace'); refresh(); return; }
-        if (id === 'image.invertSelection') { placeFloating(); setSelection(selection ? Uint8Array.from(selection.mask, v => 255 - v) : new Uint8Array(source.width * source.height).fill(255), 'replace'); refresh(); return; }
+        if (id === 'image.invertSelection') { placeFloating(); setSelection(selection ? Uint8Array.from(selection.mask, v => 255 - v) : new Uint8Array(source.width * source.height).fill(255), 'replace', 'Invert selection'); refresh(); return; }
         if (id === 'edit.copy' || id === 'edit.cut') { const pixels = selectedPixels(); if (!pixels) return; clipboard = pixels; void systemCopy(pixels); if (id === 'edit.copy') { message = `Copied ${pixels.width} × ${pixels.height} pixels.`; refresh(); return; } }
         if (id === 'edit.cut' || id === 'edit.delete') {
           if (floating) { floating = null; composite(); commitActive(id === 'edit.cut' ? 'Cut' : 'Delete'); }
@@ -541,23 +566,43 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         scale = Math.max(effective, 0.01) / view.zoom; offset = { x: 0, y: 0 };
         const o = origin(); offset = { x: (Math.max(MARGIN, (w - source.width * scale * view.zoom) / 2) - view.pan.x) / view.zoom - o.x, y: (Math.max(MARGIN, (h - source.height * scale * view.zoom) / 2) - view.pan.y) / view.zoom - o.y };
       }
+      function viewSettings() {
+        if (!source || !current) return;
+        const original = { scale, offset }, placed = placement();
+        const base: View2D = { zoom: placed.z, pan: { x: placed.x, y: placed.y } };
+        const center = { x: stage.clientWidth / 2, y: stage.clientHeight / 2 }, range = { min: 0.01, max: 64 };
+        host.dialog({ title: 'View settings', fields: [
+          { key: 'zoom', label: 'Zoom (%)', type: 'number', min: 1, max: 6400 },
+          { key: 'x', label: 'Horizontal offset (px)', type: 'number' },
+          { key: 'y', label: 'Vertical offset (px)', type: 'number' },
+        ], initial: { zoom: base.zoom * 100, x: 0, y: 0 },
+        validate(values) {
+          try {
+            const zoomed = viewTransform({ view: base, range, action: { type: 'zoom', factor: Number(values.zoom) / (100 * base.zoom), cursor: center } });
+            const moved = viewTransform({ view: zoomed, range, action: { type: 'pan', delta: { x: Number(values.x), y: Number(values.y) } } });
+            return { ok: true, value: { zoom: moved.zoom, pan: { ...moved.pan } } };
+          } catch (error) { return { ok: false, error: { code: 'image.view', message: error instanceof Error ? error.message : String(error) } }; }
+        },
+        preview(value) {
+          const next = value as View2D;
+          // Fit and wheel transforms compose; typed values describe their effective pixel scale.
+          scale = next.zoom / view.zoom; offset = { x: 0, y: 0 };
+          const o = origin(); offset = { x: (next.pan.x - view.pan.x) / view.zoom - o.x, y: (next.pan.y - view.pan.y) / view.zoom - o.y };
+          refresh();
+        }, commit() {}, cancel() { scale = original.scale; offset = original.offset; refresh(); } });
+      }
       const Resize = window.ResizeObserver, observer = Resize ? new Resize(() => layout()) : null; observer?.observe(stage);
       return {
+        bridge,
         render(snapshot, nextView) {
           const changed = snapshot?.identity !== current?.identity, opened = snapshot?.id !== current?.id; current = snapshot; view = nextView;
           if (changed) { shapeBase = null; shapeDirty = null; marquee = null; tool = { ...tool, drag: null }; if (stroke?.timer) window.clearInterval(stroke.timer); stroke = null; opacityPreview = null; }
           if (!snapshot) { source = null; rasters.clear(); floating = null; selection = null; edges = null; }
           // Undo, redo, open and rejected commits all arrive as a value this view did not produce.
           else if (snapshot.value !== source) {
-            const next = snapshot.value as ImageContent, sameSize = !!source && source.width === next.width && source.height === next.height;
-            floating = null; if (!sameSize) selection = null; resync();
+            floating = null; resync();
           }
-          if (opened && source) { selection = null; selectionChanged(); message = ''; fitView('fit'); }
-          if (pendingSelect && source) {
-            const { x, y, raster } = pendingSelect, mask = new Uint8Array(source.width * source.height); pendingSelect = null;
-            for (let py = 0; py < raster.height; py++) for (let px = 0; px < raster.width; px++) { const tx = px + x, ty = py + y; if (tx >= 0 && ty >= 0 && tx < source.width && ty < source.height && raster.data[(py * raster.width + px) * 4 + 3]) mask[ty * source.width + tx] = 255; }
-            const bounds = maskBounds(mask, source.width); selection = bounds ? { mask, bounds } : null; selectionChanged();
-          }
+          if (opened && source) { message = ''; fitView('fit'); }
           refresh();
         },
         model() {
@@ -567,7 +612,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           return {
             menus: [
               { id: 'select', label: 'Select', items: [item('edit.selectAll', 'Select all', 'select', 'Ctrl+A'), item('image.deselect', 'Deselect', undefined, '', false, has), item('image.invertSelection', 'Invert selection'), item('edit.copy', 'Copy', 'copy', 'Ctrl+C', false, has), item('edit.cut', 'Cut', 'cut', 'Ctrl+X', false, has), item('edit.paste', 'Paste as new layer', 'paste', 'Ctrl+V'), item('edit.delete', 'Delete', 'delete', 'Delete', false, has), item('image.crop', 'Crop to selection', 'crop', '', true, has), item('image.transform', 'Free transform…', 'rotate', 'Ctrl+T'), item('image.nudgeLeft', 'Nudge left', undefined, '←', false, has), item('image.nudgeRight', 'Nudge right', undefined, '→', false, has), item('image.nudgeUp', 'Nudge up', undefined, '↑', false, has), item('image.nudgeDown', 'Nudge down', undefined, '↓', false, has)] },
-              { id: 'image', label: 'Image', items: [item('image.import', 'Open image…', 'open'), item('image.importLayer', 'Import as layer…', 'layerAdd'), item('image.exportPNG', 'Export PNG…', 'export', '', true), item('image.resize', 'Resize…', 'fit'), item('image.canvasSize', 'Canvas size…', 'grid'),
+              { id: 'image', label: 'Image', items: [item('image.import', 'Open image…', 'open'), item('image.importLayer', 'Import as layer…', 'layerAdd'), item('image.exportPNG', 'Export PNG…', 'export', '', true), item('bridge.imageToVideo', 'Send image to Video bin', 'video', '', false, enabled && !!host.transfer && !pendingTransfer()), item('image.resize', 'Resize…', 'fit'), item('image.canvasSize', 'Canvas size…', 'grid'),
                 item('image.rotateRight', 'Rotate right', 'rotate', '', true), item('image.rotateLeft', 'Rotate left', 'rotate'), item('image.rotate180', 'Rotate 180°', 'rotate'), item('image.flipH', 'Flip horizontal', 'flip', '', true), item('image.flipV', 'Flip vertical', 'flip'),
                 item('image.flatten', 'Flatten image', 'layers', '', false, enabled && count > 1), item('view.fit', 'Zoom to fit', 'fit', 'F'), item('image.actualSize', 'Actual pixels', 'zoomIn'), item('image.sizeUp', 'Larger brush', undefined, ']'), item('image.sizeDown', 'Smaller brush', undefined, '['), item('color.swap', 'Swap colours', undefined, 'X'), item('color.reset', 'Default colours', undefined, 'D')] },
               { id: 'layer', label: 'Layer', items: [item('layer.new', 'New layer', 'layerAdd', '', true), item('layer.duplicate', 'Duplicate layer', 'copy'), item('layer.delete', 'Delete layer', 'delete', '', false, enabled && count > 1), item('layer.up', 'Move up', undefined, '', false, enabled && index < count - 1), item('layer.down', 'Move down', undefined, '', false, enabled && index > 0), item('layer.mergeDown', 'Merge down', 'layers', '', false, enabled && index > 0)] },
@@ -578,6 +623,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
             panels: [{ id: 'image-options', title: 'Colours and tool options', content: optionsPanel }, { id: 'image-layers', title: 'Layers', content: layersPanel }],
           };
         },
+        viewSettings,
         context: () => ({ viewRole: 'canvas2d', activeTool: tool.tool, status: hint.textContent ?? '' }),
         command(id) { try { command(id); } catch (cause) { fail(cause); } host.invalidate(); },
         gesture(gesture) {

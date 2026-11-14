@@ -1,0 +1,24 @@
+✖ S18 coded asset stream read failure aborts cleanup without deleting published generations (52.642134ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 279.03785
+
+✖ failing tests:
+
+test at src/shared/offline-retain.test.ts:1:7522
+✖ S18 coded asset stream read failure aborts cleanup without deleting published generations (52.642134ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-retain.test.ts:133:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }

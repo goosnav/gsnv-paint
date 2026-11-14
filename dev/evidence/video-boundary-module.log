@@ -1,0 +1,5 @@
+FAIL: src/video/video-timeline.ts
+  - PURPOSE reads as more than one responsibility; consider splitting the brick
+  - DECISIONS names no alternative considered
+  - 7 public entry points exceeds the maximum of 3
+PASS: src/bridge/video-source-adapter.ts

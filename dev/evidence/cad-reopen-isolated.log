@@ -1,0 +1,20 @@
+
+Running 5 tests using 1 worker
+
+(node:1038465) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 ../../../../../tmp/gsnv-consumer-qa/cad-open-isolated/cad-open.browser.spec.ts:25:1 › CAD-IMPORT production golden: exact source, units, undo, STEP/STL export and native reopen (6.4s)
+(node:1038700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 ../../../../../tmp/gsnv-consumer-qa/cad-open-isolated/cad-open.browser.spec.ts:25:1 › CAD-IMPORT production golden: exact source, units, undo, STEP/STL export and native reopen (6.6s)
+(node:1038969) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 ../../../../../tmp/gsnv-consumer-qa/cad-open-isolated/cad-open.browser.spec.ts:25:1 › CAD-IMPORT production golden: exact source, units, undo, STEP/STL export and native reopen (6.5s)
+(node:1039259) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  4 ../../../../../tmp/gsnv-consumer-qa/cad-open-isolated/cad-open.browser.spec.ts:25:1 › CAD-IMPORT production golden: exact source, units, undo, STEP/STL export and native reopen (6.5s)
+(node:1039509) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 ../../../../../tmp/gsnv-consumer-qa/cad-open-isolated/cad-open.browser.spec.ts:25:1 › CAD-IMPORT production golden: exact source, units, undo, STEP/STL export and native reopen (6.4s)
+
+  5 passed (36.6s)

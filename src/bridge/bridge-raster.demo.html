@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Raster capture proof</title><link rel="icon" href="data:,"></head>
+<body><h1>Raster capture proof</h1><p>Local fixtures exercise transparent CAD capture, lossless PNG encoding and three decoded Video frames. Results appear below; no file is saved.</p>
+<button id="run" disabled>Run captures</button><pre id="result">Loading fixture…</pre>
+<script type="module">
+import './bridge-raster-fixture.ts';
+const run=document.querySelector('#run'),output=document.querySelector('#result');
+run.disabled=false;output.textContent='Ready. The visible source scene stays unchanged.';
+run.onclick=async()=>{run.disabled=true;try{const proof=window.bridgeRaster;output.textContent=JSON.stringify({browser:navigator.userAgent,cad:await proof.cad(),video:await proof.video(),pngBytes:(await proof.png()).length},null,2);}catch(error){output.textContent=String(error);}finally{run.disabled=false;}};
+</script></body></html>

@@ -70,7 +70,7 @@ export function bindInput({ root, context, onCommand, onGesture }: InputRequest)
     return Boolean(target?.closest('input,textarea,select,[role="textbox"]') ||
       (editable && editable.getAttribute('contenteditable') !== 'false'));
   };
-  const activationControl = (target: Element | null) => Boolean(target?.closest('button,a[href],[role="button"]'));
+  const activationControl = (target: Element | null) => Boolean(target?.closest('button,summary,a[href],[role="button"]'));
   const interactive = (target: Element | null) => textEntry(target) || activationControl(target);
   const position = (event: MouseEvent): Point => { const rect = root.getBoundingClientRect(); return { x: event.clientX - rect.left, y: event.clientY - rect.top }; };
   const finite = (point: Point) => Number.isFinite(point.x) && Number.isFinite(point.y);
@@ -97,7 +97,7 @@ export function bindInput({ root, context, onCommand, onGesture }: InputRequest)
     if (failed) throw failure;
   };
   const inputView = (event: Event, value: CommandContext) => {
-    const target=element(event.target),control=target?.closest('button,a[href],[role="button"]');
+    const target=element(event.target),control=target?.closest('button,summary,a[href],[role="button"]');
     const viewGeometry=control?.hasAttribute('data-view-geometry');
     return !disposed && !event.defaultPrevented && value.target !== 'dialog' && value.viewRole !== 'none' && !inDialog(target) && !textEntry(target) && (!activationControl(target)||viewGeometry);
   };

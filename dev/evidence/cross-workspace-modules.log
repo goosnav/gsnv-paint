@@ -1,0 +1,12 @@
+PASS: src/bridge/transfer-contract.ts
+PASS: src/bridge/image-source.ts
+PASS: src/bridge/image-source-adapter.ts
+PASS: src/bridge/video-source-adapter.ts
+PASS: src/bridge/cad-source-adapter.ts
+PASS: src/bridge/destination-adapter.ts
+PASS: src/bridge/png-encode.ts
+PASS: src/bridge/workspace-bridge.ts
+PASS: src/cad/cad-viewport-capture.ts
+PASS: src/video/video-media-bin.ts
+PASS: src/video/video-field-edit.ts
+PASS: src/video/video-frame-renderer.ts

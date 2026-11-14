@@ -1,0 +1,101 @@
+✔ A-SHELL golden starts one empty CAD window with unavailable editing commands (149.009734ms)
+✔ A-SHELL invalidate refreshes the active editor menus without committing or touching other workspaces (55.680568ms)
+✔ A-SHELL project rename preserves pending editor input and has its own undo step (98.002044ms)
+✔ A-SHELL editor open creates an unsaved document only after replacement consent (40.638684ms)
+✔ A-SHELL with recent projects: New never prompts, edits autosave to File > Recent and reopen from there (866.792685ms)
+✔ A-SHELL unavailable recent backup keeps dirty work on New and Open and warns on unload (44.032318ms)
+✔ A-SHELL NotAllowedError recent backup keeps dirty work on New and Open and warns on unload (35.642909ms)
+✔ A-SHELL QuotaExceededError recent backup keeps dirty work on New and Open and warns on unload (35.28182ms)
+✔ A-SHELL unload protects the exact dirty revision until its recent backup succeeds (44.572198ms)
+✔ A-SHELL a changed revision during replacement backup stays open (33.264185ms)
+✔ A-SHELL overlapping recent writes cannot leave an older revision stored last (32.46325ms)
+✔ A-SHELL Undo cannot acknowledge a stored revision while queued writes can still replace it (37.941701ms)
+✔ A-SHELL disposal accepts pending view edits and finishes their stored backup (19.462476ms)
+✔ A-SHELL all retained projects remain reachable beyond the newest 12 menu entries (33.505804ms)
+✔ A-SHELL opening an older file with the same project id preserves displaced unsaved work (35.799609ms)
+✔ A-SHELL real sessions keep 100 edits, independent workspaces and exactly-once keyboard history (232.788154ms)
+✔ A-SHELL native Open validates domain before replacement and preserves handles on rejection (32.143812ms)
+✔ A-SHELL Open protects its target workspace, including dirty replacement consent (49.779735ms)
+✔ A-SHELL save binds the written revision while later edits remain dirty (22.553258ms)
+✔ A-SHELL late native save cannot bind its handle to a reopened document with the same ID (24.891802ms)
+✔ A-SHELL denied write permission fails before serialization and preserves dirty state (21.359974ms)
+✔ A-SHELL Save-then-replace proceeds only after a successful write of the protected revision (34.17997ms)
+✔ A-SHELL recovery is offered explicitly and restores editable data as dirty (42.612552ms)
+✔ A-SHELL corrupt recovery remains readable and its observed generation is exceeded after discard (26.975842ms)
+✔ A-SHELL discard runs after queued autosaves without recreating a recovery record (26.136855ms)
+✔ A-SHELL stale editor callbacks and post-disposal file completions cannot replace documents (21.668768ms)
+✔ A-SHELL unavailable browser recovery does not block editing or explicit project saves (21.661268ms)
+✔ A-SHELL Open completion during another modal settles without a hidden replacement prompt (21.868509ms)
+✔ A-SHELL a new edit after pending discard makes the resulting recovery available again (20.089822ms)
+✔ A-SHELL a modal forwards the active pointer cancellation before further editing (21.370729ms)
+Not implemented: navigation to another Document
+✔ A-SHELL New restores keyboard scope when an editor replaces its focused view (37.318715ms)
+✔ A-SHELL view settings delegates to an adapter-owned transform without changing document state (14.287206ms)
+✔ A-SHELL restored storage plus native Save repairs the current recovery before close and reopen (42.498284ms)
+✔ A-SHELL Recent never advances past failed recovery, and a retry commits recovery before Recent (24.126378ms)
+✔ A-SHELL native Save stays successful with a truthful warning when Recent fails after recovery (27.256752ms)
+✔ A-SHELL delayed file Save retries the newer current revision without marking it saved (23.045046ms)
+✔ A-SHELL returned generation 1 and width 77 cannot acknowledge the attempted recovery (29.311047ms)
+✔ A-SHELL returned generation 100 and width 77 cannot acknowledge the attempted recovery (20.44051ms)
+✔ A-SHELL returned generation 100 and width 10 cannot acknowledge the attempted recovery (20.579714ms)
+Not implemented: navigation to another Document
+✔ A-SHELL startup conflict 61/62 stays read-only and recovery opens as an editable copy (40.814714ms)
+Not implemented: navigation to another Document
+✔ A-SHELL startup conflict 62/61 stays read-only and recovery opens as an editable copy (40.507135ms)
+✔ A-SHELL startup with identical Recent performs no writes on startup or no-edit disposal (24.808353ms)
+✔ A-SHELL startup with absent Recent performs no writes on startup or no-edit disposal (14.17571ms)
+✔ A-SHELL startup with unreadable Recent performs no writes on startup or no-edit disposal (14.163007ms)
+✔ A-SHELL startup with invalid Recent performs no writes on startup or no-edit disposal (15.01456ms)
+✔ A-SHELL startup with unlisted Recent performs no writes on startup or no-edit disposal (13.556973ms)
+✔ A-SHELL explicit recovery discard is not undone by Recent flush; a later edit resumes recovery (24.26688ms)
+✔ A-SHELL obsolete queued snapshots are never encoded into recovery, including during disposal (19.395444ms)
+✔ A-SHELL an initiated native Save can finish current browser persistence after disposal without late UI (21.444764ms)
+✔ A-SHELL an editor import cannot silently remove an unresolved recovery conflict (25.527178ms)
+✖ A-SHELL a pending browser backup permits the next Save without releasing its newer native write guard (18.716767ms)
+✖ A-SHELL download handoff releases Save while its browser persistence remains pending (20.505455ms)
+✔ A-SHELL cancelled picker releases only its file guard and a later Save succeeds (19.672118ms)
+✔ A-SHELL failed native write releases only its file guard and a later Save succeeds (21.386422ms)
+ℹ tests 54
+ℹ suites 0
+ℹ pass 52
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3701.785301
+
+✖ failing tests:
+
+test at src/app/app-shell.test.ts:1:45338
+✖ A-SHELL a pending browser backup permits the next Save without releasing its newer native write guard (18.716767ms)
+  AssertionError [ERR_ASSERTION]: file handoff releases Save before Recent finishes
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:642:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:47821
+✖ A-SHELL download handoff releases Save while its browser persistence remains pending (20.505455ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:663:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -62,7 +62,7 @@ function nativeHandle(value: File, close: () => Promise<void> = async () => {}) 
   } as unknown as FileSystemFileHandle;
   return { handle, writes, deny() { permission = 'denied'; }, get requested() { return requested; } };
 }
-function setup(options: { storage?: ReturnType<typeof resource>; available?: Workspace[]; recent?: RecentPort } = {}) {
+function setup(options: { storage?: ReturnType<typeof resource>; available?: Workspace[]; recent?: RecentPort; viewSettings?: () => void } = {}) {
   const dom = new JSDOM('<!doctype html><body><div id="app"></div></body>', { url: 'https://fixture.test' });
   const window = dom.window;
   const captures = new WeakMap<HTMLElement, Set<number>>();
@@ -77,7 +77,10 @@ function setup(options: { storage?: ReturnType<typeof resource>; available?: Wor
   const fixtures = { cad: fixture('cad'), image: fixture('image'), video: fixture('video') };
   const files: FilePorts = { document: window.document, URL: { createObjectURL: () => 'blob:fixture', revokeObjectURL() {} }, setTimeout: callback => { callback(); } };
   const storage = options.storage ?? resource();
-  const adapters = Object.fromEntries((options.available ?? ['cad', 'image', 'video']).map(workspace => [workspace, fixtures[workspace].adapter]));
+  const adapters = Object.fromEntries((options.available ?? ['cad', 'image', 'video']).map(workspace => {
+    const adapter = fixtures[workspace].adapter;
+    return [workspace, options.viewSettings && workspace === 'cad' ? { ...adapter, mount: (host: Parameters<WorkspaceAdapter['mount']>[0]) => ({ ...adapter.mount(host), viewSettings: options.viewSettings! }) } : adapter];
+  }));
   const app = mountApp({ root, adapters, files, recovery: storage, probe: { environment: {}, codecRequests: [] }, ...(options.recent ? { recent: options.recent } : {}) });
   return { app, root, dom, window, files, storage, fixtures, close: () => { app.dispose(); dom.window.close(); } };
 }
@@ -89,6 +92,13 @@ function confirm(root: HTMLElement, value: 'replace' | 'keep' | 'save' = 'replac
   [...root.querySelectorAll<HTMLButtonElement>('dialog button')].find(button => button.textContent === 'OK')!.click();
 }
 const turn = () => new Promise<void>(resolve => setImmediate(resolve));
+const partsFor = (width: number, id = 'fixture-id') => nativeContainer({ op: 'encode', package: packageFor('cad', width, id) }).parts;
+const storedWidth = (parts: readonly Uint8Array[]) => (nativeContainer({ op: 'decode', parts }).project.content as { width: number }).width;
+async function recoveryParts(storage: ReturnType<typeof resource>) {
+  const result = await recoveryStore({ op: 'read', workspace: 'cad' }, storage);
+  assert.ok(result.ok); return result.value?.payload ?? null;
+}
+const unload = (s: ReturnType<typeof setup>) => { const event = new s.window.Event('beforeunload', { cancelable: true }); s.window.dispatchEvent(event); return event.defaultPrevented; };
 
 test('A-SHELL golden starts one empty CAD window with unavailable editing commands', async () => {
   const s = setup({ available: [] }); await s.app.ready;
@@ -469,4 +479,203 @@ test('A-SHELL New restores keyboard scope when an editor replaces its focused vi
   s.files.showOpenFilePicker = async () => { opened++; throw new s.window.DOMException('Canceled', 'AbortError'); };
   s.window.document.activeElement!.dispatchEvent(new s.window.KeyboardEvent('keydown', { key: 'o', ctrlKey: true, bubbles: true, cancelable: true }));
   await s.app.idle(); assert.equal(opened, 1); s.close();
+});
+
+
+test('A-SHELL view settings delegates to an adapter-owned transform without changing document state', async () => {
+  let opened = 0;
+  const s = setup({ viewSettings: () => { opened++; } });
+  try {
+    await s.app.ready; await s.app.dispatch('file.new');
+    const before = s.app.snapshot();
+    await s.app.dispatch('view.settings');
+    assert.equal(opened, 1);
+    assert.equal(s.root.querySelector('dialog'), null, 'the fallback dialog must not also open');
+    assert.equal(s.app.snapshot(), before);
+  } finally { s.close(); }
+});
+
+test('A-SHELL restored storage plus native Save repairs the current recovery before close and reopen', async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), journal = storage.localStorage.setItem, saveRecent = recent.save.bind(recent); let denied = false;
+  storage.localStorage.setItem = (key, value) => { if (denied) throw new DOMException('Blocked', 'SecurityError'); journal(key, value); };
+  recent.save = async entry => { if (denied) throw new DOMException('Blocked', 'SecurityError'); await saveRecent(entry); };
+  const s = setup({ storage, recent });
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); s.fixtures.cad.change(51); unload(s); await s.app.idle();
+    denied = true; s.fixtures.cad.stage(52); assert.equal(unload(s), true); await s.app.idle(); assert.equal(storedWidth((await recoveryParts(storage))!), 51);
+    denied = false; const file = nativeHandle(fileFor(packageFor('cad'))); s.files.showSaveFilePicker = async () => file.handle;
+    await s.app.dispatch('file.save'); assert.equal(storedWidth(file.writes), 52); assert.equal(s.app.snapshot().dirty.cad, false);
+    assert.equal(storedWidth((await recoveryParts(storage))!), 52); assert.equal(storedWidth(await recent.load('fixture-id')), 52); assert.equal(unload(s), false);
+    s.app.dispose(); await s.app.idle();
+    const reopened = setup({ storage, recent }); try { await reopened.app.ready; assert.deepEqual(reopened.app.snapshot().documents.cad!.value, { width: 52 }); } finally { reopened.close(); await reopened.app.idle(); }
+  } finally { denied = false; s.close(); await s.app.idle(); }
+});
+test('A-SHELL Recent never advances past failed recovery, and a retry commits recovery before Recent', async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), journal = storage.localStorage.setItem, saveRecent = recent.save.bind(recent); let denied = false, verifyOrder = false, writes = 0;
+  storage.localStorage.setItem = (key, value) => { if (denied) throw new Error('Recovery denied'); journal(key, value); };
+  recent.save = async entry => { writes++; if (verifyOrder) assert.deepEqual(await recoveryParts(storage), entry.parts); await saveRecent(entry); };
+  const s = setup({ storage, recent });
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); unload(s); await s.app.idle(); const before = writes;
+    denied = true; s.fixtures.cad.change(53); assert.equal(unload(s), true); await s.app.idle();
+    assert.equal(writes, before); assert.equal(storedWidth(await recent.load('fixture-id')), 10); assert.match(s.root.textContent!, /Recovery denied/);
+    denied = false; verifyOrder = true; assert.equal(unload(s), true); await s.app.idle(); assert.equal(unload(s), false); assert.equal(storedWidth(await recent.load('fixture-id')), 53);
+  } finally { denied = false; s.close(); await s.app.idle(); }
+});
+test('A-SHELL native Save stays successful with a truthful warning when Recent fails after recovery', async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), saveRecent = recent.save.bind(recent); let denied = false;
+  recent.save = async entry => { if (denied) throw new Error('Recent quota denied'); await saveRecent(entry); };
+  const s = setup({ storage, recent });
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); unload(s); await s.app.idle(); denied = true; s.fixtures.cad.change(54);
+    const file = nativeHandle(fileFor(packageFor('cad'))); s.files.showSaveFilePicker = async () => file.handle; await s.app.dispatch('file.save');
+    assert.equal(storedWidth(file.writes), 54); assert.equal(s.app.snapshot().dirty.cad, false); assert.equal(storedWidth((await recoveryParts(storage))!), 54); assert.equal(storedWidth(await recent.load('fixture-id')), 10); assert.match(status(s.root), /Recent quota denied/);
+  } finally { denied = false; s.close(); await s.app.idle(); }
+});
+test('A-SHELL delayed file Save retries the newer current revision without marking it saved', async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), journal = storage.localStorage.setItem; let denied = false;
+  storage.localStorage.setItem = (key, value) => { if (denied) throw new Error('Recovery denied'); journal(key, value); };
+  const s = setup({ storage, recent }), entered = deferred(), release = deferred();
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); await s.app.idle();
+    const file = nativeHandle(fileFor(packageFor('cad')), async () => { entered.resolve(); await release.promise; }); s.files.showSaveFilePicker = async () => file.handle;
+    const saving = s.app.dispatch('file.save'); await entered.promise; denied = true; s.fixtures.cad.change(55); await turn(); await turn(); denied = false; release.resolve(); await saving;
+    assert.equal(storedWidth(file.writes), 10); assert.equal(s.app.snapshot().dirty.cad, true); assert.equal(storedWidth((await recoveryParts(storage))!), 55); assert.equal(storedWidth(await recent.load('fixture-id')), 55);
+  } finally { denied = false; release.resolve(); s.close(); await s.app.idle(); }
+});
+for (const [generation, width] of [[1, 77], [100, 77], [100, 10]] as const) test(`A-SHELL returned generation ${generation} and width ${width} cannot acknowledge the attempted recovery`, async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), s = setup({ storage, recent });
+  try {
+    await s.app.ready; await recoveryStore({ op: 'write', record: { workspace: 'cad', generation, title: 'Other', payload: partsFor(width) } }, storage);
+    await s.app.dispatch('file.new'); assert.equal(unload(s), true); await s.app.idle();
+    assert.deepEqual(await recent.list(), []); assert.equal(storedWidth((await recoveryParts(storage))!), width); assert.match(s.root.textContent!, /acknowledg|different|match/i);
+    assert.equal(unload(s), true); await s.app.idle(); assert.equal(storedWidth((await recoveryParts(storage))!), 10); assert.equal(storedWidth(await recent.load('fixture-id')), 10);
+  } finally { s.close(); await s.app.idle(); }
+});
+for (const [recovered, retained] of [[61, 62], [62, 61]]) test(`A-SHELL startup conflict ${recovered}/${retained} stays read-only and recovery opens as an editable copy`, async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), original = partsFor(retained!);
+  await recoveryStore({ op: 'write', record: { workspace: 'cad', generation: 20, title: 'Recovery', payload: partsFor(recovered!) } }, storage);
+  await recent.save({ id: 'fixture-id', workspace: 'cad', title: 'Stored original', updated: 1000, parts: original });
+  const s = setup({ storage, recent });
+  try {
+    await s.app.ready; assert.equal(s.app.snapshot().documents.cad, undefined); assert.match(s.root.textContent!, /Recover as copy/); unload(s); await s.app.idle(); s.app.dispose(); await s.app.idle();
+    assert.deepEqual(await recent.load('fixture-id'), original); assert.equal(storedWidth((await recoveryParts(storage))!), recovered);
+    const next = setup({ storage, recent }); try {
+      await next.app.ready; await next.app.dispatch('file.recent.0'); assert.deepEqual(next.app.snapshot().documents.cad!.value, { width: retained });
+      await next.app.dispatch('recovery.restore'); await next.app.idle(); const copy = next.app.snapshot().documents.cad!; assert.notEqual(copy.id, 'fixture-id'); assert.deepEqual(copy.value, { width: recovered });
+      assert.deepEqual(await recent.load('fixture-id'), original); assert.equal(storedWidth(await recent.load(copy.id)), recovered); next.fixtures.cad.change(63); await next.app.dispatch('file.save'); assert.equal(storedWidth(await recent.load(copy.id)), 63); assert.deepEqual(await recent.load('fixture-id'), original);
+    } finally { next.close(); await next.app.idle(); }
+  } finally { s.close(); await s.app.idle(); }
+});
+for (const alternative of ['identical', 'absent', 'unreadable', 'invalid', 'unlisted'] as const) test(`A-SHELL startup with ${alternative} Recent performs no writes on startup or no-edit disposal`, async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB);
+  await recoveryStore({ op: 'write', record: { workspace: 'cad', generation: 20, title: 'Recovery', payload: partsFor(65) } }, storage);
+  if (alternative !== 'absent') await recent.save({ id: 'fixture-id', workspace: 'cad', title: 'Original', updated: 1000, parts: alternative === 'invalid' ? partsFor(0) : partsFor(65) });
+  if (alternative === 'unreadable') recent.load = async () => { throw new Error('Read denied'); };
+  if (alternative === 'unlisted') recent.list = async () => { throw new Error('List denied'); };
+  let writes = 0; const journal = storage.localStorage.setItem, saveRecent = recent.save.bind(recent); storage.localStorage.setItem = (key, value) => { writes++; journal(key, value); }; recent.save = async entry => { writes++; await saveRecent(entry); };
+  const s = setup({ storage, recent });
+  try { await s.app.ready; await s.app.idle(); assert.equal(!!s.app.snapshot().documents.cad, alternative === 'identical' || alternative === 'absent'); unload(s); await s.app.idle(); s.app.dispose(); await s.app.idle(); assert.equal(writes, 0); }
+  finally { s.close(); await s.app.idle(); }
+});
+test('A-SHELL explicit recovery discard is not undone by Recent flush; a later edit resumes recovery', async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), s = setup({ storage, recent });
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); unload(s); await s.app.idle(); await s.app.dispatch('recovery.discard'); unload(s); await s.app.idle(); assert.equal(await recoveryParts(storage), null);
+    s.fixtures.cad.change(66); unload(s); await s.app.idle(); assert.equal(storedWidth((await recoveryParts(storage))!), 66); assert.equal(storedWidth(await recent.load('fixture-id')), 66);
+  } finally { s.close(); await s.app.idle(); }
+});
+
+test('A-SHELL obsolete queued snapshots are never encoded into recovery, including during disposal', async () => {
+  const s = setup();
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); await s.app.idle();
+    const widths: number[] = [], encode = s.fixtures.cad.adapter.encode;
+    s.fixtures.cad.adapter.encode = snapshot => { widths.push((snapshot.value as { width: number }).width); return encode(snapshot); };
+    s.fixtures.cad.change(71); s.fixtures.cad.change(72); s.fixtures.cad.change(73); s.app.dispose(); await s.app.idle();
+    assert.deepEqual(widths, [73]); assert.equal(storedWidth((await recoveryParts(s.storage))!), 73); assert.equal(s.root.children.length, 0);
+  } finally { s.close(); await s.app.idle(); }
+});
+
+test('A-SHELL an initiated native Save can finish current browser persistence after disposal without late UI', async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), journal = storage.localStorage.setItem;
+  const firstFailure = deferred(), disposalFailure = deferred(), fileEntered = deferred(), fileRelease = deferred(); let denied = false, failures = 0;
+  storage.localStorage.setItem = (key, value) => { if (denied) { if (++failures === 1) firstFailure.resolve(); else disposalFailure.resolve(); throw new Error('Recovery denied'); } journal(key, value); };
+  const s = setup({ storage, recent });
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); unload(s); await s.app.idle();
+    const file = nativeHandle(fileFor(packageFor('cad')), async () => { fileEntered.resolve(); await fileRelease.promise; }); s.files.showSaveFilePicker = async () => file.handle;
+    const saving = s.app.dispatch('file.save'); await fileEntered.promise; denied = true; s.fixtures.cad.change(74); await firstFailure.promise; await turn();
+    s.app.dispose(); await disposalFailure.promise; await turn(); denied = false; fileRelease.resolve(); await saving; await s.app.idle();
+    assert.equal(storedWidth(file.writes), 10); assert.equal(storedWidth((await recoveryParts(storage))!), 74); assert.equal(storedWidth(await recent.load('fixture-id')), 74);
+    assert.deepEqual(s.app.snapshot().documents.cad!.value, { width: 74 }); assert.equal(s.root.children.length, 0);
+  } finally { denied = false; fileRelease.resolve(); s.close(); await s.app.idle(); }
+});
+
+test('A-SHELL an editor import cannot silently remove an unresolved recovery conflict', async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), original = partsFor(81);
+  await recoveryStore({ op: 'write', record: { workspace: 'cad', generation: 20, title: 'Recovery', payload: partsFor(82) } }, storage);
+  await recent.save({ id: 'fixture-id', workspace: 'cad', title: 'Original', updated: 1000, parts: original });
+  const s = setup({ storage, recent });
+  try {
+    await s.app.ready;
+    assert.equal(await s.fixtures.cad.open({ id: 'imported', title: 'Imported', format: 'gsnv-cad', version: 1, value: { width: 83 } }), false);
+    assert.equal(s.app.snapshot().documents.cad, undefined); assert.match(s.root.textContent!, /Recover as copy/); assert.match(status(s.root), /pending recovery/);
+    unload(s); await s.app.idle(); assert.deepEqual(await recent.load('fixture-id'), original); assert.equal(storedWidth((await recoveryParts(storage))!), 82);
+  } finally { s.close(); await s.app.idle(); }
+});
+
+test('A-SHELL a pending browser backup permits the next Save without releasing its newer native write guard', { timeout: 5000 }, async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), realSave = recent.save.bind(recent);
+  const backupEntered = deferred(), backupRelease = deferred(), secondWriteEntered = deferred(), secondWriteRelease = deferred(); let recentWrites = 0;
+  recent.save = async entry => { if (++recentWrites === 1) { backupEntered.resolve(); await backupRelease.promise; } await realSave(entry); };
+  const s = setup({ storage, recent }), writes: Uint8Array[][] = []; let firstSettled = false;
+  const target = nativeHandle(fileFor(packageFor('cad')));
+  target.handle.createWritable = async () => {
+    const parts: Uint8Array[] = []; const index = writes.push(parts);
+    return { write: async (bytes: Uint8Array) => { parts.push(bytes.slice()); }, close: async () => { if (index === 2) { secondWriteEntered.resolve(); await secondWriteRelease.promise; } }, abort: async () => {} } as unknown as FileSystemWritableFileStream;
+  };
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); await s.app.idle(); s.files.showSaveFilePicker = async () => target.handle;
+    const first = s.app.dispatch('file.save').then(() => { firstSettled = true; }); await backupEntered.promise;
+    assert.equal(storedWidth(writes[0]!), 10); assert.equal(firstSettled, false, 'Save still awaits its required browser persistence');
+    assert.equal(s.root.querySelector<HTMLButtonElement>('[data-command="file.save"]')!.disabled, false, 'file handoff releases Save before Recent finishes');
+    s.fixtures.cad.change(42); await s.app.dispatch('edit.undo'); await s.app.dispatch('edit.redo'); const secondIdentity = s.app.snapshot().documents.cad!.identity;
+    const second = s.app.dispatch('file.save'); await secondWriteEntered.promise;
+    assert.equal(storedWidth(writes[1]!), 42); assert.equal(writes.length, 2); assert.equal(s.app.snapshot().dirty.cad, true);
+    backupRelease.resolve(); await first;
+    assert.equal(s.root.querySelector<HTMLButtonElement>('[data-command="file.save"]')!.disabled, true, 'older backup completion cannot release the newer native write');
+    await s.app.dispatch('file.save'); assert.equal(writes.length, 2, 'duplicate Save during the second native write remains ignored');
+    secondWriteRelease.resolve(); await second;
+    assert.equal(s.app.snapshot().saved.cad, secondIdentity); assert.equal(s.app.snapshot().dirty.cad, false); assert.equal(storedWidth((await recoveryParts(storage))!), 42); assert.equal(storedWidth(await recent.load('fixture-id')), 42);
+    assert.equal(s.root.querySelector<HTMLButtonElement>('[data-command="file.save"]')!.disabled, false);
+  } finally { backupRelease.resolve(); secondWriteRelease.resolve(); s.close(); await s.app.idle(); }
+});
+
+test('A-SHELL download handoff releases Save while its browser persistence remains pending', { timeout: 5000 }, async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), realSave = recent.save.bind(recent), backupEntered = deferred(), backupRelease = deferred(), secondDownload = deferred(); let recentWrites = 0;
+  recent.save = async entry => { if (++recentWrites === 1) { backupEntered.resolve(); await backupRelease.promise; } await realSave(entry); };
+  const s = setup({ storage, recent }), downloads: Blob[] = [];
+  s.files.URL.createObjectURL = blob => { assert.ok(blob instanceof Blob); downloads.push(blob); if (downloads.length === 2) secondDownload.resolve(); return 'blob:fixture'; };
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); await s.app.idle();
+    const first = s.app.dispatch('file.save'); await backupEntered.promise;
+    assert.equal(s.root.querySelector<HTMLButtonElement>('[data-command="file.save"]')!.disabled, false);
+    s.fixtures.cad.change(43); await s.app.dispatch('edit.undo'); await s.app.dispatch('edit.redo'); const second = s.app.dispatch('file.save'); await secondDownload.promise;
+    assert.equal(storedWidth([new Uint8Array(await downloads[0]!.arrayBuffer())]), 10); assert.equal(storedWidth([new Uint8Array(await downloads[1]!.arrayBuffer())]), 43);
+    backupRelease.resolve(); await Promise.all([first, second]); assert.equal(s.app.snapshot().dirty.cad, false); assert.equal(storedWidth((await recoveryParts(storage))!), 43); assert.equal(storedWidth(await recent.load('fixture-id')), 43);
+  } finally { backupRelease.resolve(); s.close(); await s.app.idle(); }
+});
+
+for (const failure of ['cancelled picker', 'failed native write'] as const) test(`A-SHELL ${failure} releases only its file guard and a later Save succeeds`, async () => {
+  const s = setup(), pickerEntered = deferred(), pickerRelease = deferred(); let picks = 0;
+  const destination = nativeHandle(fileFor(packageFor('cad'))), failing = nativeHandle(fileFor(packageFor('cad')));
+  failing.handle.createWritable = async () => { throw new Error('Native write failed'); };
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); await s.app.idle();
+    s.files.showSaveFilePicker = async () => { picks++; pickerEntered.resolve(); await pickerRelease.promise; if (failure === 'cancelled picker') throw new DOMException('Cancelled', 'AbortError'); return failing.handle; };
+    const first = s.app.dispatch('file.save'); await pickerEntered.promise; await s.app.dispatch('file.save'); assert.equal(picks, 1, 'pending picker still owns the guard');
+    pickerRelease.resolve(); await first; assert.equal(s.app.snapshot().dirty.cad, true); assert.equal(s.app.snapshot().saved.cad, undefined); assert.equal(s.root.querySelector<HTMLButtonElement>('[data-command="file.save"]')!.disabled, false);
+    s.files.showSaveFilePicker = async () => destination.handle; await s.app.dispatch('file.save'); assert.equal(storedWidth(destination.writes), 10); assert.equal(s.app.snapshot().dirty.cad, false);
+  } finally { pickerRelease.resolve(); s.close(); await s.app.idle(); }
 });

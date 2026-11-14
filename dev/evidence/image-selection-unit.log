@@ -1,0 +1,46 @@
+✔ IMG-103 exact pencil/layer/selection/fill/adjustment/multiply acceptance golden (32.667362ms)
+✔ I-ADJUST identity settings leave pixels unchanged (6.031457ms)
+✔ I-ADJUST known values for tonal and colour adjustments (3.338928ms)
+✔ I-ADJUST filters: blur keeps flat areas and transparent edges, sharpen raises edge contrast, pixelate averages, noise is seeded (3.047803ms)
+✔ I-BRUSH soft dabs fall off from a solid core; flow accumulates but never exceeds 1 (6.877416ms)
+✔ I-BRUSH coverage modes: opacity caps paint, erase to transparent, clone from an offset, filter blend (1.090754ms)
+✔ I-BRUSH gradients reach both end colours; linear is constant across its axis (1.118923ms)
+✔ I-BRUSH selection masks: shapes, lasso, wand and combination (1.488898ms)
+✔ I-BRUSH smudge carries picked-up colour along the stroke and fades with distance (3.451051ms)
+✔ I-COMPOSITE golden blend modes over an opaque base (3.50509ms)
+✔ I-COMPOSITE transparent stacks, hidden layers and rectangle bounds (0.86056ms)
+✔ I-COMPOSITE masked merge keeps edits inside the selection and interpolates soft edges (0.432238ms)
+✔ I-CONTENT new documents have one opaque Background layer with clipped edge tiles (4.116932ms)
+✔ I-CONTENT layer updates share untouched tiles; stack edits reuse pixels without copies (22.639172ms)
+✔ I-CONTENT native encode/decode is byte exact per layer and still opens single-layer projects (2.508082ms)
+✔ I51 selection is owned, retained by pixel/layer edits, cleared by resize, and encoded exactly (1.395241ms)
+✔ I51 legacy layers migrate with no selection and malformed v2 selection assets fail atomically (2.056554ms)
+✔ I-LAYERS lists top layer first, routes row and button actions, and gates impossible actions (129.675208ms)
+✔ I-PALETTE swatches, colour inputs and swap report exact changes (157.163914ms)
+✔ I-PALETTE each numeric option is a trackbar plus a typed box; typing applies on change and clamps (23.947022ms)
+✔ I-PALETTE colour text conversion is exact (0.433714ms)
+✔ I58 literal partial-coverage snapshot, minimal bounds and owned immutable record (2.623468ms)
+✔ I58 empty, single pixel, all edges and maximum coverage dimensions (54.231909ms)
+✔ I58 rejects invalid dimensions, mismatched/detached/shared coverage and owns sliced views (1.259008ms)
+✔ I-TOOLS freehand tools emit incremental segments and exactly one end (4.668973ms)
+✔ I-TOOLS shapes and gradients preview, constrain with Shift and commit on release (0.691503ms)
+✔ I-TOOLS selections: modes from modifiers, ellipse and lasso shapes, move inside, wand clicks (1.330326ms)
+✔ I-TOOLS single-click tools, clone source and validation (0.743087ms)
+✔ I-RASTER new rasters are filled and bounded (3.489351ms)
+✔ I-RASTER pencil stroke is a connected aliased line and reports its dirty rectangle (1.646124ms)
+✔ I-RASTER round brush stamps are symmetric and clip at edges (0.995046ms)
+✔ I-RASTER rectangle outline, fill and inverted drag direction (0.967303ms)
+✔ I-RASTER ellipse fill is inside its bounding box and outline leaves the centre (1.066877ms)
+✔ I-RASTER flood fill stays within a closed boundary and is a no-op on its own colour (0.936163ms)
+✔ I-RASTER flood fill handles a large concave region without recursion (35.742347ms)
+✔ I-RASTER clear, replace blit and source-over blit (0.434177ms)
+✔ I-RASTER flips, rotations, crop, resize, canvas and invert never alias the input (1.322791ms)
+✔ I-RASTER free transform scales and rotates about the centre into rotated bounds (1.639035ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1282.740421

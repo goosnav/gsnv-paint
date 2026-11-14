@@ -1,0 +1,148 @@
+
+cad-consumer-transition-red / command output tail (protocol lines omitted)
+
+    =========================== logs ===========================
+    waiting for event "filechooser"
+    ============================================================
+
+      53 |     const saving=page.waitForEvent('download'); await page.keyboard.press('Control+s'); const saved=await saving, bytes=await readFile((await saved.path())!);
+      54 |     expect(JSON.stringify(nativeContainer({ op:'decode', parts:[bytes] }).project.content)).toContain('width');
+    > 55 |     await page.keyboard.press('Control+n'); const choosing=page.waitForEvent('filechooser',{timeout:8000}); await page.keyboard.press('Control+o'); await (await choosing).setFiles({ name:saved.suggestedFilename(),mimeType:'application/octet-stream',buffer:bytes }); await ready(page); await expect(props).toContainText('68654.425 mm³');
+         |                                                                 ^
+      56 |
+      57 |      outcomes.push({iteration,passed:true});
+      58 |     }
+        at /tmp/gsnv-consumer-qa/cad-consumer-transition-control/control.browser.spec.ts:55:65
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/cad-consumer-transition-control/results/control.browser-CAD-consum-49250-version-files-and-real-STEP/error-context.md
+
+  1 failed
+    ../../../../../tmp/gsnv-consumer-qa/cad-consumer-transition-control/control.browser.spec.ts:12:1 › CAD consumer golden: dependent holes/pocket, live variables, unit conversion, files and real STEP 
+
+cad-consumer-transition-protocol / raw run.log (one-based source lines)
+
+3575:   pw:protocol ◀ RECV {"method":"Page.fileChooserOpened","params":{"frameId":"0713571C0A6DC4D08AFA56CF0BF786D7","mode":"selectSingle","backendNodeId":110},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +0ms
+3577:   pw:protocol ◀ RECV {"id":1208,"result":{},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +0ms
+3585:   pw:protocol SEND ► {"id":1213,"method":"Page.setInterceptFileChooserDialog","params":{"enabled":false},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +2ms
+3587:   pw:protocol ◀ RECV {"id":1213,"result":{},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +0ms
+3819:   pw:protocol SEND ► {"id":1304,"method":"Page.setInterceptFileChooserDialog","params":{"enabled":true},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +2ms
+3822:   pw:protocol SEND ► {"id":1306,"method":"Input.dispatchKeyEvent","params":{"type":"rawKeyDown","modifiers":2,"windowsVirtualKeyCode":79,"code":"KeyO","commands":[],"key":"o","text":"","unmodifiedText":"","autoRepeat":false,"location":0,"isKeypad":false},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +0ms
+3823:   pw:protocol ◀ RECV {"id":1306,"result":{},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +4ms
+3824:   pw:protocol SEND ► {"id":1307,"method":"Input.dispatchKeyEvent","params":{"type":"keyUp","modifiers":2,"key":"o","windowsVirtualKeyCode":79,"code":"KeyO","location":0,"isKeypad":false},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +0ms
+3825:   pw:protocol ◀ RECV {"id":1307,"result":{},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +1ms
+3828:   pw:protocol ◀ RECV {"id":1304,"result":{},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +1ms
+3829:   pw:protocol SEND ► {"id":1309,"method":"Page.setInterceptFileChooserDialog","params":{"enabled":false},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +8s
+3831:   pw:protocol ◀ RECV {"id":1309,"result":{},"sessionId":"6F6C1BA152F20406F47A505A84572322"} +1ms
+
+cad-consumer-transition-protocol / command output tail (protocol lines omitted)
+
+    =========================== logs ===========================
+    waiting for event "filechooser"
+    ============================================================
+
+      53 |     const saving=page.waitForEvent('download'); await page.keyboard.press('Control+s'); const saved=await saving, bytes=await readFile((await saved.path())!);
+      54 |     expect(JSON.stringify(nativeContainer({ op:'decode', parts:[bytes] }).project.content)).toContain('width');
+    > 55 |     await page.keyboard.press('Control+n'); const choosing=page.waitForEvent('filechooser',{timeout:8000}); await page.keyboard.press('Control+o'); await (await choosing).setFiles({ name:saved.suggestedFilename(),mimeType:'application/octet-stream',buffer:bytes }); await ready(page); await expect(props).toContainText('68654.425 mm³');
+         |                                                                 ^
+      56 |
+      57 |      outcomes.push({iteration,passed:true});
+      58 |     }
+        at /tmp/gsnv-consumer-qa/cad-consumer-transition-protocol/control.browser.spec.ts:55:65
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/cad-consumer-transition-protocol/results/control.browser-CAD-consum-49250-version-files-and-real-STEP/error-context.md
+
+  1 failed
+    ../../../../../tmp/gsnv-consumer-qa/cad-consumer-transition-protocol/control.browser.spec.ts:12:1 › CAD consumer golden: dependent holes/pocket, live variables, unit conversion, files and real STEP 
+
+cad-consumer-transition-armed / raw run.log (one-based source lines)
+
+2840:   pw:protocol ◀ RECV {"id":918,"result":{},"sessionId":"778CF70C2AA69B8FE0C87D87B471388F"} +5ms
+3081:   pw:protocol SEND ► {"id":1010,"method":"Page.setInterceptFileChooserDialog","params":{"enabled":true},"sessionId":"56F97EA47D83874310F18F30C9C8F104"} +1ms
+3082:   pw:protocol ◀ RECV {"id":1010,"result":{},"sessionId":"56F97EA47D83874310F18F30C9C8F104"} +1ms
+3083:   pw:protocol SEND ► {"id":1011,"method":"Page.setInterceptFileChooserDialog","params":{"enabled":true},"sessionId":"778CF70C2AA69B8FE0C87D87B471388F"} +1ms
+3086:   pw:protocol SEND ► {"id":1013,"method":"Input.dispatchKeyEvent","params":{"type":"rawKeyDown","modifiers":2,"windowsVirtualKeyCode":79,"code":"KeyO","commands":[],"key":"o","text":"","unmodifiedText":"","autoRepeat":false,"location":0,"isKeypad":false},"sessionId":"778CF70C2AA69B8FE0C87D87B471388F"} +0ms
+3087:   pw:protocol ◀ RECV {"id":1013,"result":{},"sessionId":"778CF70C2AA69B8FE0C87D87B471388F"} +4ms
+3088:   pw:protocol SEND ► {"id":1014,"method":"Input.dispatchKeyEvent","params":{"type":"keyUp","modifiers":2,"key":"o","windowsVirtualKeyCode":79,"code":"KeyO","location":0,"isKeypad":false},"sessionId":"778CF70C2AA69B8FE0C87D87B471388F"} +0ms
+3089:   pw:protocol ◀ RECV {"method":"Page.fileChooserOpened","params":{"frameId":"84803FB0935C8397E36A62FB2E7A2F26","mode":"selectSingle","backendNodeId":106},"sessionId":"56F97EA47D83874310F18F30C9C8F104"} +0ms
+3090:   pw:protocol ◀ RECV {"id":1011,"result":{},"sessionId":"778CF70C2AA69B8FE0C87D87B471388F"} +0ms
+3091:   pw:protocol ◀ RECV {"id":1014,"result":{},"sessionId":"778CF70C2AA69B8FE0C87D87B471388F"} +1ms
+3095:   pw:protocol SEND ► {"id":1016,"method":"Page.setInterceptFileChooserDialog","params":{"enabled":false},"sessionId":"778CF70C2AA69B8FE0C87D87B471388F"} +6s
+3097:   pw:protocol ◀ RECV {"id":1016,"result":{},"sessionId":"778CF70C2AA69B8FE0C87D87B471388F"} +0ms
+
+cad-consumer-transition-armed / command output tail (protocol lines omitted)
+
+    =========================== logs ===========================
+    waiting for event "filechooser"
+    ============================================================
+
+      53 |     const saving=page.waitForEvent('download'); await page.keyboard.press('Control+s'); const saved=await saving, bytes=await readFile((await saved.path())!);
+      54 |     expect(JSON.stringify(nativeContainer({ op:'decode', parts:[bytes] }).project.content)).toContain('width');
+    > 55 |     await page.keyboard.press('Control+n'); await protocol.send('Page.setInterceptFileChooserDialog',{enabled:true});const choosing=page.waitForEvent('filechooser',{timeout:8000}); await page.keyboard.press('Control+o'); await (await choosing).setFiles({ name:saved.suggestedFilename(),mimeType:'application/octet-stream',buffer:bytes }); await ready(page); await expect(props).toContainText('68654.425 mm³');
+         |                                                                                                                                          ^
+      56 |
+      57 |      outcomes.push({iteration,passed:true});
+      58 |     }
+        at /tmp/gsnv-consumer-qa/cad-consumer-transition-armed/control.browser.spec.ts:55:138
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/cad-consumer-transition-armed/results/control.browser-CAD-consum-49250-version-files-and-real-STEP/error-context.md
+
+  1 failed
+    ../../../../../tmp/gsnv-consumer-qa/cad-consumer-transition-armed/control.browser.spec.ts:12:1 › CAD consumer golden: dependent holes/pocket, live variables, unit conversion, files and real STEP 
+
+cad-consumer-transition-main-armed / raw run.log (one-based source lines)
+
+2826:   pw:protocol SEND ► {"id":903,"method":"Page.setInterceptFileChooserDialog","params":{"enabled":true},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +0ms
+2827:   pw:protocol ◀ RECV {"id":903,"result":{},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +1ms
+2830:   pw:protocol SEND ► {"id":905,"method":"Input.dispatchKeyEvent","params":{"type":"rawKeyDown","modifiers":2,"windowsVirtualKeyCode":79,"code":"KeyO","commands":[],"key":"o","text":"","unmodifiedText":"","autoRepeat":false,"location":0,"isKeypad":false},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +0ms
+2831:   pw:protocol ◀ RECV {"id":905,"result":{},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +3ms
+2832:   pw:protocol SEND ► {"id":906,"method":"Input.dispatchKeyEvent","params":{"type":"keyUp","modifiers":2,"key":"o","windowsVirtualKeyCode":79,"code":"KeyO","location":0,"isKeypad":false},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +0ms
+2833:   pw:protocol ◀ RECV {"method":"Page.fileChooserOpened","params":{"frameId":"D544568AF717DE0DEFFD9D730B9243C4","mode":"selectSingle","backendNodeId":100},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +0ms
+2835:   pw:protocol ◀ RECV {"id":906,"result":{},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +0ms
+2843:   pw:protocol SEND ► {"id":911,"method":"Page.setInterceptFileChooserDialog","params":{"enabled":false},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +1ms
+7637:   pw:protocol ◀ RECV {"id":2804,"result":{},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +1ms
+7638:   pw:protocol SEND ► {"id":2805,"method":"Input.dispatchKeyEvent","params":{"type":"keyUp","modifiers":2,"key":"o","windowsVirtualKeyCode":79,"code":"KeyO","location":0,"isKeypad":false},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +0ms
+7639:   pw:protocol ◀ RECV {"method":"Page.fileChooserOpened","params":{"frameId":"D544568AF717DE0DEFFD9D730B9243C4","mode":"selectSingle","backendNodeId":177},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +0ms
+7641:   pw:protocol ◀ RECV {"id":2805,"result":{},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +1ms
+7649:   pw:protocol SEND ► {"id":2810,"method":"Page.setInterceptFileChooserDialog","params":{"enabled":false},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +1ms
+7651:   pw:protocol ◀ RECV {"id":2810,"result":{},"sessionId":"1A3FD718A88EC2ACDA2440E3BB52BBB4"} +3ms
+
+cad-consumer-transition-main-armed / command output tail (protocol lines omitted)
+
+
+Running 1 test using 1 worker
+
+(node:1092758) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+CAD consumer golden Chrome 154.0.8037.97 linux/x64: complete UI construction, dependent placements, exact volumes, units, editable native reopen and actual STEP re-import.
+  ✓  1 ../../../../../tmp/gsnv-consumer-qa/cad-consumer-transition-main-armed/control.browser.spec.ts:12:1 › CAD consumer golden: dependent holes/pocket, live variables, unit conversion, files and real STEP (33.1s)
+
+  1 passed (34.1s)
+
+cad-consumer-transition-public-armed / raw run.log (one-based source lines)
+
+75:   pw:protocol SEND ► {"id":29,"method":"Page.setInterceptFileChooserDialog","params":{"enabled":true},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +45ms
+79:   pw:protocol ◀ RECV {"id":29,"result":{},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +0ms
+2871:   pw:protocol SEND ► {"id":909,"method":"Input.dispatchKeyEvent","params":{"type":"rawKeyDown","modifiers":2,"windowsVirtualKeyCode":79,"code":"KeyO","commands":[],"key":"o","text":"","unmodifiedText":"","autoRepeat":false,"location":0,"isKeypad":false},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +0ms
+2872:   pw:protocol ◀ RECV {"id":909,"result":{},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +1ms
+2873:   pw:protocol SEND ► {"id":910,"method":"Input.dispatchKeyEvent","params":{"type":"keyUp","modifiers":2,"key":"o","windowsVirtualKeyCode":79,"code":"KeyO","location":0,"isKeypad":false},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +1ms
+2874:   pw:protocol ◀ RECV {"method":"Page.fileChooserOpened","params":{"frameId":"95F8AA46A92E3CB04CBAE9B6D605E39F","mode":"selectSingle","backendNodeId":97},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +0ms
+2876:   pw:protocol ◀ RECV {"id":910,"result":{},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +0ms
+3118:   pw:protocol SEND ► {"id":1006,"method":"Input.dispatchKeyEvent","params":{"type":"rawKeyDown","modifiers":2,"windowsVirtualKeyCode":79,"code":"KeyO","commands":[],"key":"o","text":"","unmodifiedText":"","autoRepeat":false,"location":0,"isKeypad":false},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +0ms
+7331:   pw:protocol ◀ RECV {"id":2660,"result":{},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +1ms
+7575:   pw:protocol SEND ► {"id":2757,"method":"Input.dispatchKeyEvent","params":{"type":"rawKeyDown","modifiers":2,"windowsVirtualKeyCode":79,"code":"KeyO","commands":[],"key":"o","text":"","unmodifiedText":"","autoRepeat":false,"location":0,"isKeypad":false},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +0ms
+7576:   pw:protocol ◀ RECV {"id":2757,"result":{},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +1ms
+7577:   pw:protocol SEND ► {"id":2758,"method":"Input.dispatchKeyEvent","params":{"type":"keyUp","modifiers":2,"key":"o","windowsVirtualKeyCode":79,"code":"KeyO","location":0,"isKeypad":false},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +1ms
+7578:   pw:protocol ◀ RECV {"method":"Page.fileChooserOpened","params":{"frameId":"95F8AA46A92E3CB04CBAE9B6D605E39F","mode":"selectSingle","backendNodeId":174},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +0ms
+7580:   pw:protocol ◀ RECV {"id":2758,"result":{},"sessionId":"1524664BF82FF9E0E594DC9ED79A60D7"} +0ms
+
+cad-consumer-transition-public-armed / command output tail (protocol lines omitted)
+
+
+Running 1 test using 1 worker
+
+(node:1093787) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+CAD consumer golden Chrome 154.0.8037.97 linux/x64: complete UI construction, dependent placements, exact volumes, units, editable native reopen and actual STEP re-import.
+  ✓  1 ../../../../../tmp/gsnv-consumer-qa/cad-consumer-transition-public-armed/control.browser.spec.ts:12:1 › CAD consumer golden: dependent holes/pocket, live variables, unit conversion, files and real STEP (32.1s)
+
+  1 passed (33.1s)

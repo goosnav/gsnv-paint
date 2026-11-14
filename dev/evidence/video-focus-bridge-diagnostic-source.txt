@@ -1,0 +1,129 @@
+import { test, expect, type Page } from '@playwright/test';
+import { build, preview, type PreviewServer } from 'vite';
+import { mkdtempSync, readdirSync, rmSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { inflateSync } from 'node:zlib';
+import { nativeContainer } from '../shared/native-container.ts';
+import { imageContent } from '../image/image-content.ts';
+import { videoTimeline } from '../video/video-timeline.ts';
+import { kernelFixture } from '../cad/kernel-test-fixture.ts';
+import { stepExchange } from '../cad/step-exchange.ts';
+let server: PreviewServer, outDir: string; const fullApp = process.env.BRIDGE_WORKSPACE_APP === '1', failures = new WeakMap<Page,string[]>();
+test.beforeAll(async () => {
+  if (fullApp) { server = await preview({ logLevel: 'error', preview: { host: '127.0.0.1', port: 4194, strictPort: true } }); return; }
+  outDir = mkdtempSync(join(process.env.BRIDGE_TEST_TMP ?? tmpdir(), 'gsnv-bridge-workspace-'));
+  await build({ configFile: false, publicDir: false, logLevel: 'error', worker: { format: 'es' }, build: { outDir, emptyOutDir: true, assetsInlineLimit: 0, rollupOptions: { input: fileURLToPath(new URL('./bridge-workspace-fixture.ts', import.meta.url)), output: { entryFileNames: 'workspace.js' } } } });
+  const css = readdirSync(outDir, { recursive: true }).map(String).filter(path => path.endsWith('.css')).map(path => `<link rel="stylesheet" href="/${path}">`).join('');
+  const headers = { 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Embedder-Policy': 'require-corp', 'Cross-Origin-Resource-Policy': 'same-origin' };
+  server = await preview({ configFile: false, logLevel: 'error', build: { outDir }, preview: { host: '127.0.0.1', port: 4194, strictPort: true, headers }, plugins: [{ name: 'bridge-fixture', configurePreviewServer(vite) { vite.middlewares.use((req,res,next) => { if (req.url === '/') { res.setHeader('Content-Type','text/html'); res.end(`<!doctype html><link rel="icon" href="data:,">${css}<div id="app"></div><script type="module" src="/workspace.js"></script>`); } else next(); }); } }] });
+});
+test.afterAll(async () => { if (server) await new Promise<void>(resolve => server.httpServer.close(() => resolve())); if (outDir) rmSync(outDir, { recursive: true, force: true }); });
+test.beforeEach(async ({ page, context }) => {
+  const errors: string[] = []; failures.set(page,errors); page.on('pageerror', e => errors.push(e.message)); page.on('request', request => { if (/^https?:/.test(request.url()) && new URL(request.url()).origin !== 'http://127.0.0.1:4194') errors.push(request.url()); });
+  await context.addInitScript(() => { Object.defineProperty(window,'showSaveFilePicker',{value:undefined}); Object.defineProperty(window,'showOpenFilePicker',{value:undefined}); });
+  await page.goto('http://127.0.0.1:4194/'); await page.evaluate(() => {
+ const keys:unknown[]=[];(window as unknown as {keys:unknown[]}).keys=keys;
+ for(const capture of [true,false]) document.addEventListener('keydown',event=>{if(event.ctrlKey)keys.push({capture,key:event.key,prevented:event.defaultPrevented,tag:(event.target as HTMLElement).tagName,appOwnsFocus:document.querySelector('#app')?.contains(document.activeElement),saveDisabled:document.querySelector<HTMLButtonElement>('.gc-standard [data-command="file.save"]')?.disabled,title:document.querySelector('[data-window-title]')?.textContent});},capture);
+ }); await expect(page.locator('[data-command="file.open"]:visible').first()).toBeEnabled();
+});
+test.afterEach(async ({ page }) => { console.log('BRIDGE KEY OBSERVATIONS',JSON.stringify(await page.evaluate(() => (window as unknown as {keys:unknown[]}).keys))); expect(failures.get(page)).toEqual([]); });
+const menu = async (page: Page, name: string, item: string) => { await page.getByRole('menuitem',{name,exact:true}).click(); await page.getByRole('menuitem',{name:item,exact:true}).click(); };
+const workspace = async (page: Page, name: string) => page.getByRole('tab',{name,exact:true}).click();
+const history = (page: Page) => page.locator('[data-panel-history] li').allTextContents();
+async function open(page: Page, name: string, bytes: Buffer) { const choosing = page.waitForEvent('filechooser'); await page.locator('[data-command="file.open"]:visible').first().click(); await (await choosing).setFiles({name,mimeType:'application/octet-stream',buffer:bytes}); await expect(page.locator('[data-window-title]')).toHaveText(nativeContainer({op:'decode',parts:[bytes]}).project.title); }
+async function save(page: Page) { const saving = page.waitForEvent('download', {timeout:8000}); await page.keyboard.press('Control+s'); const download = await saving, bytes = await readFile((await download.path())!); return { bytes, name: download.suggestedFilename(), pkg: nativeContainer({op:'decode',parts:[bytes]}) }; }
+async function storedBytes(page:Page,id:string){return Buffer.from(await page.evaluate(id=>new Promise<number[]>((resolve,reject)=>{const opening=indexedDB.open('gsnv-paint-recent',1);opening.onerror=()=>reject(opening.error);opening.onsuccess=()=>{const db=opening.result,tx=db.transaction('projects','readonly'),request=tx.objectStore('projects').get(id);tx.oncomplete=()=>{db.close();resolve(request.result?.parts.flatMap((part:Uint8Array)=>[...part])??[]);};tx.onerror=()=>{db.close();reject(tx.error);};};}),id));}
+function imageFixture() {
+  const width=32,height=24,bottom=new Uint8ClampedArray(width*height*4),top=bottom.slice(),expected=bottom.slice();
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++){const i=(y*width+x)*4,q=(y<12?0:2)+(x<16?0:1);bottom.set([[255,0,0,255],[0,0,0,0],[0,0,255,255],[0,0,0,0]][q]!,i);top.set([[0,0,0,0],[0,255,0,128],[255,0,0,128],[0,0,0,0]][q]!,i);expected.set([[255,0,0,255],[0,255,0,128],[128,0,127,255],[0,0,0,0]][q]!,i);}
+  const value=imageContent({operation:'layers',previous:null,width,height,activeLayerId:'top',layers:[{meta:{id:'bottom',name:'Bottom',visible:true,opacity:1,blend:'normal'},raster:{width,height,data:bottom}},{meta:{id:'top',name:'Top',visible:true,opacity:1,blend:'normal'},raster:{width,height,data:top}}]}),encoded=imageContent({operation:'encode',value});
+  const pkg={project:{format:'gsnv-image' as const,version:1 as const,id:'bridge-source-image',title:'Layered bridge',content:encoded.content},assets:encoded.assets.map(a=>({...a,mime:'application/octet-stream'}))};
+  return {bytes:Buffer.concat(nativeContainer({op:'encode',package:pkg}).parts),expected};
+}
+function decodePNG(bytes: Uint8Array) { const png=Buffer.from(bytes),idat:Buffer[]=[];let offset=8;const width=png.readUInt32BE(16),height=png.readUInt32BE(20);while(offset<png.length){const n=png.readUInt32BE(offset);if(png.toString('ascii',offset+4,offset+8)==='IDAT')idat.push(png.subarray(offset+8,offset+8+n));offset+=n+12;}const raw=inflateSync(Buffer.concat(idat)),rgba=Buffer.alloc(width*height*4);for(let y=0;y<height;y++){expect(raw[y*(width*4+1)]).toBe(0);raw.copy(rgba,y*width*4,y*(width*4+1)+1,(y+1)*(width*4+1));}return{width,height,rgba}; }
+test('XWS Image composite arrives as an undoable bin-only PNG; frame becomes an editable native Image and prior source stays stored', async ({page},info) => {
+  const original=imageFixture();await open(page,'layered.gsnv-image',original.bytes);await expect(page.locator('.image-canvas')).toBeVisible();await page.keyboard.press('Control+a');const before=await save(page),sourceHistory=await history(page);
+  await menu(page,'Image','Send image to Video bin');await expect(page.getByRole('tab',{name:'Video',exact:true})).toHaveAttribute('aria-selected','true');await expect(page.locator('.video-media-bin [data-media-id]')).toHaveCount(1);await expect(page.locator('.video-clip')).toHaveCount(0);await expect(page.locator('.video-media-bin')).toContainText('32 × 24');
+  await page.keyboard.press('Control+z');await expect(page.locator('.video-media-bin [data-media-id]')).toHaveCount(0);await page.keyboard.press('Control+y');await expect(page.locator('.video-media-bin [data-media-id]')).toHaveCount(1);
+  const bin=await save(page),content=bin.pkg.project.content as {width:number;height:number;clips:unknown[];media:{id:string}[]};expect([content.width,content.height]).toEqual([1280,720]);expect(content.clips).toEqual([]);expect(content.media).toHaveLength(1);const png=decodePNG(bin.pkg.assets[0]!.bytes);expect([png.width,png.height]).toEqual([32,24]);expect(png.rgba.equals(Buffer.from(original.expected))).toBe(true);
+  await workspace(page,'Image');expect(await history(page)).toEqual(sourceHistory);expect((await save(page)).bytes.equals(before.bytes)).toBe(true);
+  await menu(page,'File','Rename…');await page.getByRole('dialog').getByLabel('Name',{exact:true}).fill('Keep layered source');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();
+  await workspace(page,'Video');await page.keyboard.press('Control+n');await open(page,bin.name,bin.bytes);await expect(page.locator('.video-media-bin [data-media-id]')).toHaveCount(1);await expect(page.locator('.video-clip')).toHaveCount(0);
+  await page.locator('[data-bin-action=place]').click();await expect(page.locator('.video-clip')).toHaveCount(1);await expect(page.locator('[data-bin-action=remove]')).toBeDisabled();
+  await menu(page,'Video','Frame size…');const dialog=page.getByRole('dialog');await dialog.getByLabel('Width (px)').fill('160');await dialog.getByLabel('Height (px)').fill('120');await dialog.getByRole('button',{name:'OK',exact:true}).click();
+  await page.locator('[data-field=fadeIn]').fill('0.5');const immediate=await save(page);expect((immediate.pkg.project.content as {clips:{fadeIn:number}[]}).clips[0]!.fadeIn).toBe(.5);
+  await page.locator('.video-panel').getByRole('button',{name:'Add title…'}).click();await dialog.getByLabel('Text',{exact:true}).fill('BRIDGE');await dialog.getByLabel('Size',{exact:true}).fill('150');await dialog.getByLabel('Position',{exact:true}).selectOption('middle');await dialog.getByLabel('Dark box behind text').uncheck();await dialog.getByRole('button',{name:'OK',exact:true}).click();
+  // Canvas black overlay alpha .5 quantizes to 128/255, so opaque red becomes 127.
+  await page.locator('.video-scrub').evaluate((input:HTMLInputElement)=>{input.value='0.25';input.dispatchEvent(new Event('input',{bubbles:true}));});await expect.poll(()=>page.locator('.video-canvas').evaluate((c:HTMLCanvasElement)=>c.getContext('2d')!.getImageData(10,10,1,1).data[0])).toBe(127);
+  const preview=await page.locator('.video-canvas').evaluate((c:HTMLCanvasElement)=>[...c.getContext('2d')!.getImageData(0,0,c.width,c.height).data]),videoHistory=await history(page);
+  await menu(page,'Video','Send current frame to Image');await expect(page.getByRole('tab',{name:'Image',exact:true})).toHaveAttribute('aria-selected','true');const frame=await save(page);expect(frame.pkg.project.id).not.toBe(before.pkg.project.id);const raster=imageContent({operation:'decode',content:frame.pkg.project.content,assets:frame.pkg.assets});expect([raster.width,raster.height,raster.layers.length]).toEqual([160,120,1]);expect([...raster.layers[0]!.tiles[0]!]).toEqual(preview);expect(raster.selection).toBeNull();
+  await workspace(page,'Video');expect(await history(page)).toEqual(videoHistory);await workspace(page,'Image');await page.keyboard.press('Control+n');await open(page,frame.name,frame.bytes);expect((await save(page)).bytes.equals(frame.bytes)).toBe(true);
+  await menu(page,'File','Open stored project…');await expect(page.getByRole('dialog').getByLabel('Project',{exact:true})).toContainText('Keep layered source');await page.getByRole('dialog').getByRole('button',{name:'Cancel',exact:true}).click();
+  await workspace(page,'Video');const finalVideo=await save(page);await workspace(page,'Image');
+  await expect.poll(async()=>(await storedBytes(page,frame.pkg.project.id)).equals(frame.bytes)).toBe(true);await expect.poll(async()=>(await storedBytes(page,finalVideo.pkg.project.id)).equals(finalVideo.bytes)).toBe(true);
+  await page.reload();await workspace(page,'Video');await expect(page.locator('.video-clip')).toHaveCount(1);expect((await save(page)).bytes.equals(finalVideo.bytes)).toBe(true);await workspace(page,'Image');await expect(page.locator('[data-window-title]')).toHaveText(`${frame.pkg.project.title} *`);expect((await save(page)).bytes.equals(frame.bytes)).toBe(true);
+  await page.screenshot({path:join(info.outputDir,'bridge-image-frame.png')});
+});
+async function videoFixture(trim?:{in:number;out:number}) {
+  const bytes=new Uint8Array(await readFile(new URL('./fixtures/frame-colors.webm',import.meta.url)));
+  let value=videoTimeline({operation:'edit',value:videoTimeline({operation:'new',width:160,height:120}),op:{kind:'import-media',media:{id:'original-video',name:'Original video',mime:'video/webm',kind:'video',duration:1.5,width:128,height:96},bytes}});
+  value=videoTimeline({operation:'edit',value,op:{kind:'place-media',mediaId:'original-video',clipId:'original-clip'}});if(trim)value=videoTimeline({operation:'edit',value,op:{kind:'trim',id:'original-clip',...trim}});const encoded=videoTimeline({operation:'encode',value});
+  return Buffer.concat(nativeContainer({op:'encode',package:{project:{format:'gsnv-video',version:1,id:'existing-video',title:'Existing video',content:encoded.content},assets:encoded.assets}}).parts);
+}
+for(const [inside,out,rgb]of [[0,.5,[255,0,0]],[.5,1,[0,255,0]]] as const)test(`XWS trimmed Video End [${inside},${out}) keeps its last included frame in preview and native Image`,async({page})=>{
+  await open(page,'trimmed.gsnv-video',await videoFixture({in:inside,out}));await expect(page.locator('.video-clip')).toHaveCount(1);await page.getByRole('menuitem',{name:'Video',exact:true}).click();await page.locator('[data-command="video.end"]:visible').click();
+  const pixel=()=>page.locator('.video-canvas').evaluate((c:HTMLCanvasElement)=>[...c.getContext('2d')!.getImageData(10,10,1,1).data]);
+  await expect.poll(async()=>{const rgba=await pixel();return rgba[3]===255&&rgb.every((channel,i)=>Math.abs(channel-rgba[i]!)<=3);}).toBe(true);
+  const preview=await pixel(),source=(await save(page)).bytes;await menu(page,'Video','Send current frame to Image');await expect(page.getByRole('tab',{name:'Image',exact:true})).toHaveAttribute('aria-selected','true');
+  const frame=await save(page),content=frame.pkg.project.content as {width:number;height:number};expect([content.width,content.height]).toEqual([160,120]);const rgba=[...frame.pkg.assets[0]!.bytes.subarray((10*160+10)*4,(10*160+10)*4+4)];expect(rgba).toEqual(preview);for(let i=0;i<3;i++)expect(Math.abs(rgba[i]!-rgb[i]!)).toBeLessThanOrEqual(3);expect(rgba[3]).toBe(255);
+  await workspace(page,'Video');expect((await save(page)).bytes.equals(source)).toBe(true);
+});
+test('XWS MediaRecorder WebM export can be imported and captured with an initially unknown decoded duration',async({page})=>{
+  // Exercise the real WebM fallback exporter even on Chrome versions which prefer MP4.
+  await page.evaluate(()=>{const supported=MediaRecorder.isTypeSupported.bind(MediaRecorder);MediaRecorder.isTypeSupported=type=>type.startsWith('video/webm')&&supported(type);});
+  // Longer than the exporter's 500 ms slice ensures an ordinary multi-chunk WebM.
+  await open(page,'colors.gsnv-video',await videoFixture());
+  await expect.poll(()=>page.locator('.video-canvas').evaluate((c:HTMLCanvasElement)=>c.getContext('2d')!.getImageData(10,10,1,1).data[0])).toBeGreaterThan(250);
+  const exporting=page.waitForEvent('download');await page.locator('.video-panel').getByRole('button',{name:'Export video…',exact:true}).click();const exported=await exporting,bytes=await readFile((await exported.path())!);expect(exported.suggestedFilename()).toMatch(/\.webm$/);
+  const initialDuration=await page.evaluate(async data=>{const url=URL.createObjectURL(new Blob([new Uint8Array(data)],{type:'video/webm'})),video=document.createElement('video');try{video.preload='auto';const ready=new Promise<void>((resolve,reject)=>{video.onloadeddata=()=>resolve();video.onerror=()=>reject(new Error('Exported WebM did not decode'));});video.src=url;await ready;return String(video.duration);}finally{video.removeAttribute('src');video.load();URL.revokeObjectURL(url);}},[...bytes]);expect(initialDuration).toBe('Infinity');
+  await page.getByRole('menuitem',{name:'File',exact:true}).click();await page.locator('[data-command="file.new"]:visible').first().click();await expect(page.locator('.video-clip')).toHaveCount(0);const choosing=page.waitForEvent('filechooser');await menu(page,'Video','Add video or image…');await(await choosing).setFiles({name:exported.suggestedFilename(),mimeType:'video/webm',buffer:bytes});await expect(page.locator('.video-clip')).toHaveCount(1);
+  await page.locator('.video-scrub').evaluate((input:HTMLInputElement)=>{input.value='0.1';input.dispatchEvent(new Event('input',{bubbles:true}));});
+  await expect.poll(()=>page.locator('.video-canvas').evaluate((c:HTMLCanvasElement)=>c.getContext('2d')!.getImageData(10,10,1,1).data[0])).toBeGreaterThan(250);
+  const source=await save(page);expect(Buffer.from(source.pkg.assets[0]!.bytes).equals(bytes)).toBe(true);
+  await menu(page,'Video','Send current frame to Image');await expect(page.getByRole('tab',{name:'Image',exact:true})).toHaveAttribute('aria-selected','true');const captured=await save(page),image=imageContent({operation:'decode',content:captured.pkg.project.content,assets:captured.pkg.assets});
+  expect([image.width,image.height]).toEqual([160,120]);const rgba=[...image.layers[0]!.tiles[0]!.subarray((10*160+10)*4,(10*160+10)*4+4)];for(let i=0;i<3;i++)expect(Math.abs(rgba[i]!-[255,0,0][i]!)).toBeLessThanOrEqual(3);expect(rgba[3]).toBe(255);console.log('D03 MediaRecorder import proof',JSON.stringify({initialDuration,rgba,sourceBytesPreserved:true}));
+});
+test('XWS existing Video receives exactly one reversible append and pending Image floats remain untouched',async({page})=>{
+  const video=await videoFixture(),image=imageFixture();await open(page,'existing.gsnv-video',video);await expect(page.locator('.video-clip')).toHaveCount(1);await open(page,'source.gsnv-image',image.bytes);await expect(page.locator('.image-canvas')).toBeVisible();
+  await page.keyboard.press('Control+a');await page.locator('[data-command="image.move"]:visible').click();const box=(await page.locator('.image-canvas').boundingBox())!;await page.mouse.move(box.x+box.width*.25,box.y+box.height*.25);await page.mouse.down();await page.mouse.move(box.x+box.width*.25+10,box.y+box.height*.25+10);await page.mouse.up();
+  const before=await history(page);await page.getByRole('menuitem',{name:'Image',exact:true}).click();await expect(page.getByRole('menuitem',{name:'Send image to Video bin',exact:true})).toBeDisabled();await page.keyboard.press('Escape');await page.locator('.image-stage').focus();await page.keyboard.press('Escape');expect(await history(page)).toEqual(before);
+  await menu(page,'Image','Send image to Video bin');await expect(page.locator('.video-media-bin [data-media-id]')).toHaveCount(2);await expect(page.locator('.video-clip')).toHaveCount(1);const received=await save(page),v=received.pkg.project.content as {width:number;height:number;clips:{id:string}[]};expect([v.width,v.height,v.clips[0]!.id]).toEqual([160,120,'original-clip']);
+  await page.keyboard.press('Control+z');await expect(page.locator('.video-media-bin [data-media-id]')).toHaveCount(1);expect((await save(page)).bytes.equals(video)).toBe(true);await page.keyboard.press('Control+y');expect((await save(page)).bytes.equals(received.bytes)).toBe(true);
+});
+test('XWS denied durable storage keeps a dirty Image target and stays in Video',async({page})=>{
+  await open(page,'target.gsnv-image',imageFixture().bytes);await expect(page.locator('.image-canvas')).toBeVisible();
+  await page.evaluate(()=>{IDBObjectStore.prototype.put=function(){throw new DOMException('fixture quota denied','QuotaExceededError');};});
+  await menu(page,'File','Rename…');await page.getByRole('dialog').getByLabel('Name',{exact:true}).fill('Unsaved target must survive');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();
+  await open(page,'video.gsnv-video',await videoFixture());await expect(page.locator('.video-clip')).toHaveCount(1);await menu(page,'Video','Send current frame to Image');
+  await expect(page.locator('.gc-status')).toContainText(/Save|quota|kept/);await expect(page.getByRole('tab',{name:'Video',exact:true})).toHaveAttribute('aria-selected','true');await workspace(page,'Image');const kept=await save(page);expect(kept.pkg.project.id).toBe('bridge-source-image');expect(kept.pkg.project.title).toBe('Unsaved target must survive');
+});
+const cadReady=async(page:Page)=>expect(page.locator('.cad-build-status')).toHaveAttribute('data-state','ready',{timeout:30000});
+async function captureCAD(page:Page){await menu(page,'Solid','Send transparent view to Image…');const dialog=page.getByRole('dialog'),value=await dialog.locator('select').inputValue();const expected=value.split('x').map(Number);await dialog.getByRole('button',{name:'OK',exact:true}).click();await expect(page.getByRole('tab',{name:'Image',exact:true})).toHaveAttribute('aria-selected','true');const saved=await save(page),content=saved.pkg.project.content as {width:number;height:number};expect([content.width,content.height]).toEqual(expected);const rgba=saved.pkg.assets[0]!.bytes;expect(rgba[3]).toBe(0);expect(rgba.at(-1)).toBe(0);expect(rgba.some((value,index)=>index%4===3&&value>0&&value<255)).toBe(true);return{saved,rgba,width:content.width,height:content.height};}
+test('XWS committed parametric CAD capture stays transparent, reopens exactly, and source dimensions remain editable',async({page},info)=>{
+  await page.locator('[data-command="file.new"]:visible').first().click();await page.locator('[data-command="cad.rectangle"]:visible').first().click();const dialog=page.getByRole('dialog');await dialog.getByRole('button',{name:'OK',exact:true}).click();await cadReady(page);await page.locator('[data-command="cad.extrude"]:visible').first().click();await dialog.getByRole('button',{name:'OK',exact:true}).click();await cadReady(page);
+  const source=await save(page),prior=await history(page);
+  const oldWidth=await page.getByLabel('CAD solid viewport').evaluate((c:HTMLCanvasElement)=>c.width);await menu(page,'Solid','Send transparent view to Image…');await page.setViewportSize({width:1200,height:720});await expect.poll(()=>page.getByLabel('CAD solid viewport').evaluate((c:HTMLCanvasElement)=>c.width)).not.toBe(oldWidth);await dialog.getByRole('button',{name:'OK',exact:true}).click();await expect(page.locator('.gc-status')).toContainText(/changed/);await expect(page.getByRole('tab',{name:'CAD',exact:true})).toHaveAttribute('aria-selected','true');expect(await history(page)).toEqual(prior);await page.setViewportSize({width:1280,height:720});
+  const capture=await captureCAD(page);await page.keyboard.press('Control+n');await open(page,capture.saved.name,capture.saved.bytes);expect((await save(page)).bytes.equals(capture.saved.bytes)).toBe(true);
+  await workspace(page,'CAD');expect(await history(page)).toEqual(prior);expect((await save(page)).bytes.equals(source.bytes)).toBe(true);await page.locator('[data-command="cad.extrude"]:visible').first().click();await dialog.getByLabel('Depth (mm or expression)').fill('12');await dialog.getByRole('button',{name:'OK',exact:true}).click();await cadReady(page);await expect(page.locator('.cad-properties')).toContainText('72000.000 mm³');
+  await workspace(page,'Image');await page.screenshot({path:join(info.outputDir,'bridge-cad-transparent.png')});
+});
+test('XWS imported CAD capture retains both disconnected STEP bodies and exact source bytes',async({page})=>{
+  const kernel=await kernelFixture();let bytes:Uint8Array;
+  try{const {library,session}=kernel,point=new library.gp_Pnt(70,0,0),one=new library.BRepPrimAPI_MakeBox(10,20,30),two=new library.BRepPrimAPI_MakeBox(point,5,6,7),shapes=[{bodyId:'one',token:session.retain(one.Shape())},{bodyId:'two',token:session.retain(two.Shape())}];point.delete();one.delete();two.delete();bytes=stepExchange({action:'export',session,units:'mm',bodies:{shapes,topology:[],operands:[],diagnostics:[]}}).file!.bytes;}finally{kernel.close();}
+  const choosing=page.waitForEvent('filechooser');await page.locator('[data-command="cad.importSTEP"]:visible').first().click();await(await choosing).setFiles({name:'two-bodies.step',mimeType:'model/step',buffer:Buffer.from(bytes!)});await cadReady(page);await expect(page.locator('[data-body-id]')).toHaveCount(2);const source=await save(page),prior=await history(page),capture=await captureCAD(page);
+  const {width,height,rgba}=capture,seen=new Uint8Array(width*height),components:number[]=[];for(let p=0;p<seen.length;p++){if(seen[p]||rgba[p*4+3]!<16)continue;const stack=[p];seen[p]=1;let count=0;while(stack.length){const i=stack.pop()!;count++;const x=i%width,y=Math.floor(i/width);for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const xx=x+dx,yy=y+dy,n=yy*width+xx;if(xx>=0&&xx<width&&yy>=0&&yy<height&&!seen[n]&&rgba[n*4+3]!>=16){seen[n]=1;stack.push(n);}}}if(count>20)components.push(count);}expect(components).toHaveLength(2);
+  await workspace(page,'CAD');expect(await history(page)).toEqual(prior);expect((await save(page)).bytes.equals(source.bytes)).toBe(true);expect(source.pkg.assets[0]!.bytes).toEqual(bytes!);
+});

@@ -121,3 +121,20 @@ Production evidence covers the actual 120 mm acceptance STEP: one explicitly non
 A second production fixture contains two spatially separated solids in an inch STEP file. Both are displayed and inspected as **6,000 and 210 mm³**, total **6,210 mm³**, and both survive independent STEP export readback. Corrupting only the second solid produces a visible error while the previous project's native bytes, title and history remain unchanged. Pending real worker imports are terminated by Escape and New; late worker responses cannot open a project.
 
 The native ownership tests repeatedly leave zero retained tokens on success, clean the second and subsequent bodies after an ordinary preview failure, and make no subsequent session/native calls after injected numeric, WebAssembly runtime or unknown binding faults. The parent owns the final broad regression/build and human acceptance. Native OS file chooser behavior and maximum-size performance are not claimed by headless browser evidence.
+
+## Network-controlled cancellation fixture
+
+The current offline installer can serve a worker module from CacheStorage before
+Playwright's page request route sees it. A cumulative browser diagnostic recorded
+that exact condition: the second export worker response reported
+`fromServiceWorker: true`, its route handler never ran, and the export completed
+before the test's source edit. The test had not established its intended pending
+worker precondition. This is a fixture correction, not changed cancellation policy.
+
+Only the network-held cancellation contexts block service workers. They must
+assert that the worker module request entered the held route before pressing
+Escape or replacing/editing source. Normal import/export and native roundtrip
+cases keep service workers enabled; the dedicated offline gate independently
+exercises all nine workspaces with the production cache. Existing worker counters,
+unchanged-source/history, no-download, readable-error and successful-retry
+assertions are retained. No runtime fallback, delay or synthetic shortcut is added.

@@ -1,0 +1,3 @@
+{"kind":"route-enter","time":1794633458342,"url":"http://127.0.0.1:4175/assets/cad-step-export.worker-DMaxtdPy.js"}
+{"kind":"response","time":1794633459301,"url":"http://127.0.0.1:4175/assets/cad-step-export.worker-DMaxtdPy.js","fromServiceWorker":true,"status":200}
+{"kind":"download","time":1794633459690,"name":"Untitled part.step"}

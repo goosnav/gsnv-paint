@@ -7,6 +7,7 @@ Mode A baseline. The system turns local editable documents into raster images, v
 1. Phase 1: S01, S03, S02, S04, S05, S06, S07, S08, S09, S10, S11, S12, S15, S13, S14, then A-SHELL (dependencies precede consumers).
 2. Phase 2: [CAD contracts](MODULE_MAP-CAD.md), in its listed topological order, then A-CAD.
 3. Phases 3–5: [Image, Video and delivery contracts](MODULE_MAP-MEDIA.md), in listed phase/topological order.
+4. Shared offline increment: S16 → S18 → S19 → S17 → S20 → S21 → production assembly. The committed [offline plan](MODULE_MAP-OFFLINE.md), [canonical root amendment](OFFLINE-ROOT-ROUTE.md), and [verification ledger](OFFLINE-WORKFLOW.md) retain the detailed decisions and evidence.
 
 All statuses start PLANNED. Every brick is one file, at most 300 implementation lines, three public symbols, five inputs (otherwise a named request), and three direct brick collaborators. Assemblies only wire dependencies and route effects; domain decisions remain in CORE. GREEN means tests/checker/demo pass, not human acceptance. Every brick gets a sibling testbench and a separate demo; paths are assigned when implementation begins.
 
@@ -112,17 +113,24 @@ TEST: catalog coverage, unique paths/accessibility, inspected original SVG sheet
 
 Purpose: Render the shared web application shell from a view model.
 IN: `{root:HTMLElement,model:ChromeModel,onCommand:(id:string)=>void,onWorkspace:(workspace)=>void}`.
-OUT: `{update(model):void,dispose():void,viewport:HTMLElement}`; blue application header/navigation, menu bar, lightly beveled toolbar/palette, docked panels/status and workspace switcher at 1280×720, without simulated OS furniture; all listeners removed on disposal.
+OUT: `{update(model):void,dispose():void,viewport:HTMLElement,offlineSlot:HTMLElement}`; blue application header/navigation, menu bar, lightly beveled toolbar/palette, docked panels/status and workspace switcher at 1280×720, without simulated OS furniture; all listeners removed on disposal.
 RAISES: `TypeError` for missing root or invalid view model.
 DEPS: S09.
 TEST: fake DOM contracts and one real Chromium layout/menu/focus/tooltip/switch smoke with screenshot. Requirement group AppShell.
 Amendment (D20): tools may carry an optional boolean `active`, rendered as `aria-pressed`; `update` keeps an open menu and its focused command open across background updates (focus returns to the trigger only when that command vanished or became disabled).
 
-Offline assembly amendment (S21, CONTRACTED): S10 returns a stable empty
+Offline assembly amendment (S21, GREEN): S10 returns a stable empty
 `offlineSlot:HTMLElement` beside browser capabilities. `update` preserves its
 caller-owned content and focus; A-SHELL forwards it without owning offline
 policy. Production main mounts S20/S21 there and disposes them with the app.
 A unit seam must prove identity/focus across workspace/chrome updates.
+
+Commit/activation repair (GREEN): [the committed S10 contract](CHROME-COMMIT-ACTIVATION.md)
+preserves same-workspace menu/command/tool nodes and unchanged glyphs during
+blur-triggered editor commits. Removed/disabled commands are inert; workspace
+changes replace their controls. Ordered reconciliation preserves duplicate
+occurrences. Evidence: 79 cumulative S10/S12/A-SHELL unit tests and a production
+Slides mouse Save/File-menu test, including last-typed native-file content.
 
 ## S11 dialog — SHELL — GREEN
 
@@ -175,6 +183,60 @@ OUT: encode `{parts:readonly Uint8Array[],byteLength:number}` or decode `NativeP
 RAISES: `ContainerFormatError` for malformed framing/schema/checksum/length; `ContainerLimitError` for declared or actual limits; propagates S03 `ProjectFormatError`.
 DEPS: S03.
 TEST: literal independently computed header/checksum fixture, segmented boundary input, multi-asset byte roundtrip, 0 assets, limits, corruption/truncation/future magic/duplicate IDs, and S03 seam. Requirement group ProjectPersistence. [Implemented wire format](NATIVE-CONTAINER-V1.md).
+
+## S16 offline-manifest — CORE — GREEN
+
+Purpose: Validate and own the complete static-build inventory.
+IN: `offlineManifest(value:unknown)` with `{schema:1,build:string,assets:readonly {url:string,bytes:number,sha256:string,mime:string}[]}`. Identity and hashes are 64 lowercase hex characters; URLs are unique canonical root-relative static paths without query/hash/traversal/backslash/control or encoded separators. `/index.html` is required; bootstrap/internal names are reserved.
+OUT: Sorted independent deeply frozen `OfflineManifest`; exports factory plus `OfflineAsset` and `OfflineManifest` types.
+RAISES: `TypeError` for malformed data; `RangeError` for each file ≥25 MiB, more than 20,000 files, or total >128 MiB.
+DEPS: none.
+TEST: `src/shared/offline-manifest.test.ts`, four boundary/path/ownership tests and literal demo. Component GREEN does not certify an installed build.
+
+## S17 offline-build — SHELL — GREEN
+
+Purpose: Inventory final production bytes and emit the standalone worker.
+IN: `offlineBuild(options?:{buildId?:string}):Plugin` for a writable root-based Vite browser build; identity is fresh unless explicitly provided.
+OUT: Meta build identity in HTML, exact `offline-manifest.json`, and one bundled root `offline-sw.js`; all static output including lazy OCCT/PlaneGCS/LibRaw/Python workers, WASM, stdlib, fonts and notices is inventoried. A final scan applies the hosting limit to generated bootstrap files too.
+RAISES: `TypeError` for identity, build error for missing required runtime families, source/private files, symlinks, output changes or file/count limits.
+DEPS: S16, S19 wiring entry, existing Vite; Node standard library.
+TEST: `dev/offline-build.test.ts`, four real temporary-build tests; isolated production demo. `configFile:false` prevents recursive app-plugin invocation. Hosting response behavior requires the separate S18 assembly gate.
+
+## S18 offline-cache — SHELL — GREEN
+
+Purpose: Publish a fully verified build through one atomic cache-pointer write.
+IN: `offlineCache({manifest,origin,ports})`; ports are CacheStorage open/keys/delete, fetch, SHA-256 digest, random attempt ID, clock, abort timeout and progress.
+OUT: `{install(signal?):Promise<OfflineReceipt>,audit():Promise<OfflineReceipt>,match(request:Request):Promise<Response|undefined>,retain():Promise<void>}`. Receipt records schema/build/generation/files/bytes/time/complete. Separate immutable candidate generations preserve published A on every failure; audit runs on startup or explicit checks, never once per ordinary fetch. Only exact manifest GET URLs are served, with single ranges supported.
+RAISES: Stable `offline.network|integrity|headers|limit|quota|storage|incomplete|cancelled` errors. Status200, exact bytes/hash/MIME and COOP/COEP/CORP are required. Only `/index.html` downloads from canonical `/` under [the committed amendment](OFFLINE-ROOT-ROUTE.md), retaining its index cache key. Redirects remain forbidden.
+DEPS: S16.
+TEST: `src/shared/offline-cache.test.ts`, ten transactional, corruption, interruption, cleanup, hot-path and range cases plus real CacheStorage demo. Every failed candidate retains A; retain keeps current and newest other complete build and never deletes unrelated caches.
+
+## S19 offline-worker — SHELL — GREEN
+
+Purpose: Route service-worker events and defer updates safely.
+IN: `installOfflineWorker({scope:OfflineWorkerScope,manifest:OfflineManifest}):void`; the wiring-only `src/app/offline-entry.ts` supplies the actual scope and embedded manifest.
+OUT: Install waits for publication; activate audits and performs owned cleanup; first-install claim requires matching build replies from every current in-scope window. Same-build root/index navigations and exact static assets are served. Existing controlled tabs keep their old version; no skipWaiting, reload, navigation preload or user-file cache path exists.
+RAISES: Install failure rejects installation; message/fetch operational failures become bounded reports or readable HTTP errors.
+DEPS: S16, S18.
+TEST: `src/shared/offline-worker.test.ts`, eight lifecycle/protocol/routing tests; tiny real Chrome worker fixture covers offline reload and natural activation after all A tabs close. Messages require a verified same-origin window, version/nonce/build and ≤4 KiB; waits are bounded to five seconds.
+
+## S20 offline-client — SHELL — GREEN
+
+Purpose: Register the matching build and expose reliable readiness/update state.
+IN: `createOfflineClient({environment,buildId,onState})`; environment supplies secure context, location and service-worker navigator.
+OUT: `{ready:Promise<void>,check():Promise<void>,retry():Promise<void>,dispose():void}` and `OfflineState`: phase unavailable/checking/installing/ready/reopen-required/error, page/ready build IDs, byte progress, update none/checking/installing/ready/error, optional actionable error. Only a matching controller is Ready. Failed B retains ready A plus a separate update error.
+RAISES: Browser/registration/protocol failures become visible state; `ready` settles after initial success or failure. Disposal closes pending ports/listeners and suppresses late callbacks.
+DEPS: S19 protocol, without a production runtime import.
+TEST: `src/shared/offline-client.test.ts`, six state/protocol/disposal/retry tests; real Chrome failed-B/offline-A/retry/waiting-B fixture. No session, navigation or local project mutation occurs here.
+
+## S21 offline-status — SHELL — GREEN
+
+Purpose: Present readiness without interrupting editing.
+IN: `mountOfflineStatus({root:HTMLElement,onRetry:()=>void|Promise<void>,onCheck:()=>void|Promise<void>})`; `update` receives S20 state.
+OUT: `{update(state):void,dispose():void}`; stable native details/summary, progress, text-only errors and Retry/Check buttons. Summary says Preparing offline, Ready offline, Reopen to enable offline, or Offline unavailable. Update instructions require saving and closing all app tabs. Escape closes details and focuses its summary; progress announcements are throttled to one second, state/error changes immediate.
+RAISES: `TypeError` for invalid DOM/callback ports; unexpected action rejection is visible and politely announced.
+DEPS: S20 state type only.
+TEST: `src/shared/offline-status.test.ts`, five DOM/focus/error/announcement cases; Chrome 1280×720 panel bounds and Escape/focus demo. Full production native Enter/Space and focus-preservation acceptance is tracked separately in the ledger.
 
 ## A-SHELL — assembly, not a brick — GREEN
 

@@ -1,0 +1,4 @@
+FAIL: src/app/app-shell.ts
+  - KIND must be CORE or SHELL, found 'SHELL assembly A-SHELL; lifecycle/routing only, no domain algorithms.'
+  - DECISIONS names no alternative considered
+  - 574 implementation lines exceeds the hard cap of 300; re-split this brick

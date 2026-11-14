@@ -1,0 +1,42 @@
+✔ A-SHELL bridge flushes hidden target, requires durable backup, preserves source and uses fresh target identity (424.038489ms)
+✔ A-D-Bridge applies an acknowledged bin edit and keeps source revision intact (25.779556ms)
+✔ A-D-Bridge rejects target pending edits and denied replacement without applying (1.893531ms)
+✔ A-D-Bridge rechecks source, target, epoch, view and workspace after asynchronous capture (2.035955ms)
+✔ A-D-Bridge rechecks after replacement backup and cancellation prevents late apply (9.842122ms)
+✔ A-D-Bridge leaves both documents intact when browser PNG compression is unavailable (1.787913ms)
+✔ S16 recent projects retain every stored project beyond 12 until explicit removal (33.059121ms)
+✔ S14 golden real S03/S15/S08 roundtrip returns exact package and journal metadata (22.291263ms)
+✔ S14 missing recovery and serialized discard return null without touching other workspaces (10.567475ms)
+✔ S14 older and equal saves return the actual newer committed package (8.545671ms)
+✔ S14 overlapping saves retain the highest committed generation across real S08 (4.193806ms)
+✔ S14 journal quota failure retains old valid recovery with storage code and context (2.866132ms)
+✔ S14 simulated interrupted write recovers the previous package despite an advanced journal (2.139397ms)
+✔ S14 corrupt or oversized container bytes remain stored and never replace caller state (3.505812ms)
+✔ S14 common metadata errors remain distinguishable on save and recovery (1.622999ms)
+✔ S14 workspace mismatches are rejected before writes and before returning recovered content (1.704649ms)
+✔ S14 invalid packages cannot overwrite old recovery or reach the port (16.960541ms)
+✔ S14 request bounds and accessors fail without I/O; safe integer extremes are accepted (5.867653ms)
+✔ S14 malformed port results cannot masquerade as saved or discarded recovery (0.628773ms)
+✔ S14 unavailable storage, port rejection and unusual codec errors become contextual results (0.454101ms)
+✔ S14 an observing port retains the authoritative generation even when content is corrupt (2.161784ms)
+✔ S14 hostile error-message coercion cannot reject the adapter promise (0.606843ms)
+✔ S14 malformed storage payload segments are corrupt responses without invoking accessors (0.310987ms)
+✔ S08 golden write/read roundtrip stores only journal metadata in localStorage (18.775075ms)
+✔ S08 missing, empty payload, independent workspaces, and remove are explicit (8.183724ms)
+✔ S08 older/equal generations cannot replace the latest complete record (5.131514ms)
+✔ S08 overlapping writes serialize and keep the highest complete generation (4.25856ms)
+✔ S08 journal quota failure leaves previous recovery intact (2.494956ms)
+✔ S08 interrupted IndexedDB write retains old generation despite advanced journal hint (3.398409ms)
+✔ S08 stale/corrupt journal never hides an intact committed record (1.745642ms)
+✔ S08 corrupt database schema is a diagnostic, not an empty document (2.172746ms)
+✔ S08 missing/denied storage reports unavailable without throwing (3.993784ms)
+✔ S08 malformed record metadata/payload is rejected before persistence (5.031908ms)
+✔ S08 rejects sparse input and stored payloads without replacing intact recovery (5.613556ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1799.271155

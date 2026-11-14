@@ -35,6 +35,8 @@ test('STEP-APP production downloads the actual solid and rebuilt dimensions with
  }finally{await page.close();await server.close();for(const shape of shapes.values())shape.delete();}
 });
 
+test.describe('STEP export with a network-held worker',()=>{
+test.use({serviceWorkers:'block'}); // Cached responses bypass page.route and would remove the pending-work precondition.
 test('STEP-APP cancels real workers on Esc/source changes and reports invalid solids without a download',async({page,context})=>{
  test.setTimeout(60000);const server=await preview({preview:{host:'127.0.0.1',port:4175,strictPort:true}}),downloads:string[]=[];
  let hold=true;const releases:(()=>void)[]=[];
@@ -51,7 +53,7 @@ test('STEP-APP cancels real workers on Esc/source changes and reports invalid so
  await page.route('**/cad-step-export.worker*.js',async route=>{if(hold)await new Promise<void>(resolve=>releases.push(resolve));try{await route.continue();}catch{/* A terminated worker cancels its pending module request. */}});
  page.on('download',d=>downloads.push(d.suggestedFilename()));
  const count=()=>page.evaluate(()=>(window as unknown as {__stepWorkers:Spy}).__stepWorkers);
- const start=async(n:number)=>{await page.locator('button[data-command="cad.exportSTEP"]:visible').first().click();await expect.poll(async()=>(await count()).started).toBe(n);};
+ const start=async(n:number)=>{await page.locator('button[data-command="cad.exportSTEP"]:visible').first().click();await expect.poll(async()=>(await count()).started).toBe(n);if(hold)await expect.poll(()=>releases.length,{message:'Export worker request is held before cancellation'}).toBe(1);};
  try{
   await page.goto(server.resolvedUrls!.local[0]!);await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled();await page.keyboard.press('Control+n');
   await page.locator('button[data-command="cad.rectangle"]:visible').first().click();await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();await page.keyboard.press('e');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();
@@ -64,4 +66,5 @@ test('STEP-APP cancels real workers on Esc/source changes and reports invalid so
   await start(3);await expect(page.locator('.cad-tool-hint')).toHaveAttribute('data-export-state','error',{timeout:30000});await expect(page.locator('.cad-tool-hint')).toContainText('closed profile');await expect.poll(async()=>(await count()).terminated).toBe(3);expect(downloads).toEqual([]);
   await page.keyboard.press('Control+z');await expect(page.locator('.cad-properties')).toContainText('72000.000 mm³',{timeout:30000});
  }finally{hold=false;releases.splice(0).forEach(resolve=>resolve());await page.close();await server.close();}
+});
 });

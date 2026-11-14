@@ -32,16 +32,22 @@ export function createCADWorkspace(files:FilePorts):WorkspaceAdapter{
     mount(host){
       const pane=host.root.ownerDocument.createElement('div'),notice=host.root.ownerDocument.createElement('p');pane.className='cad-workspace-view';notice.className='cad-import-status';notice.setAttribute('role','status');notice.hidden=true;host.root.append(pane,notice);
       const assets={kernelModule:new URL(kernelModule,location.href).href,kernelWasm:new URL(kernelWasm,location.href).href,solverModule:new URL(solverModule,location.href).href,solverWasm:new URL(solverWasm,location.href).href};
-      const childHost={...host,root:pane};let current:Snapshot,imported=false,view=parametric.mount(childHost),disposed=false;
+      const childHost={...host,root:pane};let current:Snapshot,imported=false,view=parametric.mount(childHost),disposed=false,importPending=false;
       const importer=cadSTEPImport({files,assets,id:()=>crypto.randomUUID(),createWorker:()=>new Worker(new URL('./cad-workspace.worker.ts',import.meta.url),{type:'module'}),
-        onStatus(state,message){if(disposed)return;notice.hidden=false;notice.dataset.state=state;notice.textContent=message;host.invalidate();},
+        onStatus(state,message){if(disposed)return;importPending=state==='busy';notice.hidden=false;notice.dataset.state=state;notice.textContent=message;host.invalidate();},
         onImport(source,_preview,baseIdentity){
           if(disposed||baseIdentity!==(current?.identity??null)||!isSTEPSource(source))return;
+          importPending=true;
           const title=source.assets[0].name.replace(/\.(step|stp)$/i,'')||'Imported part';
-          void host.open({id:crypto.randomUUID(),title,format:'gsnv-cad',version:1,value:source}).then(opened=>{if(disposed)return;if(opened)notice.hidden=true;else{notice.hidden=false;notice.textContent='STEP import canceled; the current project was kept.';}host.invalidate();}).catch(cause=>{if(disposed)return;notice.hidden=false;notice.dataset.state='error';notice.textContent=cause instanceof Error?cause.message:String(cause);});
+          void host.open({id:crypto.randomUUID(),title,format:'gsnv-cad',version:1,value:source}).then(opened=>{if(disposed)return;if(opened)notice.hidden=true;else{notice.hidden=false;notice.textContent='STEP import canceled; the current project was kept.';}host.invalidate();}).catch(cause=>{if(disposed)return;notice.hidden=false;notice.dataset.state='error';notice.textContent=cause instanceof Error?cause.message:String(cause);}).finally(()=>{importPending=false;host.invalidate();});
         },
       });
       return{
+        bridge:{
+          prepare(role){if(disposed||importPending)throw Object.assign(new Error('Finish or cancel the STEP import before sending this view.'),{name:'BridgePendingEdit'});view.bridge?.prepare(role);},
+          revision(){return importPending?'import-pending':view.bridge?.revision()??'unavailable';},
+          async capture(intent,source,signal){if(disposed||importPending||!view.bridge)throw Object.assign(new Error('The CAD view is not ready for capture.'),{name:'BridgePendingEdit'});return view.bridge.capture(intent,source,signal);},
+        },
         render(snapshot,nextView){
           const changed=snapshot?.identity!==current?.identity;if(changed){importer.cancel();notice.hidden=true;}current=snapshot;
           const next=!!snapshot&&isSTEPSource(cadProjectSource({operation:'read',value:snapshot.value}));

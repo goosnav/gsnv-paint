@@ -219,3 +219,15 @@ test('S12 captured right-click over a native control or outside the view remains
     assert.equal(event.defaultPrevented, false); assert.deepEqual(f.gestures, []);
   }
 });
+
+test('S12 native summary activation, scrolling and focus preserve details controls', () => {
+  const f = fixture(); bindInput(f.args);
+  const details = f.dom.window.document.createElement('details'), summary = f.dom.window.document.createElement('summary');
+  summary.textContent = 'Ready offline'; details.append(summary); f.root.append(details);
+  for (const key of ['Enter', ' ']) assert.equal(f.key(key, {}, summary).defaultPrevented, false);
+  assert.equal(f.pointer('pointerdown', {}, summary).defaultPrevented, false);
+  assert.equal(f.wheel(-100, 0, summary).defaultPrevented, false);
+  assert.deepEqual(f.gestures, []); assert.deepEqual(f.commands, []);
+  f.pointer('pointerdown'); summary.focus();
+  assert.deepEqual(f.gestures, [point('down'), point('cancel')]);
+});

@@ -1,0 +1,2 @@
+import { materializeSketchProfile } from './sketch-profile-source.ts';
+console.log(materializeSketchProfile({profile:{id:'demo',kind:'center-rectangle',entityIds:['a','b','c','d'],center:[{source:'10',kind:'length'},{source:'10',kind:'length'}],width:{source:'30',kind:'length'},height:{source:'20',kind:'length'},construction:false},context:{units:'mm',variables:{}},tolerance:{linearMm:1e-7,angularRad:1e-9,relative:1e-9}}));

@@ -6,6 +6,7 @@
  *            history entry; playback and scrubbing never do.
  *            RAISES: invalid project content from decode; playback/export failures show in the hint.
  * GUARANTEES Original media bytes are stored unchanged in the project; object URLs are revoked on dispose.
+ *            Inspector refresh preserves semantic control focus or returns it to the timeline; outside focus stays owned by its caller.
  * TUNING     PIXELS_PER_SECOND, STEP and export MIME preference below.
  * DECISIONS  D1: Export renders the canvas in real time through MediaRecorder (WebM, or MP4 where the browser can
  *            record it). Alternative: frame-exact WebCodecs muxing; deferred because it needs a muxer dependency.
@@ -15,6 +16,11 @@
 import type { WorkspaceAdapter } from '../app/app-shell.ts';
 import { fileAccess, type FilePorts } from '../shared/file-access.ts';
 import { videoTimeline, duration, starts, clipLength, type VideoContent, type VideoOp, type Media, type Title } from './video-timeline.ts';
+import { renderVideoFrame } from './video-frame-renderer.ts';
+import { videoMediaBin } from './video-media-bin.ts';
+import { videoFieldEdit } from './video-field-edit.ts';
+import { videoSource } from '../bridge/video-source-adapter.ts';
+import type { EditorBridge } from '../bridge/workspace-bridge.ts';
 import './video-workspace.css';
 
 type Snapshot = Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
@@ -48,6 +54,8 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
       let current: Snapshot, content: VideoContent | null = null, selected: string | null = null, t = 0, playing = false, startClock = 0, startT = 0, raf = 0, active: HTMLVideoElement | null = null, message = '', disposed = false;
       let audio: AudioContext | null = null, recordDest: MediaStreamAudioDestinationNode | null = null, exporting: { recorder: MediaRecorder; chunks: Blob[] } | null = null;
       const elements = new Map<string, Element>();
+      let pendingImports = 0, rangeScrubbing = false, pendingField: { clipId: string; field: string; value: string } | null = null;
+      const binRoot = make('div'), bin = videoMediaBin({ root: binRoot, action(kind, mediaId) { try { flush(); commit(kind === 'place' ? { kind: 'place-media', mediaId, clipId: crypto.randomUUID() } : { kind: 'remove-media', mediaId }, kind === 'place' ? 'Add bin item to timeline' : 'Remove bin item'); } catch (cause) { hint.textContent = String(cause); } } });
 
       function syncMedia() {
         if (!content) return;
@@ -70,35 +78,20 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       function draw() {
         if (!ctx || !content) return;
-        canvas.width = content.width; canvas.height = content.height; ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        const at = videoTimeline({ operation: 'locate', value: content, time: t });
-        if (at) {
-          const e = elements.get(at.media.id), el = e?.el, w = el instanceof HTMLVideoElement ? el.videoWidth : (el as HTMLImageElement | undefined)?.naturalWidth ?? 0, h = el instanceof HTMLVideoElement ? el.videoHeight : (el as HTMLImageElement | undefined)?.naturalHeight ?? 0;
-          if (el && w && h) { const s = Math.min(canvas.width / w, canvas.height / h), dw = w * s, dh = h * s; ctx.drawImage(el, (canvas.width - dw) / 2, (canvas.height - dh) / 2, dw, dh); }
-          if (at.fade < 1) { ctx.fillStyle = `rgba(0,0,0,${1 - at.fade})`; ctx.fillRect(0, 0, canvas.width, canvas.height); }
-          if (e?.gain) e.gain.gain.value = at.clip.volume * at.fade;
-        }
-        for (const title of content.titles) if (t >= title.start && t < title.start + title.duration) drawTitle(title);
-      }
-      function drawTitle(title: Title) {
-        if (!ctx) return; const lines = title.text.split('\n'), size = title.size * canvas.height / 720, lineHeight = size * 1.2;
-        ctx.font = `bold ${size}px Tahoma, Verdana, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        const block = lineHeight * lines.length, y0 = title.position === 'top' ? canvas.height * 0.12 : title.position === 'middle' ? (canvas.height - block) / 2 + lineHeight / 2 : canvas.height * 0.88 - block + lineHeight / 2;
-        const fade = Math.min(1, (t - title.start) / 0.3, (title.start + title.duration - t) / 0.3);
-        ctx.globalAlpha = Math.max(0, fade);
-        if (title.background) { const width = Math.max(...lines.map(l => ctx.measureText(l).width)) + size; ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect((canvas.width - width) / 2, y0 - lineHeight / 2 - size * 0.2, width, block + size * 0.4); }
-        ctx.fillStyle = title.color; lines.forEach((line, i) => ctx.fillText(line, canvas.width / 2, y0 + i * lineHeight)); ctx.globalAlpha = 1;
+        renderVideoFrame(ctx, content, t, id => elements.get(id)?.el);
+        const at = videoTimeline({ operation: 'locate', value: content, time: t }), element = at && elements.get(at.media.id);
+        if (element?.gain) element.gain.gain.value = at!.clip.volume * at!.fade;
       }
       function seekTo(time: number) {
         if (!content) return; t = Math.max(0, Math.min(duration(content), time));
         if (playing) { startT = t; startClock = performance.now(); active?.pause(); active = null; }
-        else { const at = videoTimeline({ operation: 'locate', value: content, time: t }), el = at && elements.get(at.media.id)?.el; if (el instanceof HTMLVideoElement && Math.abs(el.currentTime - at!.source) > 0.01) el.currentTime = at!.source; else draw(); }
+        else { const at = videoTimeline({ operation: 'locate', value: content, time: t }), el = at && elements.get(at.media.id)?.el; if (el instanceof HTMLVideoElement && el.currentTime !== at!.source) el.currentTime = at!.source; else draw(); }
         refreshTime();
       }
       function tick() {
         if (!playing || !content) return;
         t = startT + (performance.now() - startClock) / 1000;
-        if (t >= duration(content)) { t = duration(content); stop(); draw(); if (exporting) finishExport(); refreshTime(); return; }
+        if (t >= duration(content)) { t = duration(content); stop(); seekTo(t); if (exporting) finishExport(); refreshTime(); return; }
         const at = videoTimeline({ operation: 'locate', value: content, time: t }), e = at && elements.get(at.media.id), el = e?.el;
         if (el instanceof HTMLVideoElement) {
           route(e!);
@@ -130,6 +123,8 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
         } finally { URL.revokeObjectURL(url); }
       }
       async function addMedia(file?: File) {
+        const base = current?.identity; pendingImports++; host.invalidate();
+        try {
         let name: string, bytes: Uint8Array, mime: string;
         if (file) { name = file.name; bytes = new Uint8Array(await file.arrayBuffer()); mime = file.type; }
         else {
@@ -141,9 +136,11 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
         try {
           message = `Reading ${name}…`; refresh(); const media = await probe({ name, bytes, mime });
           if (disposed) return;
-          if (!current) await host.open({ id: crypto.randomUUID(), title: name.replace(/\.[^.]+$/, ''), format: 'gsnv-video', version: 1, value: videoTimeline({ operation: 'new' }) });
+          if (base !== current?.identity) throw new Error('The Video project changed while reading media. Add it again to the current project.');
+          if (!current && !await host.open({ id: crypto.randomUUID(), title: name.replace(/\.[^.]+$/, ''), format: 'gsnv-video', version: 1, value: videoTimeline({ operation: 'new' }) })) return;
           commit({ kind: 'add-media', media, bytes, clipId: crypto.randomUUID() }, `Add ${media.kind}`);
         } catch (cause) { message = `${name}: ${cause instanceof Error ? cause.message : String(cause)}`; refresh(); }
+        } catch (cause) { message = cause instanceof Error ? cause.message : String(cause); refresh(); } finally { pendingImports--; host.invalidate(); }
       }
       function titleDialog(existing?: Title) {
         if (!content) return;
@@ -187,19 +184,21 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       const clockLen = (s: number) => `${s.toFixed(1)} s`;
       function renderPanel() {
+        const identity = (node: HTMLElement) => JSON.stringify([node.tagName, (node as HTMLInputElement).type, node.dataset.field, node.dataset.clipId, node.dataset.videoCommand, node.dataset.editTitle, node.dataset.deleteTitle]);
+        const focused = document.activeElement as HTMLElement | null, restore = focused && panel.contains(focused) ? identity(focused) : null;
         panel.replaceChildren(); panel.className = 'video-panel';
         const section = (title: string) => { panel.append(make('h3', '', title)); };
         const clip = content?.clips.find(c => c.id === selected), media = clip && content!.media.find(m => m.id === clip.mediaId);
         section(clip ? `Clip: ${media!.name}` : 'Clip');
         if (!clip) panel.append(make('p', 'video-none', content?.clips.length ? 'Click a clip on the timeline to edit it.' : 'Add a video or image to start.'));
         else {
-          const row = (label: string, key: 'in' | 'out' | 'fadeIn' | 'fadeOut', max: number) => { const r = make('label', 'video-row'), box = make('input', 'xp-field'); box.type = 'number'; box.step = '0.1'; box.min = '0'; box.max = String(max); box.value = String(Math.round(clip[key] * 100) / 100); box.dataset.field = key; r.append(make('span', '', label), box); panel.append(r); };
+          const row = (label: string, key: 'in' | 'out' | 'fadeIn' | 'fadeOut', max: number) => { const r = make('label', 'video-row'), box = make('input', 'xp-field'); box.type = 'number'; box.step = '0.1'; box.min = '0'; box.max = String(max); box.value = String(Math.round(clip[key] * 100) / 100); box.dataset.field = key; box.dataset.clipId = clip.id; r.append(make('span', '', label), box); panel.append(r); };
           row('In (s)', 'in', media!.kind === 'video' ? media!.duration : 3600); row('Out (s)', 'out', media!.kind === 'video' ? media!.duration : 3600); row('Fade in (s)', 'fadeIn', clipLength(clip)); row('Fade out (s)', 'fadeOut', clipLength(clip));
           const vol = make('div', 'video-row'), range = make('input', 'xp-range'), box = make('input', 'xp-field');
-          range.type = 'range'; box.type = 'number'; for (const n of [range, box]) { n.min = '0'; n.max = '200'; n.step = '1'; n.value = String(Math.round(clip.volume * 100)); n.dataset.field = 'volume'; } box.setAttribute('aria-label', 'Volume (%)');
+          range.type = 'range'; box.type = 'number'; for (const n of [range, box]) { n.min = '0'; n.max = '200'; n.step = '1'; n.value = String(Math.round(clip.volume * 100)); n.dataset.field = 'volume'; n.dataset.clipId = clip.id; } box.setAttribute('aria-label', 'Volume (%)');
           vol.append(make('span', '', 'Volume (%)'), range, box); panel.append(vol);
           const buttons = make('div', 'video-buttons');
-          for (const [id, label] of [['video.moveEarlier', '◀ Earlier'], ['video.moveLater', 'Later ▶'], ['video.split', 'Split at playhead'], ['edit.delete', 'Delete clip']]) { const b = make('button', 'xp-button', label); b.type = 'button'; b.dataset.videoCommand = id!; buttons.append(b); }
+          for (const [id, label] of [['video.moveEarlier', '◀ Earlier'], ['video.moveLater', 'Later ▶'], ['video.split', 'Split at playhead'], ['edit.delete', 'Delete clip']]) { const b = make('button', 'xp-button', label); b.type = 'button'; b.dataset.videoCommand = id!; b.dataset.clipId = clip.id; buttons.append(b); }
           panel.append(buttons);
         }
         section('Titles');
@@ -207,6 +206,11 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
         const add = make('button', 'xp-button', 'Add title…'); add.type = 'button'; add.dataset.videoCommand = 'video.addTitle'; add.disabled = !content?.clips.length; panel.append(add);
         section('Export');
         const exp = make('button', 'xp-button', exporting ? 'Exporting…' : 'Export video…'); exp.type = 'button'; exp.dataset.videoCommand = 'video.export'; exp.disabled = !content?.clips.length || !!exporting; panel.append(exp, make('p', 'video-none', `${content?.width ?? 0} × ${content?.height ?? 0} px, 30 fps. Export plays the video once in real time.`));
+        if (pendingField?.clipId === selected) for (const input of panel.querySelectorAll<HTMLInputElement>('[data-field]')) if (input.dataset.field === pendingField.field) input.value = pendingField.value;
+        if (restore !== null && !disposed) {
+          const replacement = [...panel.querySelectorAll<HTMLElement>('button,input')].find(node => identity(node) === restore && !node.matches(':disabled'));
+          (replacement ?? timeline).focus({ preventScroll: true });
+        }
       }
       function fit() {
         if (!content) return; const box = monitor.getBoundingClientRect(), s = Math.min((box.width - 24) / content.width, (box.height - 24) / content.height);
@@ -218,6 +222,12 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
         empty.hidden = !!content?.clips.length; play.textContent = playing ? 'Pause' : 'Play'; play.disabled = !content?.clips.length || !!exporting; home.disabled = play.disabled;
         hint.textContent = message || (content?.clips.length ? 'Space plays · S splits at the playhead · I/O set the clip in/out · ←/→ step a frame.' : 'Add a video or image to start.'); hint.hidden = !current && !message;
         renderTimeline(); renderPanel(); refreshTime(); if (!playing) draw();
+        bin.update(content, id => elements.get(id)?.url);
+      }
+      function flush() {
+        if (!pendingField || !content || !current) return;
+        const edit = videoFieldEdit(content, pendingField.clipId, pendingField.field, pendingField.value); pendingField = null;
+        host.commit({ ...current, value: edit.value }, edit.label, current.identity);
       }
       // Panel and timeline interactions.
       const onPanel = (event: Event) => {
@@ -227,12 +237,12 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
         if (editTitle && event.type === 'click') { titleDialog(content!.titles.find(x => x.id === editTitle)); return; }
         if (deleteTitle && event.type === 'click') { commit({ kind: 'delete-title', id: deleteTitle }, 'Delete title'); return; }
         const field = target.dataset?.field; if (!field || !clip || event.type !== 'change') return;
-        const n = Number(target.value); if (!Number.isFinite(n)) return;
-        if (field === 'in' || field === 'out') commit({ kind: 'trim', id: clip.id, in: field === 'in' ? n : clip.in, out: field === 'out' ? n : clip.out }, 'Trim clip');
-        else if (field === 'volume') commit({ kind: 'clip', id: clip.id, volume: n / 100 }, 'Volume');
-        else commit({ kind: 'clip', id: clip.id, [field]: n }, field === 'fadeIn' ? 'Fade in' : 'Fade out');
+        pendingField = { clipId: clip.id, field, value: target.value ?? '' };
+        try { flush(); } catch (cause) { message = cause instanceof Error ? cause.message : String(cause); hint.textContent = message; hint.hidden = false; }
       };
+      const onFieldInput = (event: Event) => { const input = event.target as HTMLInputElement; if (input.dataset.field && selected) pendingField = { clipId: selected, field: input.dataset.field, value: input.value }; };
       panel.addEventListener('click', onPanel); panel.addEventListener('change', onPanel);
+      panel.addEventListener('input', onFieldInput);
       // Pointer handling stays local (preventDefault) so the shell's canvas gestures never capture the timeline.
       const timeAt = (event: MouseEvent) => (event.clientX - timeline.getBoundingClientRect().left + timeline.scrollLeft) / PIXELS_PER_SECOND;
       let scrubbing = -1;
@@ -242,10 +252,11 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
         scrubbing = event.pointerId; timeline.setPointerCapture(event.pointerId); seekTo(timeAt(event)); refresh(); host.invalidate();
       };
       const onScrub = (event: PointerEvent) => { if (event.pointerId === scrubbing) seekTo(timeAt(event)); };
-      const onScrubEnd = (event: PointerEvent) => { if (event.pointerId === scrubbing) scrubbing = -1; };
+      const onScrubEnd = (event: PointerEvent) => { if (event.pointerId === scrubbing) { scrubbing = -1; host.invalidate(); } };
       const onTitleOpen = (event: MouseEvent) => { const title = (event.target as HTMLElement).closest<HTMLElement>('[data-title-id]'); if (title && content) titleDialog(content.titles.find(x => x.id === title.dataset.titleId)); };
       timeline.addEventListener('pointerdown', onTimeline); timeline.addEventListener('pointermove', onScrub); timeline.addEventListener('pointerup', onScrubEnd); timeline.addEventListener('pointercancel', onScrubEnd); timeline.addEventListener('dblclick', onTitleOpen);
       scrub.addEventListener('input', () => seekTo(Number(scrub.value)));
+      scrub.addEventListener('pointerdown', () => { rangeScrubbing = true; }); for (const type of ['pointerup','pointercancel','blur']) scrub.addEventListener(type, () => { rangeScrubbing = false; host.invalidate(); });
       play.addEventListener('click', () => run('video.togglePlayback')); home.addEventListener('click', () => run('video.home')); addButton.addEventListener('click', () => { void addMedia(); });
       const drop = (event: DragEvent) => { event.preventDefault(); const f = event.dataTransfer?.files[0]; if (f) void addMedia(f); };
       const over = (event: DragEvent) => event.preventDefault();
@@ -255,6 +266,8 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
         if (id === 'video.add') { void addMedia(); return; }
         if (!content) return;
         message = '';
+        if (id === 'bridge.videoFrameToImage') { void host.transfer?.({ route: 'video-frame-to-image' }); return; }
+        if (id === 'tool.cancel' && pendingField) { pendingField = null; refresh(); return; }
         if (id === 'video.togglePlayback') { playing ? stop() : start(); return; }
         if (id === 'video.pause' || id === 'tool.cancel') { if (playing) stop(); return; }
         if (id === 'video.home') { seekTo(0); return; }
@@ -275,7 +288,17 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
           host.dialog({ title: 'Frame size', fields: [{ key: 'width', label: 'Width (px)', type: 'number', min: 16, max: 3840, step: 2 }, { key: 'height', label: 'Height (px)', type: 'number', min: 16, max: 2160, step: 2 }], initial: { width: content.width, height: content.height }, validate: v => ({ ok: true, value: v }), preview() {}, cancel() {}, commit: v => { const x = v as Record<string, unknown>; commit({ kind: 'size', width: Number(x.width), height: Number(x.height) }, 'Frame size'); } });
         }
       }
+      const pendingTransfer = () => disposed ? 'closed workspace' : pendingImports ? 'media import' : exporting ? 'video export' : scrubbing !== -1 || rangeScrubbing ? 'playhead gesture' : pendingField ? 'clip field edit' : '';
+      const bridge: EditorBridge = {
+        prepare(role) { const pending = pendingTransfer(); if (pending) throw Object.assign(new Error(`Finish or cancel the ${pending} before sending or receiving Video media.`), { name: 'BridgePendingEdit' }); if (role === 'source' && !content?.clips.length) throw Object.assign(new Error('Add a decodable timeline clip before sending a frame.'), { name: 'BridgeUnavailable' }); if (playing) stop(); },
+        revision: () => `${current?.identity ?? 'empty'}:${t}:${playing}:${pendingTransfer()}`,
+        async capture(intent, source, signal) {
+          if (intent.route !== 'video-frame-to-image' || source.workspace !== 'video' || !current || !content) throw new Error('Video can send only the current timeline frame to Image.');
+          return videoSource({ document, value: content, time: t, source, label: `${current.title} frame`, signal, isCurrent: () => !disposed && current?.identity === source.identity && bridge.revision() === source.viewRevision });
+        },
+      };
       return {
+        bridge, flush,
         render(snapshot) {
           const changed = snapshot?.identity !== current?.identity; current = snapshot;
           if (changed) { content = snapshot ? snapshot.value as VideoContent : null; if (selected && !content?.clips.some(c => c.id === selected)) selected = content?.clips.at(-1)?.id ?? null; if (!selected && content?.clips.length) selected = content.clips[content.clips.length - 1]!.id; syncMedia(); if (content && t > duration(content)) t = duration(content); }
@@ -286,13 +309,13 @@ export function createVideoWorkspace(files: FilePorts): WorkspaceAdapter {
           return { menus: [{ id: 'video', label: 'Video', items: [item('video.add', 'Add video or image…', '', !exporting, 'open', true), item('video.togglePlayback', playing ? 'Pause' : 'Play', 'Space', enabled, 'play', true), item('video.split', 'Split at playhead', 'S', enabled, 'split', true),
             item('edit.delete', 'Delete clip', 'Delete', enabled && !!selected, 'delete'), item('video.markIn', 'Set clip in point', 'I', enabled && !!selected), item('video.markOut', 'Set clip out point', 'O', enabled && !!selected), item('video.moveEarlier', 'Move clip earlier', '', enabled && !!selected), item('video.moveLater', 'Move clip later', '', enabled && !!selected),
             item('video.home', 'Go to start', 'Home'), item('video.end', 'Go to end', 'End'), item('video.stepBack', 'Step back', '←'), item('video.stepForward', 'Step forward', '→'), item('video.shuttleReverse', 'Back 1 second', 'J'), item('video.pause', 'Pause', 'K'), item('video.shuttleForward', 'Forward 1 second', 'L'),
-            item('video.addTitle', 'Add title…', '', enabled, 'text', true), item('video.size', 'Frame size…', '', !!content), item('video.export', 'Export video…', '', enabled && !exporting, 'export', true)] }],
-            tools: [], panels: [{ id: 'video-inspector', title: 'Clip, titles and export', content: panel }] };
+            item('video.addTitle', 'Add title…', '', enabled, 'text', true), item('video.size', 'Frame size…', '', !!content), item('bridge.videoFrameToImage', 'Send current frame to Image', '', enabled && !!host.transfer && !pendingTransfer(), 'image'), item('video.export', 'Export video…', '', enabled && !exporting, 'export', true)] }],
+            tools: [], panels: [{ id: 'video-bin', title: 'Media bin', content: binRoot }, { id: 'video-inspector', title: 'Clip, titles and export', content: panel }] };
         },
         context: () => ({ viewRole: 'timeline', activeTool: 'timeline', status: hint.textContent ?? '' }),
         command(id) { run(id); host.invalidate(); },
         gesture() {},
-        dispose() { if (disposed) return; disposed = true; resize.disconnect(); stop(); exporting?.recorder.state === 'recording' && exporting.recorder.stop(); for (const e of elements.values()) { e.el instanceof HTMLVideoElement && e.el.pause(); URL.revokeObjectURL(e.url); } void audio?.close(); panel.removeEventListener('click', onPanel); panel.removeEventListener('change', onPanel); host.root.replaceChildren(); },
+        dispose() { if (disposed) return; disposed = true; resize.disconnect(); stop(); exporting?.recorder.state === 'recording' && exporting.recorder.stop(); for (const e of elements.values()) { e.el instanceof HTMLVideoElement && e.el.pause(); URL.revokeObjectURL(e.url); } void audio?.close(); panel.removeEventListener('click', onPanel); panel.removeEventListener('change', onPanel); panel.removeEventListener('input', onFieldInput); bin.dispose(); host.root.replaceChildren(); },
       };
     },
   };

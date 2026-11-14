@@ -39,8 +39,14 @@ if (mtime('node_modules/.package-lock.json') < mtime('package-lock.json')) {
 }
 
 const built = mtime('dist/index.html');
-const sources = ['index.html', 'vite.config.ts', 'package-lock.json', 'src', ...readdirSync(join(root, 'src'), { recursive: true }).map(name => join('src', name))];
-if (sources.some(path => mtime(path) > built)) {
+const sources = ['index.html', 'vite.config.ts', 'package-lock.json', 'dev/offline-build.ts'];
+for (const directory of ['src', 'public']) {
+  if (existsSync(join(root, directory))) sources.push(directory, ...readdirSync(join(root, directory), { recursive: true }).map(name => join(directory, name)));
+}
+const complete = ['dist/index.html', 'dist/offline-sw.js', 'dist/offline-manifest.json'].every(path => {
+  try { return statSync(join(root, path)).isFile(); } catch { return false; }
+});
+if (!complete || sources.some(path => mtime(path) > built)) {
   console.log('Building gsnv-paint…');
   const { build } = await import('vite');
   try { await build({ root, logLevel: 'warn' }); }

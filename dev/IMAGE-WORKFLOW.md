@@ -1,6 +1,6 @@
 # Image workspace (Paint + Photoshop/GIMP essentials) — provisional GREEN
 
-[D20](DECISIONS.md#d20--deliver-a-working-paint-style-image-workspace-before-the-full-layer-roster) introduced a paint-style editor. The 2026-11-12 plan (item 2) extends it with the Photoshop/GIMP functionality people use most. The full I01–I37 roster stays planned; this working increment is I50–I57 plus IMAGE-APP. Nothing is human-ACCEPTED.
+[D20](DECISIONS.md#d20--deliver-a-working-paint-style-image-workspace-before-the-full-layer-roster) introduced a paint-style editor. The 2026-11-12 plan (item 2) extends it with the Photoshop/GIMP functionality people use most. The full I01–I37 roster stays planned; this working increment is I50–I58 plus IMAGE-APP. Nothing is human-ACCEPTED.
 
 ## Tools (shortcut)
 
@@ -19,7 +19,8 @@ Every numeric option is an XP trackbar paired with a typed number box (applied o
 - **Adjustments** (live preview, OK/Cancel): Brightness/Contrast, Hue/Saturation, Levels, Curves (outputs at 64/128/192 through a monotone curve), Colour balance, Desaturate, Invert, Sepia, Posterize, Threshold.
 - **Filters:** Gaussian blur, Unsharp mask, Add noise, Pixelate, Find edges, Emboss.
 - **Image:** Open image as a new document, Export PNG (flattened), Resize, Canvas size, Crop to selection, rotate, flip.
-- **Files:** `.gsnv-image` projects store each layer as its own asset; projects from the single-layer version still open.
+- **Files:** `.gsnv-image` projects store each layer and the current selection as separate assets; both earlier project layouts still open. Selection changes have their own undo steps and survive recovery.
+- **View:** View → View settings shows the effective pixel zoom after Fit or wheel zoom. Type 1–6400% and optional horizontal/vertical offsets in screen pixels; preview stays centered, and Cancel restores the prior view.
 
 ## Verification — 2026-11-12
 
@@ -35,3 +36,21 @@ Every numeric option is an XP trackbar paired with a typed number box (applied o
 ## Limits
 
 No layer masks, groups or editable text layers. Selections are hard-edged (no feather). Colour editing is opaque. Images are limited to 4096 × 4096 pixels. Pen pressure is not used. Other browsers and operating systems are untested.
+
+
+## Exact acceptance and selection persistence — 2026-11-13
+
+IMG-103 and IMG-104 PASS in the production Chrome workflow and the independent
+pixel golden. All 3,072 composite bytes, every native layer byte and parameter,
+and all 768 selection bytes are checked; the reopened background remains
+editable. The fixture has no text or layer masks, so this is no evidence for
+those separate missing features. [Commands and evidence](IMAGE-ACCEPTANCE.md).
+
+The native container envelope remains `gsnv-image`, version 1. Its JSON domain
+layout is now `rgba8-layers-v2`: width, height, activeLayerId, ordered layer
+records `{id,name,visible,opacity,blend,asset}`, and required `selection`.
+Selection is null or `{encoding:'gray8',asset:'selection'}`; that asset has one
+coverage byte per pixel in row-major order (0 excluded, 255 included). Layer
+assets contain exact straight-alpha RGBA bytes, including RGB under zero
+alpha. Old `rgba8` and `rgba8-layers` layouts migrate with no selection. Unknown
+future layouts and malformed/missing/duplicate asset records fail visibly.

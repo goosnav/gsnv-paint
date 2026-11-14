@@ -17,7 +17,7 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-001 | SYS-007 | 1 | 5 | Distribution | V-SYS-007 | T | UNTESTED |
 | N-001 | SYS-008 | 1 | 4 | Distribution | V-SYS-008 | T | UNTESTED |
 | N-001 | SYS-009 | 1 | 4 | Distribution | V-SYS-009 | T | UNTESTED |
-| N-001 | SYS-010 | 5 | 5 | Distribution | V-SYS-010 | T | UNTESTED |
+| N-001 | SYS-010 | 5 | 5 | Distribution | V-SYS-010 | T | PASS |
 | N-007 | SYS-011 | 5 | 5 | AppShell | V-SYS-011 | I | UNTESTED |
 | N-007 | SYS-012 | 5 | 5 | AppShell | V-SYS-012 | T | UNTESTED |
 | N-002 | SYS-013 | 1 | 4 | AppShell | V-SYS-013 | T | UNTESTED |
@@ -73,20 +73,20 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-003 | CAD-017 | 2 | 2 | CADModel | V-CAD-017 | T | PASS |
 | N-003 | CAD-018 | 2 | 2 | CADModel | V-CAD-018 | T | UNTESTED |
 | N-003 | CAD-019 | 2 | 2 | CADModel | V-CAD-019 | T | UNTESTED |
-| N-003 | CAD-020 | 2 | 2 | CADSketch | V-CAD-020 | T | UNTESTED |
+| N-003 | CAD-020 | 2 | 2 | CADSketch | V-CAD-020 | T | PASS |
 | N-003 | CAD-021 | 2 | 2 | CADSketch | V-CAD-021 | T | UNTESTED |
 | N-003 | CAD-022 | 2 | 2 | CADSketch | V-CAD-022 | T | UNTESTED |
 | N-003 | CAD-023 | 2 | 2 | CADSketch | V-CAD-023 | T | UNTESTED |
 | N-003 | CAD-024 | 2 | 2 | CADSketch | V-CAD-024 | T | UNTESTED |
-| N-003 | CAD-025 | 2 | 2 | CADSketch | V-CAD-025 | T | UNTESTED |
+| N-003 | CAD-025 | 2 | 2 | CADSketch | V-CAD-025 | T | PASS |
 | N-003 | CAD-026 | 2 | 2 | CADSketch | V-CAD-026 | T | UNTESTED |
 | N-003 | CAD-027 | 2 | 2 | CADSketch | V-CAD-027 | T | UNTESTED |
 | N-003 | CAD-028 | 2 | 2 | CADSketch | V-CAD-028 | T | UNTESTED |
 | N-003 | CAD-029 | 2 | 2 | CADSketch | V-CAD-029 | T | UNTESTED |
-| N-003 | CAD-030 | 2 | 2 | CADSketch | V-CAD-030 | T | UNTESTED |
+| N-003 | CAD-030 | 2 | 2 | CADSketch | V-CAD-030 | T | PASS |
 | N-003 | CAD-031 | 2 | 2 | CADSketch | V-CAD-031 | T | UNTESTED |
 | N-003 | CAD-032 | 2 | 2 | CADSketch | V-CAD-032 | T | UNTESTED |
-| N-003 | CAD-033 | 2 | 2 | CADSketch | V-CAD-033 | T | UNTESTED |
+| N-003 | CAD-033 | 2 | 2 | CADSketch | V-CAD-033 | T | PASS |
 | N-003 | CAD-034 | 2 | 2 | CADSketch | V-CAD-034 | T | UNTESTED |
 | N-003 | CAD-035 | 2 | 2 | CADSketch | V-CAD-035 | T | UNTESTED |
 | N-003 | CAD-036 | 2 | 2 | CADSketch | V-CAD-036 | T | UNTESTED |
@@ -280,8 +280,8 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-004 | IMG-100 | 3 | 3 | ImagePixels | V-IMG-100 | T | UNTESTED |
 | N-004 | IMG-101 | 3 | 3 | ImagePixels | V-IMG-101 | T | UNTESTED |
 | N-004 | IMG-102 | 3 | 3 | ImagePixels | V-IMG-102 | T | UNTESTED |
-| N-004 | IMG-103 | 3 | 3 | ImagePixels | V-IMG-103 | T | UNTESTED |
-| N-004 | IMG-104 | 3 | 3 | ImagePixels | V-IMG-104 | T | UNTESTED |
+| N-004 | IMG-103 | 3 | 3 | ImagePixels | V-IMG-103 | T | PASS |
+| N-004 | IMG-104 | 3 | 3 | ImagePixels | V-IMG-104 | T | PASS |
 | N-005 | VID-001 | 4 | 4 | VideoTimeline | V-VID-001 | T | UNTESTED |
 | N-005 | VID-002 | 4 | 4 | VideoTimeline | V-VID-002 | T | UNTESTED |
 | N-005 | VID-003 | 4 | 4 | VideoMedia | V-VID-003 | T | UNTESTED |
@@ -355,9 +355,9 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-005 | VID-071 | 4 | 4 | VideoPreviewExport | V-VID-071 | T | UNTESTED |
 | N-005 | VID-072 | 4 | 4 | VideoPreviewExport | V-VID-072 | T | UNTESTED |
 | N-005 | VID-073 | 4 | 4 | VideoPreviewExport | V-VID-073 | T | UNTESTED |
-| N-006 | XWS-001 | 5 | 5 | WorkspaceBridge | V-XWS-001 | T | UNTESTED |
+| N-006 | XWS-001 | 5 | 5 | WorkspaceBridge | V-XWS-001 | T | PASS |
 | N-006 | XWS-002 | 5 | 5 | WorkspaceBridge | V-XWS-002 | T | UNTESTED |
-| N-006 | XWS-003 | 5 | 5 | WorkspaceBridge | V-XWS-003 | T | UNTESTED |
+| N-006 | XWS-003 | 5 | 5 | WorkspaceBridge | V-XWS-003 | T | PASS |
 | N-003 | PERF-001 | 2 | 2 | CADViewport | V-PERF-001 | T | UNTESTED |
 | N-003 | PERF-002 | 2 | 2 | CADKernel | V-PERF-002 | T | UNTESTED |
 | N-004 | PERF-003 | 3 | 3 | ImageViewport | V-PERF-003 | T | UNTESTED |
@@ -394,20 +394,6 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-007 | REL-030 | 2 | 2 | Architecture | V-REL-030 | I | UNTESTED |
 | N-007 | REL-031 | 3 | 3 | Architecture | V-REL-031 | I | UNTESTED |
 | N-007 | REL-032 | 4 | 4 | Architecture | V-REL-032 | I | UNTESTED |
-
-## Coverage totals
-
-| Family | Requirements | PASS | FAIL | UNTESTED |
-|---|---:|---:|---:|---:|
-| SYS | 16 | 0 | 0 | 16 |
-| CTL | 30 | 0 | 0 | 30 |
-| CAD | 124 | 0 | 0 | 124 |
-| IMG | 104 | 0 | 0 | 104 |
-| VID | 73 | 0 | 0 | 73 |
-| XWS | 3 | 0 | 0 | 3 |
-| PERF | 4 | 0 | 0 | 4 |
-| REL | 32 | 0 | 0 | 32 |
-| **Total** | **386** | **0** | **0** | **386** |
 | N-008 | DOC-001 | 5 | 5 | Authoring | V-DOC-001 | T | PASS |
 | N-008 | DOC-002 | 5 | 5 | Authoring | V-DOC-002 | T | PASS |
 | N-008 | DOC-003 | 5 | 5 | Authoring | V-DOC-003 | T | PASS |
@@ -424,6 +410,26 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | N-008 | CODE-002 | 5 | 5 | Authoring | V-CODE-002 | T | PASS |
 | N-008 | CODE-003 | 5 | 5 | Authoring | V-CODE-003 | T | PASS |
 | N-008 | AUTH-001 | 5 | 5 | Authoring | V-AUTH-001 | T | UNTESTED |
+
+## Coverage totals
+
+| Family | Requirements | PASS | FAIL | UNTESTED |
+|---|---:|---:|---:|---:|
+| SYS | 16 | 2 | 0 | 14 |
+| CTL | 30 | 0 | 0 | 30 |
+| CAD | 124 | 17 | 0 | 107 |
+| IMG | 104 | 2 | 0 | 102 |
+| VID | 73 | 0 | 0 | 73 |
+| XWS | 3 | 2 | 0 | 1 |
+| PERF | 4 | 0 | 0 | 4 |
+| REL | 32 | 8 | 0 | 24 |
+| DOC | 3 | 3 | 0 | 0 |
+| SLD | 3 | 3 | 0 | 0 |
+| AUD | 3 | 3 | 0 | 0 |
+| SHEET | 3 | 3 | 0 | 0 |
+| CODE | 3 | 3 | 0 | 0 |
+| AUTH | 1 | 0 | 0 | 1 |
+| **Total** | **402** | **46** | **0** | **356** |
 
 ## Need-to-requirement closure
 

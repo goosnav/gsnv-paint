@@ -1,0 +1,299 @@
+✔ A-SHELL golden starts one empty CAD window with unavailable editing commands (145.439798ms)
+✔ A-SHELL invalidate refreshes the active editor menus without committing or touching other workspaces (56.583142ms)
+✔ A-SHELL project rename preserves pending editor input and has its own undo step (111.711523ms)
+✔ A-SHELL editor open creates an unsaved document only after replacement consent (47.474989ms)
+✔ A-SHELL with recent projects: New never prompts, edits autosave to File > Recent and reopen from there (861.481ms)
+✔ A-SHELL unavailable recent backup keeps dirty work on New and Open and warns on unload (44.893755ms)
+✔ A-SHELL NotAllowedError recent backup keeps dirty work on New and Open and warns on unload (38.13732ms)
+✔ A-SHELL QuotaExceededError recent backup keeps dirty work on New and Open and warns on unload (35.440954ms)
+✔ A-SHELL unload protects the exact dirty revision until its recent backup succeeds (41.803605ms)
+✔ A-SHELL a changed revision during replacement backup stays open (32.846953ms)
+✔ A-SHELL overlapping recent writes cannot leave an older revision stored last (27.813936ms)
+✔ A-SHELL Undo cannot acknowledge a stored revision while queued writes can still replace it (39.146346ms)
+✔ A-SHELL disposal accepts pending view edits and finishes their stored backup (18.929433ms)
+✔ A-SHELL all retained projects remain reachable beyond the newest 12 menu entries (33.910732ms)
+✔ A-SHELL opening an older file with the same project id preserves displaced unsaved work (36.553169ms)
+✔ A-SHELL real sessions keep 100 edits, independent workspaces and exactly-once keyboard history (460.176639ms)
+✔ A-SHELL native Open validates domain before replacement and preserves handles on rejection (48.491289ms)
+✔ A-SHELL Open protects its target workspace, including dirty replacement consent (41.520309ms)
+✔ A-SHELL save binds the written revision while later edits remain dirty (26.562353ms)
+✔ A-SHELL late native save cannot bind its handle to a reopened document with the same ID (25.801283ms)
+✔ A-SHELL denied write permission fails before serialization and preserves dirty state (21.937363ms)
+✔ A-SHELL Save-then-replace proceeds only after a successful write of the protected revision (33.803032ms)
+✔ A-SHELL recovery is offered explicitly and restores editable data as dirty (41.883343ms)
+✔ A-SHELL corrupt recovery remains readable and its observed generation is exceeded after discard (18.55323ms)
+✔ A-SHELL discard runs after queued autosaves without recreating a recovery record (45.827496ms)
+✔ A-SHELL stale editor callbacks and post-disposal file completions cannot replace documents (19.254074ms)
+✔ A-SHELL unavailable browser recovery does not block editing or explicit project saves (17.206103ms)
+✔ A-SHELL Open completion during another modal settles without a hidden replacement prompt (21.565597ms)
+✔ A-SHELL a new edit after pending discard makes the resulting recovery available again (20.138969ms)
+✔ A-SHELL a modal forwards the active pointer cancellation before further editing (20.52206ms)
+Not implemented: navigation to another Document
+✔ A-SHELL New restores keyboard scope when an editor replaces its focused view (35.66564ms)
+✔ A-SHELL view settings delegates to an adapter-owned transform without changing document state (15.849117ms)
+✖ A-SHELL restored storage plus native Save repairs the current recovery before close and reopen (30.654921ms)
+✖ A-SHELL Recent never advances past failed recovery, and a retry commits recovery before Recent (23.974172ms)
+✖ A-SHELL native Save stays successful with a truthful warning when Recent fails after recovery (23.666939ms)
+✖ A-SHELL delayed file Save retries the newer current revision without marking it saved (21.598676ms)
+✖ A-SHELL a returned generation 1 with different bytes cannot acknowledge the attempted recovery (18.630811ms)
+✖ A-SHELL a returned generation 100 with different bytes cannot acknowledge the attempted recovery (25.605507ms)
+✖ A-SHELL startup conflict 61/62 stays read-only and recovery opens as an editable copy (15.518999ms)
+✖ A-SHELL startup conflict 62/61 stays read-only and recovery opens as an editable copy (14.676814ms)
+✖ A-SHELL startup with identical Recent performs no writes on startup or no-edit disposal (16.412004ms)
+✖ A-SHELL startup with absent Recent performs no writes on startup or no-edit disposal (15.567625ms)
+✖ A-SHELL startup with unreadable Recent performs no writes on startup or no-edit disposal (15.521852ms)
+✖ A-SHELL startup with invalid Recent performs no writes on startup or no-edit disposal (14.901126ms)
+✔ A-SHELL explicit recovery discard is not undone by Recent flush; a later edit resumes recovery (21.714618ms)
+ℹ tests 45
+ℹ suites 0
+ℹ pass 33
+ℹ fail 12
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3665.937816
+
+✖ failing tests:
+
+test at src/app/app-shell.test.ts:1:33460
+✖ A-SHELL restored storage plus native Save repairs the current recovery before close and reopen (30.654921ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  51 !== 52
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:508:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 51,
+    expected: 52,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:34916
+✖ A-SHELL Recent never advances past failed recovery, and a retry commits recovery before Recent (23.974172ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:521:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:36039
+✖ A-SHELL native Save stays successful with a truthful warning when Recent fails after recovery (23.666939ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Recent quota denied/. Input:
+  
+  'Saved cad fixture.'
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:532:233)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Saved cad fixture.',
+    expected: /Recent quota denied/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:36971
+✖ A-SHELL delayed file Save retries the newer current revision without marking it saved (21.598676ms)
+  Error: That recent project is no longer stored in this browser.
+      at Object.load (/home/goosnav/Desktop/code/gsnv-paint/src/shared/recent-projects.ts:60:58)
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:543:186)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/app/app-shell.test.ts:1:38079
+✖ A-SHELL a returned generation 1 with different bytes cannot acknowledge the attempted recovery (18.630811ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   {
+  +     id: 'fixture-id',
+  +     title: 'cad fixture',
+  +     updated: 1794631076923,
+  +     workspace: 'cad'
+  +   }
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:551:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { id: 'fixture-id', workspace: 'cad', title: 'cad fixture', updated: 1794631076923 } ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:38079
+✖ A-SHELL a returned generation 100 with different bytes cannot acknowledge the attempted recovery (25.605507ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   {
+  +     id: 'fixture-id',
+  +     title: 'cad fixture',
+  +     updated: 1794631076940,
+  +     workspace: 'cad'
+  +   }
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:551:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { id: 'fixture-id', workspace: 'cad', title: 'cad fixture', updated: 1794631076940 } ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:38932
+✖ A-SHELL startup conflict 61/62 stays read-only and recovery opens as an editable copy (15.518999ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + {
+  +   content: {
+  +     fixture: true,
+  +     width: 61
+  +   },
+  +   format: 'gsnv-cad',
+  +   id: 'fixture-id',
+  +   identity: 'revision-1',
+  +   title: 'cad fixture',
+  +   value: {
+  +     width: 61
+  +   },
+  +   version: 1
+  + }
+  - undefined
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:561:31)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { content: { fixture: true, width: 61 }, format: 'gsnv-cad', id: 'fixture-id', title: 'cad fixture', version: 1, value: { width: 61 }, identity: 'revision-1' },
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:38932
+✖ A-SHELL startup conflict 62/61 stays read-only and recovery opens as an editable copy (14.676814ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + {
+  +   content: {
+  +     fixture: true,
+  +     width: 62
+  +   },
+  +   format: 'gsnv-cad',
+  +   id: 'fixture-id',
+  +   identity: 'revision-1',
+  +   title: 'cad fixture',
+  +   value: {
+  +     width: 62
+  +   },
+  +   version: 1
+  + }
+  - undefined
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:561:31)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { content: { fixture: true, width: 62 }, format: 'gsnv-cad', id: 'fixture-id', title: 'cad fixture', version: 1, value: { width: 62 }, identity: 'revision-1' },
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:40555
+✖ A-SHELL startup with identical Recent performs no writes on startup or no-edit disposal (16.412004ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:577:228)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:40555
+✖ A-SHELL startup with absent Recent performs no writes on startup or no-edit disposal (15.567625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:577:228)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:40555
+✖ A-SHELL startup with unreadable Recent performs no writes on startup or no-edit disposal (15.521852ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:577:55)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/app/app-shell.test.ts:1:40555
+✖ A-SHELL startup with invalid Recent performs no writes on startup or no-edit disposal (14.901126ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:577:55)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

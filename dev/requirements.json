@@ -116,7 +116,7 @@
     "verification": "V-SYS-010",
     "procedure": "Load the complete app once, disable network, close and reopen it, then create, edit, reopen, and export one document per workspace; assert no required asset is missing.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 5
   },
   {
@@ -788,7 +788,7 @@
     "verification": "V-CAD-020",
     "procedure": "Create one sketch on XY, YZ, and XZ and assert its coordinates map to the selected plane.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {
@@ -848,7 +848,7 @@
     "verification": "V-CAD-025",
     "procedure": "In an empty sketch, click center (10,10) then corner (25,20); assert a closed rectangle symmetric about (10,10), then save/reopen and compare entity parameters.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {
@@ -908,7 +908,7 @@
     "verification": "V-CAD-030",
     "procedure": "In an empty sketch, type 6 sides, choose center (0,0), and radius 10; assert a closed six-sided regular polygon with equal sides, then save/reopen and compare entity parameters.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {
@@ -944,7 +944,7 @@
     "verification": "V-CAD-033",
     "procedure": "In an empty sketch, draw a line and mark it construction; assert reference geometry omitted from profile area and solid creation, then save/reopen and compare entity parameters.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 2
   },
   {
@@ -3272,7 +3272,7 @@
     "verification": "V-IMG-103",
     "procedure": "On a 32 by 24 transparent document, use a 1-pixel opaque #FF0000 pencil on points (1,1)-(12,1)-(12,8); add a layer, select rectangle (4,4)-(20,16), fill opaque #4080C0, add rectangle (16,12)-(28,20) to the selection, invert selected RGB then threshold at 128, and set the upper layer to multiply at 50 percent; compare every composite RGBA byte with a checked-in independently reviewed golden fixture.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 3
   },
   {
@@ -3284,7 +3284,7 @@
     "verification": "V-IMG-104",
     "procedure": "Save and reopen the scripted golden document; assert canonical layer/text/mask/selection/parameter state equality and byte-for-byte equality of composite RGBA pixels; edit a retained layer afterward.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 3
   },
   {
@@ -4172,7 +4172,7 @@
     "verification": "V-XWS-001",
     "procedure": "Create a layered Image document with transparency, send it to Video, and assert a new still-image bin item renders the source composite at matching dimensions without a network request.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 5
   },
   {
@@ -4196,7 +4196,7 @@
     "verification": "V-XWS-003",
     "procedure": "Capture a colored solid from the CAD viewport and send it to Image; assert matching visible geometry and alpha zero for background pixels, with no background-color fringe.",
     "method": "T",
-    "status": "UNTESTED",
+    "status": "PASS",
     "verificationPhase": 5
   },
   {

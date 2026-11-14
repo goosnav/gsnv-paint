@@ -108,3 +108,39 @@ live preview/cancel, exact typed offsets, correct percent after Fit, and
 wheel-anchor invariance. The IMG-103/104 test must still edit the reopened
 selected layer through a visible pixel after typed zoom, with the same exact
 pixel expectation. No golden may be weakened to accommodate this defect.
+
+## Executed gates — GREEN, 2026-11-13 (Linux x64, Chrome 154)
+
+- `node --import tsx --test 'src/image/*.test.ts'`: **38 pass, 0 fail,
+  0 skipped**, exit 0. I58's missing-export RED preceded its implementation;
+  the revised I51 failed its two new selection cases before implementation.
+  [Full unit output](evidence/image-selection-unit.log).
+- `npx tsc --noEmit`: exit 0. `check_module.py` passes I51 and I58; both
+  sibling demos run and print the exact v2 layout and partial coverage.
+- `node --import tsx --test src/app/app-shell.test.ts`: **32 pass, 0 fail,
+  0 skipped**, exit 0. The new adapter-owned view-settings seam first failed
+  with zero calls where one was required.
+- `npx vite build --outDir /tmp/gsnv-image-selection-dist`: exit 0. This is
+  an emitted production bundle, not a development-server-only check.
+- `GSNV_TEST_DIST=/tmp/gsnv-image-selection-dist npx playwright test src/image/image-acceptance.browser.spec.ts src/image/image-workspace.browser.spec.ts`:
+  **5 passed (21.6s)**, exit 0. [Full browser output](evidence/image-selection-browser.log).
+  The typed-zoom test first failed with its image center 3,248 CSS pixels
+  from the expected center. It now proves live 800% preview, Cancel, typed
+  offsets, wheel anchoring, correct percent after Fit, and unchanged history.
+
+The independent coordinate oracle review reproduced all 3,072 golden bytes
+and SHA-256 without application imports. IMG-103/104 are recorded PASS for
+their exact specified document. Selection undo/redo, floating-move cancel,
+selection-only IndexedDB recovery and older-layout Open also pass. The two
+existing Image workflows retain their pixel assertions; their history lists
+now explicitly include completed selection edits. The first existing case
+explicitly deselects after reopen before painting outside the restored mask.
+
+[Inspected 800% production capture](evidence/IMG-103104-production.png): the
+small document remains visible and the reopened layer can be edited through
+its selected pixel. This capture includes the checkerboard/selection overlay;
+it does not replace the exact raw RGBA oracle.
+
+No text/layer-mask functionality, 4000×4000/20-layer performance, physical pen,
+other OS or other browser pass is inferred. These remain separate open gates.
+No brick is human-ACCEPTED.

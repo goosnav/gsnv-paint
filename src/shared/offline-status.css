@@ -1,0 +1,14 @@
+.gc-offline { position:relative; flex:0 0 auto; max-width:240px; font:inherit; color:inherit; }
+.gc-offline > summary { height:17px; box-sizing:content-box; padding:1px 6px; border:1px solid; border-color:#aca899 #fff #fff #aca899; white-space:nowrap; list-style:none; cursor:pointer; }
+.gc-offline > summary::-webkit-details-marker { display:none; }
+.gc-offline > summary:focus-visible { outline:2px solid #185cbd; outline-offset:-2px; }
+.gc-offline-panel { box-sizing:border-box; position:absolute; bottom:calc(100% + 5px); right:0; z-index:100; width:340px; max-width:calc(100vw - 16px); padding:10px; background:#ece9d8; color:#111; border:1px solid #7f9db9; box-shadow:2px 3px 6px #0005; font:12px/1.4 Tahoma,sans-serif; }
+.gc-offline-panel p { margin:0 0 8px; white-space:normal; overflow-wrap:anywhere; }
+.gc-offline-panel progress { width:100%; height:14px; accent-color:#3e9425; }
+.gc-offline-error { color:#8c1d15; }
+.gc-offline-actions { display:flex; flex-wrap:wrap; gap:6px; }
+.gc-offline-actions button { border:1px solid #7f9db9; border-radius:3px; padding:3px 8px; background:linear-gradient(#fff,#ece9d8); color:#111; font:inherit; }
+.gc-offline-actions button:disabled { color:#777; }
+.gc-offline-actions button:focus-visible { outline:2px solid #185cbd; outline-offset:1px; }
+.gc-offline-announcement { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+@media (forced-colors:active) { .gc-offline-panel,.gc-offline-actions button { border-color:ButtonText; } .gc-offline-error { color:CanvasText; } }

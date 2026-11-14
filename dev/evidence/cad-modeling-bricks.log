@@ -1,0 +1,13 @@
+PASS: src/cad/default-plane-frame.ts
+PASS: src/cad/kernel-plane-transform.ts
+PASS: src/cad/sketch-profile-source.ts
+PASS: src/cad/sketch-profile-edit.ts
+PASS: src/cad/cad-expression-policy.ts
+PASS: src/cad/cad-legacy-sketch-edit.ts
+PASS: src/cad/cad-model-edit.ts
+PASS: src/cad/editable-cad-content.ts
+PASS: src/cad/edit-cad-content.ts
+PASS: src/cad/linear-sketch-program.ts
+PASS: src/cad/cad-tool-input.ts
+PASS: src/cad/cad-properties.ts
+PASS: src/cad/cad-viewport.ts

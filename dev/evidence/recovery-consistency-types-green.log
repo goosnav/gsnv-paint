@@ -1,0 +1,4 @@
+Command: npx tsc --noEmit
+Working directory: /home/goosnav/Desktop/code/gsnv-paint
+Exit status: 0
+Compiler output: empty (no diagnostics).

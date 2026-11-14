@@ -1,0 +1,11 @@
+import { build } from 'vite';
+import { mkdtemp, readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { offlineBuild } from './offline-build.ts';
+const directory = await mkdtemp(join(tmpdir(), 'gsnv-offline-build-demo-'));
+const root = fileURLToPath(new URL('..', import.meta.url));
+await build({ configFile: false, root, plugins: [offlineBuild()], build: { outDir: directory, emptyOutDir: true } });
+const manifest = JSON.parse(await readFile(join(directory, 'offline-manifest.json'), 'utf8'));
+console.log('Complete static build:', directory, 'build:', manifest.build, 'files:', manifest.assets.length, 'bytes:', manifest.assets.reduce((sum: number, a: { bytes: number }) => sum + a.bytes, 0));

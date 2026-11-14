@@ -23,6 +23,8 @@ async function kernel(){
   },close(){for(const id of [...retained.keys()])session.release({id,generation:1});}};
 }
 test('CAD-IMPORT production golden: exact source, units, undo, STEP/STL export and native reopen',async({page,context},testInfo)=>{
+  // Keep interception active before navigation; one-shot subscriptions can race Ctrl+O.
+  page.on('filechooser',()=>{});
   test.setTimeout(90000);const server=await serve(),native=await kernel(),errors:string[]=[],external:string[]=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('console',e=>{if(e.type()==='error')errors.push(e.text());});page.on('request',r=>{if(/^https?:/.test(r.url())&&!r.url().startsWith('http://127.0.0.1:4188'))external.push(r.url());});
   await context.addInitScript(()=>{Object.defineProperty(window,'showOpenFilePicker',{value:undefined});Object.defineProperty(window,'showSaveFilePicker',{value:undefined});});
@@ -60,6 +62,8 @@ test('CAD-IMPORT production preserves every source solid and rejects a damaged s
   }finally{native.close();await page.close();await server.close();}
 });
 
+test.describe('STEP import with a network-held worker',()=>{
+test.use({serviceWorkers:'block'}); // The fixture must intercept the module before the native worker can run.
 test('CAD-IMPORT production cancellation and project replacement terminate pending native work',async({page,context})=>{
   test.setTimeout(60000);const server=await serve(),bytes=await readFile(new URL('./fixtures/acceptance-plate-120mm.step',import.meta.url)),releases:(()=>void)[]=[];let hold=true;
   await context.addInitScript(()=>{Object.defineProperty(window,'showOpenFilePicker',{value:undefined});const spy={started:0,terminated:0};Object.assign(window,{__importWorkers:spy});const Native=Worker;window.Worker=class extends Native{tracked:boolean;constructor(url:string|URL,options?:WorkerOptions){super(url,options);this.tracked=String(url).includes('cad-workspace.worker');if(this.tracked)spy.started++;}override terminate(){if(this.tracked)spy.terminated++;super.terminate();}};});
@@ -67,7 +71,8 @@ test('CAD-IMPORT production cancellation and project replacement terminate pendi
   const counts=()=>page.evaluate(()=>(window as unknown as {__importWorkers:{started:number;terminated:number}}).__importWorkers);
   try{
     await page.goto(server.resolvedUrls!.local[0]!);await page.keyboard.press('Control+n');const before=await history(page);
-    await importFile(page,bytes);await expect.poll(async()=>(await counts()).started).toBe(1);await page.keyboard.press('Escape');await expect.poll(async()=>(await counts()).terminated).toBe(1);await expect(page.locator('.cad-import-status')).toContainText('canceled');expect(await history(page)).toEqual(before);await expect(page.locator('.cad-imported-properties')).toHaveCount(0);
-    releases.splice(0).forEach(r=>r());await importFile(page,bytes);await expect.poll(async()=>(await counts()).started).toBe(2);await page.keyboard.press('Control+n');await expect.poll(async()=>(await counts()).terminated).toBe(2);hold=false;releases.splice(0).forEach(r=>r());await expect(page.locator('.cad-imported-properties')).toHaveCount(0);await expect(page.locator('.cad-properties')).toContainText('Draw a closed sketch');
+    await importFile(page,bytes);await expect.poll(async()=>(await counts()).started).toBe(1);await expect.poll(()=>releases.length,{message:'Import worker request is held before Escape'}).toBe(1);await page.keyboard.press('Escape');await expect.poll(async()=>(await counts()).terminated).toBe(1);await expect(page.locator('.cad-import-status')).toContainText('canceled');expect(await history(page)).toEqual(before);await expect(page.locator('.cad-imported-properties')).toHaveCount(0);
+    releases.splice(0).forEach(r=>r());await importFile(page,bytes);await expect.poll(async()=>(await counts()).started).toBe(2);await expect.poll(()=>releases.length,{message:'Import worker request is held before New'}).toBe(1);await page.keyboard.press('Control+n');await expect.poll(async()=>(await counts()).terminated).toBe(2);hold=false;releases.splice(0).forEach(r=>r());await expect(page.locator('.cad-imported-properties')).toHaveCount(0);await expect(page.locator('.cad-properties')).toContainText('Draw a closed sketch');
   }finally{hold=false;releases.splice(0).forEach(r=>r());await page.close();await server.close();}
+});
 });

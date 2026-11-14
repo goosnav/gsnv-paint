@@ -1,0 +1,157 @@
+{
+  "candidate": "9980ea171176a67ab825a15083838fed0849060cd52c8d6857652d75cf6efaa2",
+  "hashes": [
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.ts",
+      "sha256": "7f41c2785f700c78148fab82f1e62cf7f06d3eb05016350e2ea4121730dc2017",
+      "checkpoint_sha256": "7f41c2785f700c78148fab82f1e62cf7f06d3eb05016350e2ea4121730dc2017",
+      "matches_checkpoint": true
+    },
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/src/shared/chrome.ts",
+      "sha256": "ddbe39bbf2dd4d02bff114d8648bb344906ba3207dfb7c044b334d8ff24e2b61",
+      "checkpoint_sha256": "ddbe39bbf2dd4d02bff114d8648bb344906ba3207dfb7c044b334d8ff24e2b61",
+      "matches_checkpoint": true
+    },
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.ts",
+      "sha256": "2dea2f7841b5903cf575859417373e77994de47e3c2d4784bce4b68a55e57f10",
+      "checkpoint_sha256": "2dea2f7841b5903cf575859417373e77994de47e3c2d4784bce4b68a55e57f10",
+      "matches_checkpoint": true
+    },
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/src/shared/project-files.ts",
+      "sha256": "ae72887738129761b1da2cfdff7aa3f715e0ce47ddae7f2cf935433c33344ab1",
+      "checkpoint_sha256": "ae72887738129761b1da2cfdff7aa3f715e0ce47ddae7f2cf935433c33344ab1",
+      "matches_checkpoint": true
+    },
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/src/shared/file-access.ts",
+      "sha256": "fa80079f92d5fce53d8e741b6a0d2e2fd3b75532d44faf6609c2b015f251a50f",
+      "checkpoint_sha256": "fa80079f92d5fce53d8e741b6a0d2e2fd3b75532d44faf6609c2b015f251a50f",
+      "matches_checkpoint": true
+    },
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-workspace.ts",
+      "sha256": "4987535a251e25bdee850333c6844656bf823f0855cafc8ee7f79314deb19b6b",
+      "checkpoint_sha256": "4987535a251e25bdee850333c6844656bf823f0855cafc8ee7f79314deb19b6b",
+      "matches_checkpoint": true
+    },
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-parametric-workspace.ts",
+      "sha256": "38b3c8aacf4ec3bb2ef58e76ab2a393de67072d03ee216eac3e01a96c144528f",
+      "checkpoint_sha256": "38b3c8aacf4ec3bb2ef58e76ab2a393de67072d03ee216eac3e01a96c144528f",
+      "matches_checkpoint": true
+    },
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/src/cad/cad-imported-view.ts",
+      "sha256": "45ca036f3fbc62a54d79908cc5237a536066b3d8acfaa64a9338f0a8866e5005",
+      "checkpoint_sha256": "45ca036f3fbc62a54d79908cc5237a536066b3d8acfaa64a9338f0a8866e5005",
+      "matches_checkpoint": true
+    },
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/package.json",
+      "sha256": "fab4e4db223047077674db864b3ca7cd47ee3a5063c77de3886bbb7f44c80b70",
+      "checkpoint_sha256": "fab4e4db223047077674db864b3ca7cd47ee3a5063c77de3886bbb7f44c80b70",
+      "matches_checkpoint": true
+    },
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/package-lock.json",
+      "sha256": "59a50bbfa40e4e6c1ae42c8cfce521fb7f5f0b09e35cd394c9e5d3a348c3635f",
+      "checkpoint_sha256": "59a50bbfa40e4e6c1ae42c8cfce521fb7f5f0b09e35cd394c9e5d3a348c3635f",
+      "matches_checkpoint": true
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-red/control.browser.spec.ts",
+      "sha256": "86541766db6dfaaa1306a018cfd157eed7be1639d12c1a41d167d2fd4d7c54f5"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-red/playwright.config.ts",
+      "sha256": "2e9a653448d1e5bf26719c75537b899e19ba74e9cfa8371700b279655a044598"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-red/run.log",
+      "sha256": "5ed87a7103513ba333cb73cf4aa7f1b07056e3f42467361841ef9013066b44de"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-red/outcomes.json",
+      "sha256": "93b19ed945f63a55177dd64af562a2c1f0bb9dffffae477e3aff755263b6e415"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-protocol/control.browser.spec.ts",
+      "sha256": "863612b3fc7df3a06b8e700c7e31e154e226981a9ef4d79bff557b4388e0439c"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-protocol/playwright.config.ts",
+      "sha256": "7b1e8b9712bdea6aac50cc5dc2312d447d6ab2df09ce7d8360f5b09f9738e9b1"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-protocol/run.log",
+      "sha256": "6dbc2839de25025d1514672122add0a73007ab6c443df121a5ad3e8d7c2b17ab"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-protocol/outcomes.json",
+      "sha256": "18ddce8a8aa8cfab5d9b087f75f039793f0a1735c24b837f972a202918a0c355"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-armed/control.browser.spec.ts",
+      "sha256": "9b7329c5570071c7217c830d2bd0f82e4786a100312a36cb86054c118344edca"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-armed/playwright.config.ts",
+      "sha256": "ac1a53fd422adea48683a52deca52cfe53a1c428c897e4bf02f6e5abafdea232"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-armed/run.log",
+      "sha256": "16f3a564fdad7e7da5be0e658205bc33cd04b69db5efda1ed08b45879118bdcc"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-armed/outcomes.json",
+      "sha256": "c747dba7f412de2454295f0031c643eb653edcefcb7ce397a08afbfe29c5fa75"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-main-armed/control.browser.spec.ts",
+      "sha256": "b95f2b31be8a09541983b68f40a3c5ffde2fc47052c21fbc016fe78ac8aab3fe"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-main-armed/playwright.config.ts",
+      "sha256": "b9895748e53d9da52e1502577585a896aa33f5ff61e32a49c5d0dbd44bdf3a2e"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-main-armed/run.log",
+      "sha256": "a9fb58b3dd9ed0139b0cbeed88e46224af8a3267bc23a80b3a0340923a5eab50"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-main-armed/outcomes.json",
+      "sha256": "222ead0e1b1499a2f74cb4efe84a9775da676cb053428c3ce72007d5cfbcd12c"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-public-armed/control.browser.spec.ts",
+      "sha256": "101d9d07cfd2d52bdc839d9dcbd7db1e164595ff4c062e14fa9877d835234d3a"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-public-armed/playwright.config.ts",
+      "sha256": "bf7259c2d13c7fb51adeff56f1496c6f4047c2967aa8cfd0f9d6b599016a2b89"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-public-armed/run.log",
+      "sha256": "77885a0b03f0548a65c6efa5316a0ed81c0382f30d42aa4918526f02dcd7668e"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-consumer-transition-public-armed/outcomes.json",
+      "sha256": "8042ff36d785958a055f6ed12f520bad64050d5a2fd946c04f5a20b31587b2dc"
+    },
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/node_modules/playwright-core/lib/coreBundle.js",
+      "sha256": "4ef8330594818d8f464de939e32bca62b758099e0d0e94a56095406da963f7f1"
+    },
+    {
+      "path": "/home/goosnav/Desktop/code/gsnv-paint/node_modules/playwright-core/package.json",
+      "sha256": "f5c29da29c2f96b8f77a58d93250b3ea60dbe3d8325491fb7519956f7f1d2d28"
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/cad-open-isolated/dist/offline-manifest.json",
+      "sha256": "d1f47003eca301b69b7b265238ba466fbd61cd9776cdecf74ca7a9f677026ab4"
+    }
+  ]
+}

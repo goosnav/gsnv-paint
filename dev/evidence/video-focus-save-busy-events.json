@@ -1,0 +1,225 @@
+{
+  "productionBuild": "a01669123bc418f13181170f607bfc034d57a36acf9537191c4c59150fc52020",
+  "browser": "154.0.8037.97",
+  "note": "Read-only synchronous document capture/bubble observations. No extra action waits or runtime edits. Download timeout8s in diagnostic only. Original cumulative case timed out60s.",
+  "observations": [
+    [
+      {
+        "capture": true,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Layered bridge"
+      },
+      {
+        "capture": false,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Layered bridge"
+      },
+      {
+        "capture": true,
+        "key": "a",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Layered bridge"
+      },
+      {
+        "capture": false,
+        "key": "a",
+        "prevented": true,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Layered bridge *"
+      },
+      {
+        "capture": true,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Existing video *"
+      },
+      {
+        "capture": false,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Existing video *"
+      },
+      {
+        "capture": true,
+        "key": "s",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Existing video *"
+      },
+      {
+        "capture": false,
+        "key": "s",
+        "prevented": true,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": true,
+        "title": "Existing video *"
+      },
+      {
+        "capture": true,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Existing video"
+      },
+      {
+        "capture": false,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Existing video"
+      },
+      {
+        "capture": true,
+        "key": "z",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Existing video"
+      },
+      {
+        "capture": false,
+        "key": "z",
+        "prevented": true,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Existing video *"
+      },
+      {
+        "capture": true,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Existing video *"
+      },
+      {
+        "capture": false,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Existing video *"
+      },
+      {
+        "capture": true,
+        "key": "s",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": false,
+        "title": "Existing video *"
+      },
+      {
+        "capture": false,
+        "key": "s",
+        "prevented": true,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": true,
+        "title": "Existing video *"
+      },
+      {
+        "capture": true,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": true,
+        "title": "Existing video *"
+      },
+      {
+        "capture": false,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": true,
+        "title": "Existing video *"
+      },
+      {
+        "capture": true,
+        "key": "y",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": true,
+        "title": "Existing video *"
+      },
+      {
+        "capture": false,
+        "key": "y",
+        "prevented": true,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": true,
+        "title": "Existing video *"
+      },
+      {
+        "capture": true,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": true,
+        "title": "Existing video *"
+      },
+      {
+        "capture": false,
+        "key": "Control",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": true,
+        "title": "Existing video *"
+      },
+      {
+        "capture": true,
+        "key": "s",
+        "prevented": false,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": true,
+        "title": "Existing video *"
+      },
+      {
+        "capture": false,
+        "key": "s",
+        "prevented": true,
+        "tag": "DIV",
+        "appOwnsFocus": true,
+        "saveDisabled": true,
+        "title": "Existing video *"
+      }
+    ]
+  ]
+}

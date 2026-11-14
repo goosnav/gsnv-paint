@@ -1,0 +1,4641 @@
+{
+  "note": "Diagnostic observations before repair; DOM outerHTML is shortened to opening tags in all states/events. Other event properties and stacks are retained. Original raw diagnostic files are hashed below.",
+  "sources": [
+    {
+      "path": "/tmp/gsnv-consumer-qa/video-shortcut/report.json",
+      "sha256": "241c58d1e9a4575d734cc2abe2ee73013542887861f22443a3d9a5f7dde54498",
+      "observations": [
+        {
+          "scenario": "panel-mouse",
+          "build": "b81589f26a3f41800b8098725bf97c7fdfbee34ae14f82fd99c026e0f281f8f7",
+          "browser": "158.0.8127.18",
+          "export": {
+            "name": "frame-colors.mp4",
+            "bytes": 3546,
+            "firstBytes": [
+              0,
+              0,
+              0,
+              36,
+              102,
+              116,
+              121,
+              112,
+              105,
+              115,
+              111,
+              109
+            ]
+          },
+          "errors": [],
+          "afterExport": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "stack": "Error\n    at Element.replaceChildren (<anonymous>:2:486)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ]
+            }
+          },
+          "afterShortcut": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "stack": "Error\n    at Element.replaceChildren (<anonymous>:2:486)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ]
+            }
+          },
+          "afterNew": {
+            "active": "<button class=\"gc-menu-trigger\" type=\"button\" data-menu=\"file\" data-focus-key=\"menu:file\" role=\"menuitem\" aria-haspopup=\"menu\" aria-expanded=\"false\">",
+            "appOwnsFocus": true,
+            "clips": 0,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "stack": "Error\n    at Element.replaceChildren (<anonymous>:2:486)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "scenario": "panel-refocus-timeline",
+          "build": "b81589f26a3f41800b8098725bf97c7fdfbee34ae14f82fd99c026e0f281f8f7",
+          "browser": "158.0.8127.18",
+          "export": {
+            "name": "frame-colors.mp4",
+            "bytes": 3568,
+            "firstBytes": [
+              0,
+              0,
+              0,
+              36,
+              102,
+              116,
+              121,
+              112,
+              105,
+              115,
+              111,
+              109
+            ]
+          },
+          "errors": [],
+          "afterExport": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "stack": "Error\n    at Element.replaceChildren (<anonymous>:2:486)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ]
+            }
+          },
+          "afterShortcut": {
+            "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+            "appOwnsFocus": true,
+            "clips": 0,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "stack": "Error\n    at Element.replaceChildren (<anonymous>:2:486)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ]
+            }
+          },
+          "afterNew": {
+            "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+            "appOwnsFocus": true,
+            "clips": 0,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "stack": "Error\n    at Element.replaceChildren (<anonymous>:2:486)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "scenario": "toolbar-mouse",
+          "build": "b81589f26a3f41800b8098725bf97c7fdfbee34ae14f82fd99c026e0f281f8f7",
+          "browser": "158.0.8127.18",
+          "export": {
+            "name": "frame-colors.mp4",
+            "bytes": 3568,
+            "firstBytes": [
+              0,
+              0,
+              0,
+              36,
+              102,
+              116,
+              121,
+              112,
+              105,
+              115,
+              111,
+              109
+            ]
+          },
+          "errors": [],
+          "afterExport": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [],
+              "removals": []
+            }
+          },
+          "afterShortcut": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": []
+            }
+          },
+          "afterNew": {
+            "active": "<button class=\"gc-menu-trigger\" type=\"button\" data-menu=\"file\" data-focus-key=\"menu:file\" role=\"menuitem\" aria-haspopup=\"menu\" aria-expanded=\"false\">",
+            "appOwnsFocus": true,
+            "clips": 0,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": []
+            }
+          }
+        },
+        {
+          "scenario": "panel-keyboard",
+          "build": "b81589f26a3f41800b8098725bf97c7fdfbee34ae14f82fd99c026e0f281f8f7",
+          "browser": "158.0.8127.18",
+          "export": {
+            "name": "frame-colors.mp4",
+            "bytes": 3568,
+            "firstBytes": [
+              0,
+              0,
+              0,
+              36,
+              102,
+              116,
+              121,
+              112,
+              105,
+              115,
+              111,
+              109
+            ]
+          },
+          "errors": [],
+          "afterExport": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "stack": "Error\n    at Element.replaceChildren (<anonymous>:2:486)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ]
+            }
+          },
+          "afterShortcut": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "stack": "Error\n    at Element.replaceChildren (<anonymous>:2:486)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ]
+            }
+          },
+          "afterNew": {
+            "active": "<button class=\"gc-menu-trigger\" type=\"button\" data-menu=\"file\" data-focus-key=\"menu:file\" role=\"menuitem\" aria-haspopup=\"menu\" aria-expanded=\"false\">",
+            "appOwnsFocus": true,
+            "clips": 0,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "stack": "Error\n    at Element.replaceChildren (<anonymous>:2:486)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/video-shortcut/focus-report.json",
+      "sha256": "b871a2ba955f41ebac3c913bee4d364852e2993a6654799d8937cc460589d231",
+      "observations": [
+        {
+          "scenario": "toolbar-mouse",
+          "build": "b81589f26a3f41800b8098725bf97c7fdfbee34ae14f82fd99c026e0f281f8f7",
+          "browser": "158.0.8127.18",
+          "export": {
+            "name": "frame-colors.mp4",
+            "bytes": 3546,
+            "firstBytes": [
+              0,
+              0,
+              0,
+              36,
+              102,
+              116,
+              121,
+              112,
+              105,
+              115,
+              111,
+              109
+            ]
+          },
+          "errors": [],
+          "afterExport": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [],
+              "removals": [],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                }
+              ],
+              "focusCalls": [
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)\n    at HTMLElement.k (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:5107)"
+                }
+              ],
+              "disableEvents": [
+                {
+                  "value": true,
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLButtonElement.set [as disabled] (/tmp/gsnv-consumer-qa/video-shortcut/focus-probe.js:10:320)\n    at D (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:1713)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3548\n    at Array.map (<anonymous>)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3522)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)"
+                }
+              ],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/c2a0cdfa-3d0d-40fe-9cdb-3cf353baab9b\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          },
+          "afterShortcut": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                }
+              ],
+              "focusCalls": [
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)\n    at HTMLElement.k (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:5107)"
+                }
+              ],
+              "disableEvents": [
+                {
+                  "value": true,
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLButtonElement.set [as disabled] (/tmp/gsnv-consumer-qa/video-shortcut/focus-probe.js:10:320)\n    at D (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:1713)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3548\n    at Array.map (<anonymous>)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3522)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)"
+                }
+              ],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/c2a0cdfa-3d0d-40fe-9cdb-3cf353baab9b\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          },
+          "afterNew": {
+            "active": "<button class=\"gc-menu-trigger\" type=\"button\" data-menu=\"file\" data-focus-key=\"menu:file\" role=\"menuitem\" aria-haspopup=\"menu\" aria-expanded=\"false\">",
+            "appOwnsFocus": true,
+            "clips": 0,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "related": null
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  }
+                }
+              ],
+              "focusCalls": [
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)\n    at HTMLElement.k (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:5107)"
+                },
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/focus-probe.js:8:229)\n    at T (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:1335)\n    at HTMLElement.k (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:5101)"
+                },
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58396)\n    at _e (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:53789)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:56430)"
+                },
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:46899"
+                }
+              ],
+              "disableEvents": [
+                {
+                  "value": true,
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLButtonElement.set [as disabled] (/tmp/gsnv-consumer-qa/video-shortcut/focus-probe.js:10:320)\n    at D (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:1713)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3548\n    at Array.map (<anonymous>)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3522)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)"
+                }
+              ],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/c2a0cdfa-3d0d-40fe-9cdb-3cf353baab9b\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "path": "/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-report.json",
+      "sha256": "2be3396e259f2f8986fb99a52ad4ea544e3e60031bf3a98d8295de0f7a2a468a",
+      "observations": [
+        {
+          "scenario": "panel-mouse",
+          "build": "b81589f26a3f41800b8098725bf97c7fdfbee34ae14f82fd99c026e0f281f8f7",
+          "browser": "154.0.8037.97",
+          "export": {
+            "name": "frame-colors.mp4",
+            "bytes": 3546,
+            "firstBytes": [
+              0,
+              0,
+              0,
+              36,
+              102,
+              116,
+              121,
+              112,
+              105,
+              115,
+              111,
+              109
+            ]
+          },
+          "errors": [],
+          "afterExport": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "stack": "Error\n    at Element.replaceChildren (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:15:161)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                }
+              ],
+              "focusCalls": [],
+              "disableEvents": [],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/f66b10bc-d7e2-4b88-862a-51178e3d6dfe\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          },
+          "afterShortcut": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "stack": "Error\n    at Element.replaceChildren (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:15:161)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                }
+              ],
+              "focusCalls": [],
+              "disableEvents": [],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/f66b10bc-d7e2-4b88-862a-51178e3d6dfe\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          },
+          "afterNew": {
+            "active": "<button class=\"gc-menu-trigger\" type=\"button\" data-menu=\"file\" data-focus-key=\"menu:file\" role=\"menuitem\" aria-haspopup=\"menu\" aria-expanded=\"false\">",
+            "appOwnsFocus": true,
+            "clips": 0,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "stack": "Error\n    at Element.replaceChildren (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:15:161)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "related": null
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  }
+                }
+              ],
+              "focusCalls": [
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at T (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:1335)\n    at HTMLElement.k (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:5101)"
+                },
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58396)\n    at _e (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:53789)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:56430)"
+                },
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:46899"
+                }
+              ],
+              "disableEvents": [],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/f66b10bc-d7e2-4b88-862a-51178e3d6dfe\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "scenario": "panel-refocus-timeline",
+          "build": "b81589f26a3f41800b8098725bf97c7fdfbee34ae14f82fd99c026e0f281f8f7",
+          "browser": "154.0.8037.97",
+          "export": {
+            "name": "frame-colors.mp4",
+            "bytes": 3568,
+            "firstBytes": [
+              0,
+              0,
+              0,
+              36,
+              102,
+              116,
+              121,
+              112,
+              105,
+              115,
+              111,
+              109
+            ]
+          },
+          "errors": [],
+          "afterExport": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "stack": "Error\n    at Element.replaceChildren (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:15:161)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                }
+              ],
+              "focusCalls": [],
+              "disableEvents": [],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/080a9109-cdf6-457e-9c87-e4d8b627ffdd\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          },
+          "afterShortcut": {
+            "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+            "appOwnsFocus": true,
+            "clips": 0,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "stack": "Error\n    at Element.replaceChildren (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:15:161)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "active": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "related": null
+                }
+              ],
+              "focusCalls": [
+                {
+                  "target": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "before": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "after": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4865)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58396)\n    at _e (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:53789)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:56430)"
+                },
+                {
+                  "target": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "before": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "after": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4865)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:46899"
+                }
+              ],
+              "disableEvents": [],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/080a9109-cdf6-457e-9c87-e4d8b627ffdd\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          },
+          "afterNew": {
+            "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+            "appOwnsFocus": true,
+            "clips": 0,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "DIV",
+                  "active": "<div class=\"video-timeline\" tabindex=\"0\" aria-label=\"Timeline\">",
+                  "defaultPrevented": true,
+                  "appInPath": true
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "stack": "Error\n    at Element.replaceChildren (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:15:161)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "active": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "related": null
+                }
+              ],
+              "focusCalls": [
+                {
+                  "target": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "before": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "after": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4865)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58396)\n    at _e (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:53789)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:56430)"
+                },
+                {
+                  "target": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "before": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "after": {
+                    "tag": "DIV",
+                    "id": "",
+                    "className": "video-timeline"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4865)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:46899"
+                }
+              ],
+              "disableEvents": [],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/080a9109-cdf6-457e-9c87-e4d8b627ffdd\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "scenario": "toolbar-mouse",
+          "build": "b81589f26a3f41800b8098725bf97c7fdfbee34ae14f82fd99c026e0f281f8f7",
+          "browser": "154.0.8037.97",
+          "export": {
+            "name": "frame-colors.mp4",
+            "bytes": 3568,
+            "firstBytes": [
+              0,
+              0,
+              0,
+              36,
+              102,
+              116,
+              121,
+              112,
+              105,
+              115,
+              111,
+              109
+            ]
+          },
+          "errors": [],
+          "afterExport": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [],
+              "removals": [],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                }
+              ],
+              "focusCalls": [
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)\n    at HTMLElement.k (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:5107)"
+                }
+              ],
+              "disableEvents": [
+                {
+                  "value": true,
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLButtonElement.set [as disabled] (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:10:320)\n    at D (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:1713)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3548\n    at Array.map (<anonymous>)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3522)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)"
+                }
+              ],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/9fe7cf3f-7795-4bba-8cf2-00d996542451\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          },
+          "afterShortcut": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                }
+              ],
+              "focusCalls": [
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)\n    at HTMLElement.k (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:5107)"
+                }
+              ],
+              "disableEvents": [
+                {
+                  "value": true,
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLButtonElement.set [as disabled] (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:10:320)\n    at D (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:1713)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3548\n    at Array.map (<anonymous>)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3522)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)"
+                }
+              ],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/9fe7cf3f-7795-4bba-8cf2-00d996542451\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          },
+          "afterNew": {
+            "active": "<button class=\"gc-menu-trigger\" type=\"button\" data-menu=\"file\" data-focus-key=\"menu:file\" role=\"menuitem\" aria-haspopup=\"menu\" aria-expanded=\"false\">",
+            "appOwnsFocus": true,
+            "clips": 0,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "related": null
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  }
+                }
+              ],
+              "focusCalls": [
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)\n    at HTMLElement.k (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:5107)"
+                },
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at T (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:1335)\n    at HTMLElement.k (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:5101)"
+                },
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58396)\n    at _e (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:53789)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:56430)"
+                },
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:46899"
+                }
+              ],
+              "disableEvents": [
+                {
+                  "value": true,
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "video.export"
+                  },
+                  "stack": "Error\n    at HTMLButtonElement.set [as disabled] (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:10:320)\n    at D (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:1713)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3548\n    at Array.map (<anonymous>)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:3522)\n    at Object.invalidate (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:49195)\n    at Object.command (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:7513)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57542)\n    at Te (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:57665)\n    at onCommand (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58450)"
+                }
+              ],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/9fe7cf3f-7795-4bba-8cf2-00d996542451\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "scenario": "panel-keyboard",
+          "build": "b81589f26a3f41800b8098725bf97c7fdfbee34ae14f82fd99c026e0f281f8f7",
+          "browser": "154.0.8037.97",
+          "export": {
+            "name": "frame-colors.mp4",
+            "bytes": 3568,
+            "firstBytes": [
+              0,
+              0,
+              0,
+              36,
+              102,
+              116,
+              121,
+              112,
+              105,
+              115,
+              111,
+              109
+            ]
+          },
+          "errors": [],
+          "afterExport": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "stack": "Error\n    at Element.replaceChildren (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:15:161)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                }
+              ],
+              "focusCalls": [],
+              "disableEvents": [],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/a207d3fc-169c-4de4-9a0e-135a3af6bb63\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          },
+          "afterShortcut": {
+            "active": "<body>",
+            "appOwnsFocus": false,
+            "clips": 1,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "stack": "Error\n    at Element.replaceChildren (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:15:161)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                }
+              ],
+              "focusCalls": [],
+              "disableEvents": [],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/a207d3fc-169c-4de4-9a0e-135a3af6bb63\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          },
+          "afterNew": {
+            "active": "<button class=\"gc-menu-trigger\" type=\"button\" data-menu=\"file\" data-focus-key=\"menu:file\" role=\"menuitem\" aria-haspopup=\"menu\" aria-expanded=\"false\">",
+            "appOwnsFocus": true,
+            "clips": 0,
+            "hint": "Exported frame-colors.mp4.",
+            "busy": null,
+            "data": {
+              "events": [
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": true,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "app",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Enter",
+                  "ctrl": false,
+                  "target": "BUTTON",
+                  "active": "<button class=\"xp-button\" type=\"button\" data-video-command=\"video.export\">",
+                  "defaultPrevented": false,
+                  "appInPath": true
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "Control",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": true,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "document",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                },
+                {
+                  "name": "window",
+                  "capture": false,
+                  "key": "n",
+                  "ctrl": true,
+                  "target": "BODY",
+                  "active": "<body>",
+                  "defaultPrevented": false,
+                  "appInPath": false
+                }
+              ],
+              "removals": [
+                {
+                  "container": "DIV.video-panel",
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "stack": "Error\n    at Element.replaceChildren (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:15:161)\n    at ge (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4229:224)\n    at ye (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1165)\n    at U (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:8866)\n    at fe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4228:12985)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:4032)\n    at HTMLDivElement.xe (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4230:1479)"
+                }
+              ],
+              "focusEvents": [
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-icon-button",
+                    "command": "file.save"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "xp-button",
+                    "videoCommand": "video.export"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": null
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "related": null
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  }
+                },
+                {
+                  "name": "focusout",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  }
+                },
+                {
+                  "name": "focusin",
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "active": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "related": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  }
+                }
+              ],
+              "focusCalls": [
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-item",
+                    "command": "file.new"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at T (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:1335)\n    at HTMLElement.k (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:5101)"
+                },
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at De (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:58396)\n    at _e (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:53789)\n    at Ce (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:56430)"
+                },
+                {
+                  "target": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "before": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "after": {
+                    "tag": "BUTTON",
+                    "id": "",
+                    "className": "gc-menu-trigger"
+                  },
+                  "stack": "Error\n    at HTMLElement.focus (/tmp/gsnv-consumer-qa/video-shortcut/chrome154/focus-probe.js:8:229)\n    at Object.O [as update] (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:4798)\n    at ue (http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:50534)\n    at http://127.0.0.1:4221/assets/index-C80Lfu5Z.js:4450:46899"
+                }
+              ],
+              "disableEvents": [],
+              "anchorClicks": [
+                {
+                  "active": {
+                    "tag": "BODY",
+                    "id": "",
+                    "className": ""
+                  },
+                  "anchor": "<a href=\"blob:http://127.0.0.1:4221/a207d3fc-169c-4de4-9a0e-135a3af6bb63\" download=\"frame-colors.mp4\">"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

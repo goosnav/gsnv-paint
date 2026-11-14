@@ -3,10 +3,12 @@
  * KIND       SHELL
  * CONTRACT   IN: ChromeRequest; live root, valid ChromeModel with nonempty IDs and callbacks. Menu entries
  *            marked toolbar=true supply their glyph; tools populate the left palette.
- *            OUT: update/dispose plus a stable viewport element; XP-inspired application header/menu/
+ *            OUT: update/dispose plus stable viewport/offline status slot elements; XP-inspired application header/menu/
  *            toolbar/palette/panels/status, workspace switcher and accessible controls.
- *            update preserves viewport and caller-owned panel content identities, an open
+ *            update preserves viewport, offline-slot and caller-owned panel content identities, an open
  *            menu and its focused command (focus returns to the trigger if it vanished);
+ *            same-workspace command/menu IDs retain their nodes and unchanged glyphs.
+ *            Disabled or removed toolbar/tool focus returns to the stable viewport.
  *            dispose is idempotent and removes all installed event listeners.
  *            RAISES: TypeError for invalid root/model/callbacks.
  * GUARANTEES No domain decisions or fake tool actions; supplied strings are text;
@@ -18,6 +20,9 @@
  *            D2: Delegate events to the frame/document. Alternative: per-render handlers;
  *            rejected because frequent model updates risk leaks. Revisit if: profiling
  *            reveals a measurable dispatch cost.
+ *            D3: Reconcile controls in place. Alternative: recreate them on update;
+ *            rejected because blur commits can detach a pressed Save before click.
+ *            Revisit if: control ownership changes. No replayed/synthetic activation.
  * LIMITS     Workspace editing, history, file operations and modal content are external.
  * TESTBENCH  src/shared/chrome.test.ts -- run with: node --import tsx --test src/shared/chrome.test.ts
  */
@@ -35,7 +40,7 @@ export type ChromeModel = {
   panels: readonly Panel[]; status: string; capabilities: readonly Capability[];
 };
 export type ChromeRequest = { root: HTMLElement; model: ChromeModel; onCommand: (id: string) => void; onWorkspace: (workspace: Workspace) => void };
-type ChromeHandle = { update(model: ChromeModel): void; dispose(): void; viewport: HTMLElement };
+type ChromeHandle = { update(model: ChromeModel): void; dispose(): void; viewport: HTMLElement; offlineSlot: HTMLElement };
 
 function validate(model: ChromeModel): void {
   const text = (value: unknown) => typeof value === 'string';
@@ -76,9 +81,9 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
   frame.innerHTML = `<header class="gc-app-header"><div class="gc-identity"><span class="gc-app-icon"></span><strong class="gc-brand">gsnv-paint</strong></div><span data-window-title></span><div class="gc-workspaces" role="tablist" aria-label="Workspace"></div></header>
     <div class="gc-command-row"><nav class="gc-menubar" role="menubar" aria-label="Menu bar"></nav><div class="gc-standard" role="toolbar" aria-label="Standard toolbar"></div></div>
     <div class="gc-main"><aside class="gc-palette" role="toolbar" aria-label="Tool palette"></aside><div class="gc-viewport" role="region" tabindex="0"></div><aside class="gc-panels" role="complementary" aria-label="Panels"></aside></div>
-    <footer class="gc-statusbar"><div class="gc-status" role="status"></div><details class="gc-capabilities"><summary></summary><div class="gc-capability-list"></div></details></footer>`;
+    <footer class="gc-statusbar"><div class="gc-status" role="status"></div><div class="gc-offline-slot"></div><details class="gc-capabilities"><summary></summary><div class="gc-capability-list"></div></details></footer>`;
   const get = <T extends HTMLElement>(selector: string) => frame.querySelector<T>(selector)!;
-  const viewport = get<HTMLDivElement>('.gc-viewport');
+  const viewport = get<HTMLDivElement>('.gc-viewport'), offlineSlot = get<HTMLDivElement>('.gc-offline-slot');
   const menuBar = get<HTMLElement>('.gc-menubar');
   const toolbar = get<HTMLElement>('.gc-standard');
   const palette = get<HTMLElement>('.gc-palette');
@@ -95,8 +100,14 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
   let current = model;
   let disposed = false;
   let activeMenu = -1;
-  let menuNodes: { button: HTMLButtonElement; popup: HTMLElement }[] = [];
+  let menuNodes: { wrap: HTMLElement; button: HTMLButtonElement; popup: HTMLElement }[] = [];
   let panelCache: Panel[] = [];
+  const presentation = new WeakMap<HTMLButtonElement, string>();
+  const paletteLabel = make('div', 'gc-palette-label', 'Tools');
+  const reconcile = (parent: HTMLElement, children: readonly HTMLElement[]) => {
+    children.forEach((child, index) => { if (parent.children[index] !== child) parent.insertBefore(child, parent.children[index] ?? null); });
+    while (parent.children.length > children.length) parent.lastElementChild!.remove();
+  };
   const closeMenu = (focus = false) => {
     const previous = menuNodes[activeMenu];
     for (const item of menuNodes) { item.popup.hidden = true; item.button.setAttribute('aria-expanded', 'false'); }
@@ -109,15 +120,23 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     const choices = [...item.popup.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')];
     if (focus) (last ? choices.at(-1) : choices[0])?.focus();
   };
-  const commandButton = (item: MenuItem | Tool, surface: string) => {
-    const button = make('button', surface === 'menu' ? 'gc-menu-item' : 'gc-icon-button'); button.type = 'button';
+  const commandButton = (item: MenuItem | Tool, surface: string, previous: HTMLButtonElement[]) => {
+    const index = previous.findIndex(button => button.dataset.command === item.id);
+    const button = index < 0 ? make('button', surface === 'menu' ? 'gc-menu-item' : 'gc-icon-button') : previous.splice(index, 1)[0]!;
+    button.type = 'button';
     button.disabled = !item.enabled; button.dataset.command = item.id; button.dataset.focusKey = `${surface}:${item.id}`;
     button.title = item.shortcut ? `${item.label} (${item.shortcut})` : item.label;
     button.setAttribute('aria-label', button.title);
-    if ('status' in item) { button.dataset.status = item.status; if (item.active !== undefined) button.setAttribute('aria-pressed', String(item.active)); }
-    if (item.icon) button.append(renderIcon({ document, name: item.icon, label: item.label, size: 18 }));
-    if (surface === 'toolbar') button.append(make('span', 'gc-command-label', item.label));
-    if (surface === 'menu') { button.setAttribute('role', 'menuitem'); button.append(make('span', 'gc-menu-label', item.label), make('span', 'gc-key', item.shortcut)); }
+    if ('status' in item) button.dataset.status = item.status;
+    if ('active' in item && item.active !== undefined) button.setAttribute('aria-pressed', String(item.active)); else button.removeAttribute('aria-pressed');
+    const signature = JSON.stringify([item.icon, item.label, item.shortcut, surface]);
+    if (presentation.get(button) !== signature) {
+      button.replaceChildren();
+      if (item.icon) button.append(renderIcon({ document, name: item.icon, label: item.label, size: 18 }));
+      if (surface === 'toolbar') button.append(make('span', 'gc-command-label', item.label));
+      if (surface === 'menu') { button.setAttribute('role', 'menuitem'); button.append(make('span', 'gc-menu-label', item.label), make('span', 'gc-key', item.shortcut)); }
+      presentation.set(button, signature);
+    }
     return button;
   };
   const update = (next: ChromeModel) => {
@@ -127,21 +146,32 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     // Background updates (worker results, autosave) keep an open menu open with the same focused command.
     const openId = activeMenu >= 0 ? menuNodes[activeMenu]!.button.dataset.menu : undefined;
     const popupFocused = activeMenu >= 0 && menuNodes[activeMenu]!.popup.contains(focused);
+    const sameWorkspace = current.workspace === next.workspace;
+    const oldMenus = sameWorkspace ? [...menuNodes] : [];
+    const oldToolbar = sameWorkspace ? [...toolbar.querySelectorAll<HTMLButtonElement>('button')] : [];
+    const oldTools = sameWorkspace ? [...palette.querySelectorAll<HTMLButtonElement>('button')] : [];
     closeMenu(); current = next;
     get<HTMLElement>('[data-window-title]').textContent = `${next.title || 'Untitled'}${next.dirty ? ' *' : ''}`;
     viewport.setAttribute('aria-label', `${workspaceNames[next.workspace]} workspace view`);
     workspaceButtons.forEach(button => { const selected = button.dataset.workspace === next.workspace; button.setAttribute('aria-selected', String(selected)); button.tabIndex = selected ? 0 : -1; });
-    menuBar.replaceChildren(); toolbar.replaceChildren(); palette.replaceChildren(); menuNodes = [];
+    menuNodes = []; const toolbarButtons: HTMLButtonElement[] = [];
     for (const menu of next.menus) {
-      const wrap = make('div', 'gc-menu-wrap'); const button = make('button', 'gc-menu-trigger', menu.label); button.type = 'button';
+      const index = oldMenus.findIndex(item => item.button.dataset.menu === menu.id);
+      const old = index < 0 ? undefined : oldMenus.splice(index, 1)[0];
+      const wrap = old?.wrap ?? make('div', 'gc-menu-wrap'); const button = old?.button ?? make('button', 'gc-menu-trigger'); button.type = 'button';
+      if (button.textContent !== menu.label) button.textContent = menu.label;
       button.dataset.menu = menu.id; button.dataset.focusKey = `menu:${menu.id}`; button.setAttribute('role', 'menuitem');
       button.setAttribute('aria-haspopup', 'menu'); button.setAttribute('aria-expanded', 'false');
-      const popup = make('div', 'gc-menu-popup'); popup.setAttribute('role', 'menu'); popup.setAttribute('aria-label', menu.label); popup.hidden = true;
-      for (const item of menu.items) { popup.append(commandButton(item, 'menu')); if (item.toolbar) toolbar.append(commandButton(item, 'toolbar')); }
-      wrap.append(button, popup); menuBar.append(wrap); menuNodes.push({ button, popup });
+      const popup = old?.popup ?? make('div', 'gc-menu-popup'); popup.setAttribute('role', 'menu'); popup.setAttribute('aria-label', menu.label); popup.hidden = true;
+      const oldItems = [...popup.querySelectorAll<HTMLButtonElement>('button')];
+      reconcile(popup, menu.items.map(item => {
+        if (item.toolbar) toolbarButtons.push(commandButton(item, 'toolbar', oldToolbar));
+        return commandButton(item, 'menu', oldItems);
+      }));
+      if (!old) wrap.append(button, popup); menuNodes.push({ wrap, button, popup });
     }
-    palette.append(make('div', 'gc-palette-label', 'Tools'));
-    for (const tool of next.tools) palette.append(commandButton(tool, 'tool'));
+    reconcile(menuBar, menuNodes.map(item => item.wrap)); reconcile(toolbar, toolbarButtons);
+    reconcile(palette, [paletteLabel, ...next.tools.map(tool => commandButton(tool, 'tool', oldTools))]);
     if (panelCache.length !== next.panels.length || next.panels.some((panel, index) => {
       const old = panelCache[index]; return !old || old.id !== panel.id || old.title !== panel.title || old.content !== panel.content;
     })) {
@@ -162,9 +192,10 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     // A focused command that is gone or now disabled hands focus back to its visible trigger.
     if (popupFocused && (reopen < 0 || ![...menuNodes[reopen]!.popup.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')].some(item => item.dataset.focusKey === focusKey))) focusKey = reopen >= 0 ? menuNodes[reopen]!.button.dataset.focusKey : `menu:${openId}`;
     if (focusKey) {
-      const replacement = [...frame.querySelectorAll<HTMLElement>('[data-focus-key]')].find(element => element.dataset.focusKey === focusKey);
-      replacement?.focus();
-      if (!replacement || document.activeElement !== replacement) viewport.focus();
+      const replacement = focused && frame.contains(focused) && focused.dataset.focusKey === focusKey ? focused :
+        [...frame.querySelectorAll<HTMLElement>('[data-focus-key]')].find(element => element.dataset.focusKey === focusKey);
+      if (replacement && !replacement.matches(':disabled')) replacement.focus();
+      if (!replacement || replacement.matches(':disabled') || document.activeElement !== replacement) viewport.focus();
     }
     else if (focused && frame.contains(focused)) focused.focus();
   };
@@ -203,7 +234,7 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
   document.addEventListener('pointerdown', outside);
   document.addEventListener('focusin', outside);
   root.append(frame); update(model);
-  return { viewport, update, dispose() {
+  return { viewport, offlineSlot, update, dispose() {
     if (disposed) return; disposed = true;
     frame.removeEventListener('click', clicked); frame.removeEventListener('keydown', keyed);
     frame.removeEventListener('pointerover', hint); frame.removeEventListener('focusin', hint);

@@ -1,0 +1,233 @@
+{
+  "buildA": "6325bde3ba12a7d5974d3dd36ede8934f0cf9a6ebd551665f1d52c85180c479d",
+  "buildB": "9442a467e157d33e2ae208da02bce21363e8f01b9644e8b5f28d060a14b4ba1b",
+  "browser": "158.0.8127.18",
+  "savedProject": {
+    "content": {
+      "html": "<p>pending document 7391 during update before close</p>",
+      "page": {
+        "margin": 1,
+        "numbers": false,
+        "orientation": "portrait",
+        "size": "letter"
+      }
+    },
+    "format": "gsnv-document",
+    "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+    "title": "Untitled document",
+    "version": 1
+  },
+  "beforeSavedTabCloses": [
+    {
+      "database": "gsnv-paint-recovery",
+      "metadata": {
+        "workspace": "document",
+        "generation": 5,
+        "title": "Untitled document"
+      },
+      "bytes": 300,
+      "sha256": "151ec0f959aa3c105dfbd80d8b770f5eb925bae36b4c8786be8a69f74ae4b793",
+      "project": {
+        "content": {
+          "html": "<p>pending document 7391 during update before close</p>",
+          "page": {
+            "margin": 1,
+            "numbers": false,
+            "orientation": "portrait",
+            "size": "letter"
+          }
+        },
+        "format": "gsnv-document",
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "title": "Untitled document",
+        "version": 1
+      }
+    },
+    {
+      "database": "gsnv-paint-recent",
+      "metadata": {
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "workspace": "document",
+        "title": "Untitled document",
+        "updated": 1794631836888
+      },
+      "bytes": 300,
+      "sha256": "151ec0f959aa3c105dfbd80d8b770f5eb925bae36b4c8786be8a69f74ae4b793",
+      "project": {
+        "content": {
+          "html": "<p>pending document 7391 during update before close</p>",
+          "page": {
+            "margin": 1,
+            "numbers": false,
+            "orientation": "portrait",
+            "size": "letter"
+          }
+        },
+        "format": "gsnv-document",
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "title": "Untitled document",
+        "version": 1
+      }
+    }
+  ],
+  "afterDocumentTabClose": [
+    {
+      "database": "gsnv-paint-recovery",
+      "metadata": {
+        "workspace": "document",
+        "generation": 5,
+        "title": "Untitled document"
+      },
+      "bytes": 300,
+      "sha256": "151ec0f959aa3c105dfbd80d8b770f5eb925bae36b4c8786be8a69f74ae4b793",
+      "project": {
+        "content": {
+          "html": "<p>pending document 7391 during update before close</p>",
+          "page": {
+            "margin": 1,
+            "numbers": false,
+            "orientation": "portrait",
+            "size": "letter"
+          }
+        },
+        "format": "gsnv-document",
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "title": "Untitled document",
+        "version": 1
+      }
+    },
+    {
+      "database": "gsnv-paint-recent",
+      "metadata": {
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "workspace": "document",
+        "title": "Untitled document",
+        "updated": 1794631836888
+      },
+      "bytes": 300,
+      "sha256": "151ec0f959aa3c105dfbd80d8b770f5eb925bae36b4c8786be8a69f74ae4b793",
+      "project": {
+        "content": {
+          "html": "<p>pending document 7391 during update before close</p>",
+          "page": {
+            "margin": 1,
+            "numbers": false,
+            "orientation": "portrait",
+            "size": "letter"
+          }
+        },
+        "format": "gsnv-document",
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "title": "Untitled document",
+        "version": 1
+      }
+    }
+  ],
+  "beforeBStartup": [
+    {
+      "database": "gsnv-paint-recovery",
+      "metadata": {
+        "workspace": "document",
+        "generation": 5,
+        "title": "Untitled document"
+      },
+      "bytes": 300,
+      "sha256": "151ec0f959aa3c105dfbd80d8b770f5eb925bae36b4c8786be8a69f74ae4b793",
+      "project": {
+        "content": {
+          "html": "<p>pending document 7391 during update before close</p>",
+          "page": {
+            "margin": 1,
+            "numbers": false,
+            "orientation": "portrait",
+            "size": "letter"
+          }
+        },
+        "format": "gsnv-document",
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "title": "Untitled document",
+        "version": 1
+      }
+    },
+    {
+      "database": "gsnv-paint-recent",
+      "metadata": {
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "workspace": "document",
+        "title": "Untitled document",
+        "updated": 1794631836888
+      },
+      "bytes": 300,
+      "sha256": "151ec0f959aa3c105dfbd80d8b770f5eb925bae36b4c8786be8a69f74ae4b793",
+      "project": {
+        "content": {
+          "html": "<p>pending document 7391 during update before close</p>",
+          "page": {
+            "margin": 1,
+            "numbers": false,
+            "orientation": "portrait",
+            "size": "letter"
+          }
+        },
+        "format": "gsnv-document",
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "title": "Untitled document",
+        "version": 1
+      }
+    }
+  ],
+  "afterBStartup": [
+    {
+      "database": "gsnv-paint-recovery",
+      "metadata": {
+        "workspace": "document",
+        "generation": 5,
+        "title": "Untitled document"
+      },
+      "bytes": 300,
+      "sha256": "151ec0f959aa3c105dfbd80d8b770f5eb925bae36b4c8786be8a69f74ae4b793",
+      "project": {
+        "content": {
+          "html": "<p>pending document 7391 during update before close</p>",
+          "page": {
+            "margin": 1,
+            "numbers": false,
+            "orientation": "portrait",
+            "size": "letter"
+          }
+        },
+        "format": "gsnv-document",
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "title": "Untitled document",
+        "version": 1
+      }
+    },
+    {
+      "database": "gsnv-paint-recent",
+      "metadata": {
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "workspace": "document",
+        "title": "Untitled document",
+        "updated": 1794631836888
+      },
+      "bytes": 300,
+      "sha256": "151ec0f959aa3c105dfbd80d8b770f5eb925bae36b4c8786be8a69f74ae4b793",
+      "project": {
+        "content": {
+          "html": "<p>pending document 7391 during update before close</p>",
+          "page": {
+            "margin": 1,
+            "numbers": false,
+            "orientation": "portrait",
+            "size": "letter"
+          }
+        },
+        "format": "gsnv-document",
+        "id": "595ff0ce-9014-4dda-8ff3-b2bd75cf8868",
+        "title": "Untitled document",
+        "version": 1
+      }
+    }
+  ],
+  "nativeCloseWarnings": []
+}

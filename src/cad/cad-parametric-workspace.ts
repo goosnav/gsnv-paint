@@ -23,7 +23,9 @@ import { evaluateVariables } from './named-variables.ts';
 import { makeLinearEntities, type LinearEntity } from './sketch-linear-primitives.ts';
 import { cadWorkerClient, type CADBuild } from './cad-worker-client.ts';
 import { cadViewport } from './cad-viewport.ts';
+import { cadSourceAdapter } from '../bridge/cad-source-adapter.ts';
 import { cadToolInput, type CADToolState } from './cad-tool-input.ts';
+import type { ProfileSource } from './sketch-profile-source.ts';
 import { cadProperties, type PropertyEdit } from './cad-properties.ts';
 import { cadSTEPExport } from './cad-step-export.ts';
 import { writeSTL } from './stl-serialization.ts';
@@ -39,6 +41,13 @@ import './cad-workspace.css';
 
 type Snapshot=Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
 const firstSegment=(entities:readonly SketchEntity[])=>entities.find((e):e is Extract<SketchEntity,{kind:'segment'}>=>e.kind==='segment');
+function profileSource(kind:ProfileSource['kind'],values:DialogSpec['initial'],id:string,members?:string[]):ProfileSource {
+ const count=kind==='center-rectangle'?4:Number(values.sides);
+ if(!Number.isInteger(count)||count<3||count>128)throw new Error('A polygon needs 3–128 whole sides.');
+ const length=(source:unknown)=>({source:String(source),kind:'length' as const});
+ const common={id,entityIds:members??Array.from({length:count},(_,i)=>`${id}-edge-${i}`),center:[length(values.x),length(values.y)] as [ReturnType<typeof length>,ReturnType<typeof length>],construction:values.construction===true};
+ return kind==='center-rectangle'?{...common,kind,width:length(values.width),height:length(values.height)}:{...common,kind,sides:count,radius:length(values.radius),rotation:{source:String(values.rotation),kind:'angle'}};
+}
 export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
  const value=(document:AppDocument)=>editableCADContent({operation:'read',value:document.value});
  return{
@@ -51,7 +60,8 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
    const viewport=cadViewport(stage);
    let current:Snapshot,content:CADContent|null=null,preview:CADContent|null=null,result:CADBuild|null=null,view:View2D={zoom:1,pan:{x:0,y:0}};
    let mode:'sketch'|'solid'='sketch',status:'idle'|'busy'|'ready'|'error'='idle',message='Start a new part with Ctrl+N.',disposed=false,jobIdentity='',previewSequence=0,exportMessage='';
-   let tool:CADToolState={tool:'select',anchor:null,cursor:null,selected:[]};
+   let tool:CADToolState={tool:'select',anchor:null,cursor:null,selected:[]},polygonSides=6;
+   const sending=cadSourceAdapter({viewport:viewport.capturePort(),title:()=>current?.title??'Part',dialog:host.dialog,transfer:host.transfer});
    const properties=cadProperties({root:panel,onEdit:edit});
    const assets={kernelModule:new URL(kernelModule,location.href).href,kernelWasm:new URL(kernelWasm,location.href).href,solverModule:new URL(solverModule,location.href).href,solverWasm:new URL(solverWasm,location.href).href};
    const exporter=cadSTEPExport({files,assets,createWorker:()=>new Worker(new URL('./cad-step-export.worker.ts',import.meta.url),{type:'module'}),onStatus(state,text){exportMessage=text;hint.dataset.exportState=state;refresh(false);}});
@@ -66,12 +76,17 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
    const onCut=()=>!!activeSketch&&activeSketch!==baseId();
    const entities=()=>(onCut()?result?.sketches?.[activeSketch]:result?.entities)??sketchOf(effective())?.entities??[];
    const uid=()=>crypto.randomUUID();
-   function toolStatus(){return !current?'New (Ctrl+N) starts a part.':mode==='solid'?'Middle-drag to orbit · Shift+middle-drag to pan · wheel to zoom · F to fit.':tool.tool==='select'?'Click an edge to select · Ctrl-click adds to selection · double-click a dimension to edit.':tool.anchor?(tool.tool==='circle'?'Click a point on the circle to set its size · Esc cancels.':'Click the next corner to finish · Shift aligns a line · Esc cancels.'):tool.tool==='circle'?'Click the circle center · inside an outline it becomes a hole when extruded.':tool.tool==='line'?'Click the first endpoint · endpoints snap · Esc cancels.':'Click the first corner. This replaces the current sketch with a dimensioned rectangle.';}
+   function toolStatus(){
+    if(tool.tool==='center-rectangle'&&mode==='sketch')return tool.anchor?'Click a corner to finish the centered rectangle · Esc cancels.':'Click the rectangle center · a new editable profile is added.';
+    if(tool.tool==='polygon'&&mode==='sketch')return tool.anchor?`Click the first vertex of the ${polygonSides}-sided polygon · Esc cancels.`:`Click the center of the ${polygonSides}-sided polygon.`;
+    return !current?'New (Ctrl+N) starts a part.':mode==='solid'?'Middle-drag to orbit · Shift+middle-drag to pan · wheel to zoom · F to fit.':tool.tool==='select'?'Click an edge to select · Ctrl-click adds to selection · double-click a dimension to edit.':tool.anchor?(tool.tool==='circle'?'Click a point on the circle to set its size · Esc cancels.':'Click the next corner to finish · Shift aligns a line · Esc cancels.'):tool.tool==='circle'?'Click the circle center · inside an outline it becomes a hole when extruded.':tool.tool==='line'?'Click the first endpoint · endpoints snap · Esc cancels.':'Click the first corner. This replaces the current sketch with a dimensioned rectangle.';
+   }
+   function selectGeometry(id:string,multi:boolean){const members=sketchOf(content)?.profiles?.find(p=>p.entityIds.includes(id))?.entityIds??[id];tool={...tool,tool:'select',anchor:null,cursor:null,selected:multi?(members.every(id=>tool.selected.includes(id))?tool.selected.filter(id=>!members.includes(id)):[...new Set([...tool.selected,...members])]):[...members]};}
    function refresh(includePanel=true){
     if(disposed)return;const shown=effective();let ghost:(LinearEntity|SketchEntity)[]=[];
     if(shown&&tool.anchor&&tool.cursor&&tool.tool==='circle'){const radius=Math.hypot(tool.cursor[0]-tool.anchor[0],tool.cursor[1]-tool.anchor[1]);if(radius>shown.tolerance.linearMm)ghost=[{id:'preview',kind:'circle',center:tool.anchor,radius,construction:false}];}
-    else if(shown&&tool.anchor&&tool.cursor&&tool.tool!=='select')try{ghost=makeLinearEntities({tool:tool.tool==='line'?'line':'corner-rectangle',anchors:[tool.anchor,tool.cursor],ids:tool.tool==='line'?['preview']:['preview1','preview2','preview3','preview4'],construction:false,tolerance:shown.tolerance});}catch{/* A zero-length hover is a preview, never a committed segment. */}
-    viewport.update({content:shown,sketch:sketchOf(shown),context:onCut()?(result?.entities??shown?.graph.features[0].definition.sketch.entities??[]):[],entities:entities(),view,selected:tool.selected,preview:ghost,solid:result?.solid??null,mode,state:status==='error'?'error':result?.dof===0?'fully':'under'});
+    else if(shown&&tool.anchor&&tool.cursor&&tool.tool!=='select')try{ghost=makeLinearEntities({tool:tool.tool==='line'?'line':tool.tool==='polygon'?'polygon':tool.tool==='center-rectangle'?'center-rectangle':'corner-rectangle',anchors:[tool.anchor,tool.cursor],sides:polygonSides,ids:Array.from({length:tool.tool==='line'?1:tool.tool==='polygon'?polygonSides:4},(_,i)=>`preview${i}`),construction:false,tolerance:shown.tolerance});}catch{/* A zero-length hover is a preview, never a committed segment. */}
+    viewport.update({content:shown,sketch:sketchOf(shown),context:onCut()?(result?.entities??shown?.graph.features[0].definition.sketch.entities??[]):[],entities:entities(),view,selected:tool.selected,preview:ghost,solid:result?.solid??null,mode,state:status==='error'?'error':result?.dof===0?'fully':'under',capture:{documentIdentity:current?.identity??'',ready:!preview&&!tool.anchor&&status==='ready'&&jobIdentity===current?.identity}});
     hint.textContent=exportMessage||toolStatus();hint.dataset.tool=tool.tool;stage.dataset.tool=mode==='sketch'?tool.tool:'orbit';
     if(includePanel)properties.update({content:shown,activeSketch:onCut()?activeSketch:'',selected:tool.selected,state:status,message,result});
     if(current&&document.activeElement===document.body&&!document.querySelector('dialog[open]'))stage.focus();
@@ -99,7 +114,12 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
    function length(source:unknown){if(!content)throw new Error('Create a part first.');return evaluateDimension({expression:{source:String(source),kind:'length'},context:evaluateVariables({variables:content.variables,units:content.units}).context}).value;}
    function edit(request:PropertyEdit){
     if(disposed||!content)return;const sketch=sketchOf(content)!;
-    if(request.command==='cad.editVariable'&&request.id){variableDialog(request.id);}
+    const profile=sketch.profiles?.find(p=>p.id===request.id);
+    if(request.command==='cad.editProfile'&&profile){profileDialog(profile.kind,profile);}
+    else if(request.command==='cad.detachProfile'&&profile){commit({kind:'detach-profile',id:profile.id},'Detach profile');}
+    else if(request.command==='cad.removeProfile'&&profile){commit({kind:'remove-profile',id:profile.id},'Delete profile');}
+    else if(request.command==='cad.profileConstruction'&&profile){commit({kind:'construction',ids:profile.entityIds,enabled:!profile.construction},'Change profile construction');}
+    else if(request.command==='cad.editVariable'&&request.id){variableDialog(request.id);}
     else if(request.command==='cad.removeVariable'&&request.id){commit({kind:'remove-variable',name:request.id},'Delete variable');}
     else if(request.command==='cad.editPosition'&&request.id){
      const constraint=sketch.constraints.find(c=>c.id===request.id);if(!constraint?.position)return;
@@ -122,18 +142,32 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
     const fields:DialogSpec['fields']=[...(!variable?[{key:'name',label:'Name',type:'text' as const}]:[]),{key:'source',label:'Value or expression',type:'text'},{key:'kind',label:'Type',type:'select',choices:[{value:'length',label:`Length (${content.units})`},{value:'angle',label:'Angle (degrees)'},{value:'scalar',label:'Number'}]}];
     transaction(variable?`Edit variable ${variable.name}`:'Add variable',fields,{...(!variable?{name:''}:{}),source:variable?.expression.source??'10',kind:variable?.expression.kind??'length'},v=>({kind:'variable',name:variable?.name??String(v.name).trim(),source:String(v.source),dimensionKind:v.kind as 'length'|'angle'|'scalar'}));
    }
+   function profileDialog(kind:ProfileSource['kind'],existing?:ProfileSource){
+    if(!content)return;const id=existing?.id??uid(),label=kind==='center-rectangle'?'Centered rectangle dimensions':'Regular polygon dimensions';
+    const field=(key:string,name:string)=>({key,label:`${name} (${content!.units} or expression)`,type:'text' as const});
+    const fields:DialogSpec['fields']=[field('x','Center U'),field('y','Center V'),...(kind==='center-rectangle'?[field('width','Width'),field('height','Height')]:[field('radius','Radius'),{key:'rotation',label:'Rotation (degrees or expression)',type:'text' as const},...(!existing?[{key:'sides',label:'Sides',type:'number' as const,min:3,max:128,step:1}]:[])])];
+    const initial:DialogSpec['initial']={x:existing?.center[0].source??'30',y:existing?.center[1].source??'30',...(kind==='center-rectangle'?{width:existing?.kind==='center-rectangle'?existing.width.source:'40',height:existing?.kind==='center-rectangle'?existing.height.source:'20'}:{radius:existing?.kind==='regular-polygon'?existing.radius.source:'20',rotation:existing?.kind==='regular-polygon'?existing.rotation.source:'0',...(!existing?{sides:6}:{})})};
+    transaction(existing?`Edit ${label.toLowerCase()}`:label,fields,initial,v=>({kind:existing?'edit-profile':'add-profile',profile:profileSource(kind,{...v,sides:existing?.kind==='regular-polygon'?existing.sides:v.sides??4,construction:existing?.construction??false},id,existing?.entityIds)}));
+   }
    function edgeDialog(feature:'fillet'|'chamfer',id:string,edges:EdgeSet,size:string){
     if(!content)return;
-    transaction(feature==='fillet'?'Fillet (rounded edges)':'Chamfer (bevelled edges)',[{key:'edges',label:'Edges',type:'select',choices:[{value:'vertical',label:'Vertical edges (corners)'},{value:'top',label:'Top edges'},{value:'bottom',label:'Bottom edges'},{value:'all',label:'All edges'}]},{key:'size',label:`${feature==='fillet'?'Radius':'Distance'} (${content.units} or expression)`,type:'text'}],
+    transaction(feature==='fillet'?'Fillet (rounded edges)':'Chamfer (bevelled edges)',[{key:'edges',label:'Edges',type:'select',choices:[{value:'vertical',label:'Edges along extrusion (corners)'},{value:'top',label:'End edges (+normal)'},{value:'bottom',label:'Start edges (−normal)'},{value:'all',label:'All edges'}]},{key:'size',label:`${feature==='fillet'?'Radius':'Distance'} (${content.units} or expression)`,type:'text'}],
      {edges,size},v=>({kind:'edge-feature',id,feature,edges:v.edges as EdgeSet,size:String(v.size)}),true);
    }
    function command(id:string){
     if(!content)return;
+    if(id==='bridge.cadToImage'){sending.send();return;}
     if(id==='tool.cancel'){exporter.cancel();worker.cancel();preview=null;tool=cadToolInput({state:tool,event:{kind:'cancel'},endpoints:[],tolerance:content.tolerance.linearMm}).state;build(content,current!.identity);return;}
     if(id==='cad.exportSTEP'){void exporter.run({content,name:`${current?.title.trim()||'part'}.step`});return;}
     if(id==='tool.confirm'){if(tool.anchor&&tool.cursor)pointer(tool.cursor,null,false,false);return;}
-    if(['cad.select','cad.line','cad.rectangleTool','cad.circleTool'].includes(id)){mode='sketch';tool=cadToolInput({state:tool,event:{kind:'tool',tool:id==='cad.select'?'select':id==='cad.line'?'line':id==='cad.circleTool'?'circle':'rectangle'},endpoints:[],tolerance:content.tolerance.linearMm}).state;refresh();host.invalidate();return;}
+    const chooseTool=(next:CADToolState['tool'])=>{mode='sketch';tool=cadToolInput({state:tool,event:{kind:'tool',tool:next},endpoints:[],tolerance:content!.tolerance.linearMm}).state;refresh();host.invalidate();};
+    const tools:Record<string,CADToolState['tool']>={'cad.select':'select','cad.line':'line','cad.rectangleTool':'rectangle','cad.circleTool':'circle','cad.centerRectangleTool':'center-rectangle'};
+    if(tools[id]){chooseTool(tools[id]!);return;}
+    if(id==='cad.polygonTool'){host.dialog({title:'Polygon tool',fields:[{key:'sides',label:'Sides',type:'number',min:3,max:128,step:1}],initial:{sides:polygonSides},validate:v=>Number.isInteger(v.sides)&&Number(v.sides)>=3&&Number(v.sides)<=128?{ok:true,value:Number(v.sides)}:{ok:false,error:{code:'cad.sides',message:'Choose 3–128 whole sides.'}},preview(){},commit:v=>{polygonSides=Number(v);chooseTool('polygon');},cancel(){}});return;}
+    if(id==='cad.centerRectangle'||id==='cad.polygon'){profileDialog(id==='cad.centerRectangle'?'center-rectangle':'regular-polygon');return;}
+    if(id==='cad.construction'){const picked=sketchOf(content)!.entities.filter(e=>tool.selected.includes(e.id));if(picked.length)commit({kind:'construction',ids:picked.map(e=>e.id),enabled:!picked.every(e=>e.construction)},'Change construction geometry');return;}
     if(id==='cad.exportSTL'){void exportSTL();return;}
+    if(id.startsWith('cad.plane.')){commit({kind:'plane',plane:id.slice(10) as Sketch['plane']},'Change sketch plane');return;}
     if(id==='cad.addVariable'){variableDialog();return;}
     if(id==='cad.circle'){
      const prefix=uid();
@@ -164,10 +198,15 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
    }
    function pointer(point:[number,number],hit:string|null,ctrl:boolean,shift:boolean,move=false){
     if(!content)return;const endpoints=entities().flatMap(e=>e.kind==='segment'?[e.a,e.b]:e.kind==='circle'?[e.center]:[]),a=viewport.point({x:0,y:0}),b=viewport.point({x:8,y:0});
+    if(!move&&tool.tool==='select'&&hit){selectGeometry(hit,ctrl);refresh();return;}
     const next=cadToolInput({state:tool,event:{kind:move?'move':'click',point,hit,ctrl,shift},endpoints,tolerance:Math.max(content.tolerance.linearMm,Math.abs(b[0]-a[0]))});tool=next.state;
     if(next.intent.kind==='line')commit({kind:'line',id:uid(),a:next.intent.a,b:next.intent.b},'Draw line');
     else if(next.intent.kind==='circle'){if(next.intent.radius>content.tolerance.linearMm)commit({kind:'circle',prefix:uid(),diameter:`${+(next.intent.radius*2).toFixed(3)} mm`,center:next.intent.center},'Draw circle');else refresh();}
     else if(next.intent.kind==='rectangle')commit({kind:'rectangle',prefix:uid(),width:`${next.intent.width} mm`,height:`${next.intent.height} mm`,origin:next.intent.origin},'Draw rectangle');
+    else if(next.intent.kind==='center-rectangle'||next.intent.kind==='polygon'){
+     const intent=next.intent,dimensions=intent.kind==='center-rectangle'?{width:`${intent.width} mm`,height:`${intent.height} mm`}:{sides:polygonSides,radius:`${intent.radius} mm`,rotation:`${intent.rotation} deg`};
+     commit({kind:'add-profile',profile:profileSource(intent.kind==='polygon'?'regular-polygon':'center-rectangle',{...dimensions,x:`${intent.center[0]} mm`,y:`${intent.center[1]} mm`},uid())},intent.kind==='polygon'?'Draw regular polygon':'Draw centered rectangle');
+    }
     else refresh(!move);
    }
    async function exportSTL(){
@@ -185,7 +224,7 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
     const entity=target.closest('[data-entity-id][role="button"]')?.getAttribute('data-entity-id');
     if(event.type==='keydown'&&mode==='sketch'&&entity){
      event.preventDefault();event.stopPropagation();const multi=(event as KeyboardEvent).ctrlKey||(event as KeyboardEvent).metaKey;
-     tool={...tool,tool:'select',anchor:null,cursor:null,selected:multi?(tool.selected.includes(entity)?tool.selected.filter(id=>id!==entity):[...tool.selected,entity]):[entity]};refresh();host.invalidate();
+     selectGeometry(entity,multi);refresh();host.invalidate();
     }
    };stage.addEventListener('dblclick',dimensionEdit);stage.addEventListener('keydown',dimensionEdit);
    return{
@@ -195,9 +234,9 @@ export function createParametricCADWorkspace(files:FilePorts):WorkspaceAdapter{
     },
     model(){
      const enabled=!!current,item=(id:string,label:string,icon:string,shortcut='',toolbar=false)=>({id,label,icon,shortcut,toolbar,enabled});
-     return{menus:[{id:'sketch',label:'Sketch',items:[item('cad.rectangle','Rectangle dimensions…','rectangle','',true),item('cad.lineCoordinates','Line coordinates…','line'),item('cad.circle','Circle dimensions…','ellipse'),item('cad.sketch','Edit sketch','grid'),item('cad.horizontal','Horizontal constraint','ruler'),item('cad.vertical','Vertical constraint','ruler'),item('edit.selectAll','Select all','select','Ctrl+A'),item('edit.delete','Delete selected','delete','Delete')]},{id:'solid',label:'Solid',items:[item('cad.extrude','Extrude…','extrude','E',true),item('cad.solid','Solid view','cad','',true),item('cad.removeExtrude','Delete extrusion','delete'),item('view.fit','Zoom to fit','fit','F',true),{...item('cad.addCut','Cut (pocket or hole)…','delete'),enabled:enabled&&!!(content&&bossOf(content))},{...item('cad.fillet','Fillet (round edges)…','ellipse'),enabled:enabled&&!!(content&&bossOf(content))},{...item('cad.chamfer','Chamfer (bevel edges)…','extrude'),enabled:enabled&&!!(content&&bossOf(content))},item('cad.units.mm','Metric units (mm)','ruler'),item('cad.units.inch','Imperial units (inch)','ruler'),{...item('cad.exportSTEP','Export STEP','export','',true),enabled:enabled&&!!(content&&bossOf(content))},{...item('cad.exportSTL','Export STL (3D printing)','export'),enabled:enabled&&!!result?.solid}]}],
-     tools:[{active:enabled&&tool.tool==='select',id:'cad.select',label:'Select',icon:'select',shortcut:'V',enabled,status:'Click an edge to select it.'},{active:enabled&&tool.tool==='line',id:'cad.line',label:'Line',icon:'line',shortcut:'L',enabled,status:'Click two endpoints to draw a line.'},{active:enabled&&tool.tool==='rectangle',id:'cad.rectangleTool',label:'Rectangle',icon:'rectangle',shortcut:'R',enabled,status:'Click two corners to replace the outline with a rectangle.'},{active:enabled&&tool.tool==='circle',id:'cad.circleTool',label:'Circle',icon:'ellipse',shortcut:'C',enabled,status:'Click the center, then a point on the circle.'}],panels:[{id:'cad-properties',title:'Part',content:panel}]};
-    },context:()=>({viewRole:mode==='sketch'?'sketch2d':'cad3d',activeTool:tool.tool,status:exportMessage||toolStatus()}),command,
+     return{menus:[{id:'sketch',label:'Sketch',items:[item('cad.rectangle','Rectangle dimensions…','rectangle','',true),item('cad.lineCoordinates','Line coordinates…','line'),item('cad.circle','Circle dimensions…','ellipse'),item('cad.centerRectangle','Centered rectangle dimensions…','rectangle'),item('cad.polygon','Regular polygon dimensions…','cad'),item('cad.sketch','Edit sketch','grid'),item('cad.horizontal','Horizontal constraint','ruler'),item('cad.vertical','Vertical constraint','ruler'),item('edit.selectAll','Select all','select','Ctrl+A'),item('edit.delete','Delete selected','delete','Delete')]},{id:'solid',label:'Solid',items:[item('cad.extrude','Extrude…','extrude','E',true),item('cad.solid','Solid view','cad','',true),item('cad.removeExtrude','Delete extrusion','delete'),item('view.fit','Zoom to fit','fit','F',true),{...item('cad.addCut','Cut (pocket or hole)…','delete'),enabled:enabled&&!!(content&&bossOf(content))},{...item('cad.fillet','Fillet (round edges)…','ellipse'),enabled:enabled&&!!(content&&bossOf(content))},{...item('cad.chamfer','Chamfer (bevel edges)…','extrude'),enabled:enabled&&!!(content&&bossOf(content))},item('cad.units.mm','Metric units (mm)','ruler'),item('cad.units.inch','Imperial units (inch)','ruler'),{...item('cad.exportSTEP','Export STEP','export','',true),enabled:enabled&&!!(content&&bossOf(content))},{...item('cad.exportSTL','Export STL (3D printing)','export'),enabled:enabled&&!!result?.solid},{...item('bridge.cadToImage','Send transparent view to Image…','image'),enabled:sending.ready()}]}],
+     tools:[{active:enabled&&tool.tool==='select',id:'cad.select',label:'Select',icon:'select',shortcut:'V',enabled,status:'Click an edge to select it.'},{active:enabled&&tool.tool==='line',id:'cad.line',label:'Line',icon:'line',shortcut:'L',enabled,status:'Click two endpoints to draw a line.'},{active:enabled&&tool.tool==='rectangle',id:'cad.rectangleTool',label:'Rectangle',icon:'rectangle',shortcut:'R',enabled,status:'Click two corners to replace the outline with a rectangle.'},{active:enabled&&tool.tool==='circle',id:'cad.circleTool',label:'Circle',icon:'ellipse',shortcut:'C',enabled,status:'Click the center, then a point on the circle.'},{active:enabled&&tool.tool==='center-rectangle',id:'cad.centerRectangleTool',label:'Centered rectangle',icon:'rectangle',shortcut:'',enabled,status:'Click the center, then a corner.'},{active:enabled&&tool.tool==='polygon',id:'cad.polygonTool',label:'Polygon',icon:'cad',shortcut:'',enabled,status:'Choose sides, then click the center and first vertex.'}],panels:[{id:'cad-properties',title:'Part',content:panel}]};
+    },bridge:sending.bridge,context:()=>({viewRole:mode==='sketch'?'sketch2d':'cad3d',activeTool:tool.tool,status:exportMessage||toolStatus()}),command,
     gesture(gesture){if(mode!=='sketch'||gesture.type!=='pointer')return;if(gesture.phase==='cancel'){tool={...tool,anchor:null,cursor:null};refresh();}else if(gesture.phase==='down'&&gesture.button===0)pointer(viewport.point(gesture.point),viewport.hit(gesture.point),gesture.ctrl,gesture.shift);else if(gesture.phase==='move')pointer(viewport.point(gesture.point),null,gesture.ctrl,gesture.shift,true);},
     dispose(){if(disposed)return;disposed=true;exporter.dispose();worker.dispose();stage.removeEventListener('dblclick',dimensionEdit);stage.removeEventListener('keydown',dimensionEdit);viewport.dispose();properties.dispose();host.root.replaceChildren();},
    };

@@ -34,3 +34,41 @@ test: edit a text property, click shared Save without a prior blur or keyboard
 workaround, parse the downloaded native file and assert the last typed text.
 Repeat with File-menu activation. Run S10/S12/A-SHELL and full browser regressions.
 Only those observed results establish GREEN; human acceptance remains pending.
+
+## Executed repair evidence
+
+The new unit cases first failed because the old pressed Save node was detached;
+the production Slides test first timed out waiting for its download. S10 now
+reconciles ordered controls in place. Its presentation signature replaces glyphs
+only when icon/label/shortcut changes. Duplicate occurrences are consumed once
+from their own surface; changing workspace starts fresh controls. No synthetic
+activation or queued model update was introduced.
+
+Run from the repository root on Linux x64, Node 24.21.0 and Chrome 154.0.8037.97:
+
+```sh
+node --import tsx --test src/shared/chrome.test.ts src/shared/input-adapter.test.ts src/app/app-shell.test.ts
+# tests 79; pass 79; fail 0; cancelled 0; skipped 0; todo 0
+npx tsc --noEmit
+# exit 0
+npx vite build --outDir /tmp/gsnv-chrome-fix-dist
+# exit 0
+GSNV_TEST_DIST=/tmp/gsnv-chrome-fix-dist npx playwright test --config src/shared/chrome-commit.playwright.config.ts
+# 1 passed (1.9s)
+```
+
+The real browser test clicks Save directly after typing a Slides property,
+without a preliminary blur or keyboard workaround. It parses the actual native
+download and checks the last typed string. It repeats through the File menu.
+The method checker reports PASS (210 implementation lines; above its 200-line
+soft cap, below the 300 hard cap). Independent read-only review also ran all
+19 S10 cases and found no additional blocker; it did not independently rerun the
+production browser test. Saved output: [unit](evidence/chrome-commit-unit.log),
+[production browser](evidence/chrome-commit-browser.log). The cumulative final
+candidate gate remains separate. The existing interactive demo is
+`/dev/fixtures/chrome.html`, exercised by `chrome.browser.spec.ts`.
+
+Tweak surface: labels/icons/shortcuts remain caller view-model data; dimensions
+and colors remain `chrome.css`. Control-reconciliation behavior is guarded by the
+blur, reorder, duplicate, disabled/removal, focus and workspace tests. No OS or
+browser beyond the recorded Linux Chrome environment is certified here.

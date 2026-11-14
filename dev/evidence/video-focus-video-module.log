@@ -1,0 +1,4 @@
+FAIL: src/video/video-workspace.ts
+  - KIND must be CORE or SHELL, found 'SHELL assembly VIDEO-APP; media elements, canvas preview, Web Audio routing and MediaRecorder export.'
+  - DECISIONS has no 'Revisit if:' trigger
+  - 302 implementation lines exceeds the hard cap of 300; re-split this brick

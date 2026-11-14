@@ -50,3 +50,69 @@ native records. Rejected because identity-based edits could target different
 content than the file intended. Revisit source sampling when native WebCodecs
 demux supplies exact source timestamps; revisit schema only with a documented
 version migration.
+
+## Repair evidence
+
+The implementation is frozen for the parent’s cumulative candidate gate. The
+focused repair gate passes; the whole application build/browser run and human
+acceptance are separate gates. XWS-002 remains incomplete because the Video
+correction stage is still absent.
+
+The original testbench was run before implementation: 32 new core tests had
+19 failures, and all three new real-Chrome endpoint cases failed. The source
+sampling correction now returns `0.499999` for `[0,0.5)` and `0.999999` for
+`[0.5,1)`, while retaining the exact timeline time/offset/fade. Preview and
+captured native Image bytes match: `[254,0,0,255]` and `[0,255,2,255]`. The
+existing maximum channel error of 3 was not increased. A trim beginning at the
+actual finite decoded end is rejected. The native decoder rejects malformed
+identities/assets atomically; valid unplaced bytes still survive native
+round-trip and explicit removal.
+
+A follow-up regression covers a real UI WebM export, local source reimport and
+frame capture. Chrome reports `Infinity` at `loadeddata` for the multi-chunk
+MediaRecorder export. An initial finite-only duration guard was reproduced RED
+in a controlled decoder test and real Chrome, then removed. Positive unknown
+duration now permits the requested finite, clip-bounded seek; NaN or known
+duration at/before the in-point still fails. After seek, D03 rechecks duration,
+current time, clip bounds and readiness; a newly revealed short source, a
+backward clamp before the in-point, an excluded out-point or NaN cannot supply
+pixels. These post-seek tests were also RED before their guard was added. The
+real exported bytes are preserved exactly on import; captured native Image
+is 160×120 with red sample `[254,0,0,255]`.
+
+Commands from the repository root:
+
+```sh
+node --import tsx --test src/video/video-boundary.test.ts src/video/video-timeline.test.ts src/bridge/video-source-adapter.test.ts
+# 38 tests; 38 pass; 0 fail
+node node_modules/@playwright/test/cli.js test --config src/bridge/bridge.playwright.config.ts --grep 'trimmed|MediaRecorder WebM'
+# 4 passed (8.1 s); real Chrome, isolated production assembly on port 4194
+./node_modules/.bin/tsc --noEmit
+# exit 0
+```
+
+The UI WebM test restricts `MediaRecorder.isTypeSupported` to supported WebM
+types to exercise the real fallback exporter on Chrome versions which prefer
+MP4. It does not substitute recording, media bytes, decoder events or pixels.
+The recording is longer than the exporter's 500 ms chunk interval, avoiding a
+single-chunk file whose duration Chrome can know immediately. The same workspace
+tests run against the full application with `BRIDGE_WORKSPACE_APP=1`; parent
+owns that combined build/run. These tests request only local origin resources.
+
+Evidence: [core RED](evidence/video-boundary-unit-red.log),
+[endpoint browser RED](evidence/video-boundary-browser-red.log),
+[unknown-duration unit RED](evidence/video-duration-unit-red.log),
+[unknown-duration browser RED](evidence/video-duration-browser-red.log),
+[post-seek RED](evidence/video-postseek-unit-red.log),
+[final unit GREEN](evidence/video-boundary-unit-green.log),
+[final focused browser GREEN](evidence/video-boundary-browser-green.log), and
+[TypeScript](evidence/video-boundary-tsc.log).
+
+D03's method checker [passes](evidence/video-boundary-module-d03.log). The
+existing V-TIMELINE module still produces its prior header/public-entry warnings:
+PURPOSE wording, no named alternative, and seven counted exports (including
+overload declarations). The same check on HEAD before this repair produced
+the same findings; [baseline](evidence/video-boundary-module-baseline.log) and
+[current](evidence/video-boundary-module.log) are retained. This bounded repair
+does not claim to have brought the inherited module's interface into full
+method compliance or rewritten the working Video assembly.

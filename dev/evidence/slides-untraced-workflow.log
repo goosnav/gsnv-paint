@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:1066872) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 ../../../../../tmp/gsnv-consumer-audit-20261113/security-scratch/slides-trace-diagnosis/slides-isolated.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF (2.9s)
+
+  1 passed (4.0s)

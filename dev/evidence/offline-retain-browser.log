@@ -1,0 +1,11 @@
+
+Running 4 tests using 1 worker
+
+(node:1020115) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/shared/offline-client.browser.spec.ts:8:1 › S20 real client reports failed B while A stays usable, then installs B without disturbing typing (4.4s)
+  ✓  2 src/shared/offline-retain.browser.spec.ts:8:1 › S18 real CacheStorage cleanup preserves A after partial B eviction and C activation (2.8s)
+  ✓  3 src/shared/offline-status.browser.spec.ts:8:1 › S21 XP footer details stay inside 1280×720 and Escape restores summary focus (606ms)
+  ✓  4 src/shared/offline-worker.browser.spec.ts:8:1 › S19 real Chrome installs, reloads offline and defers a complete update until all tabs close (1.8s)
+
+  4 passed (10.7s)

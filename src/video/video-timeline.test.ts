@@ -24,7 +24,21 @@ test('V-TIMELINE trim, split, move, fades, volume and delete keep the sequence c
   const at = videoTimeline({ operation: 'locate', value: v, time: 3.5 })!; assert.equal(at.clip.id, 'a'); assert.ok(Math.abs(at.fade - 0.5) < 1e-9); assert.equal(at.source, 2.5);
   assert.throws(() => edit(v, { kind: 'clip', id: 'a', fadeIn: 3, fadeOut: 3 }), /fades must fit/);
   assert.throws(() => edit(v, { kind: 'trim', id: 'a', in: 5, out: 11 }), /inside the source/);
-  v = edit(v, { kind: 'delete', id: 'b' }); assert.deepEqual(v.media.map(m => m.id), ['v']); assert.equal(v.bytes.has('i'), false);
+  v = edit(v, { kind: 'delete', id: 'b' }); assert.deepEqual(v.media.map(m => m.id), ['v', 'i']); assert.equal(v.bytes.has('i'), true, 'clip deletion retains its bin source');
+});
+
+test('V02 bin-only imports preserve project settings, survive native reopen and place/remove explicitly', () => {
+  const initial = videoTimeline({ operation: 'new' }), data = new Uint8Array([8,9,10]);
+  const added = edit(initial, { kind: 'import-media', media: still, bytes: data }); data[0] = 99;
+  assert.deepEqual([added.width, added.height, added.fps, added.clips.length], [1280,720,30,0]); assert.equal(initial.media.length, 0); assert.deepEqual([...added.bytes.get('i')!], [8,9,10]);
+  const encoded = videoTimeline({ operation: 'encode', value: added }), reopened = videoTimeline({ operation: 'decode', content: encoded.content, assets: encoded.assets });
+  assert.deepEqual(reopened, added); assert.equal(encoded.assets[0]!.id, 'media-i');
+  const placed = edit(added, { kind: 'place-media', mediaId: 'i', clipId: 'placed' }); assert.equal(duration(placed), 3); assert.deepEqual([placed.width, placed.height], [1280,720]);
+  assert.throws(() => edit(placed, { kind: 'remove-media', mediaId: 'i' }), /timeline/);
+  const deleted = edit(placed, { kind: 'delete', id: 'placed' }); assert.deepEqual(deleted.media, added.media);
+  const removed = edit(deleted, { kind: 'remove-media', mediaId: 'i' }); assert.equal(removed.bytes.size, 0); assert.equal(removed.media.length, 0); assert.equal(added.media.length, 1);
+  assert.throws(() => edit(added, { kind: 'import-media', media: still, bytes: new Uint8Array([1]) }));
+  assert.throws(() => edit(added, { kind: 'place-media', mediaId: 'missing', clipId: 'bad' }));
 });
 
 test('V-TIMELINE titles validate and the project round-trips through the native encoding', () => {

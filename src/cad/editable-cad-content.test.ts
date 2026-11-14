@@ -28,7 +28,7 @@ test('C50 segment geometry and reference checks reject data loss', () => {
   for (let i = 1; i <= 30; i++) { sketch.entities[0] = { ...(sketch.entities[0] as Extract<typeof sketch.entities[0], { kind: 'segment' }>), b: [i,0] }; assert.deepEqual(read(JSON.parse(JSON.stringify(value))), value); }
   const bad = (mutate: (x: any) => void) => { const v = JSON.parse(JSON.stringify(value)); mutate(v.graph.features[0].definition.sketch); assert.throws(() => read(v), { name: 'CADContentError' }); };
   bad(x => x.entities.push(x.entities[0])); bad(x => x.entities[0].b = [0,0]); bad(x => x.entities[0].b = [Infinity,0]);
-  bad(x => x.constraints[0].entityIds = ['missing']); bad(x => x.dimensions[0].kind = 'radius'); bad(x => x.plane = 'XZ'); bad(x => x.extra = 1);
+  bad(x => x.constraints[0].entityIds = ['missing']); bad(x => x.dimensions[0].kind = 'radius'); bad(x => x.plane = 'ZX'); bad(x => x.extra = 1);
   const circle = { id: 'c', kind: 'circle', center: [5, 5], radius: 2, construction: false };
   const withCircle = (mutate: (x: any) => void = () => {}) => { const v = JSON.parse(JSON.stringify(value)); const s = v.graph.features[0].definition.sketch; s.entities.push({ ...circle }); mutate(s); return v; };
   assert.deepEqual(read(withCircle(x => { x.constraints.push({ id: 'cf', kind: 'fix', entityIds: ['c'], pointRoles: ['center'], inferred: true }); x.dimensions.push({ id: 'cd', kind: 'diameter', entityIds: ['c'], anchors: [[3,5],[7,5]], value: { source: '4', kind: 'length' }, label: [8,8] }); })).graph.features[0].definition.sketch.entities[1], circle);

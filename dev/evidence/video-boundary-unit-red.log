@@ -1,0 +1,434 @@
+✖ V-TIMELINE native rejects duplicate media IDs without changing input (4.790003ms)
+✖ V-TIMELINE native rejects duplicate clip IDs without changing input (0.407354ms)
+✖ V-TIMELINE native rejects duplicate title IDs without changing input (0.541585ms)
+✖ V-TIMELINE native rejects duplicate asset IDs without changing input (0.33932ms)
+✔ V-TIMELINE native rejects missing assets without changing input (1.224137ms)
+✖ V-TIMELINE native rejects unreferenced assets without changing input (0.264559ms)
+✔ V-TIMELINE native rejects empty media ID without changing input (0.267561ms)
+✔ V-TIMELINE native rejects missing media ID without changing input (0.300248ms)
+✖ V-TIMELINE native rejects missing clip ID without changing input (0.368398ms)
+✖ V-TIMELINE native rejects empty clip ID without changing input (0.359886ms)
+✔ V-TIMELINE native rejects missing title ID without changing input (0.292375ms)
+✔ V-TIMELINE native rejects empty title ID without changing input (0.366509ms)
+✔ V-TIMELINE native rejects missing asset ID without changing input (0.305547ms)
+✔ V-TIMELINE native rejects numeric media ID without changing input (0.187361ms)
+✖ V-TIMELINE native rejects numeric clip ID without changing input (0.262338ms)
+✔ V-TIMELINE native rejects numeric title ID without changing input (0.255767ms)
+✔ V-TIMELINE native rejects null media without changing input (0.189488ms)
+✖ V-TIMELINE native rejects null clip without changing input (1.058247ms)
+✔ V-TIMELINE native rejects null title without changing input (0.209894ms)
+✖ V-TIMELINE native rejects null asset without changing input (0.393035ms)
+✖ V-TIMELINE native rejects empty asset bytes without changing input (0.230913ms)
+✖ V-TIMELINE native rejects non-byte asset payload without changing input (0.215184ms)
+✔ V-TIMELINE native rejects unknown clip media reference without changing input (0.20222ms)
+✔ V-TIMELINE native rejects null clip media reference without changing input (0.257459ms)
+✖ V-TIMELINE native rejects zero media width without changing input (0.240063ms)
+✖ V-TIMELINE native rejects negative media height without changing input (0.200655ms)
+✖ V-TIMELINE native rejects fractional media width without changing input (0.212476ms)
+✔ V-TIMELINE native rejects malformed collections and retains valid independent IDs and unplaced bytes (1.816943ms)
+✖ V-TIMELINE edits cannot create empty or non-string native identities (0.447013ms)
+✖ V-TIMELINE End samples the final half-open trim without changing offset, fade, interior times or source (0.50912ms)
+✖ V-TIMELINE adjacent boundaries choose the next clip while the final boundary stays inside its source (0.548939ms)
+✖ V-TIMELINE End enlarges the sample margin only when one microsecond is not representable (0.614299ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 13
+ℹ fail 19
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 243.352381
+
+✖ failing tests:
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects duplicate media IDs without changing input (4.790003ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects duplicate clip IDs without changing input (0.407354ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects duplicate title IDs without changing input (0.541585ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects duplicate asset IDs without changing input (0.33932ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects unreferenced assets without changing input (0.264559ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects missing clip ID without changing input (0.368398ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects empty clip ID without changing input (0.359886ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects numeric clip ID without changing input (0.262338ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects null clip without changing input (1.058247ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   name: 'TypeError'
+  -   name: 'VideoContentError'
+    }
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of null (reading 'mediaId')
+        at m (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-timeline.ts:46:40)
+        at Array.find (<anonymous>)
+        at checkClip (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-timeline.ts:46:19)
+        at videoTimeline (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-timeline.ts:82:33)
+        at assert.throws.name (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:21)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25),
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects null asset without changing input (0.393035ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    Comparison {
+  +   name: 'TypeError'
+  -   name: 'VideoContentError'
+    }
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of null (reading 'id')
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-timeline.ts:80:48)
+        at Array.find (<anonymous>)
+        at videoTimeline (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-timeline.ts:80:36)
+        at assert.throws.name (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:21)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18),
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects empty asset bytes without changing input (0.230913ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects non-byte asset payload without changing input (0.215184ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects zero media width without changing input (0.240063ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects negative media height without changing input (0.200655ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:2767
+✖ V-TIMELINE native rejects fractional media width without changing input (0.212476ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoContentError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:43:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoContentError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:4254
+✖ V-TIMELINE edits cannot create empty or non-string native identities (0.447013ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (VideoEditError).
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:58:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'VideoEditError' },
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:4771
+✖ V-TIMELINE End samples the final half-open trim without changing offset, fade, interior times or source (0.50912ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0.5 !== 0.499999
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:67:162)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0.5,
+    expected: 0.499999,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:6044
+✖ V-TIMELINE adjacent boundaries choose the next clip while the final boundary stays inside its source (0.548939ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      'second',
+      0.5,
+  +   1
+  -   0.999999
+    ]
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:78:70)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'second', 0.5, 1 ],
+    expected: [ 'second', 0.5, 0.999999 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/video/video-boundary.test.ts:1:6634
+✖ V-TIMELINE End enlarges the sample margin only when one microsecond is not representable (0.614299ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 1099511627776
+  - 1099511627775.9999
+                ^
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/video/video-boundary.test.ts:83:76)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1099511627776,
+    expected: 1099511627775.9999,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

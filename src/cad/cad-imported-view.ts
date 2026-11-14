@@ -18,6 +18,7 @@ import { cadProjectSource, isSTEPSource, type CADSource } from './cad-project-so
 import { cadWorkerClient, type CADBuild, type CADProtocol } from './cad-worker-client.ts';
 import { cadSTEPExport } from './cad-step-export.ts';
 import { cadViewport } from './cad-viewport.ts';
+import { cadSourceAdapter } from '../bridge/cad-source-adapter.ts';
 import { writeSTL } from './stl-serialization.ts';
 type Host=Parameters<WorkspaceAdapter['mount']>[0];
 type View=ReturnType<WorkspaceAdapter['mount']>;
@@ -27,6 +28,7 @@ export function createImportedCADView(host:Host,files:FilePorts,assets:CADProtoc
   stage.className='cad-stage';stage.tabIndex=-1;hint.className='cad-tool-hint';panel.className='cad-properties cad-imported-properties';host.root.append(stage,hint);
   const viewport=cadViewport(stage);
   let current:Snapshot,content:CADSource|null=null,result:CADBuild|null=null,state:'busy'|'ready'|'error'='busy',message='Rebuilding imported STEP…',exportMessage='',disposed=false;
+  const sending=cadSourceAdapter({viewport:viewport.capturePort(),title:()=>current?.title??'Imported part',dialog:host.dialog,transfer:host.transfer});
   const worker=cadWorkerClient({assets,createWorker:()=>new Worker(new URL('./cad-workspace.worker.ts',import.meta.url),{type:'module'}),
     onResult(identity,value){if(disposed||identity!==current?.identity)return;result=value;state='ready';message=`${value.bodies?.length??0} solid${value.bodies?.length===1?'':'s'} imported. Source is non-parametric.`;refresh();host.invalidate();},
     onError(identity,error){if(disposed||identity!==current?.identity)return;result=null;state='error';message=error;refresh();host.invalidate();},
@@ -36,7 +38,7 @@ export function createImportedCADView(host:Host,files:FilePorts,assets:CADProtoc
   function button(label:string,id:string){const b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.importAction=id;b.onclick=()=>command(id);return b;}
   function refresh(){
     if(disposed)return;
-    viewport.update({content:null,entities:[],view:{zoom:1,pan:{x:0,y:0}},selected:[],preview:[],solid:result?.solid??null,mode:'solid',state:state==='error'?'error':'fully',emptyMessage:state==='error'?'The imported source could not be rebuilt.':message});
+    viewport.update({content:null,entities:[],view:{zoom:1,pan:{x:0,y:0}},selected:[],preview:[],solid:result?.solid??null,mode:'solid',state:state==='error'?'error':'fully',emptyMessage:state==='error'?'The imported source could not be rebuilt.':message,capture:{documentIdentity:current?.identity??'',ready:state==='ready'}});
     hint.textContent=exportMessage||'Middle-drag to orbit · Shift+middle-drag to pan · wheel to zoom · F to fit.';
     const focus=(document.activeElement as HTMLElement|null)?.dataset.importAction;panel.replaceChildren();
     const status=node('p',message);status.className='cad-build-status';status.dataset.state=state;status.setAttribute('role','status');panel.append(status);
@@ -65,6 +67,7 @@ export function createImportedCADView(host:Host,files:FilePorts,assets:CADProtoc
   function command(id:string){
     if(disposed)return;if(id==='tool.cancel'){exporter.cancel();worker.cancel();if(state==='busy'){state='error';message='STEP rebuild canceled.';result=null;refresh();host.invalidate();}return;}
     if(id==='view.fit'){viewport.fit();return;}if(!content||!current)return;
+    if(id==='bridge.cadToImage'){sending.send();return;}
     if(id==='cad.exportSTEP'){void exporter.run({content,name:`${current.title||'imported-part'}.step`});return;}
     if(id==='cad.exportSTL'){void exportSTL();return;}
     if(id==='cad.units.mm'||id==='cad.units.inch'){
@@ -78,8 +81,8 @@ export function createImportedCADView(host:Host,files:FilePorts,assets:CADProtoc
       if(content&&snapshot)worker.submit(snapshot.identity,content);else worker.cancel();
     },
     model(){const item=(id:string,label:string,icon:string,toolbar=false)=>({id,label,icon,toolbar,shortcut:id==='view.fit'?'F':'',enabled:!!current});
-      return{menus:[{id:'solid',label:'Solid',items:[item('view.fit','Zoom to fit','fit',true),item('cad.units.mm','Metric units (mm)','ruler'),item('cad.units.inch','Imperial units (inch)','ruler'),item('cad.exportSTEP','Export STEP','export',true),{...item('cad.exportSTL','Export STL (3D printing)','export'),enabled:!!result?.solid}]}],tools:[],panels:[{id:'cad-properties',title:'Imported part',content:panel}]};
-    },context:()=>({viewRole:'cad3d',activeTool:'orbit',status:exportMessage||message}),command,gesture(){},
+      return{menus:[{id:'solid',label:'Solid',items:[item('view.fit','Zoom to fit','fit',true),item('cad.units.mm','Metric units (mm)','ruler'),item('cad.units.inch','Imperial units (inch)','ruler'),item('cad.exportSTEP','Export STEP','export',true),{...item('cad.exportSTL','Export STL (3D printing)','export'),enabled:!!result?.solid},{...item('bridge.cadToImage','Send transparent view to Image…','image'),enabled:sending.ready()}]}],tools:[],panels:[{id:'cad-properties',title:'Imported part',content:panel}]};
+    },bridge:sending.bridge,context:()=>({viewRole:'cad3d',activeTool:'orbit',status:exportMessage||message}),command,gesture(){},
     dispose(){if(disposed)return;disposed=true;worker.dispose();exporter.dispose();viewport.dispose();host.root.replaceChildren();panel.replaceChildren();},
   };
 }

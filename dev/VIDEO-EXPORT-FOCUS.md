@@ -65,3 +65,94 @@ Alternative rejected: focus the timeline after every export finishes. It leaves
 keyboard access broken during export and can steal focus from a user who moved
 elsewhere while waiting. Revisit only if export becomes a separately contracted
 modal workflow. This contract is not a completed verification or human acceptance.
+
+## Implementation and evidence — 2026-11-13
+
+The bounded focus repair is implemented and frozen. S10 tests whether a
+replacement is disabled before calling `focus()`, then uses its stable viewport
+when the command is disabled or removed. The Video inspector captures its own
+focused control before rebuilding, restores by clip/field/control type or title
+ID, and falls back to the timeline with `preventScroll`. It leaves outside focus
+alone and retains pending numeric values. No download, input-routing, native
+format or A-SHELL implementation was changed by this repair.
+
+The initial diagnostic reproduced the failure in Chrome 154.0.8037.97 and Chrome
+for Testing 158.0.8127.18 on production build
+`b81589f26a3f41800b8098725bf97c7fdfbee34ae14f82fd99c026e0f281f8f7`.
+[Event observations](evidence/video-focus-diagnosis.json) retain the removed
+inspector control, the toolbar's stale disabled active element, BODY focus before
+the download anchor, unhandled Ctrl+N, and successful File > New. Repeated DOM
+outerHTML is reduced to opening tags; the original diagnostic files and hashes
+are recorded in that evidence.
+
+RED was observed before implementation: [two disabled-focus unit
+failures](evidence/video-focus-unit-red.log), and [six failing production browser
+cases out of seven](evidence/video-focus-browser-red.log). The existing outside
+menu case already passed. The browser checks were then verified in an isolated
+Video shell fixture and the complete app. The fixture's playable dimensions
+oracle was corrected from 160 × 120 to the imported source's actual 128 × 96;
+the native media/model was unchanged.
+
+The complete app was copied after the recovery owner froze A-SHELL. Its source
+HEAD was `92e90b82371b9930b4dc2eefdc4737426b0fde44` plus the frozen working tree.
+The [442-file source inventory](evidence/video-focus-source-inventory.json)
+records every hash, the source inventory digest
+`5ded4445f5145a9b22af804f36b35e1b8687dec11d275d51706044466c86b77f`, and production
+build `a01669123bc418f13181170f607bfc034d57a36acf9537191c4c59150fc52020`.
+The isolated source/output is
+`/tmp/gsnv-consumer-qa/video-focus-production-source`; the shared `dist/` was not
+rebuilt. Full TypeScript validation and the [production
+build](evidence/video-focus-production-build.log) exited zero.
+
+Scoped GREEN evidence at 1280 × 720 on Linux system Chrome 154.0.8037.97:
+
+- [108/108 units](evidence/video-focus-unit-green.log): S10, input adapter,
+  keymap, pending Video fields, timeline and Video boundaries.
+- [7/7 production focus cases](evidence/video-focus-production-green.log):
+  inspector/toolbar × mouse/Enter export, immediately followed by Ctrl+S with
+  exact native bytes and Ctrl+N without an intervening focus action; real
+  exported media decodes and plays. Pending numeric input, a focused outside
+  File menu, exact second-title focus and removed-control fallback also pass.
+  No page errors were reported.
+- [Existing Video production journey](evidence/video-focus-video-cumulative.log)
+  passes import, edits, playback, native persistence, reload and real export.
+  Its [1280 × 720 screenshot](evidence/VIDEO-focus-cumulative-production.png)
+  is saved separately from prior evidence.
+- [Mouse Save and File-menu Save after property blur](evidence/video-focus-chrome-cumulative.log)
+  pass in the complete Slides workspace.
+- [79/79 frozen A-SHELL, direct bridge, Recent and recovery units](evidence/video-focus-shell-green.log)
+  pass against the isolated snapshot.
+
+Run the focused production gate from the repository after a coordinated build:
+
+```sh
+GSNV_VIDEO_FOCUS_DIST=/absolute/path/to/dist node_modules/.bin/playwright test --config src/video/video-export-focus.playwright.config.ts
+```
+
+The S10 module checker [passes with a 210-line soft-limit
+warning](evidence/video-focus-chrome-module.log). The generic checker does not
+accept the VIDEO-APP assembly header and also reports its missing revisit marker
+and 302 implementation lines; [that structural result is retained](evidence/video-focus-video-module.log),
+not reported as a pass. No unrelated split or line compression was performed.
+
+## Separate cumulative failure — not accepted
+
+The [unchanged full bridge suite](evidence/video-focus-bridge-cumulative.log)
+finished **12/13**, with the immediate Save after Redo timing out. This is not a
+focus failure: [read-only capture/bubble observations](evidence/video-focus-save-busy-events.json)
+show app-owned DIV focus and consumed Ctrl+Y/Ctrl+S, while Save remains disabled
+through the prior save's post-download recovery/Recent work. Five isolated case
+repetitions passed, but the [full observed sequence reproduced the
+failure](evidence/video-focus-bridge-full-observations.log), again 12/13. Neither
+the failure nor its original native-byte assertions was weakened or removed.
+
+The temporary [diagnostic source](evidence/video-focus-bridge-diagnostic-source.txt)
+and [configuration](evidence/video-focus-bridge-diagnostic-config.txt) preserve
+the reproduction. They add synchronous read-only key observations, print them
+after each test, and shorten only the diagnostic download timeout to eight
+seconds; they add no action waits. The original case timed out at sixty seconds.
+The shell owner is repairing this separately under the committed
+[save completion boundary amendment](RECOVERY-CONSISTENCY.md). Focus runtime and
+tests are frozen; combined acceptance awaits the parent's final build and
+cumulative rerun. These scoped results do not claim original requirement PASS,
+offline acceptance, or human sign-off.

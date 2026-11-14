@@ -2,3 +2,12 @@
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: require-corp
   Cross-Origin-Resource-Policy: same-origin
+
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/offline-sw.js
+  Cache-Control: no-cache
+/offline-manifest.json
+  Cache-Control: no-cache

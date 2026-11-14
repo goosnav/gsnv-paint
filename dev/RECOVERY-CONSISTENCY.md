@@ -4,15 +4,21 @@ Mode A, 2026-11-13. This repairs the current A-SHELL persistence orchestration
 under the owner's pre-authorized BATCH. S08, S14, native project formats and the
 Recent database schema stay unchanged. Human acceptance remains pending.
 
-## Observed failure
+The final combined candidate passes all 89 default browser checks and all nine
+dedicated offline checks, including immediate Save after Redo and the exact
+denial → Stay → Save → close/reopen recovery procedure. The
+[parent checkpoint](MODELING-OFFLINE-CHECKPOINT.md) records the combined results
+and their bounded requirement credit.
+
+## Original observed failure (repaired)
 
 The real offline update test on Chrome for Testing 158 reproduced a storage
 failure followed by Stay, restored storage permissions, successful native Save,
-and actual beforeunload closes. The downloaded Document contains the final text
-`pending document 7391 during update before close`. Recent contains those same
-300 bytes, but recovery still contains the older 287-byte version without
-` before close`. Startup opens the older recovery and overwrites Recent with it.
-The file itself is correct. The complete source snapshots and failed assertion
+and actual beforeunload closes. The downloaded Document contained the final text
+`pending document 7391 during update before close`. Recent contained those same
+300 bytes, but recovery still contained the older 287-byte version without
+` before close`. Startup opened the older recovery and overwrote Recent with it.
+The file itself was correct. The complete source snapshots and failed assertion
 are in [the offline ledger](OFFLINE-WORKFLOW.md).
 
 ## Amended assembly contract
@@ -88,10 +94,10 @@ versioned persistence contract.
 
 ## File-write availability amendment
 
-Mode A, 2026-11-13. The cumulative production bridge workflow timed out on
-Save immediately after Redo. Read-only inspection found a reachable gap:
-`saving[workspace]` disables Save through the recovery/Recent awaits even after
-the native file write or download handoff finishes. That makes an otherwise
+Mode A, 2026-11-13. Before this repair, the cumulative production bridge workflow
+timed out on Save immediately after Redo. Read-only inspection found a reachable
+gap: `saving[workspace]` disabled Save through the recovery/Recent awaits even
+after the native file write or download handoff finished. That made an otherwise
 valid second Save disappear during browser storage latency. Focus repair is
 separate; this amendment changes only A-SHELL file-operation ownership.
 
@@ -140,9 +146,10 @@ at generation 5; startup does not rewrite it. Recovered native bytes equal the
 saved A file, and the reopened B document remains editable. No close warning
 was recorded after the explicit saves. Durable [browser output](evidence/recovery-consistency-browser-green.log)
 and [store snapshots](evidence/recovery-consistency-stores-green.json) preserve
-the exact result. The full combined candidate gate remains separate.
+the exact result. The final combined candidate results appear below and in the
+[parent checkpoint](MODELING-OFFLINE-CHECKPOINT.md).
 
-## Repair evidence — focused gate GREEN, production gate pending
+## Original focused repair evidence
 
 The focused RED run was captured before changing the shell: **45 tests, 33
 passed, 12 failed**, all failures in the new recovery consistency cases. The
@@ -191,9 +198,62 @@ classifies A-SHELL as an assembly, not a brick. No new public boundary, schema,
 storage-brick behavior or domain algorithm was introduced.
 
 Only `src/app/app-shell.ts`, its focused testbench, and this repair evidence were
-changed for this increment. Runtime and test sources are frozen for the parent
-to build the combined candidate. The real Chrome denial → Stay → restored
-storage → native Save → actual close/reopen test, production offline update
-gate and complete candidate suite remain pending here. These focused unit
-results do not substitute for those browser gates or claim multi-tab conflict
-resolution.
+changed for this increment. The parent subsequently built and verified the
+combined candidate. These focused unit results alone do not
+substitute for browser gates or claim multi-tab conflict resolution. The
+parent reproduction above and current offline evidence below record those
+separate executed results.
+
+## File-write availability repair evidence
+
+The deterministic testbench first ran against the preceding GREEN recovery
+implementation: **54 shell tests, 52 passed, 2 failed**. The native-file and
+download cases each found Save disabled after file handoff while Recent was
+deliberately held pending. The existing 50 cases and the new picker-cancellation
+and native-write-failure cases still passed. [Raw RED output](evidence/file-write-availability-unit-red.log)
+retains the two exact disabled-state failures.
+
+The runtime change gives each Save invocation a one-shot release for its
+existing file-operation guard. It releases after successful file handoff and
+before browser backup awaits; cancellation/failure releases through the same
+finalizer. A prior invocation's later backup completion cannot release a newer
+invocation's guard. The Save promise still awaits its exact current recovery and
+Recent work. Revision markers, captured epochs, backup queues, storage schemas
+and public boundaries are unchanged.
+
+The native overlap test holds the first Recent write, performs edit → Undo →
+Redo, and starts Save again immediately. It checks both native files' decoded
+bytes, holds the second native close, completes the first backup, and verifies
+that a third Save is ignored while the second file operation still owns its
+guard. The download test checks both handoff payloads under the same held-backup
+condition. These tests use explicit promise barriers, without sleeps, replayed
+commands, production focus changes or weakened browser assertions.
+
+Final focused commands:
+
+```sh
+node --import tsx --test src/app/app-shell.test.ts src/app/app-shell-bridge.test.ts src/bridge/workspace-bridge.test.ts src/shared/recovery-store.test.ts src/shared/recovery-session.test.ts src/shared/recent-projects.test.ts
+npx tsc --noEmit
+git diff --check -- src/app/app-shell.ts src/app/app-shell.test.ts dev/RECOVERY-CONSISTENCY.md
+```
+
+Results: **88/88 tests pass** (54 shell plus 34 bridge/persistence), with zero
+failures, cancellations, skips or todos; TypeScript and focused whitespace
+checks exit 0. [Raw GREEN output](evidence/file-write-availability-unit-green.log)
+and [TypeScript result with frozen source hashes](evidence/file-write-availability-types-green.log)
+record this gate. No original expectation was changed. Runtime/test sources are
+frozen; only this evidence was written afterward. No build, dist mutation,
+commit or push was performed by this repair owner.
+
+The parent's preceding real denial → Stay → Save → close/reopen browser result
+above remains valid for the recovery repair. The final frozen candidate passes
+all **89 default browser checks in 4.0 minutes**, including the production bridge
+Save-after-Redo case, and all **nine dedicated offline checks**, including the
+unchanged denial → Stay → Save → close/reopen workflow. The
+[default browser output](evidence/modeling-offline-browser-green.log) and
+[parent checkpoint](MODELING-OFFLINE-CHECKPOINT.md) record these combined results;
+the 88 focused tests do not replace that evidence. The historical CAD Open
+failures and the test chooser-listener correction are documented separately in
+[the diagnosis](CAD-REOPEN-DIAGNOSIS.md); no application patch was needed for that
+correction, and attribution of the earlier uninstrumented failures remains
+inferred.

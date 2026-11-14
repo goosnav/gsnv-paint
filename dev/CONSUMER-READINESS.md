@@ -2,7 +2,37 @@
 
 For a desktop creator, gsnv-paint turns local models, images, footage, documents and audio into editable projects and useful exported files through one browser application; completion requires the requested workflows, recovery and exports to work without a backend, plus the original acceptance and distribution gates.
 
-Authority: original requirements in `requirements.json`, the owner's additions in [the current plan](PLAN-2026-11-12.md), and the 2026-11-13 request for consumer usability, Spreadsheet and Code. Baseline inspected commit: `73405de`; the repair and authoring checkpoints below supersede that baseline. The old module-map status text is historical where later checkpoints explicitly supersede it; current behavior must be verified from source/tests.
+Authority: original requirements in `requirements.json`, the owner's additions in [the current plan](PLAN-2026-11-12.md), and the 2026-11-13 request for consumer usability, Spreadsheet and Code. The [modeling and offline checkpoint](MODELING-OFFLINE-CHECKPOINT.md) owns the current candidate's final combined results. Baseline inspected commit `73405de` and the earlier repair/authoring counts below are historical. Later evidence supersedes them only within its stated scope.
+
+## Current candidate — bounded combined gates GREEN
+
+The parent confirmed **908/908 full unit tests**, production build exit 0,
+Linux launcher smoke success and freshness **1/1**, offline builder **4/4**,
+Wrangler deployment dry-run exit 0, and **34 bounded module checks**. The candidate build ID is
+`9980ea171176a67ab825a15083838fed0849060cd52c8d6857652d75cf6efaa2`:
+55 manifest assets, 41,154,578 bytes total, largest asset 22,942,327 bytes.
+The total exceeds 25 MiB; each individual asset stays below that file-size bound.
+
+The canonical production-enabled browser command returned **89 passed in
+4.0 minutes, exit 0**, including CAD native reopen and the bridge
+Save-after-Redo regression. [Raw browser output](evidence/modeling-offline-browser-green.log)
+is retained. The dedicated **nine-case offline gate passed** on explicit Chrome
+for Testing 158; the real local Wrangler static-host check passed **1/1** on
+system Chrome 154. The latter browser's independent persistent-restart/download
+crash remains a separate recorded failure, not an offline-update pass.
+[README commands](../README.md#develop) describe both browser selections.
+
+The earlier CAD Open failures are historical. A captured repeated failure
+proved an asynchronous test chooser-interception race. The two golden fixtures
+now keep public `page.on('filechooser', ...)` listeners from initial setup;
+their original actions, timeouts and assertions remain. No application patch
+was made for that issue. Attribution of the earlier uninstrumented failures
+remains inferred; [diagnosis and RED evidence](CAD-REOPEN-DIAGNOSIS.md) are kept.
+
+After reviewing the full procedures, the parent credited CAD-020, CAD-025,
+CAD-030, CAD-033, XWS-001, XWS-003 and SYS-010. The requirement ledger now totals
+**46 PASS / 0 FAIL / 356 UNTESTED**; IMG-103/104 were already PASS. These counts
+describe tested requirements, not full product or owner acceptance.
 
 ## Critical journeys and acceptance ledger
 
@@ -11,15 +41,16 @@ Authority: original requirements in `requirements.json`, the owner's additions i
 | CR-CAD-01 | Create the specified rounded plate, four holes and pocket; change width; STEP export/re-import matches exact volumes | PASS for the specified plate: actual production builder and browser construction, dependent positions, width change, units and STEP round trip | Parent: native production-builder golden and browser workflow |
 | CR-CAD-02 | Change display/document units without resizing the physical part or losing expressions | REPAIRED/PASS: physical geometry and source dependencies preserved through mm/inch and native round trips | Parent: D27 unit binding regression and native rebuild |
 | CR-CAD-03 | Failed features identify their feature and preserve editable history; recovery produces the right solid, repeated rebuilding releases native state | UNVERIFIED beyond existing narrow errors | Runtime audit and parent: negative tests and browser recovery |
-| CR-EDIT-01 | Image/Photo/Video edit, save, reopen and export through real UI; retain original full acceptance requirements | PARTIAL: working subsets are committed; original golden/performance/full Video requirements are not proven | Existing native/browser suites plus gap audit |
+| CR-EDIT-01 | Image/Photo/Video edit, save, reopen and export through real UI; retain original full acceptance requirements | PARTIAL: working subsets are committed; IMG-103/104 now pass the exact production golden and editable native roundtrip; performance/full Video requirements are not proven | Existing native/browser suites plus gap audit |
 | CR-DOC-01 | Type/style a document, insert image/table, save/reopen and produce correct PDF | PASS for DOC-001–003 bounded workflow; native OS print dialog remains untested | Workflow/security audit then parent integration |
 | CR-SLD-01 | Build/present slides with text/images/shapes and export PDF; save/reopen stays editable | PASS for SLD-001–003: editable objects, native reopen and independently parsed PDF | Production Chrome and PDF evidence in AUTHORING-CHECKPOINT.md |
 | CR-AUD-01 | Import audio, inspect waveform, select/edit/fade/normalize, undo/reopen and export WAV with expected samples | PASS for AUD-001–003: waveform edits, native recovery and literal PCM16 WAV output | Physical audio hardware and non-WAV codecs untested |
 | CR-SHEET-01 | Edit a workbook with formulas, fill, format, sort/filter; CSV/XLSX and native round-trips preserve supported values/formulas | PASS for SHEET-001–003: formula/range/format/sort/filter and bounded XLSX/CSV/native workflows | Supported subset only; no claim of full Excel compatibility |
 | CR-CODE-01 | Edit files, run/stop code, see output/errors, preview web files, save/reopen; opened code never runs automatically or reads app projects | PASS for CODE-001–003: local editing, JS/Python run/stop and isolated script-free HTML/CSS preview | Production runtime isolation tests; no system shell or external packages |
-| CR-REL-01 | Offline web use and identical static M1a local payload; documented clean launch and supported-platform smoke | UNVERIFIED; source launcher exists, packaged release incomplete | Keep original release gates; no acceptance claim |
+| CR-XWS-01 | Send a whole Image to the Video bin, a current Video frame to Image, or a transparent CAD view to Image; preserve sources and editable targets | PASS for XWS-001/003 after the combined gate. Current Video raster transfer works, but XWS-002 remains UNTESTED because corrections are absent | [Transfer contract/evidence](CROSS-WORKSPACE.md) and current checkpoint; no broad Video acceptance |
+| CR-REL-01 | Offline web use and identical static M1a local payload; documented clean launch and supported-platform smoke | PARTIAL: SYS-010 offline procedure, local Wrangler host and Linux source launcher checks pass. M1a package, Windows/macOS and live hosting remain unverified | Keep original release gates; no acceptance claim |
 
-## Baseline evidence (2026-11-13, Linux x64)
+## Historical baseline evidence (2026-11-13, Linux x64)
 
 Repair contract for shared/CAD keyboard access: S10 arrow navigation visits every rendered workspace in both directions, wrapping once. C56 exposes committed sketch lines/circles as named, focusable pressed-state buttons; previews are not controls. C58 Enter/Space selects one, Ctrl+Enter/Space toggles a multi-selection, and asynchronous redraw retains the same entity focus. These actions select geometry without drawing or changing model history. Unit and real-browser regressions cover the seam.
 
@@ -33,4 +64,9 @@ See [consumer repair evidence](CONSUMER-REPAIR-CHECKPOINT.md): 610 existing-edit
 
 ## Authoring and imported-CAD checkpoint
 
-All nine workspace adapters are connected to the common shell. [Authoring evidence](AUTHORING-CHECKPOINT.md) records the current checks, exact tested scope and remaining requirements. CAD-116 passes the real consumer STEP import workflow, including multiple solids and exact source retention. The original product still has open CAD tools, Image/Video acceptance and performance requirements, cross-workspace delivery, offline installation and M1a packaging. No CANDIDATE_FOR_ACCEPTANCE or owner acceptance is claimed.
+All nine workspace adapters are connected to the common shell. [Authoring evidence](AUTHORING-CHECKPOINT.md) records that earlier checkpoint's tested scope. CAD-116 passes the real consumer STEP import workflow, including multiple solids and exact source retention. The newer [CAD modeling evidence](CAD-MODELING-EVIDENCE.md) covers default planes, editable centered rectangles/polygons and construction exclusion. Production revolve is contracted but not implemented; its native API proof does not complete CAD-071.
+
+[Snapshot transfers](CROSS-WORKSPACE.md), [Video export focus](VIDEO-EXPORT-FOCUS.md), [exact-revision recovery and Save availability](RECOVERY-CONSISTENCY.md), and [offline installation](OFFLINE-WORKFLOW.md) now pass their bounded combined regression gates; the current checkpoint records the exact evidence and credit. Remaining CAD tools, Video corrections, broader Image/Video and performance requirements, live hosting and M1a/platform distribution are still open. No CANDIDATE_FOR_ACCEPTANCE or owner acceptance is claimed.
+
+
+[Image acceptance evidence](IMAGE-ACCEPTANCE.md) adds persistent selections, exact IMG-103/104 goldens and a corrected typed zoom control. This closes those two acceptance procedures only; it does not imply the full original Image feature list is implemented.

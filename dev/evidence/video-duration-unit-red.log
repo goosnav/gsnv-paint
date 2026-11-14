@@ -1,0 +1,21 @@
+✔ D03 rejects missing frames, stale revisions and aborted work without touching browser resources (5.603119ms)
+✖ D03 accepts ready bounded seeks with unknown positive duration, but rejects NaN and clips beyond a known duration (2.624021ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 257.856462
+
+✖ failing tests:
+
+test at src/bridge/video-source-adapter.test.ts:1:961
+✖ D03 accepts ready bounded seeks with unknown positive duration, but rejects NaN and clips beyond a known duration (2.624021ms)
+  Error [BridgeFrameReadbackError]: This clip starts beyond the decoded media duration.
+      at fail (/home/goosnav/Desktop/code/gsnv-paint/src/bridge/video-source-adapter.ts:21:78)
+      at videoSource (/home/goosnav/Desktop/code/gsnv-paint/src/bridge/video-source-adapter.ts:39:86)
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/bridge/video-source-adapter.test.ts:25:22)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

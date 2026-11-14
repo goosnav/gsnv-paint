@@ -1,0 +1,13 @@
+offline-cache: PASS: real CacheStorage install + audit + read
+{
+  "schema": 1,
+  "build": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "generation": "gsnv-paint:offline:v1:build:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd:5dab1735-eca4-4517-be4f-50b429d0c1f8",
+  "files": 1,
+  "bytes": 306,
+  "publishedAt": 1794632355211,
+  "complete": true,
+  "manifestSha256": "3ca6015a61c5b262900bb1cb49ddf6db71eab6d139fe5f75d9557903d0ecca1e"
+}
+Restored 304 characters.
+offline-client: Ready offline dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd · update none

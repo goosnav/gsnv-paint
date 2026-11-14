@@ -1,0 +1,43 @@
+[WebServer] (node:1050888) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1050921) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/cad/cad-step-export.browser.spec.ts:38:1 › STEP-APP cancels real workers on Esc/source changes and reports invalid solids without a download (4.0s)
+
+
+  1) src/cad/cad-step-export.browser.spec.ts:38:1 › STEP-APP cancels real workers on Esc/source changes and reports invalid solids without a download 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "Untitled part.step",
+    + ]
+
+      60 |   await expect(page.locator('.cad-build-status')).toHaveAttribute('data-state','ready',{timeout:30000});expect(downloads).toEqual([]);
+      61 |   await start(2);await page.getByRole('button',{name:'Width: 100',exact:true}).click();await page.getByRole('dialog').getByLabel('Length (mm or expression)').fill('120');await page.getByRole('dialog').getByRole('button',{name:'OK',exact:true}).click();
+    > 62 |   await expect.poll(async()=>(await count()).terminated).toBe(2);releases.splice(0).forEach(resolve=>resolve());hold=false;await expect(page.locator('.cad-properties')).toContainText('72000.000 mm³',{timeout:30000});expect(downloads).toEqual([]);
+         |                                                                                                                                                                                                                                           ^
+      63 |   await page.getByRole('button',{name:'Sketch 1',exact:true}).click();await page.keyboard.press('Control+a');await page.keyboard.press('Delete');await expect(page.locator('.cad-build-status')).toHaveAttribute('data-state','error',{timeout:30000});
+      64 |   await start(3);await expect(page.locator('.cad-tool-hint')).toHaveAttribute('data-export-state','error',{timeout:30000});await expect(page.locator('.cad-tool-hint')).toContainText('closed profile');await expect.poll(async()=>(await count()).terminated).toBe(3);expect(downloads).toEqual([]);
+      65 |   await page.keyboard.press('Control+z');await expect(page.locator('.cad-properties')).toContainText('72000.000 mm³',{timeout:30000});
+        at /tmp/gsnv-consumer-qa/cad-open-cumulative/src/cad/cad-step-export.browser.spec.ts:62:235
+
+    Error Context: results/cad-cad-step-export.browse-99598-d-solids-without-a-download/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    results/cad-cad-step-export.browse-99598-d-solids-without-a-download/trace.zip
+    Usage:
+
+        npx playwright show-trace results/cad-cad-step-export.browse-99598-d-solids-without-a-download/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    src/cad/cad-step-export.browser.spec.ts:38:1 › STEP-APP cancels real workers on Esc/source changes and reports invalid solids without a download 

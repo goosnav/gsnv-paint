@@ -1,0 +1,2 @@
+import { defineConfig } from '@playwright/test';
+export default defineConfig({ testDir: './src/bridge', testMatch: ['bridge-raster.browser.spec.ts', 'bridge-focus-diagnostic.browser.spec.ts'], workers: 1, reporter: 'list', timeout: 30000, outputDir: '/tmp/gsnv-consumer-qa/video-focus-bridge-diagnostic', use: { channel: 'chrome', headless: true, viewport: { width: 1280, height: 720 }, trace: 'retain-on-failure' } });

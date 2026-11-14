@@ -1,0 +1,26 @@
+✔ D03 rejects missing frames, stale revisions and aborted work without touching browser resources (2.649673ms)
+✖ D03 accepts ready bounded seeks with unknown positive duration, but rejects NaN and clips beyond a known duration (7.065262ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 225.979572
+
+✖ failing tests:
+
+test at src/bridge/video-source-adapter.test.ts:1:961
+✖ D03 accepts ready bounded seeks with unknown positive duration, but rejects NaN and clips beyond a known duration (7.065262ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection (BridgeFrameReadbackError).
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/bridge/video-source-adapter.test.ts:29:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { name: 'BridgeFrameReadbackError' },
+    operator: 'rejects',
+    diff: 'simple'
+  }

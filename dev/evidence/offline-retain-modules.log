@@ -1,0 +1,4 @@
+WARN: src/shared/offline-cache.ts
+  ~ 211 implementation lines exceeds the soft cap of 200
+PASS: src/shared/offline-cache.ts
+PASS: src/shared/offline-client.ts

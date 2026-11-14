@@ -276,11 +276,11 @@ RAISES: `RangeError` for invalid sizes (over 4096² pixels), colours, rectangles
 DEPS: none.
 
 ### I51 `image/image-content.ts` — CORE — GREEN
-Purpose: Hold immutable Image documents as shared pixel tiles and map them to native files.
-IN: `new{width,height,fill}`, `raster{value}`, `update{previous,raster}`, `encode{value}` or `decode{content,bytes}`.
-OUT: `ImageContent{width,height,tiles}` of 256-pixel tiles; update reuses unchanged tiles so undo history memory grows with edited area; encode yields `{content:{width,height,encoding:'rgba8',asset:'pixels'},bytes}` for one S15 asset.
-RAISES: `RangeError` for invalid documents/rasters; `ImageContentError` for malformed project content or incomplete pixel data.
-DEPS: I50.
+Purpose: Represent immutable layered Image documents with exact native serialization.
+IN: `new{width,height,fill}`, `raster{value,layerId}`, `update{previous,layerId,raster}`, `layers{previous,width,height,layers,activeLayerId}`, `selection{previous,mask}`, `encode{value}` or `decode{content,assets}`; pixels at most 4096², 1–100 layers.
+OUT: `ImageContent{width,height,layers,activeLayerId,selection}` with shared 256-pixel tiles; unchanged selection coverage returns the same snapshot. Native `rgba8-layers-v2` records carry layer parameters/raw RGBA assets and optional gray8 selection coverage. Both earlier layouts migrate with null selection. Updated pixels and same-size layers retain selection; resized layers clear it. Encode owns every output byte.
+RAISES: `RangeError` for invalid documents/rasters; `ImageContentError` for malformed, duplicate/missing or unknown-layout native content. Bounds are derived from coverage, never trusted.
+DEPS: I50, I54, I58.
 
 ### I52 `image/image-tool-input.ts` — CORE — GREEN
 Purpose: Interpret Image canvas pointer input as paint intents.
@@ -324,9 +324,16 @@ OUT: top-first list with visibility, thumbnail, name and opacity/blend summary; 
 RAISES: `TypeError` for a missing root or callback.
 DEPS: I54.
 
-I51 is now layered (each layer's tiles shared between snapshots; layer stack edits reuse tiles; the original single-layer layout still decodes). I52 supports 18 tools with Shift/Ctrl selection modes and a Ctrl-click clone source. I53 shows per-tool options, each numeric option as an XP trackbar plus a typed number box.
+### I58 `image/image-selection-state.ts` — CORE — GREEN
+Purpose: Produce an owned canonical selection snapshot.
+IN: `{width,height,mask:Uint8Array|null}` with positive integer sizes, at most 16,777,216 pixels and exact ordinary-buffer coverage length.
+OUT: frozen `ImageSelection{mask,bounds}` with owned byte copy and minimal nonzero bounds, or null for empty coverage. Partial byte coverage is preserved.
+RAISES: `RangeError` for invalid sizes, mask type/length or detached/shared memory.
+DEPS: none.
 
-IMAGE-APP (`src/image/image-workspace.ts`) is the assembly: it wires I50–I53 to S07 file access, S11 dialogs and the A-SHELL host (history, recovery, files). Each completed stroke, shape, fill, text, move, paste or image command commits one history entry; drags and floating selections stay outside history. Browser codecs provide PNG export and PNG/JPEG/GIF/WebP/BMP import.
+I51 is now layered (each layer's tiles shared between snapshots; layer stack edits reuse tiles; both prior layouts still decode). The selection persistence and typed-view corrections pass the explicit gates in [IMAGE-ACCEPTANCE.md](IMAGE-ACCEPTANCE.md). I52 supports 18 tools with Shift/Ctrl selection modes and a Ctrl-click clone source. I53 shows per-tool options, each numeric option as an XP trackbar plus a typed number box.
+
+IMAGE-APP (`src/image/image-workspace.ts`) is the assembly: it wires I50–I53 to S07 file access, S11 dialogs and the A-SHELL host (history, recovery, files). Each completed stroke, shape, fill, text, move, paste, selection or image command commits one history entry; drags and floating selections stay outside history. View settings expose effective pixel zoom and screen-pixel offsets, preview around the viewport center, and cancel without changing history. Browser codecs provide PNG export and PNG/JPEG/GIF/WebP/BMP import.
 
 ## Working Video increment (D26)
 
@@ -528,6 +535,11 @@ Purpose: Present media thumbnails/relink state and emit local import/place/remov
 IN: `MediaBinRequest{host,media,thumbnails,missingIds,emit:(intent:MediaBinIntent)=>void}`.
 OUT: `{update,dispose}`; file handles remain external resources and unavailable sources are visibly flagged.
 RAISES: `MediaBinBindingError` for inconsistent IDs. DEPS: none.
+Bounded working prerequisite: `video/video-media-bin.ts` and the current
+V-TIMELINE import/place/remove operations are GREEN under [the transfer
+contract](CROSS-WORKSPACE.md). They preserve unplaced media, expose thumbnails
+and explicit placement/removal, and persist through native reopen/undo. This
+does not complete source relinking, large-file read-in-place or multitrack work.
 
 ### V32 `video/clip-controls-adapter.ts` — SHELL — PLANNED
 Purpose: Bind clip/title/solid/correction/transition/keyframe controls to numeric commands and live previews.
@@ -561,35 +573,37 @@ RAISES: `TimelineClipboardError`, `ClipboardIdMapError`, `ClipboardMediaError`, 
 
 ## Phase 5 — Cross-workspace and distribution bricks
 
-### D01 `bridge/transfer-contract.ts` — CORE — PLANNED
+### D01 `bridge/transfer-contract.ts` — CORE — GREEN
 Purpose: Validate only the three authorized cross-workspace transfer directions.
-IN: `BridgeRequest{source:'image'|'video-frame'|'cad-capture',destination:'video-bin'|'image-document',pixels:PixelSurface,label:string,sourceRevision:string}`.
-OUT: `TransferRaster{destination,pixels,label,sourceRevision,transparent:boolean}` with source pixels unchanged; CAD transparency is required.
-RAISES: `BridgeDirectionError`, `BridgeRasterError`, `CadTransparencyError`. DEPS: none.
+IN: The closed version-1 `TransferRaster` union in [CROSS-WORKSPACE.md](CROSS-WORKSPACE.md): source document/epoch/identity/view stamp, label and contiguous straight-alpha sRGB RGBA8; maximum 16,777,216 pixels.
+OUT: Owned validated raster for exactly Image→Video bin, Video frame→Image or transparent CAD viewport→Image; input bytes unchanged and unaliased.
+RAISES: `BridgeDirectionError`, `BridgeRasterError`, `CadTransparencyError` for unsupported direction, malformed allocation/stamp/frame/color/alpha or invalid CAD policy. DEPS: none.
 
-### D02 `bridge/image-source.ts` — CORE — PLANNED
+### D02 `bridge/image-source.ts` — CORE — GREEN
 Purpose: Produce a flattened still of the current image document for the Video bin.
-IN: `ImageBridgeSourceRequest{layers:readonly ResolvedRasterLayer[],bounds,revision,label}`.
-OUT: `TransferRaster` for `video-bin`; editable source layers remain unchanged.
-RAISES: `BridgeCompositeError`, `BridgeUnresolvedTextError`. DEPS: I06, D01.
+IN: `{value:ImageContent,source:ImageStamp,label:string}` with committed tile-backed layers.
+OUT: D01 `image-to-video-bin` raster at original resolution with visibility, opacity and supported blends; editable source layers remain unchanged.
+RAISES: `BridgeCompositeError`; D01 validation errors propagate. DEPS: I51, I54, D01.
 
-### D03 `bridge/video-source-adapter.ts` — SHELL — PLANNED
-Purpose: Read the already-rendered current Video frame into an Image transfer raster.
-IN: `VideoBridgeSourceRequest{frame:RenderedFrame,label,revision}`; the frame belongs to the requested playhead revision.
-OUT: `Promise<TransferRaster>` at project resolution, preserving existing frame ownership.
-RAISES: `BridgeFrameReadbackError`, `BridgeFrameClosedError`, `BridgeFrameRevisionError`. DEPS: D01.
+### D03 `bridge/video-source-adapter.ts` — SHELL — GREEN
+Purpose: Decode the requested committed Video frame into an Image transfer raster.
+IN: `{document,value:VideoContent,time,source:VideoStamp,label,isCurrent,signal?}`; committed supported timeline and exact playhead identity.
+OUT: `Promise<TransferRaster>` at project resolution through a private decoder and the same letterbox/fade/title renderer as preview; all local URLs/listeners/timeouts released.
+RAISES: `BridgeFrameReadbackError`, `BridgeFrameRevisionError`, abort. DEPS: D01; current V-TIMELINE and video-frame-renderer (bounded working pipeline).
+The broader correction/multitrack pipeline remains unimplemented. The excluded trimmed-end frame and unknown-duration WebM regressions now pass 38 focused unit tests and four real Chrome cases, including preview and independently decoded native Image pixels. [VIDEO-BOUNDARY-REPAIR.md](VIDEO-BOUNDARY-REPAIR.md) records the repair and its limits; the parent owns the combined candidate gate. XWS-002 remains incomplete.
 
-### D04 `bridge/cad-source-adapter.ts` — SHELL — PLANNED
+### D04 `bridge/cad-source-adapter.ts` — SHELL — GREEN
 Purpose: Capture the CAD viewport with transparent background for Image.
-IN: `CadBridgeSourceRequest{viewport:object,revision,label,width,height}`; viewport is the live C31 handle required by C35, passed explicitly by the existing CAD assembly; there is no hidden ID registry.
-OUT: `Promise<TransferRaster>` whose background alpha is zero, including antialiased edge alpha.
-RAISES: `BridgeCadCaptureError`, `BridgeCadRevisionError`, `BridgeCadTransparencyError`. DEPS: C35, D01.
+IN: `{viewport:CadCapturePort,title:()=>string,dialog,transfer?}`; explicit C35 source and shared dialog/transfer ports, no hidden registry.
+OUT: `{bridge,ready,send}`; bridge captures a `Promise<TransferRaster>` with zero background alpha and preserved antialiased edges. The size dialog presents aspect-locked dimensions; commit rechecks cached source/camera identity.
+RAISES: `StaleCaptureError`; C35 capture/context/readback and D01 validation errors, abort. DEPS: C35, D01 (shared dialog/bridge structural type ports only).
 
-### D05 `bridge/destination-adapter.ts` — SHELL — PLANNED
+### D05 `bridge/destination-adapter.ts` — SHELL — GREEN
 Purpose: Materialize a validated transfer as a new Image document or a generated still in the Video bin.
-IN: `BridgeDeliveryRequest{transfer:TransferRaster,newDocumentId?,mediaName?}` with a validated direction.
-OUT: `Promise<{imageDocument?:ImageDocument,mediaItem?:MediaRef,mediaLease?:MediaLease,generatedAsset?:NativeAsset}>`; generated Video stills return their encoded NativeAsset and mediaItem.assetId equal to that asset ID; delivery emits a workspace command carrying both records for shared history and later V16 persistence, with no hidden global state or assembly I/O.
-RAISES: `BridgeEncodeError`, `BridgeDeliveryError`, `BridgeCancelled`. DEPS: I07, I28, V24.
+IN: `{transfer:TransferRaster,target?:AppDocument,newId,mediaId,signal?}` validated by D01 immediately before the typed internal seam.
+OUT: `Promise<BridgeDelivery>`: fresh editable one-layer Image candidate, or Video bin append candidate plus empty initial document when absent. Generated stills preserve exact straight RGBA through PNG and the existing native `media-${id}` mapping. No live apply, storage, file write, navigation or handle reuse.
+RAISES: `BridgeDeliveryError`, PNG/format errors, abort. DEPS: I51; current V-TIMELINE; png-encode.
+The shell/coordinator owns exact-source and target identity checks, durable replacement backup, history and acknowledged apply. Bounded prerequisites, helper contracts, demonstrations and full-app verification are in [CROSS-WORKSPACE.md](CROSS-WORKSPACE.md); no future media pipeline is marked complete by this refinement.
 
 ### D06 `distribution/asset-policy.ts` — CORE — PLANNED
 Purpose: Verify the complete static asset manifest and deployment constraints.

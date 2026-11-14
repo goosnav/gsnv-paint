@@ -1,0 +1,1592 @@
+[
+  {
+    "variant": "cad-consumer-transition-red",
+    "raw_directory": "/tmp/gsnv-consumer-qa/cad-consumer-transition-red",
+    "passed_transition_count": 0,
+    "passed_transitions": [],
+    "event_counts": {
+      "keydown-capture": 1,
+      "input-click": 1,
+      "keydown-bubble": 1,
+      "input-change": 0,
+      "input-cancel": 1
+    },
+    "last_transition_events": [
+      {
+        "kind": "keydown-capture",
+        "time": 7106.365000009537,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "DIV",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "cad-stage",
+          "cad-workspace-view",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 7107.300000071526,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 7107.5,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "DIV",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "cad-stage",
+          "cad-workspace-view",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "input-cancel",
+        "time": 7108,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "CAD workspace."
+      }
+    ],
+    "failure": "TimeoutError: page.waitForEvent: Timeout 8000ms exceeded while waiting for event \"filechooser\"\n=========================== logs ===========================\nwaiting for event \"filechooser\"\n============================================================",
+    "observer_protocol_events": []
+  },
+  {
+    "variant": "cad-consumer-transition-protocol",
+    "raw_directory": "/tmp/gsnv-consumer-qa/cad-consumer-transition-protocol",
+    "passed_transition_count": 4,
+    "passed_transitions": [
+      {
+        "iteration": 0,
+        "passed": true
+      },
+      {
+        "iteration": 1,
+        "passed": true
+      },
+      {
+        "iteration": 2,
+        "passed": true
+      },
+      {
+        "iteration": 3,
+        "passed": true
+      }
+    ],
+    "event_counts": {
+      "keydown-capture": 5,
+      "input-click": 5,
+      "keydown-bubble": 5,
+      "input-change": 4,
+      "input-cancel": 1
+    },
+    "last_transition_events": [
+      {
+        "kind": "keydown-capture",
+        "time": 12189.68499994278,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "DIV",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "cad-stage",
+          "cad-workspace-view",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 12190.294999957085,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 12190.495000004768,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "DIV",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "cad-stage",
+          "cad-workspace-view",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "input-cancel",
+        "time": 12192.674999952316,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "CAD workspace."
+      }
+    ],
+    "failure": "TimeoutError: page.waitForEvent: Timeout 8000ms exceeded while waiting for event \"filechooser\"\n=========================== logs ===========================\nwaiting for event \"filechooser\"\n============================================================",
+    "observer_protocol_events": [],
+    "protocol_counts": {
+      "enable_sends": 5,
+      "disable_sends": 5,
+      "chooser_events": 4
+    },
+    "protocol_excerpt": [
+      {
+        "line": 3575,
+        "direction": "RECV",
+        "id": null,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "Page.fileChooserOpened",
+        "params": {
+          "frameId": "0713571C0A6DC4D08AFA56CF0BF786D7",
+          "mode": "selectSingle",
+          "backendNodeId": 110
+        },
+        "error": null
+      },
+      {
+        "line": 3577,
+        "direction": "RECV",
+        "id": 1208,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 3585,
+        "direction": "SEND",
+        "id": 1213,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "Page.setInterceptFileChooserDialog",
+        "params": {
+          "enabled": false
+        },
+        "error": null
+      },
+      {
+        "line": 3587,
+        "direction": "RECV",
+        "id": 1213,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 3819,
+        "direction": "SEND",
+        "id": 1304,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "Page.setInterceptFileChooserDialog",
+        "params": {
+          "enabled": true
+        },
+        "error": null
+      },
+      {
+        "line": 3822,
+        "direction": "SEND",
+        "id": 1306,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "rawKeyDown",
+          "modifiers": 2,
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "commands": [],
+          "key": "o",
+          "text": "",
+          "unmodifiedText": "",
+          "autoRepeat": false,
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 3823,
+        "direction": "RECV",
+        "id": 1306,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 3824,
+        "direction": "SEND",
+        "id": 1307,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "keyUp",
+          "modifiers": 2,
+          "key": "o",
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 3825,
+        "direction": "RECV",
+        "id": 1307,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 3828,
+        "direction": "RECV",
+        "id": 1304,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 3829,
+        "direction": "SEND",
+        "id": 1309,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "Page.setInterceptFileChooserDialog",
+        "params": {
+          "enabled": false
+        },
+        "error": null
+      },
+      {
+        "line": 3831,
+        "direction": "RECV",
+        "id": 1309,
+        "session": "6F6C1BA152F20406F47A505A84572322",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      }
+    ]
+  },
+  {
+    "variant": "cad-consumer-transition-armed",
+    "raw_directory": "/tmp/gsnv-consumer-qa/cad-consumer-transition-armed",
+    "passed_transition_count": 1,
+    "passed_transitions": [
+      {
+        "iteration": 0,
+        "passed": true
+      }
+    ],
+    "event_counts": {
+      "keydown-capture": 2,
+      "input-click": 2,
+      "keydown-bubble": 2,
+      "input-change": 1,
+      "input-cancel": 0
+    },
+    "last_transition_events": [
+      {
+        "kind": "keydown-capture",
+        "time": 8182.825000047684,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "DIV",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "cad-stage",
+          "cad-workspace-view",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 8183.200000047684,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 8183.300000071526,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "DIV",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "cad-stage",
+          "cad-workspace-view",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "CAD workspace."
+      }
+    ],
+    "failure": "TimeoutError: page.waitForEvent: Timeout 8000ms exceeded while waiting for event \"filechooser\"\n=========================== logs ===========================\nwaiting for event \"filechooser\"\n============================================================",
+    "observer_protocol_events": [
+      {
+        "time": 1794635000895,
+        "event": {
+          "frameId": "84803FB0935C8397E36A62FB2E7A2F26",
+          "mode": "selectSingle",
+          "backendNodeId": 101
+        }
+      },
+      {
+        "time": 1794635002205,
+        "event": {
+          "frameId": "84803FB0935C8397E36A62FB2E7A2F26",
+          "mode": "selectSingle",
+          "backendNodeId": 106
+        }
+      }
+    ],
+    "protocol_counts": {
+      "enable_sends": 4,
+      "disable_sends": 2,
+      "chooser_events": 3
+    },
+    "protocol_excerpt": [
+      {
+        "line": 2840,
+        "direction": "RECV",
+        "id": 918,
+        "session": "778CF70C2AA69B8FE0C87D87B471388F",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 3081,
+        "direction": "SEND",
+        "id": 1010,
+        "session": "56F97EA47D83874310F18F30C9C8F104",
+        "method": "Page.setInterceptFileChooserDialog",
+        "params": {
+          "enabled": true
+        },
+        "error": null
+      },
+      {
+        "line": 3082,
+        "direction": "RECV",
+        "id": 1010,
+        "session": "56F97EA47D83874310F18F30C9C8F104",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 3083,
+        "direction": "SEND",
+        "id": 1011,
+        "session": "778CF70C2AA69B8FE0C87D87B471388F",
+        "method": "Page.setInterceptFileChooserDialog",
+        "params": {
+          "enabled": true
+        },
+        "error": null
+      },
+      {
+        "line": 3086,
+        "direction": "SEND",
+        "id": 1013,
+        "session": "778CF70C2AA69B8FE0C87D87B471388F",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "rawKeyDown",
+          "modifiers": 2,
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "commands": [],
+          "key": "o",
+          "text": "",
+          "unmodifiedText": "",
+          "autoRepeat": false,
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 3087,
+        "direction": "RECV",
+        "id": 1013,
+        "session": "778CF70C2AA69B8FE0C87D87B471388F",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 3088,
+        "direction": "SEND",
+        "id": 1014,
+        "session": "778CF70C2AA69B8FE0C87D87B471388F",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "keyUp",
+          "modifiers": 2,
+          "key": "o",
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 3089,
+        "direction": "RECV",
+        "id": null,
+        "session": "56F97EA47D83874310F18F30C9C8F104",
+        "method": "Page.fileChooserOpened",
+        "params": {
+          "frameId": "84803FB0935C8397E36A62FB2E7A2F26",
+          "mode": "selectSingle",
+          "backendNodeId": 106
+        },
+        "error": null
+      },
+      {
+        "line": 3090,
+        "direction": "RECV",
+        "id": 1011,
+        "session": "778CF70C2AA69B8FE0C87D87B471388F",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 3091,
+        "direction": "RECV",
+        "id": 1014,
+        "session": "778CF70C2AA69B8FE0C87D87B471388F",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 3095,
+        "direction": "SEND",
+        "id": 1016,
+        "session": "778CF70C2AA69B8FE0C87D87B471388F",
+        "method": "Page.setInterceptFileChooserDialog",
+        "params": {
+          "enabled": false
+        },
+        "error": null
+      },
+      {
+        "line": 3097,
+        "direction": "RECV",
+        "id": 1016,
+        "session": "778CF70C2AA69B8FE0C87D87B471388F",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      }
+    ]
+  },
+  {
+    "variant": "cad-consumer-transition-main-armed",
+    "raw_directory": "/tmp/gsnv-consumer-qa/cad-consumer-transition-main-armed",
+    "passed_transition_count": 20,
+    "passed_transitions": [
+      {
+        "iteration": 0,
+        "passed": true
+      },
+      {
+        "iteration": 1,
+        "passed": true
+      },
+      {
+        "iteration": 2,
+        "passed": true
+      },
+      {
+        "iteration": 3,
+        "passed": true
+      },
+      {
+        "iteration": 4,
+        "passed": true
+      },
+      {
+        "iteration": 5,
+        "passed": true
+      },
+      {
+        "iteration": 6,
+        "passed": true
+      },
+      {
+        "iteration": 7,
+        "passed": true
+      },
+      {
+        "iteration": 8,
+        "passed": true
+      },
+      {
+        "iteration": 9,
+        "passed": true
+      },
+      {
+        "iteration": 10,
+        "passed": true
+      },
+      {
+        "iteration": 11,
+        "passed": true
+      },
+      {
+        "iteration": 12,
+        "passed": true
+      },
+      {
+        "iteration": 13,
+        "passed": true
+      },
+      {
+        "iteration": 14,
+        "passed": true
+      },
+      {
+        "iteration": 15,
+        "passed": true
+      },
+      {
+        "iteration": 16,
+        "passed": true
+      },
+      {
+        "iteration": 17,
+        "passed": true
+      },
+      {
+        "iteration": 18,
+        "passed": true
+      },
+      {
+        "iteration": 19,
+        "passed": true
+      }
+    ],
+    "event_counts": {
+      "keydown-capture": 20,
+      "input-click": 20,
+      "keydown-bubble": 20,
+      "input-change": 20,
+      "input-cancel": 0
+    },
+    "last_transition_events": [
+      {
+        "kind": "keydown-capture",
+        "time": 31566.960000038147,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "DIV",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "cad-stage",
+          "cad-workspace-view",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 31567.205000042915,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 31567.265000104904,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "DIV",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "cad-stage",
+          "cad-workspace-view",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 31579.330000042915,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      }
+    ],
+    "failure": null,
+    "observer_protocol_events": [],
+    "protocol_counts": {
+      "enable_sends": 20,
+      "disable_sends": 20,
+      "chooser_events": 20
+    },
+    "protocol_excerpt": [
+      {
+        "line": 2826,
+        "direction": "SEND",
+        "id": 903,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "Page.setInterceptFileChooserDialog",
+        "params": {
+          "enabled": true
+        },
+        "error": null
+      },
+      {
+        "line": 2827,
+        "direction": "RECV",
+        "id": 903,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 2830,
+        "direction": "SEND",
+        "id": 905,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "rawKeyDown",
+          "modifiers": 2,
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "commands": [],
+          "key": "o",
+          "text": "",
+          "unmodifiedText": "",
+          "autoRepeat": false,
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 2831,
+        "direction": "RECV",
+        "id": 905,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 2832,
+        "direction": "SEND",
+        "id": 906,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "keyUp",
+          "modifiers": 2,
+          "key": "o",
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 2833,
+        "direction": "RECV",
+        "id": null,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "Page.fileChooserOpened",
+        "params": {
+          "frameId": "D544568AF717DE0DEFFD9D730B9243C4",
+          "mode": "selectSingle",
+          "backendNodeId": 100
+        },
+        "error": null
+      },
+      {
+        "line": 2835,
+        "direction": "RECV",
+        "id": 906,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 2843,
+        "direction": "SEND",
+        "id": 911,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "Page.setInterceptFileChooserDialog",
+        "params": {
+          "enabled": false
+        },
+        "error": null
+      },
+      {
+        "line": 7637,
+        "direction": "RECV",
+        "id": 2804,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 7638,
+        "direction": "SEND",
+        "id": 2805,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "keyUp",
+          "modifiers": 2,
+          "key": "o",
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 7639,
+        "direction": "RECV",
+        "id": null,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "Page.fileChooserOpened",
+        "params": {
+          "frameId": "D544568AF717DE0DEFFD9D730B9243C4",
+          "mode": "selectSingle",
+          "backendNodeId": 177
+        },
+        "error": null
+      },
+      {
+        "line": 7641,
+        "direction": "RECV",
+        "id": 2805,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 7649,
+        "direction": "SEND",
+        "id": 2810,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "Page.setInterceptFileChooserDialog",
+        "params": {
+          "enabled": false
+        },
+        "error": null
+      },
+      {
+        "line": 7651,
+        "direction": "RECV",
+        "id": 2810,
+        "session": "1A3FD718A88EC2ACDA2440E3BB52BBB4",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      }
+    ]
+  },
+  {
+    "variant": "cad-consumer-transition-public-armed",
+    "raw_directory": "/tmp/gsnv-consumer-qa/cad-consumer-transition-public-armed",
+    "passed_transition_count": 20,
+    "passed_transitions": [
+      {
+        "iteration": 0,
+        "passed": true
+      },
+      {
+        "iteration": 1,
+        "passed": true
+      },
+      {
+        "iteration": 2,
+        "passed": true
+      },
+      {
+        "iteration": 3,
+        "passed": true
+      },
+      {
+        "iteration": 4,
+        "passed": true
+      },
+      {
+        "iteration": 5,
+        "passed": true
+      },
+      {
+        "iteration": 6,
+        "passed": true
+      },
+      {
+        "iteration": 7,
+        "passed": true
+      },
+      {
+        "iteration": 8,
+        "passed": true
+      },
+      {
+        "iteration": 9,
+        "passed": true
+      },
+      {
+        "iteration": 10,
+        "passed": true
+      },
+      {
+        "iteration": 11,
+        "passed": true
+      },
+      {
+        "iteration": 12,
+        "passed": true
+      },
+      {
+        "iteration": 13,
+        "passed": true
+      },
+      {
+        "iteration": 14,
+        "passed": true
+      },
+      {
+        "iteration": 15,
+        "passed": true
+      },
+      {
+        "iteration": 16,
+        "passed": true
+      },
+      {
+        "iteration": 17,
+        "passed": true
+      },
+      {
+        "iteration": 18,
+        "passed": true
+      },
+      {
+        "iteration": 19,
+        "passed": true
+      }
+    ],
+    "event_counts": {
+      "keydown-capture": 20,
+      "input-click": 20,
+      "keydown-bubble": 20,
+      "input-change": 20,
+      "input-cancel": 0
+    },
+    "last_transition_events": [
+      {
+        "kind": "keydown-capture",
+        "time": 30478.125,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": false,
+        "target": "DIV",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "cad-stage",
+          "cad-workspace-view",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 0,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "input-click",
+        "time": 30478.419999957085,
+        "ctrl": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "keydown-bubble",
+        "time": 30478.5,
+        "key": "o",
+        "ctrl": true,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "repeat": false,
+        "composing": false,
+        "prevented": true,
+        "target": "DIV",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": true,
+        "path": [
+          "cad-stage",
+          "cad-workspace-view",
+          "app-editor",
+          "gc-viewport",
+          "gc-main",
+          "gc-window",
+          "app",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": false,
+        "everActivated": true,
+        "status": "CAD workspace."
+      },
+      {
+        "kind": "input-change",
+        "time": 30488.62999999523,
+        "prevented": false,
+        "target": "INPUT",
+        "active": {
+          "tag": "DIV",
+          "class": "cad-stage",
+          "connected": true
+        },
+        "root": false,
+        "path": [
+          "INPUT",
+          "BODY",
+          "HTML"
+        ],
+        "open": [
+          false,
+          false
+        ],
+        "inputs": 1,
+        "focus": true,
+        "activation": true,
+        "everActivated": true,
+        "status": "CAD workspace."
+      }
+    ],
+    "failure": null,
+    "observer_protocol_events": [],
+    "protocol_counts": {
+      "enable_sends": 1,
+      "disable_sends": 0,
+      "chooser_events": 20
+    },
+    "protocol_excerpt": [
+      {
+        "line": 75,
+        "direction": "SEND",
+        "id": 29,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "Page.setInterceptFileChooserDialog",
+        "params": {
+          "enabled": true
+        },
+        "error": null
+      },
+      {
+        "line": 79,
+        "direction": "RECV",
+        "id": 29,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 2871,
+        "direction": "SEND",
+        "id": 909,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "rawKeyDown",
+          "modifiers": 2,
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "commands": [],
+          "key": "o",
+          "text": "",
+          "unmodifiedText": "",
+          "autoRepeat": false,
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 2872,
+        "direction": "RECV",
+        "id": 909,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 2873,
+        "direction": "SEND",
+        "id": 910,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "keyUp",
+          "modifiers": 2,
+          "key": "o",
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 2874,
+        "direction": "RECV",
+        "id": null,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "Page.fileChooserOpened",
+        "params": {
+          "frameId": "95F8AA46A92E3CB04CBAE9B6D605E39F",
+          "mode": "selectSingle",
+          "backendNodeId": 97
+        },
+        "error": null
+      },
+      {
+        "line": 2876,
+        "direction": "RECV",
+        "id": 910,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 3118,
+        "direction": "SEND",
+        "id": 1006,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "rawKeyDown",
+          "modifiers": 2,
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "commands": [],
+          "key": "o",
+          "text": "",
+          "unmodifiedText": "",
+          "autoRepeat": false,
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 7331,
+        "direction": "RECV",
+        "id": 2660,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 7575,
+        "direction": "SEND",
+        "id": 2757,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "rawKeyDown",
+          "modifiers": 2,
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "commands": [],
+          "key": "o",
+          "text": "",
+          "unmodifiedText": "",
+          "autoRepeat": false,
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 7576,
+        "direction": "RECV",
+        "id": 2757,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      },
+      {
+        "line": 7577,
+        "direction": "SEND",
+        "id": 2758,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "Input.dispatchKeyEvent",
+        "params": {
+          "type": "keyUp",
+          "modifiers": 2,
+          "key": "o",
+          "windowsVirtualKeyCode": 79,
+          "code": "KeyO",
+          "location": 0,
+          "isKeypad": false
+        },
+        "error": null
+      },
+      {
+        "line": 7578,
+        "direction": "RECV",
+        "id": null,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "Page.fileChooserOpened",
+        "params": {
+          "frameId": "95F8AA46A92E3CB04CBAE9B6D605E39F",
+          "mode": "selectSingle",
+          "backendNodeId": 174
+        },
+        "error": null
+      },
+      {
+        "line": 7580,
+        "direction": "RECV",
+        "id": 2758,
+        "session": "1524664BF82FF9E0E594DC9ED79A60D7",
+        "method": "ACK",
+        "params": {},
+        "error": null
+      }
+    ]
+  }
+]

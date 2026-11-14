@@ -1,0 +1,73 @@
+[WebServer] (node:1051476) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 25 tests using 1 worker
+
+(node:1051509) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+A-SHELL browser: Chrome 154.0.8037.97; runner linux/x64; viewport {"width":1280,"height":720}.
+A-SHELL: actual wheel/Space pan and typed 2D view settings applied through the shared seams; right-click target reached the fixture adapter.
+A-SHELL emitted production capability results: [
+  {
+    state: 'supported',
+    text: 'Native file pickers: Native file pickers are available; access requires your file selection.'
+  },
+  {
+    state: 'supported',
+    text: 'Background workers: Background worker API is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebAssembly: WebAssembly compilation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebGL 2: WebGL 2 context creation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'Isolated execution: Cross-origin isolation is active.'
+  },
+  {
+    state: 'supported',
+    text: 'Image clipboard: Image clipboard API is available; access may require permission.'
+  },
+  {
+    state: 'supported',
+    text: 'Pen pressure API: Pressure API is available; pen hardware has not been tested.'
+  }
+]
+A-SHELL: emitted dist via Vite preview exposes one shell with nine real workspace adapters and no fixture tools. Live deployment remains untested.
+A-SHELL: one window; fixture preview/cancel/commit; undo/redo; exact downloaded container reopens; IDB recovery survives page close/reopen. Native picker interaction and product editing remain untested.
+  ✓   1 src/app/app-shell.browser.spec.ts:20:1 › A-SHELL actual window composes fixture editing, history, project files and local recovery (5.0s)
+  ✓   2 src/audio/audio-workspace.browser.spec.ts:48:1 › AUDIO-APP real WAV import, playback, range edits, shared undo, native reopen and recovery (4.6s)
+  ✓   3 src/audio/audio-workspace.browser.spec.ts:70:1 › AUDIO-APP effects export sample-exact PCM WAV and invalid import retains edits (2.2s)
+  ✓   4 src/audio/audio-workspace.browser.spec.ts:90:1 › AUDIO-APP keyboard range selection and missing Web Audio are explicit (2.1s)
+C35 capture proof {"size":[320,240],"corners":[0,0,0,0],"blue":[64,128,192,255],"green":[16,192,64,255],"edges":160,"maxFringeError":1,"unchanged":true}
+  ✓   5 src/bridge/bridge-raster.browser.spec.ts:15:1 › C35 real transparent capture retains all geometry, camera/color, edge alpha and visible renderer state (392ms)
+  ✓   6 src/bridge/bridge-raster.browser.spec.ts:22:1 › D05 real browser CompressionStream PNG preserves low-alpha bytes without Canvas conversion (287ms)
+  ✓   7 src/bridge/bridge-raster.browser.spec.ts:28:1 › D03 private decoder returns the requested adjacent frame, letterbox, fade and title (343ms)
+  ✓   8 src/bridge/bridge-raster.browser.spec.ts:37:1 › C35 lost source context fails before creating a capture (314ms)
+D03 trimmed endpoint proof {"frames":[{"sample":0.499999,"timelineSeconds":0.5,"rgba":[254,0,0,255]},{"sample":0.999999,"timelineSeconds":0.5,"rgba":[0,255,2,255]}],"beyond":"BridgeFrameReadbackError"}
+  ✓   9 src/bridge/bridge-raster.browser.spec.ts:38:1 › D03 samples inside trimmed End and rejects a trim beyond the actual decoded duration (325ms)
+  ✓  10 src/bridge/bridge-workspace.browser.spec.ts:44:1 › XWS Image composite arrives as an undoable bin-only PNG; frame becomes an editable native Image and prior source stays stored (5.3s)
+  ✓  11 src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0,0.5) keeps its last included frame in preview and native Image (1.7s)
+  ✓  12 src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0.5,1) keeps its last included frame in preview and native Image (1.6s)
+D03 MediaRecorder import proof {"initialDuration":"Infinity","rgba":[254,0,0,255],"sourceBytesPreserved":true}
+  ✓  13 src/bridge/bridge-workspace.browser.spec.ts:81:1 › XWS MediaRecorder WebM export can be imported and captured with an initially unknown decoded duration (4.1s)
+  ✓  14 src/bridge/bridge-workspace.browser.spec.ts:96:1 › XWS existing Video receives exactly one reversible append and pending Image floats remain untouched (2.0s)
+  ✓  15 src/bridge/bridge-workspace.browser.spec.ts:103:1 › XWS denied durable storage keeps a dirty Image target and stays in Video (1.7s)
+  ✓  16 src/bridge/bridge-workspace.browser.spec.ts:112:1 › XWS committed parametric CAD capture stays transparent, reopens exactly, and source dimensions remain editable (4.5s)
+  ✓  17 src/bridge/bridge-workspace.browser.spec.ts:120:1 › XWS imported CAD capture retains both disconnected STEP bodies and exact source bytes (3.9s)
+CAD consumer golden Chrome 154.0.8037.97 linux/x64: complete UI construction, dependent placements, exact volumes, units, editable native reopen and actual STEP re-import.
+  ✓  18 src/cad/cad-consumer.browser.spec.ts:12:1 › CAD consumer golden: dependent holes/pocket, live variables, unit conversion, files and real STEP (10.5s)
+  ✓  19 src/cad/cad-modeling.browser.spec.ts:16:1 › CAD modeling production: centered formula profile, planes, units, editable native reopen and STEP world position (6.3s)
+  ✓  20 src/cad/cad-modeling.browser.spec.ts:40:1 › CAD modeling production: pointer profiles, keyboard group selection, detach/undo and construction exclusion (4.0s)
+  ✓  21 src/cad/cad-modeling.browser.spec.ts:61:1 › CAD modeling production: numeric polygon radius/rotation edits and a circle hole on YZ (3.3s)
+  ✓  22 src/cad/cad-modeling.browser.spec.ts:73:1 › CAD modeling production: exact hexagon and independent construction-line native reopen fixtures (3.9s)
+STEP-APP Chrome 154.0.8037.97 linux/x64: real worker downloads re-import as 60000/72000 mm3; history unchanged; no external requests.
+  ✓  23 src/cad/cad-step-export.browser.spec.ts:8:1 › STEP-APP production downloads the actual solid and rebuilt dimensions without changing project history (3.8s)
+  ✓  24 src/cad/cad-step-export.browser.spec.ts:40:1 › Controlled worker-network cancellation › STEP-APP cancels real workers on Esc/source changes and reports invalid solids without a download (4.2s)
+  ✓  25 src/cad/cad-step-import.browser.spec.ts:25:1 › CAD-IMPORT production golden: exact source, units, undo, STEP/STL export and native reopen (6.4s)
+
+  25 passed (1.4m)

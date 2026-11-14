@@ -213,3 +213,79 @@ test('S10 palette tools expose their optional active state and reject non-boolea
   assert.throws(() => chrome.update({ ...f.model, tools: [{ ...f.model.tools[0]!, active: 'yes' as unknown as boolean }] }), TypeError);
   chrome.dispose();
 });
+
+test('S10 offline status slot keeps caller content and keyboard focus across chrome updates', () => {
+  const f = fixture(), chrome = createChrome(f.args);
+  try {
+    const slot = chrome.offlineSlot;
+    assert.ok(slot instanceof f.dom.window.HTMLElement);
+    assert.equal(slot.closest('footer'), f.root.querySelector('.gc-statusbar'));
+    const action = f.document.createElement('button'); action.textContent = 'Check for updates'; slot.append(action); action.focus();
+    chrome.update({ ...f.model, workspace: 'image', title: 'New title', dirty: false });
+    assert.equal(chrome.offlineSlot, slot); assert.equal(action.parentElement, slot); assert.equal(f.document.activeElement, action);
+  } finally { chrome.dispose(); f.dom.window.close(); }
+});
+
+test('S10 keeps native command targets connected when a field blur commits before its click', () => {
+  const f = fixture(), chrome = createChrome(f.args), input = f.document.createElement('input'); f.content.append(input);
+  const save = button(f.root, '.gc-standard [data-command="file.save"]'), glyph = save.firstElementChild;
+  const menu = button(f.root, '[data-menu="file"]'), item = button(f.root, '.gc-menu-popup [data-command="file.save"]');
+  const hand = button(f.root, '.gc-palette [data-command="view.panHold"]');
+  input.addEventListener('blur', () => chrome.update({ ...f.model, status: 'Edit committed', dirty: false,
+    menus: f.model.menus.map(m => ({ ...m, items: m.items.map(i => i.id === 'edit.undo' ? { ...i, enabled: true } : i) })) }));
+  input.focus(); save.focus();
+  assert.equal(save.isConnected, true); assert.equal(button(f.root, '.gc-standard [data-command="file.save"]'), save);
+  assert.equal(save.firstElementChild, glyph); assert.equal(button(f.root, '[data-menu="file"]'), menu);
+  assert.equal(button(f.root, '.gc-menu-popup [data-command="file.save"]'), item); assert.equal(button(f.root, '.gc-palette [data-command="view.panHold"]'), hand);
+  save.click(); assert.deepEqual(f.commands, ['file.save']); chrome.dispose();
+});
+
+test('S10 reconciles command order and labels while removed, disabled or old-workspace targets stay inert', () => {
+  const f = fixture(), chrome = createChrome(f.args);
+  const save = button(f.root, '.gc-standard [data-command="file.save"]'), open = button(f.root, '.gc-standard [data-command="file.open"]');
+  const changed: ChromeModel = { ...f.model, menus: [{ ...f.model.menus[0]!, items: [
+    { ...f.model.menus[0]!.items[2]!, label: 'Save a copy', icon: 'export' }, { ...f.model.menus[0]!.items[1]!, enabled: false },
+  ] }] };
+  chrome.update(changed);
+  assert.equal(f.root.querySelector('.gc-standard')!.firstElementChild, save); assert.equal(save.textContent, 'Save a copySave a copy');
+  assert.equal(save.getAttribute('aria-label'), 'Save a copy (Ctrl+S)'); assert.equal(button(f.root, '.gc-standard [data-command="file.open"]'), open);
+  open.dispatchEvent(new f.dom.window.MouseEvent('click', { bubbles: true })); assert.deepEqual(f.commands, []);
+  chrome.update({ ...changed, menus: [{ ...changed.menus[0]!, items: [changed.menus[0]!.items[1]!] }] });
+  assert.equal(save.isConnected, false); save.click(); assert.deepEqual(f.commands, []);
+  const oldMenu = button(f.root, '[data-menu="file"]'); chrome.update({ ...f.model, workspace: 'image' });
+  assert.notEqual(button(f.root, '[data-menu="file"]'), oldMenu); assert.equal(open.isConnected, false); open.click(); assert.deepEqual(f.commands, []);
+  chrome.dispose();
+});
+
+test('S10 keeps distinct duplicate occurrences and removes unused command nodes', () => {
+  const f = fixture(), duplicate = f.model.menus[0]!.items[2]!;
+  const model: ChromeModel = { ...f.model, menus: [{ ...f.model.menus[0]!, items: [duplicate, duplicate] }] };
+  const chrome = createChrome({ ...f.args, model }), before = [...f.root.querySelectorAll('.gc-standard button')];
+  chrome.update({ ...model, title: 'Updated' }); [...f.root.querySelectorAll('.gc-standard button')].forEach((node, i) => assert.equal(node, before[i]));
+  assert.notEqual(before[0], before[1]); chrome.update({ ...model, menus: [] });
+  assert.equal(f.root.querySelectorAll('.gc-standard button,.gc-menu-trigger').length, 0); assert.equal(before.every(node => !node.isConnected), true);
+  chrome.dispose();
+});
+
+for (const surface of ['toolbar', 'tool'] as const) test(`S10 disabled focused ${surface} hands focus to the viewport even when activeElement remains stale`, () => {
+  const f = fixture(), chrome = createChrome(f.args);
+  const control = button(f.root, surface === 'toolbar' ? '.gc-standard [data-command="file.open"]' : '.gc-palette [data-command="view.panHold"]');
+  control.focus(); let attemptedDisabledFocus = 0;
+  const focus = control.focus.bind(control);
+  control.focus = options => { if (control.disabled) attemptedDisabledFocus++; focus(options); };
+  // jsdom, like Chrome within this event, retains a just-disabled active element.
+  control.disabled = true; assert.equal(f.document.activeElement, control); control.disabled = false;
+  chrome.update(surface === 'toolbar' ? { ...f.model, menus: f.model.menus.map(menu => ({ ...menu, items: menu.items.map(item => item.id === 'file.open' ? { ...item, enabled: false } : item) })) } :
+    { ...f.model, tools: f.model.tools.map(tool => tool.id === 'view.panHold' ? { ...tool, enabled: false } : tool) });
+  assert.equal(attemptedDisabledFocus, 0); assert.equal(f.document.activeElement, chrome.viewport);
+  assert.equal(control.disabled, true); chrome.dispose(); f.dom.window.close();
+});
+
+test('S10 removed focused commands return to the viewport and background updates keep outside focus', () => {
+  const f = fixture(), chrome = createChrome(f.args);
+  button(f.root, '.gc-standard [data-command="file.open"]').focus();
+  chrome.update({ ...f.model, menus: [] }); assert.equal(f.document.activeElement, chrome.viewport);
+  const outside = button(f.document, '#outside'); outside.focus();
+  chrome.update(f.model); assert.equal(f.document.activeElement, outside);
+  chrome.dispose(); f.dom.window.close();
+});

@@ -1,0 +1,14 @@
+[WebServer] (node:896483) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:896614) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/image/image-acceptance.browser.spec.ts:11:1 › IMG-103/104 production controls match the exact golden and preserve editable layers and selection on reopen (2.8s)
+  ✓  2 src/image/image-acceptance.browser.spec.ts:93:1 › Image selection-only edits undo, recover, cancel a floating move and clear on another legacy document (1.4s)
+  ✓  3 src/image/image-acceptance.browser.spec.ts:153:1 › Image typed zoom stays centered, previews and cancels, matches Fit and retains wheel anchoring (1.1s)
+  ✓  4 src/image/image-workspace.browser.spec.ts:22:1 › IMAGE-APP production: paint tools, selection move, undo, layered native file, PNG export/open and recovery (8.5s)
+  ✓  5 src/image/image-workspace.browser.spec.ts:75:1 › IMAGE-APP layers, soft brush clipped to a selection, opacity/blend, adjustments, filters, text and geometry (6.1s)
+
+  5 passed (21.6s)

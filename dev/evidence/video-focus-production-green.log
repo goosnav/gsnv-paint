@@ -1,0 +1,15 @@
+
+Running 7 tests using 1 worker
+
+(node:1010368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VIDEO focus browser 154.0.8037.97; output /tmp/gsnv-consumer-qa/video-focus-production-source/dist
+  ✓  1 src/video/video-export-focus.browser.spec.ts:54:3 › VIDEO focus inspector mouse Export retains immediate native Save and New shortcuts (2.7s)
+  ✓  2 src/video/video-export-focus.browser.spec.ts:54:3 › VIDEO focus inspector keyboard Export retains immediate native Save and New shortcuts (2.6s)
+  ✓  3 src/video/video-export-focus.browser.spec.ts:54:3 › VIDEO focus toolbar mouse Export retains immediate native Save and New shortcuts (2.5s)
+  ✓  4 src/video/video-export-focus.browser.spec.ts:54:3 › VIDEO focus toolbar keyboard Export retains immediate native Save and New shortcuts (2.5s)
+  ✓  5 src/video/video-export-focus.browser.spec.ts:66:1 › VIDEO focus export refresh preserves a pending field value and the exact number control (2.5s)
+  ✓  6 src/video/video-export-focus.browser.spec.ts:74:1 › VIDEO focus export refresh keeps an outside menu focused and open (2.5s)
+  ✓  7 src/video/video-export-focus.browser.spec.ts:80:1 › VIDEO focus refresh restores the same title control and removed controls hand focus to the timeline (2.5s)
+
+  7 passed (19.2s)

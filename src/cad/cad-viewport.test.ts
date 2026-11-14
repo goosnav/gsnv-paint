@@ -10,6 +10,7 @@ test('C56 sketch renderer and pointer conversion use the same view transform',()
  const content=editCADContent({content:editableCADContent({operation:'new'}),action:{kind:'rectangle',prefix:'r',width:'100',height:'60'}});
  const model:CADView={content,entities:content.graph.features[0].definition.sketch.entities,view:{zoom:1,pan:{x:0,y:0}},selected:[],preview:[],solid:null,mode:'sketch',state:'fully'};
  const view=cadViewport(root);view.update(model);assert.equal(root.querySelectorAll('[data-entity-id]').length,4);assert.equal(root.querySelectorAll('[data-dimension-id]').length,2);assert.match(root.textContent!,/100/);
+ assert.throws(()=>view.capturePort().read(),/committed solid/);assert.equal(view.capturePort().isCurrent({documentIdentity:'r1',viewRevision:'1'}),false);
  assert.deepEqual(view.point({x:470,y:190}),[100,60]);
  view.update({...model,view:{zoom:2,pan:{x:10,y:20}}});assert.deepEqual(view.point({x:950,y:400}),[100,60]);
  view.update({...model,selected:['r-edge-0']});assert.equal(root.querySelector('[data-entity-id="r-edge-0"]')?.getAttribute('data-selected'),'true');
@@ -19,7 +20,9 @@ test('C56 sketch renderer and pointer conversion use the same view transform',()
  view.update({...model,selected:['r-edge-0','r-edge-1']});
  assert.equal(dom.window.document.activeElement?.getAttribute('data-entity-id'),'r-edge-0','background redraw preserves geometry focus');
  view.update({...model,content:{...content,units:'inch'}});assert.match(root.querySelector('[data-dimension-id]')?.textContent??'',/3\.9370079 in/);
- view.dispose();view.dispose();assert.equal(root.childElementCount,0);
+ view.update({...model,entities:model.entities.map(e=>({...e,construction:true}))});
+ assert.equal(root.querySelector('[data-entity-id="r-edge-0"] line[stroke-dasharray]')?.getAttribute('stroke-dasharray'),'5 4');
+ view.dispose();view.dispose();assert.equal(root.childElementCount,0);assert.throws(()=>view.capturePort().read(),/committed solid/);
 });
 test('C56 invalid hosts fail; unavailable rendering keeps sketch controls usable',()=>{
  assert.throws(()=>cadViewport(null as unknown as HTMLElement),TypeError);

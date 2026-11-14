@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:1008720) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/shared/offline.browser.spec.ts:101:1 › OFFLINE failed full-build updates preserve A through cold restarts; complete B waits for dirty tabs and native close warnings (29.8s)
+
+  1 passed (30.8s)

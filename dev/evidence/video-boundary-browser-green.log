@@ -1,0 +1,13 @@
+
+Running 4 tests using 1 worker
+
+(node:979772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+D03 trimmed endpoint proof {"frames":[{"sample":0.499999,"timelineSeconds":0.5,"rgba":[254,0,0,255]},{"sample":0.999999,"timelineSeconds":0.5,"rgba":[0,255,2,255]}],"beyond":"BridgeFrameReadbackError"}
+  ✓  1 src/bridge/bridge-raster.browser.spec.ts:38:1 › D03 samples inside trimmed End and rejects a trim beyond the actual decoded duration (387ms)
+  ✓  2 src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0,0.5) keeps its last included frame in preview and native Image (885ms)
+  ✓  3 src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0.5,1) keeps its last included frame in preview and native Image (923ms)
+D03 MediaRecorder import proof {"initialDuration":"Infinity","rgba":[254,0,0,255],"sourceBytesPreserved":true}
+  ✓  4 src/bridge/bridge-workspace.browser.spec.ts:81:1 › XWS MediaRecorder WebM export can be imported and captured with an initially unknown decoded duration (3.5s)
+
+  4 passed (8.1s)

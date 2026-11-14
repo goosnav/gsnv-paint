@@ -11,6 +11,8 @@ const ok = (page: Page) => page.getByRole('dialog').getByRole('button', { name: 
 
 test('CAD consumer golden: dependent holes/pocket, live variables, unit conversion, files and real STEP', async ({ page, context }, testInfo) => {
   test.setTimeout(180000);
+  // Keep interception active before navigation; one-shot subscriptions can race Ctrl+O.
+  page.on('filechooser', () => {});
   const server = await preview({ preview: { host: '127.0.0.1', port: 4175, strictPort: true } });
   const errors: string[] = [], external: string[] = [];
   page.on('pageerror', e => errors.push(e.message));

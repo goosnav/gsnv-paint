@@ -8,6 +8,9 @@ import { createAudioWorkspace } from '../audio/audio-workspace.ts';
 import { createCodeWorkspace } from '../code/code-workspace.ts';
 import { createSpreadsheetWorkspace } from '../spreadsheet/spreadsheet-workspace.ts';
 import { mountApp } from './app-shell.ts';
+import { createOfflineClient } from '../shared/offline-client.ts';
+import { mountOfflineStatus } from '../shared/offline-status.ts';
+import '../shared/offline-status.css';
 import { recentProjects } from '../shared/recent-projects.ts';
 import type { FilePorts } from '../shared/file-access.ts';
 import type { RecoveryPorts } from '../shared/recovery-store.ts';
@@ -31,7 +34,12 @@ try {
   const app = mountApp({ root, adapters: { cad: createCADWorkspace(files), image: createImageWorkspace(files), photo: createPhotoWorkspace(files), video: createVideoWorkspace(files), document: createDocumentWorkspace(files), slides: createSlidesWorkspace(files), audio: createAudioWorkspace(files), spreadsheet: createSpreadsheetWorkspace(files), code: createCodeWorkspace(files) }, recovery, recent: recentProjects(recovery.indexedDB), probe: { environment: window, codecRequests: [] }, files });
   root.tabIndex = -1;
   void app.ready.then(() => { if (document.activeElement === document.body) root.focus(); });
-  window.addEventListener('pagehide', () => app.dispose(), { once: true });
+  let offline: ReturnType<typeof createOfflineClient> | undefined, offlineStatus: ReturnType<typeof mountOfflineStatus> | undefined;
+  if (import.meta.env.PROD) {
+    offlineStatus = mountOfflineStatus({ root: app.offlineSlot, onRetry: () => offline?.retry(), onCheck: () => offline?.check() });
+    offline = createOfflineClient({ environment: window, buildId: document.querySelector<HTMLMetaElement>('meta[name="gsnv-build-id"]')?.content ?? '', onState: offlineStatus.update });
+  }
+  window.addEventListener('pagehide', () => { offline?.dispose(); offlineStatus?.dispose(); app.dispose(); }, { once: true });
 } catch (cause) {
   const notice = document.createElement('p'); notice.className = 'app-startup-error';
   notice.textContent = `gsnv-paint could not start in this browser: ${cause instanceof Error ? cause.message : String(cause)}`;

@@ -7,7 +7,7 @@
  * GUARANTEES Solver-only identifiers never reach messages; conflicting constraints are named in words.
  * TUNING     None.
  * DECISIONS  D1: One builder for display and export so STEP always matches what the user sees.
- * LIMITS     XY sketches; features run in document order after the boss.
+ * LIMITS     One root default plane; features run locally, then the final solid is placed in world coordinates.
  * TESTBENCH  exercised through cad-workspace and cad-step-export browser tests and kernel-features.test.ts
  */
 import type { KernelSession } from './kernel-runtime.ts';
@@ -18,6 +18,7 @@ import { evaluateDimension } from './dimension-expressions.ts';
 import { linearSketchProgram } from './linear-sketch-program.ts';
 import { sketchRegions, sketchLoops } from './sketch-regions.ts';
 import { buildLinearPrism } from './kernel-linear-prism.ts';
+import { transformPartPlane } from './kernel-plane-transform.ts';
 import { applyFeature } from './kernel-features.ts';
 
 type Token = ReturnType<KernelSession['retain']>;
@@ -25,7 +26,7 @@ const NAMES: Record<string, string> = { horizontal: 'Horizontal', vertical: 'Ver
 
 function solve(sketch: Sketch, label: string, content: CADContent, solver: SolverSession) {
   const context = evaluateVariables({ variables: content.variables, units: content.units }).context;
-  const program = linearSketchProgram({ sketch, context, tolerance: content.tolerance.linearMm });
+  const program = linearSketchProgram({ sketch, context, tolerance: content.tolerance });
   solver.engine.clear_data(); solver.engine.push_primitives_and_params(program.primitives);
   const status = solver.engine.solve(), dof = solver.dof(), conflicts = solver.engine.get_gcs_conflicting_constraints();
   if (status !== 0 || conflicts.length || dof < 0) {
@@ -61,5 +62,5 @@ export async function buildPart({ content, solver, kernel }: { content: CADConte
       } catch (cause) { throw new Error(`${f.name}: ${cause instanceof Error ? cause.message : String(cause)}`); }
     }
   } catch (cause) { throw new Error(cause instanceof Error && /^(Cut|Fillet|Chamfer|Extrude)/.test(cause.message) ? cause.message : `Extrude: ${cause instanceof Error ? cause.message : String(cause)}`); }
-  return { sketches, dof: first.dof, token, session };
+  return { sketches, dof: first.dof, token: transformPartPlane({session,token,plane:base.definition.sketch.plane}), session };
 }

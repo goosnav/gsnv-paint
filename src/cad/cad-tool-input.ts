@@ -10,11 +10,11 @@
  * TUNING     Caller converts screen snap distance to document millimetres.
  * DECISIONS  D1: Commit on clicks rather than drag release for deliberate CAD placement.
  *            Alternative: freehand drag; Revisit if: the tool's interaction contract changes.
- * LIMITS     Selection, line, corner rectangle and center circle; no arcs or constraint policy.
+ * LIMITS     Selection, lines, rectangles, circles and polygons; no arcs or constraint policy.
  * TESTBENCH  src/cad/cad-tool-input.test.ts -- run with: node --import tsx --test src/cad/cad-tool-input.test.ts
  */
-export type CADToolState={tool:'select'|'line'|'rectangle'|'circle';anchor:[number,number]|null;cursor:[number,number]|null;selected:string[]};
-type Intent={kind:'none'}|{kind:'select'}|{kind:'line';a:[number,number];b:[number,number]}|{kind:'rectangle';origin:[number,number];width:number;height:number}|{kind:'circle';center:[number,number];radius:number};
+export type CADToolState={tool:'select'|'line'|'rectangle'|'circle'|'center-rectangle'|'polygon';anchor:[number,number]|null;cursor:[number,number]|null;selected:string[]};
+type Intent={kind:'none'}|{kind:'select'}|{kind:'line';a:[number,number];b:[number,number]}|{kind:'rectangle';origin:[number,number];width:number;height:number}|{kind:'circle';center:[number,number];radius:number}|{kind:'center-rectangle';center:[number,number];width:number;height:number}|{kind:'polygon';center:[number,number];radius:number;rotation:number};
 type Request={state:CADToolState;event:{kind:'click'|'move';point:[number,number];hit:string|null;ctrl:boolean;shift:boolean}|{kind:'cancel'}|{kind:'tool';tool:CADToolState['tool']};endpoints:readonly(readonly[number,number])[];tolerance:number};
 export function cadToolInput(request:Request):{state:CADToolState;intent:Intent}{
  const {event,endpoints,tolerance}=request;
@@ -34,5 +34,7 @@ export function cadToolInput(request:Request):{state:CADToolState;intent:Intent}
  const a=state.anchor;state.anchor=null;
  if(state.tool==='line')return{state,intent:{kind:'line',a,b:p}};
  if(state.tool==='circle')return{state,intent:{kind:'circle',center:a,radius:Math.hypot(p[0]-a[0],p[1]-a[1])}};
+ if(state.tool==='center-rectangle')return{state,intent:{kind:'center-rectangle',center:a,width:2*Math.abs(p[0]-a[0]),height:2*Math.abs(p[1]-a[1])}};
+ if(state.tool==='polygon')return{state,intent:{kind:'polygon',center:a,radius:Math.hypot(p[0]-a[0],p[1]-a[1]),rotation:Math.atan2(p[1]-a[1],p[0]-a[0])*180/Math.PI}};
  return{state,intent:{kind:'rectangle',origin:[Math.min(a[0],p[0]),Math.min(a[1],p[1])],width:Math.abs(p[0]-a[0]),height:Math.abs(p[1]-a[1])}};
 }

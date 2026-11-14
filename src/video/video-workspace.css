@@ -39,3 +39,9 @@ label.video-row { grid-template-columns:78px 72px; }
 .video-title-row { display:grid; grid-template-columns:minmax(0,1fr) auto auto; align-items:center; gap:3px; margin:2px 0; }
 .video-title-row span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .video-panel > .xp-button { margin-top:4px; }
+.video-media-bin { padding:6px 10px; }
+.video-media-bin > p { margin:0; color:var(--xp-text-muted); }
+.video-media-bin section { display:grid; grid-template-columns:64px minmax(0,1fr); gap:3px 6px; padding:6px 0; border-bottom:1px solid var(--xp-shadow); }
+.video-bin-thumbnail { grid-row:span 3; width:64px; height:48px; object-fit:contain; background:repeating-conic-gradient(#ddd 0% 25%,white 0% 50%) 0 0/12px 12px; }
+.video-media-bin strong,.video-media-bin small { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.video-media-bin section > div { display:flex; gap:3px; flex-wrap:wrap; }

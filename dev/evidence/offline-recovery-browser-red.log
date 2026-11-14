@@ -1,0 +1,45 @@
+
+Running 1 test using 1 worker
+
+(node:984104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/shared/offline.browser.spec.ts:101:1 › OFFLINE failed full-build updates preserve A through cold restarts; complete B waits for dirty tabs and native close warnings (34.5s)
+
+
+  1) src/shared/offline.browser.spec.ts:101:1 › OFFLINE failed full-build updates preserve A through cold restarts; complete B waits for dirty tabs and native close warnings 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  locator('.doc-page')
+    Expected: "pending document 7391 during update before close"
+    Received: "pending document 7391 during update"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" locator('.doc-page') with timeout 5000ms
+      - waiting for locator('.doc-page')
+        14 × locator resolved to <div role="textbox" spellcheck="true" aria-multiline="true" contenteditable="true" class="doc-body doc-page" aria-label="Document text" aria-description="Escape moves to the formatting controls. Tab indents text; Shift+Tab decreases indentation.">…</div>
+           - unexpected value "pending document 7391 during update"
+
+
+      159 |     storageEvidence.afterBStartup = await documentStorage(reopened); storageEvidence.nativeCloseWarnings = nativeCloseWarnings;
+      160 |     await writeFile(join(evidence, 'update-storage.json'), JSON.stringify(storageEvidence, null, 2));
+    > 161 |     await expect(reopened.locator('.doc-page')).toHaveText('pending document 7391 during update before close');
+          |                                                 ^
+      162 |     // Recovered projects are dirty; save the restored version before opening the same ID.
+      163 |     const recovered = await download(reopened, () => reopened.keyboard.press('Control+s')); expect(recovered.bytes).toEqual(saved.bytes);
+      164 |     const chooser = reopened.waitForEvent('filechooser'); await command(reopened, 'file.open').click(); await (await chooser).setFiles({ name: saved.name, mimeType: 'application/octet-stream', buffer: saved.bytes });
+        at /home/goosnav/Desktop/code/gsnv-paint/src/shared/offline.browser.spec.ts:161:49
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-fa-946f6-s-and-native-close-warnings/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-fa-946f6-s-and-native-close-warnings/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-fa-946f6-s-and-native-close-warnings/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    src/shared/offline.browser.spec.ts:101:1 › OFFLINE failed full-build updates preserve A through cold restarts; complete B waits for dirty tabs and native close warnings 

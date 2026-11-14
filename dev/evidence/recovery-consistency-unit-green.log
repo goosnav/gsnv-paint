@@ -1,0 +1,61 @@
+✔ A-SHELL golden starts one empty CAD window with unavailable editing commands (152.615017ms)
+✔ A-SHELL invalidate refreshes the active editor menus without committing or touching other workspaces (49.449192ms)
+✔ A-SHELL project rename preserves pending editor input and has its own undo step (97.500738ms)
+✔ A-SHELL editor open creates an unsaved document only after replacement consent (39.938497ms)
+✔ A-SHELL with recent projects: New never prompts, edits autosave to File > Recent and reopen from there (860.578707ms)
+✔ A-SHELL unavailable recent backup keeps dirty work on New and Open and warns on unload (41.448905ms)
+✔ A-SHELL NotAllowedError recent backup keeps dirty work on New and Open and warns on unload (40.110559ms)
+✔ A-SHELL QuotaExceededError recent backup keeps dirty work on New and Open and warns on unload (39.604891ms)
+✔ A-SHELL unload protects the exact dirty revision until its recent backup succeeds (42.469237ms)
+✔ A-SHELL a changed revision during replacement backup stays open (36.319775ms)
+✔ A-SHELL overlapping recent writes cannot leave an older revision stored last (31.0669ms)
+✔ A-SHELL Undo cannot acknowledge a stored revision while queued writes can still replace it (40.167735ms)
+✔ A-SHELL disposal accepts pending view edits and finishes their stored backup (22.095212ms)
+✔ A-SHELL all retained projects remain reachable beyond the newest 12 menu entries (34.375449ms)
+✔ A-SHELL opening an older file with the same project id preserves displaced unsaved work (40.630772ms)
+✔ A-SHELL real sessions keep 100 edits, independent workspaces and exactly-once keyboard history (219.999859ms)
+✔ A-SHELL native Open validates domain before replacement and preserves handles on rejection (32.949628ms)
+✔ A-SHELL Open protects its target workspace, including dirty replacement consent (56.799788ms)
+✔ A-SHELL save binds the written revision while later edits remain dirty (22.706751ms)
+✔ A-SHELL late native save cannot bind its handle to a reopened document with the same ID (25.090829ms)
+✔ A-SHELL denied write permission fails before serialization and preserves dirty state (20.635943ms)
+✔ A-SHELL Save-then-replace proceeds only after a successful write of the protected revision (41.443734ms)
+✔ A-SHELL recovery is offered explicitly and restores editable data as dirty (40.1462ms)
+✔ A-SHELL corrupt recovery remains readable and its observed generation is exceeded after discard (26.175052ms)
+✔ A-SHELL discard runs after queued autosaves without recreating a recovery record (24.811405ms)
+✔ A-SHELL stale editor callbacks and post-disposal file completions cannot replace documents (18.836775ms)
+✔ A-SHELL unavailable browser recovery does not block editing or explicit project saves (21.162077ms)
+✔ A-SHELL Open completion during another modal settles without a hidden replacement prompt (23.674541ms)
+✔ A-SHELL a new edit after pending discard makes the resulting recovery available again (22.231356ms)
+✔ A-SHELL a modal forwards the active pointer cancellation before further editing (20.71044ms)
+Not implemented: navigation to another Document
+✔ A-SHELL New restores keyboard scope when an editor replaces its focused view (40.98144ms)
+✔ A-SHELL view settings delegates to an adapter-owned transform without changing document state (15.835323ms)
+✔ A-SHELL restored storage plus native Save repairs the current recovery before close and reopen (42.609297ms)
+✔ A-SHELL Recent never advances past failed recovery, and a retry commits recovery before Recent (22.391969ms)
+✔ A-SHELL native Save stays successful with a truthful warning when Recent fails after recovery (23.186963ms)
+✔ A-SHELL delayed file Save retries the newer current revision without marking it saved (20.879474ms)
+✔ A-SHELL returned generation 1 and width 77 cannot acknowledge the attempted recovery (29.941465ms)
+✔ A-SHELL returned generation 100 and width 77 cannot acknowledge the attempted recovery (19.62861ms)
+✔ A-SHELL returned generation 100 and width 10 cannot acknowledge the attempted recovery (18.387739ms)
+Not implemented: navigation to another Document
+✔ A-SHELL startup conflict 61/62 stays read-only and recovery opens as an editable copy (39.973902ms)
+Not implemented: navigation to another Document
+✔ A-SHELL startup conflict 62/61 stays read-only and recovery opens as an editable copy (39.361219ms)
+✔ A-SHELL startup with identical Recent performs no writes on startup or no-edit disposal (24.609693ms)
+✔ A-SHELL startup with absent Recent performs no writes on startup or no-edit disposal (13.457541ms)
+✔ A-SHELL startup with unreadable Recent performs no writes on startup or no-edit disposal (13.920105ms)
+✔ A-SHELL startup with invalid Recent performs no writes on startup or no-edit disposal (14.178839ms)
+✔ A-SHELL startup with unlisted Recent performs no writes on startup or no-edit disposal (13.497942ms)
+✔ A-SHELL explicit recovery discard is not undone by Recent flush; a later edit resumes recovery (21.821141ms)
+✔ A-SHELL obsolete queued snapshots are never encoded into recovery, including during disposal (18.299134ms)
+✔ A-SHELL an initiated native Save can finish current browser persistence after disposal without late UI (20.918958ms)
+✔ A-SHELL an editor import cannot silently remove an unresolved recovery conflict (26.477191ms)
+ℹ tests 50
+ℹ suites 0
+ℹ pass 50
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3622.77601

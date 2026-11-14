@@ -1,0 +1,46 @@
+✔ D03 rejects missing frames, stale revisions and aborted work without touching browser resources (3.452653ms)
+✔ D03 accepts ready bounded seeks with unknown positive duration, but rejects NaN and clips beyond a known duration (10.869083ms)
+✔ V-TIMELINE native rejects duplicate media IDs without changing input (4.254711ms)
+✔ V-TIMELINE native rejects duplicate clip IDs without changing input (0.636902ms)
+✔ V-TIMELINE native rejects duplicate title IDs without changing input (0.664768ms)
+✔ V-TIMELINE native rejects duplicate asset IDs without changing input (0.516276ms)
+✔ V-TIMELINE native rejects missing assets without changing input (5.671375ms)
+✔ V-TIMELINE native rejects unreferenced assets without changing input (0.552209ms)
+✔ V-TIMELINE native rejects empty media ID without changing input (2.155623ms)
+✔ V-TIMELINE native rejects missing media ID without changing input (0.467983ms)
+✔ V-TIMELINE native rejects missing clip ID without changing input (0.457616ms)
+✔ V-TIMELINE native rejects empty clip ID without changing input (0.500209ms)
+✔ V-TIMELINE native rejects missing title ID without changing input (1.339518ms)
+✔ V-TIMELINE native rejects empty title ID without changing input (0.375185ms)
+✔ V-TIMELINE native rejects missing asset ID without changing input (1.345467ms)
+✔ V-TIMELINE native rejects numeric media ID without changing input (0.365743ms)
+✔ V-TIMELINE native rejects numeric clip ID without changing input (0.300198ms)
+✔ V-TIMELINE native rejects numeric title ID without changing input (0.549995ms)
+✔ V-TIMELINE native rejects null media without changing input (0.302675ms)
+✔ V-TIMELINE native rejects null clip without changing input (0.300713ms)
+✔ V-TIMELINE native rejects null title without changing input (0.288739ms)
+✔ V-TIMELINE native rejects null asset without changing input (0.278116ms)
+✔ V-TIMELINE native rejects empty asset bytes without changing input (0.293477ms)
+✔ V-TIMELINE native rejects non-byte asset payload without changing input (0.525686ms)
+✔ V-TIMELINE native rejects unknown clip media reference without changing input (0.314053ms)
+✔ V-TIMELINE native rejects null clip media reference without changing input (0.299482ms)
+✔ V-TIMELINE native rejects zero media width without changing input (0.639454ms)
+✔ V-TIMELINE native rejects negative media height without changing input (0.336778ms)
+✔ V-TIMELINE native rejects fractional media width without changing input (0.244569ms)
+✔ V-TIMELINE native rejects malformed collections and retains valid independent IDs and unplaced bytes (2.949251ms)
+✔ V-TIMELINE edits cannot create empty or non-string native identities (0.892501ms)
+✔ V-TIMELINE End samples the final half-open trim without changing offset, fade, interior times or source (0.857852ms)
+✔ V-TIMELINE adjacent boundaries choose the next clip while the final boundary stays inside its source (0.182079ms)
+✔ V-TIMELINE End enlarges the sample margin only when one microsecond is not representable (0.18424ms)
+✔ V-TIMELINE clips play in sequence; images take a chosen duration; first clip sets the frame size (6.343408ms)
+✔ V-TIMELINE trim, split, move, fades, volume and delete keep the sequence consistent (1.5515ms)
+✔ V02 bin-only imports preserve project settings, survive native reopen and place/remove explicitly (1.275638ms)
+✔ V-TIMELINE titles validate and the project round-trips through the native encoding (1.656533ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 426.298381

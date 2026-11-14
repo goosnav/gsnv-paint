@@ -1,0 +1,92 @@
+
+Running 3 tests using 1 worker
+
+(node:957996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+D03 trimmed endpoint proof {"frames":[{"sample":0.5,"timelineSeconds":0.5,"rgba":[0,255,2,255]},{"sample":1,"timelineSeconds":0.5,"rgba":[0,0,253,255]}],"beyond":"unexpected success"}
+  ✘  1 src/bridge/bridge-raster.browser.spec.ts:38:1 › D03 samples inside trimmed End and rejects a trim beyond the actual decoded duration (400ms)
+(node:958168) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0,0.5) keeps its last included frame in preview and native Image (5.7s)
+(node:958467) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0.5,1) keeps its last included frame in preview and native Image (5.7s)
+
+
+  1) src/bridge/bridge-raster.browser.spec.ts:38:1 › D03 samples inside trimmed End and rejects a trim beyond the actual decoded duration 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 2
+
+      Array [
+    -   0.499999,
+    -   0.999999,
+    +   0.5,
+    +   1,
+      ]
+
+      38 | test('D03 samples inside trimmed End and rejects a trim beyond the actual decoded duration',async({page})=>{
+      39 |   await page.goto('http://127.0.0.1:4194/');const result=await page.evaluate(()=>window.bridgeRaster.trimmedVideo());console.log('D03 trimmed endpoint proof',JSON.stringify(result));
+    > 40 |   expect(result.frames.map(f=>f.sample)).toEqual([.499999,.999999]);expect(result.frames.map(f=>f.timelineSeconds)).toEqual([.5,.5]);
+         |                                          ^
+      41 |   for(const[i,rgb]of [[0,[255,0,0]],[1,[0,255,0]]]as const){for(let c=0;c<3;c++)expect(Math.abs(result.frames[i]!.rgba[c]!-rgb[c]!)).toBeLessThanOrEqual(3);expect(result.frames[i]!.rgba[3]).toBe(255);}
+      42 |   expect(result.beyond).toBe('BridgeFrameReadbackError');
+      43 | });
+        at /home/goosnav/Desktop/code/gsnv-paint/src/bridge/bridge-raster.browser.spec.ts:40:42
+
+    Error Context: ../../../../../tmp/gsnv-bridge-results/bridge-raster.browser-D03--9608f-the-actual-decoded-duration/error-context.md
+
+    Error Context: ../../../../../tmp/gsnv-bridge-results/bridge-raster.browser-D03--9608f-the-actual-decoded-duration/error-context.md
+
+  2) src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0,0.5) keeps its last included frame in preview and native Image 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      74 |   await open(page,'trimmed.gsnv-video',await videoFixture({in:inside,out}));await expect(page.locator('.video-clip')).toHaveCount(1);await page.getByRole('menuitem',{name:'Video',exact:true}).click();await page.locator('[data-command="video.end"]:visible').click();
+      75 |   const pixel=()=>page.locator('.video-canvas').evaluate((c:HTMLCanvasElement)=>[...c.getContext('2d')!.getImageData(10,10,1,1).data]);
+    > 76 |   await expect.poll(async()=>{const rgba=await pixel();return rgba[3]===255&&rgb.every((channel,i)=>Math.abs(channel-rgba[i]!)<=3);}).toBe(true);
+         |                                                                                                                                       ^
+      77 |   const preview=await pixel(),source=(await save(page)).bytes;await menu(page,'Video','Send current frame to Image');await expect(page.getByRole('tab',{name:'Image',exact:true})).toHaveAttribute('aria-selected','true');
+      78 |   const frame=await save(page),content=frame.pkg.project.content as {width:number;height:number};expect([content.width,content.height]).toEqual([160,120]);const rgba=[...frame.pkg.assets[0]!.bytes.subarray((10*160+10)*4,(10*160+10)*4+4)];expect(rgba).toEqual(preview);for(let i=0;i<3;i++)expect(Math.abs(rgba[i]!-rgb[i]!)).toBeLessThanOrEqual(3);expect(rgba[3]).toBe(255);
+      79 |   await workspace(page,'Video');expect((await save(page)).bytes.equals(source)).toBe(true);
+        at /home/goosnav/Desktop/code/gsnv-paint/src/bridge/bridge-workspace.browser.spec.ts:76:135
+
+    Error Context: ../../../../../tmp/gsnv-bridge-results/bridge-workspace.browser-X-ebee9-in-preview-and-native-Image/error-context.md
+
+    Error Context: ../../../../../tmp/gsnv-bridge-results/bridge-workspace.browser-X-ebee9-in-preview-and-native-Image/error-context.md
+
+  3) src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0.5,1) keeps its last included frame in preview and native Image 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      74 |   await open(page,'trimmed.gsnv-video',await videoFixture({in:inside,out}));await expect(page.locator('.video-clip')).toHaveCount(1);await page.getByRole('menuitem',{name:'Video',exact:true}).click();await page.locator('[data-command="video.end"]:visible').click();
+      75 |   const pixel=()=>page.locator('.video-canvas').evaluate((c:HTMLCanvasElement)=>[...c.getContext('2d')!.getImageData(10,10,1,1).data]);
+    > 76 |   await expect.poll(async()=>{const rgba=await pixel();return rgba[3]===255&&rgb.every((channel,i)=>Math.abs(channel-rgba[i]!)<=3);}).toBe(true);
+         |                                                                                                                                       ^
+      77 |   const preview=await pixel(),source=(await save(page)).bytes;await menu(page,'Video','Send current frame to Image');await expect(page.getByRole('tab',{name:'Image',exact:true})).toHaveAttribute('aria-selected','true');
+      78 |   const frame=await save(page),content=frame.pkg.project.content as {width:number;height:number};expect([content.width,content.height]).toEqual([160,120]);const rgba=[...frame.pkg.assets[0]!.bytes.subarray((10*160+10)*4,(10*160+10)*4+4)];expect(rgba).toEqual(preview);for(let i=0;i<3;i++)expect(Math.abs(rgba[i]!-rgb[i]!)).toBeLessThanOrEqual(3);expect(rgba[3]).toBe(255);
+      79 |   await workspace(page,'Video');expect((await save(page)).bytes.equals(source)).toBe(true);
+        at /home/goosnav/Desktop/code/gsnv-paint/src/bridge/bridge-workspace.browser.spec.ts:76:135
+
+    Error Context: ../../../../../tmp/gsnv-bridge-results/bridge-workspace.browser-X-cd56d-in-preview-and-native-Image/error-context.md
+
+    Error Context: ../../../../../tmp/gsnv-bridge-results/bridge-workspace.browser-X-cd56d-in-preview-and-native-Image/error-context.md
+
+  3 failed
+    src/bridge/bridge-raster.browser.spec.ts:38:1 › D03 samples inside trimmed End and rejects a trim beyond the actual decoded duration 
+    src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0,0.5) keeps its last included frame in preview and native Image 
+    src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0.5,1) keeps its last included frame in preview and native Image 

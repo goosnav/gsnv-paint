@@ -17,9 +17,10 @@ import type { CADContent, SketchEntity, Sketch } from './editable-cad-content.ts
 import type { SolidPreview } from './extrude-preview.ts';
 import type { View2D } from '../shared/view-transform.ts';
 import type { LinearEntity } from './sketch-linear-primitives.ts';
+import type { CadCapturePort } from './cad-viewport-capture.ts';
 type Drawn = LinearEntity|SketchEntity;
-export type CADView = {content:CADContent|null;sketch?:Sketch|undefined;context?:readonly Drawn[];entities:readonly Drawn[];view:View2D;selected:string[];preview:readonly Drawn[];solid:SolidPreview|null;mode:'sketch'|'solid';state:'under'|'fully'|'error';emptyMessage?:string};
-type Handle={update(model:CADView):void;fit():void;point(point:{x:number;y:number}):[number,number];hit(point:{x:number;y:number}):string|null;dispose():void};
+export type CADView = {content:CADContent|null;sketch?:Sketch|undefined;context?:readonly Drawn[];entities:readonly Drawn[];view:View2D;selected:string[];preview:readonly Drawn[];solid:SolidPreview|null;mode:'sketch'|'solid';state:'under'|'fully'|'error';emptyMessage?:string;capture?:{documentIdentity:string;ready:boolean}};
+type Handle={update(model:CADView):void;fit():void;point(point:{x:number;y:number}):[number,number];hit(point:{x:number;y:number}):string|null;capturePort():CadCapturePort;dispose():void};
 export function cadViewport(host:HTMLElement):Handle {
   if(!host?.ownerDocument)throw new TypeError('CAD viewport needs a live DOM host.');
   const document=host.ownerDocument, ns='http://www.w3.org/2000/svg', PIXELS_PER_MM=4, SKETCH_MARGIN=70;
@@ -28,7 +29,7 @@ export function cadViewport(host:HTMLElement):Handle {
   host.append(svg,stage,notice);
   let model:CADView|undefined,disposed=false,renderer:THREE.WebGLRenderer|null=null,controls:OrbitControls|null=null;
   let mesh:THREE.Mesh|null=null,edges:THREE.LineSegments|null=null,lastSolid:SolidPreview|null=null;
-  let scale=PIXELS_PER_MM,origin:{x:number;y:number}|null=null;
+  let scale=PIXELS_PER_MM,origin:{x:number;y:number}|null=null,viewRevision=0,lastWidth=0,lastHeight=0;
   const scene=new THREE.Scene();scene.background=new THREE.Color('#dfe6ef');
   const camera=new THREE.OrthographicCamera(-150,150,100,-100,0.01,1e8);camera.up.set(0,0,1);
   scene.add(new THREE.AmbientLight(0xffffff,1.6));const light=new THREE.DirectionalLight(0xffffff,3);light.position.set(100,-200,350);scene.add(light);
@@ -39,11 +40,12 @@ export function cadViewport(host:HTMLElement):Handle {
   function drawSketch(){
     if(!model)return;
     const focused=document.activeElement,focusKey=focused&&svg.contains(focused)?focused.getAttribute('data-entity-id')??focused.getAttribute('data-dimension-id'):null;
-    svg.replaceChildren();const {width,height}=size();svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
+    svg.replaceChildren();const plane=model.sketch?.plane??model.content?.graph.features[0].definition.sketch.plane??'XY';svg.setAttribute('aria-label',`${plane} sketch`);const {width,height}=size();svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
     const step=10**Math.ceil(Math.log10(24/(scale*model.view.zoom))),zero=screen([0,0]),pitch=step*scale*model.view.zoom;
     for(let x=((zero.x%pitch)+pitch)%pitch;x<width;x+=pitch)svg.append(element('line',{x1:x,y1:0,x2:x,y2:height,stroke:'#dfe5ee'}));
     for(let y=((zero.y%pitch)+pitch)%pitch;y<height;y+=pitch)svg.append(element('line',{x1:0,y1:y,x2:width,y2:y,stroke:'#dfe5ee'}));
     svg.append(element('line',{x1:0,y1:zero.y,x2:width,y2:zero.y,stroke:'#d79a9a'}),element('line',{x1:zero.x,y1:0,x2:zero.x,y2:height,stroke:'#8fbf9a'}));
+    svg.append(element('text',{x:12,y:20,fill:'#485366','font-size':12},`${plane} plane · U=${plane[0]}, V=${plane[1]}`));
     const color=model.state==='error'?'#c50f0f':model.state==='fully'?'#1c7a1c':'#0b3fb5';
     // When a cut sketch is active, the base outline is shown faintly for reference (not selectable).
     for(const entity of model.context??[]){
@@ -55,14 +57,14 @@ export function cadViewport(host:HTMLElement):Handle {
       const group=element('g',{'data-entity-id':entity.id,'data-selected':String(selected)});
       if(!preview){group.setAttribute('role','button');group.setAttribute('data-view-geometry','');group.setAttribute('tabindex','0');group.setAttribute('aria-pressed',String(selected));group.setAttribute('aria-label',`Line ${model.entities.indexOf(entity)+1}. Enter selects; Ctrl+Enter adds or removes selection.`);}
       const attrs={x1:a.x,y1:a.y,x2:b.x,y2:b.y};group.append(element('line',{...attrs,stroke:'transparent','stroke-width':14}));
-      group.append(element('line',{...attrs,stroke:selected?'#ff7a00':color,'stroke-width':selected?3:2,'stroke-dasharray':preview?'5 4':'none','pointer-events':'none'}));
+      group.append(element('line',{...attrs,stroke:selected?'#ff7a00':color,'stroke-width':selected?3:2,'stroke-dasharray':preview||entity.construction?'5 4':'none','pointer-events':'none'}));
       for(const p of [a,b])group.append(element('circle',{cx:p.x,cy:p.y,r:3,fill:'#fff',stroke:color,'pointer-events':'none'}));svg.append(group);
     }else if(entity.kind==='circle'){
       const c=screen(entity.center),r=entity.radius*scale*model.view.zoom,selected=model.selected.includes(entity.id),preview=model.preview.includes(entity);
       const group=element('g',{'data-entity-id':entity.id,'data-selected':String(selected)});
       if(!preview){group.setAttribute('role','button');group.setAttribute('data-view-geometry','');group.setAttribute('tabindex','0');group.setAttribute('aria-pressed',String(selected));group.setAttribute('aria-label',`Circle ${model.entities.indexOf(entity)+1}. Enter selects; Ctrl+Enter adds or removes selection.`);}
       group.append(element('circle',{cx:c.x,cy:c.y,r,fill:'none',stroke:'transparent','stroke-width':14}));
-      group.append(element('circle',{cx:c.x,cy:c.y,r,fill:'none',stroke:selected?'#ff7a00':color,'stroke-width':selected?3:2,'stroke-dasharray':preview?'5 4':'none','pointer-events':'none'}));
+      group.append(element('circle',{cx:c.x,cy:c.y,r,fill:'none',stroke:selected?'#ff7a00':color,'stroke-width':selected?3:2,'stroke-dasharray':preview||entity.construction?'5 4':'none','pointer-events':'none'}));
       group.append(element('path',{d:`M${c.x-4} ${c.y}h8M${c.x} ${c.y-4}v8`,stroke:color,'pointer-events':'none'}));svg.append(group);
     }
     const sketch=model.sketch??model.content?.graph.features[0].definition.sketch;
@@ -89,18 +91,20 @@ export function cadViewport(host:HTMLElement):Handle {
     if(edges){scene.remove(edges);edges.geometry.dispose();(edges.material as THREE.Material).dispose();edges=null;}lastSolid=null;
   }
   function drawSolid(){if(renderer&&!disposed)renderer.render(scene,camera);}
+  function cameraChanged(){viewRevision++;drawSolid();}
   function resize(){
-    if(disposed)return;drawSketch();if(renderer){const {width,height}=size();renderer.setSize(width,height);const half=camera.top;camera.left=-half*width/height;camera.right=-camera.left;camera.updateProjectionMatrix();drawSolid();}
+    if(disposed)return;drawSketch();if(renderer){const {width,height}=size();if(width!==lastWidth||height!==lastHeight){viewRevision++;lastWidth=width;lastHeight=height;}renderer.setSize(width,height);const half=camera.top;camera.left=-half*width/height;camera.right=-camera.left;camera.updateProjectionMatrix();drawSolid();}
   }
   function startGL(){
     if(renderer)return true;
     try{
       renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(document.defaultView?.devicePixelRatio??1,2));renderer.domElement.setAttribute('aria-label','CAD solid viewport');stage.append(renderer.domElement);
-      controls=new OrbitControls(camera,renderer.domElement);controls.mouseButtons={LEFT:null,MIDDLE:THREE.MOUSE.ROTATE,RIGHT:THREE.MOUSE.PAN};controls.zoomToCursor=true;controls.enableDamping=false;controls.addEventListener('change',drawSolid);resize();return true;
+      controls=new OrbitControls(camera,renderer.domElement);controls.mouseButtons={LEFT:null,MIDDLE:THREE.MOUSE.ROTATE,RIGHT:THREE.MOUSE.PAN};controls.zoomToCursor=true;controls.enableDamping=false;controls.addEventListener('change',cameraChanged);resize();return true;
     }catch(cause){notice.textContent=`3D view unavailable: ${cause instanceof Error?cause.message:String(cause)}. Sketch editing remains available.`;renderer?.dispose();renderer=null;return false;}
   }
   function fit(){
     if(model?.mode==='solid'&&mesh&&controls){
+      viewRevision++;
       const bounds=new THREE.Box3().setFromObject(mesh),center=bounds.getCenter(new THREE.Vector3()),extent=bounds.getSize(new THREE.Vector3());
       const radius=Math.max(extent.length(),1),{width,height}=size();camera.top=radius*.65*Math.max(1,height/width);camera.bottom=-camera.top;camera.zoom=1;camera.position.copy(center).add(new THREE.Vector3(radius,-radius,radius*.85));controls.target.copy(center);controls.update();resize();
     }else if(model){
@@ -111,9 +115,17 @@ export function cadViewport(host:HTMLElement):Handle {
     }
   }
   const Resize=document.defaultView?.ResizeObserver,observer=Resize?new Resize(resize):null;observer?.observe(host);
+  const capture:CadCapturePort={
+    read(){
+      if(disposed||!renderer||!model?.capture?.ready||!model.capture.documentIdentity||model.mode!=='solid'||!lastSolid||lastSolid!==model.solid)throw Object.assign(new Error('Wait for a committed solid build in Solid view before sending to Image.'),{name:'BridgePendingEdit'});
+      const pixels=renderer.getDrawingBufferSize(new THREE.Vector2());
+      return{documentIdentity:model.capture.documentIdentity,viewRevision:String(viewRevision),renderer,scene,camera,overlays:[],width:pixels.x,height:pixels.y};
+    },
+    isCurrent(stamp){try{const now=capture.read();return now.documentIdentity===stamp.documentIdentity&&now.viewRevision===stamp.viewRevision;}catch{return false;}},
+  };
   return{
     update(value){
-      if(disposed)return;model=value;svg.style.display=value.mode==='sketch'?'block':'none';stage.hidden=value.mode!=='solid';notice.textContent='';
+      if(disposed)return;if(model?.solid!==value.solid||model?.mode!==value.mode||model?.capture?.ready!==value.capture?.ready||model?.capture?.documentIdentity!==value.capture?.documentIdentity)viewRevision++;model=value;svg.style.display=value.mode==='sketch'?'block':'none';stage.hidden=value.mode!=='solid';notice.textContent='';
       if(value.mode==='sketch'){drawSketch();return;}
       if(!startGL())return;
       if(value.solid!==lastSolid){clearSolid();if(value.solid){
@@ -122,7 +134,7 @@ export function cadViewport(host:HTMLElement):Handle {
         edges=new THREE.LineSegments(new THREE.EdgesGeometry(geometry),new THREE.LineBasicMaterial({color:0x1d3b5c}));scene.add(edges);lastSolid=value.solid;fit();
       }}
       if(!value.solid)notice.textContent=value.emptyMessage??'No solid to display. Create a closed sketch, then extrude it.';drawSolid();
-    },fit,
+    },fit,capturePort:()=>capture,
     point(p){const zoom=model?.view.zoom??1,pan=model?.view.pan??{x:0,y:0};return[((p.x-pan.x)/zoom-base().x)/scale,(base().y-(p.y-pan.y)/zoom)/scale];},
     hit(p){const rect=host.getBoundingClientRect(),target=document.elementFromPoint?.(rect.left+p.x,rect.top+p.y);return target&&host.contains(target)?target.closest('[data-entity-id]')?.getAttribute('data-entity-id')??null:null;},
     dispose(){if(disposed)return;disposed=true;observer?.disconnect();controls?.dispose();clearSolid();renderer?.dispose();renderer?.forceContextLoss();host.replaceChildren();},

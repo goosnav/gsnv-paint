@@ -1,12 +1,12 @@
-# Next consumer CAD increment — proposed map amendment
+# Default planes, editable profiles and revolve proof — approved CAD increment
 
 Parent review (2026-11-13): this map is approved for the owner-authorized BATCH after commit. Every implementation and acceptance gate remains unverified until its named tests run. No acceptance is delegated.
 
-Status: **MAPPED, implementation pending, 2026-11-13**. No implementation, new test execution, requirement status change or human acceptance is claimed here. This extends [MODULE_MAP-CAD.md](MODULE_MAP-CAD.md), [CAD-FEATURES.md](CAD-FEATURES.md) and [CAD-STEP-IMPORT.md](CAD-STEP-IMPORT.md); it does not replace their remaining scope. C70 onward are available, confirmed by the parent. The authoring/STEP checkpoint was pushed as `450d58b` before this map was approved.
+Status: **Gates 1–2 implemented and focused production verification GREEN; gate 3 native proof GREEN; gate 4 production revolve CONTRACTED, 2026-11-13**. Gates 1–3 are frozen for the parent’s candidate regression/checkpoint. The [reviewed revolve contract](CAD-REVOLVE-INCREMENT.md), committed as `a1aaeb8`, supersedes the gate-4 proposals below, including their earlier U-axis option. Production implementation follows the current recovery/checkpoint repairs. This extends [MODULE_MAP-CAD.md](MODULE_MAP-CAD.md), [CAD-FEATURES.md](CAD-FEATURES.md) and [CAD-STEP-IMPORT.md](CAD-STEP-IMPORT.md); it does not replace their remaining scope. The parent committed this map as `df945ee` and its bounded split as `1fc368f`, after the authoring/STEP checkpoint `450d58b`. Exact executed commands, oracles, limits and proposed requirement credit are in [CAD-MODELING-EVIDENCE.md](CAD-MODELING-EVIDENCE.md). No full-CAD completion or human acceptance is claimed.
 
 The next deliverable should let someone create an editable polygonal part on XY, XZ or YZ, change its center and size through expressions, add the existing cuts/edge treatments, and reopen/export it in the correct physical position. A following, separately proved rung should add an editable revolve boss for turned parts. Plate and STEP goldens demonstrate those workflows only; they do not establish complete CAD.
 
-## Current capability versus the connected editor
+## Baseline inspected before this increment
 
 | Boundary inspected | Existing evidence/capability | Consumer gap |
 |---|---|---|
@@ -35,7 +35,7 @@ Every rung retains the existing parametric plate and imported multi-body STEP re
 | **C71**, CORE, `sketch-profile-source.ts`, `materializeSketchProfile({profile, context, tolerance})` | Exact profile union below → owned `{entities: Segment[], fixedEntityIds: string[]}` in stable supplied ID order. Evaluate source parameters with C03; construct with C07. No solver, document mutation, implicit IDs or native calls. Dependencies C03/C07. | `SketchProfileSourceError` for malformed records, wrong kinds, IDs/count, count limit, nonfinite or below-resolution geometry; propagate expression errors. Literal geometry, variable edit, center invariance, unit binding, precision/overflow and immutable input tests. |
 | **C72**, SHELL, `kernel-plane-transform.ts`, `transformPartPlane({session, token, plane})` | Live retained single-solid token and C70 plane → one retained valid solid in world coordinates. XY returns the same owned token; a successful nonidentity transform returns a new token and consumes the input exactly once. Dependencies C01/C70. Do not accept arbitrary scale/shear/mirror matrices. | `PlaneTransformError` for ordinary invalid/result failures, which preserve input ownership. Invalid/stale/closed token errors propagate. Native faults make no further native calls and require worker termination. Real B-rep validity, vertex positions, volume/area/COM, STEP, repeated ownership and injected fault tests. |
 
-Each leaf follows the existing method header, independent demo and testbench conventions. Keep leaves under 300 physical lines and within three direct brick dependencies/public symbols. C50/C51 are already near the soft 200-line target: split narrowly named source validation/edit helpers, with their own committed contracts/tests, before an extension breaches a hard limit. Do not solve the limit by compressing lines or declaring general policy an assembly. `part-builder` and workspace routing remain declared assemblies.
+Each leaf follows the existing method header, independent demo and testbench conventions. Keep leaves under 300 physical lines and within three direct brick dependencies/public symbols. C50 remains near the soft 200-line target; C51 is now a bounded assembly/router. Split narrowly named source validation/edit helpers, with their own committed contracts/tests, before an extension breaches a hard limit. Do not solve the limit by compressing lines or declaring general policy an assembly. `part-builder` and workspace routing remain declared assemblies.
 
 ### Plane persistence and routing
 
@@ -66,7 +66,7 @@ type ProfileSource = {
 );
 ```
 
-Rectangle IDs number exactly four. Polygon IDs number exactly `sides`, which is an integer 3–128; 128 is a proposed bounded editor allocation policy, not a measured kernel maximum. `radius` is the circumradius; `rotation` locates the first vertex relative to +U; order is counterclockwise in local coordinates. Center/size/radius/rotation are editable expressions. Side count is chosen at creation and remains fixed for this rung, preserving member identities; changing count is explicitly deferred rather than orphaning references on a variable edit.
+Rectangle IDs number exactly four. Polygon IDs number exactly `sides`, which is an integer 3–128; 128 is the bounded editor allocation policy, not a measured kernel maximum. `radius` is the circumradius; `rotation` locates the first vertex relative to +U; order is counterclockwise in local coordinates. Center/size/radius/rotation are editable expressions. Side count is chosen at creation and remains fixed for this rung, preserving member identities; changing count is explicitly deferred rather than orphaning references on a variable edit.
 
 Profile IDs and member IDs are globally unique. Members must exist in that sketch, be segments, have matching construction flags and belong to exactly one profile. Profiles may not overlap existing position-controlled groups. Direct persisted constraints/dimensions targeting controlled members are rejected in this subset; the UI offers profile parameters or explicit detach. This prevents two conflicting sources of authority.
 
@@ -118,38 +118,37 @@ Feature patterns follow later: C22/C24/C26 require the actual added/removed regi
 | UI | Plane selector before drawing; pointer and typed center rectangle/polygon; append without erasing; edit source fields; construction toggle; keyboard selection and focus return after dialogs; F fit; native reopen; unit-switch display and physical shape; STEP export. Capture an independently inspected production screenshot. |
 | Race/failure | Late preview/edit/cancel, failed native build, same-ID reopen, plane switch during build, disposal and export must not publish stale geometry or lose source history. No new network requests or main-thread native work. |
 
-Planned commands, **not yet executed and with new test files not yet created**:
+Executed cumulative checks: **76/76 CAD/native tests, 0 skipped; 4/4 production browser tests; 13 bounded brick checks; strict targeted TypeScript exit 0**. All seven new leaf demos also exit 0. The exact commands and saved logs are recorded in [CAD-MODELING-EVIDENCE.md](CAD-MODELING-EVIDENCE.md). `revolve-proof.test.ts` is the actual gate-3 test file; its fixture is test-only and no production module imports it.
 
-```sh
-node --import tsx --test src/cad/default-plane-frame.test.ts src/cad/kernel-plane-transform.test.ts
-node --import tsx --test src/cad/sketch-profile-source.test.ts src/cad/editable-cad-content.test.ts src/cad/edit-cad-content.test.ts src/cad/linear-sketch-program.test.ts
-node --import tsx --test src/cad/part-builder.test.ts src/cad/kernel-features.test.ts src/cad/step-preview.test.ts
-node --import tsx --test src/cad/kernel-revolve.spike.test.ts
-```
-
-A dedicated production CAD modeling browser fixture follows each connected rung, coordinated with the parent's build/output-directory ownership. Recorded source fixtures, independent expected values and actual results determine requirement credit. Potential new evidence targets CAD-020/025/030/033 and later CAD-071; CAD-022, arbitrary CAD-019 fields and full CAD/history acceptance remain open until their complete procedures pass.
+`cad-modeling.browser.spec.ts` exercises the connected editor against built production assets at 1280×720. The independently inspected screenshot is [CAD-modeling-production.png](evidence/CAD-modeling-production.png). Proposed new requirement credit is limited to CAD-020/025/030/033 after the parent’s candidate regression. CAD-071 remains unverified as a production workflow; CAD-022, arbitrary CAD-019 fields and full CAD/history acceptance remain open.
 
 ## C35 capture coordination
 
-Use the exact proposed `CaptureStamp`/`CadCapturePort` in [CROSS-WORKSPACE.md](CROSS-WORKSPACE.md), coordinated with its owner. No second API is introduced here. C35 receives the committed world-space preview, live camera and document/view identity from the local C56 handle in either CAD assembly. Plane/unit/source changes invalidate the stamp even if geometry happens to match. Pending transforms, uncommitted dialog previews or failed builds are not ready committed capture sources. Every imported body's triangles remain included. The model-local frame is entirely behind the worker boundary and cannot cause a second transform during capture.
+Use the exact approved `CaptureStamp`/`CadCapturePort` in [CROSS-WORKSPACE.md](CROSS-WORKSPACE.md), coordinated with its owner. No second API is introduced here. C35 receives the committed world-space preview, live camera and document/view identity from the local C56 handle in either CAD assembly. Plane/unit/source changes invalidate the stamp even if geometry happens to match. Pending transforms, uncommitted dialog previews or failed builds are not ready committed capture sources. Every imported body's triangles remain included. The model-local frame is entirely behind the worker boundary and cannot cause a second transform during capture.
 
 ## Prioritized remaining CAD gaps
 
-1. **These plane/profile workflows, then proved revolve:** broaden parts people can make now while retaining source intent, physical units and error behavior.
+1. **Production revolve contract and connected workflow:** gates 1–2 now provide default planes and editable profiles; gate 3 proves the pinned native API only. Share the native profile-face builder with C59 under a reviewed contract, then connect source/edits/execution/persistence/UI before enabling revolve. Preserve the proved profile domain and native-fault ownership rules.
 2. **General sketch editing:** C61 → C62/C63/C09/C16 acceptance, source points/arcs/slots, analytic C15/C23 profiles, trim/extend/offset, more driving dimensions and constrained dragging. Existing arc constructor/solver smoke tests do not pass these UI/persistence requirements. Fix typed line coordinate source retention as part of that source-field contract.
 3. **Real history and stable selection:** C05 dependency edits/rollback/suppression/reorder, C06 topology references, actual face/edge/vertex selection, planar-face sketches and individual modifiers. C05's historical revision-exhaustion proposal in PHASE-2.md remains unresolved; explicitly approve its error/no-op semantics before implementing it. A single previous plate cannot prove general dependency behavior.
 4. **More solid operations:** mid-plane/up-to-face extents, revolve cut, shell and holes, then feature patterns/mirror with exact subtractive replay and explicit body/merge intent. Close H-CAD-04/H-CAD-05 resource/target rules with representative tests, not inferred defaults.
 5. **Inspection and delivery:** real selectable geometry measurements/section views/material density, orthographic drawing/DXF/SVG/PDF and 3MF, C35 transparent capture, supported performance/cancellation matrix and complete original acceptance procedures. STEP import/preview is only one completed exchange path.
 
-Parent review/commit of this amendment is the next step. No CAD runtime, shared file, build output or requirement status was changed for this planning task.
+The approved gate 1–3 implementation is frozen. The parent owns the shared candidate build, full regression, requirement ledger, checkpoint and acceptance decisions. A separately reviewed and committed gate-4 source/executor decomposition is required before any production revolve implementation. No shared dist build or requirement-status edit was performed by the CAD owner during this increment.
 
 ## Gate implementation record
 
-C70 and C72 passed their expected missing-module RED before implementation. C70 has 2 focused tests for literal frames, matrix direction, handedness, inverse coordinates and ownership. C72 has 2 focused tests covering the real pinned kernel for every plane, both depth signs, repeated mm/inch STEP roundtrips and ordinary/native/cleanup failure ownership. The new `part-planes.test.ts` has 2 passing schema/action and real solver/kernel integration tests; asymmetric filleted-part cut corners and COM are asserted in world coordinates through mm→inch→mm and STEP. The original full acceptance-plate test remains unchanged and passes. Browser verification of gate 1 is pending.
+Each new leaf passed its expected missing-module RED before implementation, followed by focused GREEN, a standalone demo and strict targeted TypeScript. The final cumulative results are linked above.
 
-C71 passed expected missing-module RED, then 3 focused tests for preserved centers, regular polygon area/radius/rotation, immutable source and malformed/degenerate/overflow limits; strict targeted TypeScript passes. Collection/edit/UI wiring is pending, so gate 2 is not yet complete.
+| Gate / boundaries | Recorded result and independent evidence |
+|---|---|
+| **1: C70/C72, C50/C51/part builder/UI** | Literal right-handed default frames; real native asymmetric prism at both signed depths; repeated mm/inch STEP position/volume/area/COM; ordinary/native/cleanup fault ownership. Real solver/kernel integration checks an asymmetric filleted part and off-center cut in every plane. Plane selector, typed/pointer profiles, native reopen and exported XZ world position pass in production Chrome. |
+| **2: C71/C73–C76, C50/C51/C52/UI** | Immutable center-preserving source descriptors; exact membership/ID/reference rejection; atomic revisions and edits; unit binding of every new field; real PlaneGCS materialization; polygon-with-circle-hole and construction exclusion in all planes. Production tests cover source editing after reopen, numeric polygon edits, exact center rectangle/hexagon fixtures, group selection, detach/undo and persisted construction lines. |
+| **3: test-only native revolve proof** | Full and signed quarter tubes, outer radius 20→25 from an unchanged source formula, analytic volumes/COM/bounds/caps, mm/inch STEP roundtrips and zero retained tokens. Axis-touching cylinder and offset-circle torus satisfy volume/area/COM/bounds. Invalid preflight/empty/multiple/native/cleanup failures are rejected; no further native calls follow injected faults. Production worker replacement behavior remains covered by existing C55 tests, not by a new revolve feature route. |
+| **Preserved regressions** | Original 100/120-mm acceptance plate remains unchanged and GREEN through mm→inch→mm. An additional 120-mm plate fixture verifies all three planes, source hole positions, actual pocket corners, bounds/COM and STEP. Existing legacy native-source and every-body STEP import tests remain GREEN. |
+| **4: production revolve** | Not implemented or exposed. Needs approved shared face-builder, source/executor and UI contracts; its requirement remains unverified. |
 
-### C73–C76 bounded integration split (parent review before implementation)
+### C73–C76 bounded integration split (approved in `1fc368f`, implemented)
 
 No hard-limit exception is proposed. C51 becomes a declared assembly/router which dispatches to tested policies, updates the revision once, and validates the resulting C50 document. It owns no geometry construction, parameter evaluation, profile membership or model-edit policy. C50 owns its structurally identical persisted Segment type instead of importing the tool-intent type. New leaves stay below 300 physical lines, three direct brick dependencies and three public symbols; split further only under a recorded contract.
 

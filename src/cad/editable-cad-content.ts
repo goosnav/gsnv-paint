@@ -2,7 +2,7 @@
  * PURPOSE    Validate the supported editable CAD document subset.
  * KIND       CORE
  * CONTRACT   IN: new request or read with untrusted JSON value. OUT: owned CADContent
- *            with one XY sketch of segments and circles and an optional blind boss, exact
+ *            with one default-plane sketch of segments and circles and an optional blind boss, exact
  *            persisted keys. Circles carry center/radius, may be fixed by their center and
  *            dimensioned by diameter; H/V and linear dimensions target segments only.
  *            Fixed points may retain finite length-expression positions for disjoint groups.
@@ -15,18 +15,18 @@
  *            Position sources are evaluated here; legacy dimensions keep their existing lazy validation.
  * TESTBENCH  src/cad/editable-cad-content.test.ts -- run with: node --import tsx --test src/cad/editable-cad-content.test.ts
  */
-import type { LinearEntity } from './sketch-linear-primitives.ts';
-import { evaluateDimension } from './dimension-expressions.ts';
-import { evaluateVariables } from './named-variables.ts';
+import { cadExpressionPolicy } from './cad-expression-policy.ts';
+import { manageSketchProfiles } from './sketch-profile-edit.ts';
+import type { ProfileSource } from './sketch-profile-source.ts';
 type DimensionValue = { source: string; kind: 'length' | 'angle' | 'scalar' };
-type Segment = Extract<LinearEntity, { kind: 'segment' }>;
+type Segment = { id: string; kind: 'segment'; a: [number,number]; b: [number,number]; construction: boolean };
 export type Circle = { id: string; kind: 'circle'; center: [number, number]; radius: number; construction: boolean };
 export type SketchEntity = Segment | Circle;
 export type ConstraintKind = 'horizontal' | 'vertical' | 'fix' | 'parallel' | 'perpendicular' | 'equal' | 'coincident';
 export type SketchPosition = { x: { source: string; kind: 'length' }; y: { source: string; kind: 'length' }; entityIds: string[] };
 type Constraint = { id: string; kind: ConstraintKind; entityIds: string[]; pointRoles: string[]; inferred: boolean; position?: SketchPosition };
 type Dimension = { id: string; kind: 'linear' | 'aligned' | 'diameter'; entityIds: string[]; anchors: [number, number][]; value: DimensionValue; label: [number, number] };
-export type Sketch = { id: string; name: string; plane: 'XY'; entities: SketchEntity[]; constraints: Constraint[]; dimensions: Dimension[]; projected: [] };
+export type Sketch = { id: string; name: string; plane: 'XY' | 'XZ' | 'YZ'; entities: SketchEntity[]; constraints: Constraint[]; dimensions: Dimension[]; projected: []; profiles?: ProfileSource[] };
 type BaseFeature = { id: string; name: string; dependsOn: string[]; suppressed: false };
 type SketchFeature = BaseFeature & { kind: 'sketch'; definition: { kind: 'sketch'; sketch: Sketch } };
 type ExtrudeFeature = BaseFeature & { kind: 'extrude'; definition: { kind: 'extrude'; operation: 'boss'; sketchId: string; profileLoopIds: []; extent: { kind: 'blind'; distance: DimensionValue }; targetBodyIds: [] } };
@@ -96,14 +96,14 @@ export function editableCADContent(request: { operation: 'new' } | { operation: 
     if (feature.suppressed !== false) bad(feature.name, 'suppression is not supported in this CAD build');
   }
   const first = value.graph.features[0];
-  if (first.kind !== 'sketch') bad('first feature', 'expected an XY sketch');
+  if (first.kind !== 'sketch') bad('first feature', 'expected a default-plane sketch');
   empty(first.dependsOn, 'sketch dependencies'); keys(first.definition, 'kind sketch', 'sketch definition');
   if (first.definition.kind !== 'sketch') bad('sketch definition', 'wrong kind');
-  let positionContext: ReturnType<typeof evaluateVariables>['context'] | undefined;
+  const sourceContext = () => cadExpressionPolicy({units:value.units,variables:value.variables,linearMm:value.tolerance.linearMm}).context;
   const checkSketch = (sketch: Sketch, owner: string) => {
-    keys(sketch, 'id name plane entities constraints dimensions projected', 'sketch');
+    keys(sketch, `id name plane entities constraints dimensions projected${Object.hasOwn(sketch??{},'profiles')?' profiles':''}`, 'sketch');
     if (sketch.id !== owner) bad('sketch ID', 'must match feature ID'); text(sketch.name, 'sketch name');
-    if (sketch.plane !== 'XY') bad('plane', 'only XY is supported in this CAD build');
+    if (!['XY','XZ','YZ'].includes(sketch.plane) || sketch.plane !== first.definition.sketch.plane) bad('plane', 'choose XY, XZ or YZ; cut sketches must inherit the root plane');
     empty(sketch.projected, 'projected edges'); array(sketch.entities, 'entities'); const entities = new Set<string>();
     const kinds = new Map<string, SketchEntity['kind']>();
     for (const entity of sketch.entities) {
@@ -149,8 +149,7 @@ export function editableCADContent(request: { operation: 'new' } | { operation: 
           group.add(entity); controlled.add(entity);
         }
         try {
-          positionContext ??= evaluateVariables({ variables: value.variables, units: value.units }).context;
-          evaluateDimension({ expression: p.x, context: positionContext }); evaluateDimension({ expression: p.y, context: positionContext });
+          cadExpressionPolicy({units:value.units,variables:value.variables,linearMm:value.tolerance.linearMm,parameters:[{expression:p.x},{expression:p.y}]});
         } catch (cause) { bad(c.id, `invalid position: ${cause instanceof Error ? cause.message : String(cause)}`); }
       }
     }
@@ -161,7 +160,13 @@ export function editableCADContent(request: { operation: 'new' } | { operation: 
       target(d.entityIds, d.id, d.kind === 'diameter' ? 'circle' : 'segment');
       array(d.anchors, d.id); if (d.anchors.length !== 2) bad(d.id, 'expected two anchors'); d.anchors.forEach(v => vec(v,d.id)); vec(d.label,d.id); dim(d.value,d.id,true);
     }
-
+    if(Object.hasOwn(sketch,'profiles')) {
+      array(sketch.profiles,'profiles');
+      try {
+        manageSketchProfiles({sketch,usedIds:[...ids],context:sketch.profiles?.length?sourceContext():{units:value.units,variables:{}},tolerance:value.tolerance});
+        for(const profile of sketch.profiles!) id(profile.id,'profile ID');
+      } catch(cause) { bad('profiles',cause instanceof Error?cause.message:String(cause)); }
+    }
   };
   checkSketch(first.definition.sketch, first.id);
   const extrusion = value.graph.features[1] as ExtrudeFeature | undefined;

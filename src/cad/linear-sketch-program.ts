@@ -1,7 +1,7 @@
 /**
  * PURPOSE    Compile a segment/circle sketch into PlaneGCS primitives.
  * KIND       CORE
- * CONTRACT   IN: valid C50 sketch, C03 context and positive tolerance. OUT: vendor
+ * CONTRACT   IN: valid C50 sketch, C03 context and document tolerance. OUT: vendor
  *            primitives plus pure accept(snapshot) restoring solved entities by ID.
  *            Expression-controlled groups translate together before endpoint sharing and solve.
  *            RAISES: SketchProgramError for bad targets, nonfinite/collapsed translated geometry,
@@ -16,13 +16,20 @@
 import type { SketchPrimitive } from '@salusoft89/planegcs';
 import type { CADContent } from './editable-cad-content.ts';
 import { evaluateDimension, type DimensionRequest } from './dimension-expressions.ts';
-type Request = { sketch: CADContent['graph']['features'][0]['definition']['sketch']; context: DimensionRequest['context']; tolerance: number };
+import { materializeSketchProfile } from './sketch-profile-source.ts';
+type Request = { sketch: CADContent['graph']['features'][0]['definition']['sketch']; context: DimensionRequest['context']; tolerance: CADContent['tolerance'] };
 export function linearSketchProgram(request: Request): { primitives: SketchPrimitive[]; accept(snapshot: SketchPrimitive[]): Request['sketch']['entities'] } {
   const fail = (message: string): never => { throw Object.assign(new Error(message), { name: 'SketchProgramError' }); };
   const sketch = JSON.parse(JSON.stringify(request.sketch)) as Request['sketch'];
   // Translate source groups before sharing endpoints. Moving only the fixed point can
   // reverse an unsigned-distance rectangle when its new origin passes its old edges.
   const entities = new Map(sketch.entities.map(e => [e.id, e]));
+  const fixedEntities=new Set<string>();
+  for(const profile of sketch.profiles??[]) {
+    const materialized=materializeSketchProfile({profile,context:request.context,tolerance:request.tolerance});
+    for(const entity of materialized.entities)entities.set(entity.id,entity);
+    materialized.fixedEntityIds.forEach(id=>fixedEntities.add(id));
+  }
   for (const c of sketch.constraints) if (c.position) {
     const anchor = entities.get(c.entityIds[0]!); if (!anchor) fail(`Missing position anchor ${c.id}.`);
     const original = anchor!.kind === 'circle' ? [...anchor!.center] : [...(c.pointRoles[0] === 'a' ? anchor!.a : anchor!.b)];
@@ -41,7 +48,7 @@ export function linearSketchProgram(request: Request): { primitives: SketchPrimi
         entities.set(id, { ...entity!, center });
       } else {
         const a = translated(entity!.a), b = translated(entity!.b), length = Math.hypot(b[0] - a[0], b[1] - a[1]);
-        if (!Number.isFinite(length) || length <= request.tolerance) fail(`Position ${c.id} collapses or overflows edge ${id}.`);
+        if (!Number.isFinite(length) || length <= request.tolerance.linearMm) fail(`Position ${c.id} collapses or overflows edge ${id}.`);
         entities.set(id, { ...entity!, a, b });
       }
     }
@@ -61,6 +68,10 @@ export function linearSketchProgram(request: Request): { primitives: SketchPrimi
   }
   const line = (id: string) => lines.find(v=>v.id===id) ?? fail(`Missing segment ${id}.`);
   const circle = (id: string) => circles.find(v=>v.id===id) ?? fail(`Missing circle ${id}.`);
+  for(const id of fixedEntities) {
+    const member=line(id);
+    points.filter(p=>p.id===member.p1_id||p.id===member.p2_id).forEach(p=>{p.fixed=true;});
+  }
   for (const c of sketch.constraints) {
     if (c.kind === 'fix' && c.pointRoles[0] === 'center') { const center = circle(c.entityIds[0]!).c_id; points.find(p=>p.id===center)!.fixed = true; continue; }
     if (c.kind === 'parallel' || c.kind === 'perpendicular' || c.kind === 'equal') {
@@ -80,7 +91,7 @@ export function linearSketchProgram(request: Request): { primitives: SketchPrimi
   }
   for (const d of sketch.dimensions) {
     const distance = evaluateDimension({ expression:d.value, context:request.context }).value;
-    if (distance <= request.tolerance) fail(`Dimension ${d.id} must be positive and exceed the tolerance.`);
+    if (distance <= request.tolerance.linearMm) fail(`Dimension ${d.id} must be positive and exceed the tolerance.`);
     if (d.kind === 'diameter') { relations.push({ id:d.id, type:'circle_diameter', c_id:circle(d.entityIds[0]!).id, diameter:distance }); continue; }
     const l = line(d.entityIds[0]!);
     relations.push({ id:d.id, type:'p2p_distance', p1_id:l.p1_id, p2_id:l.p2_id, distance });
@@ -95,9 +106,9 @@ export function linearSketchProgram(request: Request): { primitives: SketchPrimi
     return sketch.entities.map(e=> {
       if (e.kind === 'circle') {
         const c = circle(e.id), radius = Number(solvedCircles.get(e.id)?.radius); const center = xy(c.c_id);
-        if (!Number.isFinite(radius) || radius <= request.tolerance) fail(`Sketch: constraints collapsed circle ${e.id}. Change its diameter.`);
+        if (!Number.isFinite(radius) || radius <= request.tolerance.linearMm) fail(`Sketch: constraints collapsed circle ${e.id}. Change its diameter.`);
         return { ...e, center, radius };
       }
-      const l=line(e.id),a=xy(l.p1_id),b=xy(l.p2_id); if(Math.hypot(b[0]-a[0],b[1]-a[1])<=request.tolerance)fail(`Sketch: constraints collapsed edge ${e.id}. Remove a constraint or change a dimension.`); return {...e,a,b}; });
+      const l=line(e.id),a=xy(l.p1_id),b=xy(l.p2_id); if(Math.hypot(b[0]-a[0],b[1]-a[1])<=request.tolerance.linearMm)fail(`Sketch: constraints collapsed edge ${e.id}. Remove a constraint or change a dimension.`); return {...e,a,b}; });
   } };
 }

@@ -1,0 +1,39 @@
+
+Running 1 test using 1 worker
+
+(node:977213) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/bridge/bridge-workspace.browser.spec.ts:81:1 › XWS MediaRecorder WebM export can be imported and captured with an initially unknown decoded duration (8.4s)
+
+
+  1) src/bridge/bridge-workspace.browser.spec.ts:81:1 › XWS MediaRecorder WebM export can be imported and captured with an initially unknown decoded duration 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  getByRole('tab', { name: 'Image', exact: true })
+    Expected: "true"
+    Received: "false"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveAttribute" getByRole('tab', { name: 'Image', exact: true }) with timeout 5000ms
+      - waiting for getByRole('tab', { name: 'Image', exact: true })
+        14 × locator resolved to <button role="tab" type="button" tabindex="-1" aria-label="Image" class="gc-workspace" aria-selected="false" data-workspace="image" data-focus-key="workspace:image">…</button>
+           - unexpected value "false"
+
+
+      91 |   await expect.poll(()=>page.locator('.video-canvas').evaluate((c:HTMLCanvasElement)=>c.getContext('2d')!.getImageData(10,10,1,1).data[0])).toBeGreaterThan(250);
+      92 |   const source=await save(page);expect(Buffer.from(source.pkg.assets[0]!.bytes).equals(bytes)).toBe(true);
+    > 93 |   await menu(page,'Video','Send current frame to Image');await expect(page.getByRole('tab',{name:'Image',exact:true})).toHaveAttribute('aria-selected','true');const captured=await save(page),image=imageContent({operation:'decode',content:captured.pkg.project.content,assets:captured.pkg.assets});
+         |                                                                                                                        ^
+      94 |   expect([image.width,image.height]).toEqual([160,120]);const rgba=[...image.layers[0]!.tiles[0]!.subarray((10*160+10)*4,(10*160+10)*4+4)];for(let i=0;i<3;i++)expect(Math.abs(rgba[i]!-[255,0,0][i]!)).toBeLessThanOrEqual(3);expect(rgba[3]).toBe(255);console.log('D03 MediaRecorder import proof',JSON.stringify({initialDuration,rgba,sourceBytesPreserved:true}));
+      95 | });
+      96 | test('XWS existing Video receives exactly one reversible append and pending Image floats remain untouched',async({page})=>{
+        at /home/goosnav/Desktop/code/gsnv-paint/src/bridge/bridge-workspace.browser.spec.ts:93:120
+
+    Error Context: ../../../../../tmp/gsnv-bridge-results/bridge-workspace.browser-X-5f146-ly-unknown-decoded-duration/error-context.md
+
+    Error Context: ../../../../../tmp/gsnv-bridge-results/bridge-workspace.browser-X-5f146-ly-unknown-decoded-duration/error-context.md
+
+  1 failed
+    src/bridge/bridge-workspace.browser.spec.ts:81:1 › XWS MediaRecorder WebM export can be imported and captured with an initially unknown decoded duration 

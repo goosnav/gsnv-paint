@@ -23,3 +23,11 @@ test('C57 circle tool commits center and snapped radius point',()=>{
  assert.deepEqual(run(s,click([10.05,0])).intent,{kind:'circle',center:[5,5],radius:Math.hypot(5,5)});
  assert.deepEqual(run(s,click([5,9])).intent,{kind:'circle',center:[5,5],radius:4});
 });
+test('C57 centered rectangle and polygon preserve the first click as center and snap the second',()=>{
+ let s=run(state,{kind:'tool',tool:'center-rectangle' as CADToolState['tool']}).state;s=run(s,click([5,5])).state;
+ assert.deepEqual(run(s,click([10.04,0])).intent,{kind:'center-rectangle',center:[5,5],width:10,height:10});
+ assert.deepEqual(run(s,click([1,2])).intent,{kind:'center-rectangle',center:[5,5],width:8,height:6});
+ s=run(state,{kind:'tool',tool:'polygon' as CADToolState['tool']}).state;s=run(s,click([5,5])).state;
+ const intent=run(s,click([5,9])).intent;assert.deepEqual(intent,{kind:'polygon',center:[5,5],radius:4,rotation:90});
+ assert.equal(run(s,{kind:'cancel'}).state.anchor,null);assert.deepEqual(state,{tool:'line',anchor:null,cursor:null,selected:[]});
+});

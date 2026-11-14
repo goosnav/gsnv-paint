@@ -50,3 +50,20 @@ CAD-113 still requires the specified hole/fillet part and complete independent e
 ## How to tune and maintain
 
 C37 owns translator unit choices and resource cleanup; its mm/inch round-trip is the regression guard. C59 has no tunable geometric approximation; it consumes the caller's validated polygon and signed depth. C54 retains the existing display tessellation settings, which do not affect STEP output. C60's named `WATCHDOG_MS` controls only the export deadline; fake-clock tests cover its timeout path. Menu labels and status placement live in `cad-workspace.ts`/CSS. The production export browser tests are the seam gate when changing source ownership, worker messages or file handoff.
+
+## Network-controlled cancellation fixture
+
+The current offline installer can serve a worker module from CacheStorage before
+Playwright's page request route sees it. A cumulative browser diagnostic recorded
+that exact condition: the second export worker response reported
+`fromServiceWorker: true`, its route handler never ran, and the export completed
+before the test's source edit. The test had not established its intended pending
+worker precondition. This is a fixture correction, not changed cancellation policy.
+
+Only the network-held cancellation contexts block service workers. They must
+assert that the worker module request entered the held route before pressing
+Escape or replacing/editing source. Normal import/export and native roundtrip
+cases keep service workers enabled; the dedicated offline gate independently
+exercises all nine workspaces with the production cache. Existing worker counters,
+unchanged-source/history, no-download, readable-error and successful-retry
+assertions are retained. No runtime fallback, delay or synthetic shortcut is added.

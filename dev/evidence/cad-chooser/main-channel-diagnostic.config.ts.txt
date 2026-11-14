@@ -1,0 +1,1 @@
+import {defineConfig} from '/home/goosnav/Desktop/code/gsnv-paint/node_modules/@playwright/test/index.mjs';export default defineConfig({testDir:'.',testMatch:'control.browser.spec.ts',workers:1,reporter:'list',outputDir:'/tmp/gsnv-consumer-qa/cad-consumer-transition-main-armed/results',use:{channel:'chrome',headless:true,viewport:{width:1280,height:720},trace:'off'}});

@@ -221,3 +221,8 @@ Pin Pyodide 314.0.7 for the reviewed Python runtime (MPL-2.0). Retain its licens
 JavaScript and Python run only after an explicit action, in terminable workers created by an opaque-origin sandbox. The editor sends only selected project source and fixed runtime assets. User code cannot use the editor's origin/storage or an arbitrary network proxy. HTML/CSS preview is script-free. Runtime isolation, offline loading, cancellation and asset limits remain UNVERIFIED until real browser tests pass; dependency installation alone is not evidence. The runtime contract is in MODULE_MAP-AUTHORING.md and CODE-RUNTIME.md.
 
 Use SheetJS CE 0.20.3 from its authoritative CDN, vendored as the original tarball with lockfile integrity, under Apache-2.0 (the actual tarball LICENSE was inspected before installation). Preserve licenses/notices and report unsupported workbook features. Do not install the obsolete npm `xlsx` release or execute workbook macros/external connections. [Distribution instructions](https://docs.sheetjs.com/docs/getting-started/installation/), [exact artifact](https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz). Workbook correctness and resource limits need separate tests.
+
+Cloudflare asset gate recheck, 2026-11-13: the primary [Pages limits](https://developers.cloudflare.com/pages/platform/limits/)
+still specifies 25 MiB per asset and 20,000 files for Free. S17 measures emitted
+uncompressed bytes and rejects equality as required by the owner's strict
+“under the limit” instruction; cached/gzipped transfer size does not substitute.

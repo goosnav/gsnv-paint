@@ -1,0 +1,46 @@
+
+Running 1 test using 1 worker
+
+(node:1068065) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 ../../../../../tmp/gsnv-consumer-audit-20261113/security-scratch/slides-trace-diagnosis/slides-isolated.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF (5.2s)
+
+
+  1) ../../../../../tmp/gsnv-consumer-audit-20261113/security-scratch/slides-trace-diagnosis/slides-isolated.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Array []
+    + Array [
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    +   "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    + ]
+
+      52 |     await page.getByRole('tab',{name:'Slides',exact:true}).click();await expect(scene(page)).toContainText('Quarterly update');expect(await history(page)).toEqual(slideHistory);await expect(scene(page).locator('[data-element-id]')).toHaveCount(5);
+      53 |     await property(page,'Slide name').press('Control+z');await expect(scene(page).locator('[data-element-id]')).toHaveCount(4);await page.getByRole('tab',{name:'Document',exact:true}).click();await expect(documentEditor).toContainText('Independent document');
+    > 54 |     expect(errors).toEqual([]);expect(external).toEqual([]);
+         |                    ^
+      55 |   }finally{await server.close();}
+      56 | });
+      57 |
+        at /tmp/gsnv-consumer-audit-20261113/security-scratch/slides-trace-diagnosis/slides-isolated.browser.spec.ts:54:20
+
+    attachment #3: Slides production (image/png) ───────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-audit-20261113/security-scratch/slides-trace-diagnosis/traced-results/slides-isolated.browser-SL-92d72-esentation-and-two-page-PDF/attachments/Slides-production-7e4c4510b7adef78233e43854ae1c81b3ef6d547.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../tmp/gsnv-consumer-audit-20261113/security-scratch/slides-trace-diagnosis/traced-results/slides-isolated.browser-SL-92d72-esentation-and-two-page-PDF/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-audit-20261113/security-scratch/slides-trace-diagnosis/traced-results/slides-isolated.browser-SL-92d72-esentation-and-two-page-PDF/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-audit-20261113/security-scratch/slides-trace-diagnosis/traced-results/slides-isolated.browser-SL-92d72-esentation-and-two-page-PDF/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    ../../../../../tmp/gsnv-consumer-audit-20261113/security-scratch/slides-trace-diagnosis/slides-isolated.browser.spec.ts:12:1 › SLIDES-APP real editing, pointer transforms, shared undo, native reopen, presentation and two-page PDF 

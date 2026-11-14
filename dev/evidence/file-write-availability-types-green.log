@@ -1,0 +1,8 @@
+Command: npx tsc --noEmit
+Working directory: /home/goosnav/Desktop/code/gsnv-paint
+Exit status: 0
+Compiler output: empty (no diagnostics).
+
+Frozen source SHA-256:
+7f41c2785f700c78148fab82f1e62cf7f06d3eb05016350e2ea4121730dc2017  src/app/app-shell.ts
+b197034c3fcc2c7f9ae7b27daf4aa99204d26bc065a53c44c9eb6ca174ef28a7  src/app/app-shell.test.ts

@@ -1,0 +1,74 @@
+✔ S10 golden shared window exposes the requested regions and view model (139.142931ms)
+✔ S10 toolbar/palette route enabled commands once and never activate disabled tools (30.859968ms)
+✔ S10 menus open, route enabled items, close on outside interaction and restore focus on Escape (64.946728ms)
+✔ S10 menu keyboard navigation skips disabled items and wraps (29.862663ms)
+✔ S10 workspace controls emit the exact target and reflect updates (26.401116ms)
+✔ S10 workspace keyboard navigation reaches every tab and wraps in both directions (59.25486ms)
+✔ S10 updates retain viewport, mounted renderer, panel content and focused control identity (20.298298ms)
+✔ S10 tool focus displays next action and blur restores current status (18.878435ms)
+✔ S10 supplied strings are literal text and panel elements keep their listeners (22.802992ms)
+✔ S10 dispose is idempotent and removes frame and all listeners (24.685077ms)
+✔ S10 invalid root/callbacks/model raise TypeError before damaging current DOM (22.349401ms)
+✔ S10 focus departure closes menus and preserves panel text navigation (31.37287ms)
+✔ S10 background updates keep an open menu and its focused command; vanished commands return focus to the trigger (22.383883ms)
+✔ S10 rejects empty IDs from every view-model collection before updating DOM (15.222521ms)
+✔ S10 palette tools expose their optional active state and reject non-boolean values (15.228032ms)
+✔ S10 offline status slot keeps caller content and keyboard focus across chrome updates (20.527979ms)
+✔ S10 keeps native command targets connected when a field blur commits before its click (18.160321ms)
+✔ S10 reconciles command order and labels while removed, disabled or old-workspace targets stay inert (30.434253ms)
+✔ S10 keeps distinct duplicate occurrences and removes unused command nodes (19.961409ms)
+✖ S10 disabled focused toolbar hands focus to the viewport even when activeElement remains stale (14.7843ms)
+✖ S10 disabled focused tool hands focus to the viewport even when activeElement remains stale (15.788975ms)
+✔ S10 removed focused commands return to the viewport and background updates keep outside focus (18.176661ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 20
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1722.137632
+
+✖ failing tests:
+
+test at src/shared/chrome.test.ts:1:16315
+✖ S10 disabled focused toolbar hands focus to the viewport even when activeElement remains stale (14.7843ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/chrome.test.ts:280:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/chrome.test.ts:1:16315
+✖ S10 disabled focused tool hands focus to the viewport even when activeElement remains stale (15.788975ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/chrome.test.ts:280:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

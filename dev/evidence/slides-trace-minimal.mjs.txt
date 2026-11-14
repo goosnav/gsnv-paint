@@ -1,0 +1,27 @@
+import { chromium } from '/home/goosnav/Desktop/code/gsnv-paint/node_modules/playwright/index.mjs';
+import { writeFile } from 'node:fs/promises';
+const output='/tmp/gsnv-consumer-audit-20261113/security-scratch/slides-trace-diagnosis';
+const browser=await chromium.launch({channel:'chrome',headless:true});
+const results=[];
+try {
+  for (const tracing of [false,true]) for (const init of [false,true]) {
+    const context=await browser.newContext({viewport:{width:1280,height:720}}), errors=[], log=[];
+    if(tracing) await context.tracing.start({screenshots:true,snapshots:true,sources:true});
+    if(init) await context.addInitScript(()=>{Object.defineProperty(window,'showOpenFilePicker',{value:undefined});Object.defineProperty(window,'showSaveFilePicker',{value:undefined});});
+    const page=await context.newPage();
+    page.on('console',m=>{if(m.type()==='error') errors.push({text:m.text(),location:m.location()});});
+    page.on('pageerror',e=>errors.push({pageerror:e.message}));
+    const cdp=await context.newCDPSession(page);await cdp.send('Log.enable');cdp.on('Log.entryAdded',e=>log.push(e.entry));
+    await page.setContent('<!doctype html><title>Sandbox control</title><body></body>');
+    await page.evaluate(()=>{
+      const frame=document.createElement('iframe');frame.sandbox='allow-same-origin allow-modals';frame.srcdoc='<!doctype html><html><head><title>Print</title></head><body><h1>Printed text</h1></body></html>';
+      window.printLoaded=false;frame.onload=()=>{frame.contentWindow.focus();frame.contentWindow.print();window.printLoaded=true;};document.body.append(frame);
+    });
+    await page.waitForFunction(()=>window.printLoaded===true);
+    const state=await page.evaluate(()=>{const frame=document.querySelector('iframe');return{sandbox:frame.sandbox.value,srcdoc:frame.srcdoc,scripts:frame.contentDocument.scripts.length,text:frame.contentDocument.body.textContent};});
+    if(tracing)await context.tracing.stop({path:`${output}/minimal-trace-${init}.zip`});
+    results.push({tracing,init,errors,log,state});await context.close();
+  }
+  await writeFile(`${output}/minimal-results.json`,JSON.stringify({browser:browser.version(),results},null,2));
+  console.log(JSON.stringify({browser:browser.version(),results},null,2));
+} finally {await browser.close();}

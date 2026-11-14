@@ -1,0 +1,227 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: cad/cad-consumer.browser.spec.ts >> CAD consumer golden: dependent holes/pocket, live variables, unit conversion, files and real STEP
+- Location: src/cad/cad-consumer.browser.spec.ts:12:1
+
+# Error details
+
+```
+Test timeout of 180000ms exceeded.
+```
+
+```
+Error: page.waitForEvent: Test timeout of 180000ms exceeded.
+=========================== logs ===========================
+waiting for event "filechooser"
+============================================================
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - text: "-"
+      - strong [ref=e6]: gsnv-paint
+    - generic [ref=e7]: Untitled part *
+    - tablist "Workspace" [ref=e8]:
+      - tab "CAD" [selected] [ref=e9]:
+        - img "CAD"
+      - tab "Image" [ref=e11]:
+        - img "Image"
+      - tab "Photo" [ref=e13]:
+        - img "Photo"
+      - tab "Video" [ref=e15]:
+        - img "Video"
+      - tab "Document" [ref=e17]:
+        - img "Document"
+      - tab "Slides" [ref=e19]:
+        - img "Slides"
+      - tab "Audio" [ref=e21]:
+        - img "Audio"
+      - tab "Spreadsheet" [ref=e23]:
+        - img "Spreadsheet"
+      - tab "Code" [ref=e25]:
+        - img "Code"
+  - generic [ref=e27]:
+    - menubar "Menu bar" [ref=e28]:
+      - menuitem "File" [ref=e30]
+      - menuitem "Edit" [ref=e32]
+      - menuitem "View" [ref=e34]
+      - menuitem "Exchange" [ref=e36]
+      - menuitem "Sketch" [ref=e38]
+      - menuitem "Solid" [ref=e40]
+    - toolbar "Standard toolbar" [ref=e41]:
+      - button "New (Ctrl+N)" [ref=e42]:
+        - img "New"
+        - generic [ref=e43]: New
+      - button "Open (Ctrl+O)" [ref=e44]:
+        - img "Open"
+        - generic [ref=e45]: Open
+      - button "Save (Ctrl+S)" [ref=e46]:
+        - img "Save"
+        - generic [ref=e47]: Save
+      - button "Undo (Ctrl+Z)" [disabled] [ref=e48]:
+        - img "Undo"
+        - generic [ref=e49]: Undo
+      - button "Redo (Ctrl+Y)" [disabled] [ref=e50]:
+        - img "Redo"
+        - generic [ref=e51]: Redo
+      - button "Import STEP…" [ref=e52]:
+        - img "Import STEP…"
+      - button "Rectangle dimensions…" [ref=e54]:
+        - img "Rectangle dimensions…"
+      - button "Extrude… (E)" [ref=e56]:
+        - img "Extrude…"
+        - generic [ref=e57]: Extrude…
+      - button "Solid view" [ref=e58]:
+        - img "Solid view"
+      - button "Zoom to fit (F)" [ref=e60]:
+        - img "Zoom to fit"
+        - generic [ref=e61]: Zoom to fit
+      - button "Export STEP" [disabled] [ref=e62]:
+        - img "Export STEP"
+  - generic [ref=e64]:
+    - toolbar "Tool palette" [ref=e65]:
+      - button "Select (V)" [pressed] [ref=e66]:
+        - img "Select"
+      - button "Line (L)" [ref=e67]:
+        - img "Line"
+      - button "Rectangle (R)" [ref=e68]:
+        - img "Rectangle"
+      - button "Circle (C)" [ref=e69]:
+        - img "Circle"
+      - button "Centered rectangle" [ref=e70]:
+        - img "Centered rectangle"
+      - button "Polygon" [ref=e71]:
+        - img "Polygon"
+    - region "CAD workspace view" [ref=e72]:
+      - generic [ref=e74]:
+        - img "XY sketch" [ref=e76]:
+          - generic [ref=e77]: XY plane · U=X, V=Y
+        - generic: Click an edge to select · Ctrl-click adds to selection · double-click a dimension to edit.
+    - complementary "Panels" [ref=e78]:
+      - generic [ref=e79]:
+        - heading "Part" [level=2] [ref=e80]
+        - generic [ref=e82]:
+          - status [ref=e83]: Draw a closed sketch, then extrude it.
+          - generic [ref=e84]:
+            - text: Units
+            - button "Metric (mm)" [pressed] [ref=e85]
+            - button "Imperial (in)" [ref=e86]
+          - generic [ref=e87]:
+            - text: Sketch plane
+            - button "XY" [pressed] [ref=e88]
+            - button "XZ" [ref=e89]
+            - button "YZ" [ref=e90]
+          - heading "Variables" [level=3] [ref=e91]
+          - button "Add variable…" [ref=e92]
+          - heading "Feature tree" [level=3] [ref=e93]
+          - list [ref=e94]:
+            - listitem [ref=e95]:
+              - button "Sketch 1" [pressed] [ref=e96]
+              - generic [ref=e97]: XY plane
+          - generic [ref=e98]:
+            - button "Extrude…" [disabled] [ref=e99]
+            - button "Cut…" [disabled] [ref=e100]
+            - button "Fillet…" [disabled] [ref=e101]
+            - button "Chamfer…" [disabled] [ref=e102]
+          - heading "Profiles" [level=3] [ref=e103]
+          - heading "Dimensions" [level=3] [ref=e104]
+          - paragraph [ref=e105]: Use Rectangle dimensions or Circle dimensions to create a driven profile.
+          - heading "Selection · Ctrl-click to pick two" [level=3] [ref=e106]
+          - generic [ref=e107]:
+            - button "Horizontal" [disabled] [ref=e108]
+            - button "Vertical" [disabled] [ref=e109]
+            - button "Parallel" [disabled] [ref=e110]
+            - button "Perpendicular" [disabled] [ref=e111]
+            - button "Equal" [disabled] [ref=e112]
+            - button "Coincident" [disabled] [ref=e113]
+            - button "Delete selected" [disabled] [ref=e114]
+      - generic [ref=e115]:
+        - heading "History" [level=2] [ref=e116]
+        - list [ref=e119]:
+          - listitem [ref=e120]: Current state
+      - generic [ref=e121]:
+        - heading "Recovery" [level=2] [ref=e122]
+        - generic [ref=e123]: Local recovery enabled. Save a file for a durable copy.
+  - generic [ref=e125]:
+    - status [ref=e126]: CAD workspace.
+    - group [ref=e128]:
+      - generic "Ready offline" [ref=e129] [cursor=pointer]
+    - group [ref=e130]:
+      - generic "1 browser notice" [ref=e131]
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect, type Page } from '@playwright/test';
+  2  | import { preview } from 'vite';
+  3  | import { readFile } from 'node:fs/promises';
+  4  | import init from 'replicad-opencascadejs';
+  5  | import { stepExchange } from './step-exchange.ts';
+  6  | import type { KernelSession } from './kernel-runtime.ts';
+  7  | import { nativeContainer } from '../shared/native-container.ts';
+  8  | 
+  9  | const ready = (page: Page) => expect(page.locator('.cad-build-status')).toHaveAttribute('data-state', 'ready', { timeout: 30000 });
+  10 | const ok = (page: Page) => page.getByRole('dialog').getByRole('button', { name: 'OK', exact: true }).click();
+  11 | 
+  12 | test('CAD consumer golden: dependent holes/pocket, live variables, unit conversion, files and real STEP', async ({ page, context }, testInfo) => {
+  13 |   test.setTimeout(180000);
+  14 |   const server = await preview({ preview: { host: '127.0.0.1', port: 4175, strictPort: true } });
+  15 |   const errors: string[] = [], external: string[] = [];
+  16 |   page.on('pageerror', e => errors.push(e.message));
+  17 |   page.on('request', r => { if (!r.url().startsWith('http://127.0.0.1:4175') && !r.url().startsWith('blob:') && !r.url().startsWith('data:')) external.push(r.url()); });
+  18 |   await context.addInitScript(() => { Object.defineProperty(window, 'showSaveFilePicker', { value: undefined }); Object.defineProperty(window, 'showOpenFilePicker', { value: undefined }); });
+  19 |   const library = await init({ wasmBinary: await readFile(new URL('../../node_modules/replicad-opencascadejs/dist/replicad_single.wasm', import.meta.url)), print: () => {} });
+  20 |   const shapes = new Map<number, ReturnType<KernelSession['resolve']>>(); let sequence = 0;
+  21 |   const session: KernelSession = { library, generation: 1, isClosed: () => false, retain(shape) { const id = ++sequence; shapes.set(id, shape); return { id, generation: 1 }; }, resolve(token) { return shapes.get(token.id)!; }, release(token) { shapes.get(token.id)!.delete(); shapes.delete(token.id); } };
+  22 |   try {
+  23 |     await page.goto(server.resolvedUrls!.local[0]!); await expect(page.locator('button[data-command="file.new"]:visible').first()).toBeEnabled(); await page.keyboard.press('Control+n');
+  24 |     const props = page.locator('.cad-properties'), dialog = page.getByRole('dialog');
+  25 |     await props.getByRole('button', { name: 'Add variable…', exact: true }).click(); await dialog.getByLabel('Name', { exact: true }).fill('width'); await dialog.getByLabel('Value or expression').fill('100'); await ok(page);
+  26 |     await page.locator('button[data-command="cad.rectangle"]:visible').first().click(); await dialog.getByLabel('Width (mm)', { exact: true }).fill('width'); await ok(page); await ready(page);
+  27 |     await page.keyboard.press('e'); await ok(page); await ready(page);
+  28 |     await props.getByRole('button', { name: 'Fillet…', exact: true }).click(); await dialog.getByLabel('Radius (mm or expression)').fill('5'); await ok(page); await ready(page);
+  29 |     await props.getByRole('button', { name: 'Cut…', exact: true }).click(); await ready(page);
+  30 |     for (const [x,y] of [['10','10'],['width - 10','10'],['width - 10','50'],['10','50']]) {
+  31 |       await page.getByRole('menuitem', { name: 'Sketch', exact: true }).click(); await page.getByRole('menuitem', { name: 'Circle dimensions…' }).click();
+  32 |       await dialog.getByLabel('Diameter (mm or expression)').fill('6'); await dialog.getByLabel('Center X (mm)').fill(x!); await dialog.getByLabel('Center Y (mm)').fill(y!); await ok(page); await ready(page);
+  33 |     }
+  34 |     await props.getByRole('button', { name: 'Cut…', exact: true }).click(); await ready(page);
+  35 |     await page.locator('button[data-command="cad.rectangle"]:visible').first().click(); await dialog.getByLabel('Width (mm)', { exact: true }).fill('20'); await dialog.getByLabel('Height (mm)', { exact: true }).fill('20');
+  36 |     await dialog.getByLabel('Corner X (mm)').fill('width / 2 - 10'); await dialog.getByLabel('Corner Y (mm)').fill('20'); await ok(page); await ready(page);
+  37 |     await props.getByRole('button', { name: 'Depth…', exact: true }).last().click(); await dialog.getByLabel('Extent').selectOption('blind'); await dialog.getByLabel('Depth (mm or expression)').fill('5'); await ok(page); await ready(page);
+  38 |     for (const [width,expected] of [[100,56654.424808105],[120,68654.424808105]] as const) {
+  39 |       if (width === 120) { await props.getByRole('button', { name: /^width =/ }).click(); await dialog.getByLabel('Value or expression').fill('120'); await ok(page); await ready(page); }
+  40 |       await expect(props).toContainText(`${expected.toFixed(3)} mm³`); await expect(props).toContainText(`Rectangle origin: ${width/2-10}, 20`);
+  41 |       await props.getByRole('button', { name: 'Cut 1', exact: true }).click(); await expect(props).toContainText(`Circle center: ${width-10}, 10`); await expect(props).toContainText(`Circle center: ${width-10}, 50`);
+  42 |       const downloading = page.waitForEvent('download'); await page.locator('button[data-command="cad.exportSTEP"]:visible').first().click(); const download = await downloading;
+  43 |       const bytes = await readFile((await download.path())!); const imported = stepExchange({ action: 'import', session, bytes, units: 'mm' }).bodies!;
+  44 |       expect(imported.shapes).toHaveLength(1); const properties = new library.GProp_GProps();
+  45 |       try { library.BRepGProp.VolumeProperties(session.resolve(imported.shapes[0]!.token), properties, true, false, false); expect(Math.abs(properties.Mass()-expected)).toBeLessThan(expected*0.0001); }
+  46 |       finally { properties.delete(); imported.shapes.forEach(body => session.release(body.token)); }
+  47 |       if (width === 100) await props.getByRole('button', { name: 'Cut 2', exact: true }).click();
+  48 |     }
+  49 |     await props.getByRole('button', { name: 'Imperial (in)', exact: true }).click(); await ready(page); await expect(props).toContainText('68654.425 mm³'); await expect(props).toContainText('Circle center: 4.3307087 in, 0.39370079 in');
+  50 |     await props.getByRole('button', { name: 'Metric (mm)', exact: true }).click(); await ready(page);
+  51 |     const saving=page.waitForEvent('download'); await page.keyboard.press('Control+s'); const saved=await saving, bytes=await readFile((await saved.path())!);
+  52 |     expect(JSON.stringify(nativeContainer({ op:'decode', parts:[bytes] }).project.content)).toContain('width');
+> 53 |     await page.keyboard.press('Control+n'); const choosing=page.waitForEvent('filechooser'); await page.keyboard.press('Control+o'); await (await choosing).setFiles({ name:saved.suggestedFilename(),mimeType:'application/octet-stream',buffer:bytes }); await ready(page); await expect(props).toContainText('68654.425 mm³');
+     |                                                                 ^ Error: page.waitForEvent: Test timeout of 180000ms exceeded.
+  54 |     await page.getByRole('menuitem',{name:'Solid',exact:true}).click(); await page.getByRole('menuitem',{name:'Solid view',exact:true}).click();
+  55 |     await page.screenshot({path:'dev/evidence/CAD-consumer-golden.png'}); await testInfo.attach('Parametric acceptance plate',{path:'dev/evidence/CAD-consumer-golden.png',contentType:'image/png'});
+  56 |     expect(errors).toEqual([]); expect(external).toEqual([]); expect(shapes.size).toBe(0);
+  57 |     console.log(`CAD consumer golden Chrome ${context.browser()!.version()} ${process.platform}/${process.arch}: complete UI construction, dependent placements, exact volumes, units, editable native reopen and actual STEP re-import.`);
+  58 |   } finally { await page.close(); await server.close(); for(const shape of shapes.values())shape.delete(); }
+  59 | });
+  60 | 
+```

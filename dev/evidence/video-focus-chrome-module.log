@@ -1,0 +1,3 @@
+WARN: src/shared/chrome.ts
+  ~ 210 implementation lines exceeds the soft cap of 200
+PASS: src/shared/chrome.ts

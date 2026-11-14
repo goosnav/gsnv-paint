@@ -21,7 +21,7 @@ async function start(page: Page) {
 
 test('IMAGE-APP production: paint tools, selection move, undo, layered native file, PNG export/open and recovery', async ({ page, context }, testInfo) => {
   test.setTimeout(90000);
-  const server = await preview({ preview: { host: '127.0.0.1', port: 4177, strictPort: true } }); const errors: string[] = [];
+  const server = await preview({ build: { outDir: process.env.GSNV_TEST_DIST ?? 'dist' }, preview: { host: '127.0.0.1', port: 4177, strictPort: true } }); const errors: string[] = [];
   page.on('pageerror', e => errors.push(e.message));
   await context.addInitScript(() => { Object.defineProperty(window, 'showSaveFilePicker', { value: undefined }); Object.defineProperty(window, 'showOpenFilePicker', { value: undefined }); });
   try {
@@ -38,14 +38,14 @@ test('IMAGE-APP production: paint tools, selection move, undo, layered native fi
     await page.keyboard.press('i'); await page.mouse.click(...p(100, 140), { button: 'right' }); await expect(page.locator('.image-secondary')).toHaveValue('#ff0000');
     await page.keyboard.press('s'); await drag(page, p(95, 95), p(205, 185)); await drag(page, p(150, 140), p(450, 340)); await page.keyboard.press('Enter');
     expect(await pixel(page, 450, 340)).toEqual([0, 0, 255, 255]); expect(await pixel(page, 150, 140)).toEqual([255, 0, 0, 255]); // The lifted area takes the secondary colour on the bottom layer.
-    expect(await history(page)).toEqual(['Pencil', 'Draw rectangle', 'Fill', 'Move', 'Current state']);
+    expect(await history(page)).toEqual(['Pencil', 'Draw rectangle', 'Fill', 'Select', 'Move', 'Current state']);
     await page.keyboard.press('Control+z'); expect(await pixel(page, 150, 140)).toEqual([0, 0, 255, 255]);
     await page.keyboard.press('Control+y'); expect(await pixel(page, 450, 340)).toEqual([0, 0, 255, 255]);
     await page.locator('.gc-standard button[data-command="layer.new"]').click(); await expect(page.locator('.image-layer')).toHaveCount(2);
 
     const downloading = page.waitForEvent('download'); await page.keyboard.press('Control+s'); const download = await downloading;
     const bytes = await readFile((await download.path())!), pkg = nativeContainer({ op: 'decode', parts: [bytes] }), content = pkg.project.content as { encoding: string; layers: { name: string }[] };
-    expect(pkg.project.format).toBe('gsnv-image'); expect(content.encoding).toBe('rgba8-layers'); expect(content.layers.map(l => l.name)).toEqual(['Background', 'Layer 2']);
+    expect(pkg.project.format).toBe('gsnv-image'); expect(content.encoding).toBe('rgba8-layers-v2'); expect(content.layers.map(l => l.name)).toEqual(['Background', 'Layer 2']);
     const offset = (340 * 800 + 450) * 4; expect([...pkg.assets[0]!.bytes.slice(offset, offset + 4)]).toEqual([0, 0, 255, 255]); expect(pkg.assets[1]!.bytes[offset + 3]).toBe(0);
 
     const exporting = page.waitForEvent('download'); await page.locator('.gc-standard button[data-command="image.exportPNG"]').click(); const png = await exporting;
@@ -57,6 +57,8 @@ test('IMAGE-APP production: paint tools, selection move, undo, layered native fi
     await page.waitForTimeout(1000); const opening = page.waitForEvent('filechooser'); await page.keyboard.press('Control+o'); await (await opening).setFiles({ name: download.suggestedFilename(), mimeType: 'application/octet-stream', buffer: bytes });
     await expect(page.locator('[data-window-title]')).toContainText('Untitled image'); await expect(page.locator('.image-layer')).toHaveCount(2); await expect.poll(() => pixel(page, 20, 20)).toEqual([0, 0, 0, 255]);
 
+    await expect(page.locator('.image-info')).toContainText('selection');
+    await menu(page, 'Select', 'Deselect');
     await page.locator('[data-layer-id="background"]').click(); await page.keyboard.press('b'); await page.locator('input[type=number][data-option=size]').fill('12'); await page.keyboard.press('Enter');
     const fitted = (await page.locator('.image-canvas').boundingBox())!; await drag(page, at(fitted, dims, 300, 500), at(fitted, dims, 500, 500));
     await expect(page.locator('.gc-panel').filter({ has: page.getByRole('heading', { name: 'Recovery', exact: true }) })).toContainText('Local recovery enabled');
@@ -72,7 +74,7 @@ test('IMAGE-APP production: paint tools, selection move, undo, layered native fi
 
 test('IMAGE-APP layers, soft brush clipped to a selection, opacity/blend, adjustments, filters, text and geometry', async ({ page }) => {
   test.setTimeout(90000);
-  const server = await preview({ preview: { host: '127.0.0.1', port: 4177, strictPort: true } }); const errors: string[] = [];
+  const server = await preview({ build: { outDir: process.env.GSNV_TEST_DIST ?? 'dist' }, preview: { host: '127.0.0.1', port: 4177, strictPort: true } }); const errors: string[] = [];
   page.on('pageerror', e => errors.push(e.message));
   try {
     await page.goto(server.resolvedUrls!.local[0]!); const { p } = await start(page); const dialog = page.getByRole('dialog');
@@ -110,7 +112,7 @@ test('IMAGE-APP layers, soft brush clipped to a selection, opacity/blend, adjust
     await menu(page, 'Image', 'Canvas size…'); await dialog.getByLabel('Width (px)').fill('500'); await dialog.getByRole('button', { name: 'OK', exact: true }).click(); expect(await size(page)).toEqual({ width: 500, height: 300 });
     const box = (await page.locator('.image-canvas').boundingBox())!, d2 = await size(page);
     await page.keyboard.press('s'); await drag(page, at(box, d2, 10, 10), at(box, d2, 109, 59)); await page.locator('.gc-standard button[data-command="image.crop"]').click(); expect(await size(page)).toEqual({ width: 100, height: 50 });
-    expect(await history(page)).toEqual(['New layer', 'Brush', 'Layer opacity', 'Blend mode', 'Blend mode', 'Invert colours', 'Select layer', 'Levels', 'Pencil', 'Gaussian blur', 'Select layer', 'Merge down', 'Text', 'Move', 'Transform', 'Flatten image', 'Resize image', 'Canvas size', 'Crop', 'Current state']);
+    expect(await history(page)).toEqual(['New layer', 'Select', 'Brush', 'Deselect', 'Layer opacity', 'Blend mode', 'Blend mode', 'Invert colours', 'Select layer', 'Levels', 'Pencil', 'Gaussian blur', 'Select layer', 'Merge down', 'Text', 'Move', 'Transform', 'Flatten image', 'Resize image', 'Canvas size', 'Select', 'Crop', 'Current state']);
     expect(errors).toEqual([]);
   } finally { await page.close(); await server.close(); }
 });

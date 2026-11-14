@@ -1,0 +1,218 @@
+
+Running 7 tests using 1 worker
+
+(node:1000479) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus inspector mouse Export retains immediate native Save and New shortcuts (3.4s)
+(node:1000755) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus inspector keyboard Export retains immediate native Save and New shortcuts (3.3s)
+(node:1000999) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus toolbar mouse Export retains immediate native Save and New shortcuts (3.4s)
+(node:1001225) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus toolbar keyboard Export retains immediate native Save and New shortcuts (3.4s)
+(node:1001475) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  5 src/video/video-export-focus.browser.spec.ts:62:1 › VIDEO focus export refresh preserves a pending field value and the exact number control (8.3s)
+(node:1001774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  6 src/video/video-export-focus.browser.spec.ts:70:1 › VIDEO focus export refresh keeps an outside menu focused and open (2.7s)
+  ✘  7 src/video/video-export-focus.browser.spec.ts:76:1 › VIDEO focus refresh restores the same title control and removed controls hand focus to the timeline (8.2s)
+
+
+  1) src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus inspector mouse Export retains immediate native Save and New shortcuts 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      51 |     const button = surface === 'inspector' ? inspectorExport(page) : page.locator('.gc-standard [data-command="video.export"]');
+      52 |     const movie = await download(page, async () => { if (activation === 'keyboard') { await button.focus(); await page.keyboard.press('Enter'); } else await button.click(); });
+    > 53 |     expect(await page.evaluate(() => document.querySelector('#app')!.contains(document.activeElement))).toBe(true);
+         |                                                                                                         ^
+      54 |     const saved = await download(page, () => page.keyboard.press('Control+s')); expect(saved.bytes).toEqual(original);
+      55 |     await page.keyboard.press('Control+n'); await expect(page.locator('.video-clip')).toHaveCount(0); await expect(page.locator('.video-empty')).toBeVisible();
+      56 |     expect(await page.evaluate(() => (window as unknown as { videoFocusKeys: unknown[] }).videoFocusKeys)).toEqual([
+        at /home/goosnav/Desktop/code/gsnv-paint/src/video/video-export-focus.browser.spec.ts:53:105
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-94e12-tive-Save-and-New-shortcuts/error-context.md
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-94e12-tive-Save-and-New-shortcuts/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-94e12-tive-Save-and-New-shortcuts/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-94e12-tive-Save-and-New-shortcuts/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus inspector keyboard Export retains immediate native Save and New shortcuts 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      51 |     const button = surface === 'inspector' ? inspectorExport(page) : page.locator('.gc-standard [data-command="video.export"]');
+      52 |     const movie = await download(page, async () => { if (activation === 'keyboard') { await button.focus(); await page.keyboard.press('Enter'); } else await button.click(); });
+    > 53 |     expect(await page.evaluate(() => document.querySelector('#app')!.contains(document.activeElement))).toBe(true);
+         |                                                                                                         ^
+      54 |     const saved = await download(page, () => page.keyboard.press('Control+s')); expect(saved.bytes).toEqual(original);
+      55 |     await page.keyboard.press('Control+n'); await expect(page.locator('.video-clip')).toHaveCount(0); await expect(page.locator('.video-empty')).toBeVisible();
+      56 |     expect(await page.evaluate(() => (window as unknown as { videoFocusKeys: unknown[] }).videoFocusKeys)).toEqual([
+        at /home/goosnav/Desktop/code/gsnv-paint/src/video/video-export-focus.browser.spec.ts:53:105
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-aba6b-tive-Save-and-New-shortcuts/error-context.md
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-aba6b-tive-Save-and-New-shortcuts/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-aba6b-tive-Save-and-New-shortcuts/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-aba6b-tive-Save-and-New-shortcuts/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus toolbar mouse Export retains immediate native Save and New shortcuts 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      51 |     const button = surface === 'inspector' ? inspectorExport(page) : page.locator('.gc-standard [data-command="video.export"]');
+      52 |     const movie = await download(page, async () => { if (activation === 'keyboard') { await button.focus(); await page.keyboard.press('Enter'); } else await button.click(); });
+    > 53 |     expect(await page.evaluate(() => document.querySelector('#app')!.contains(document.activeElement))).toBe(true);
+         |                                                                                                         ^
+      54 |     const saved = await download(page, () => page.keyboard.press('Control+s')); expect(saved.bytes).toEqual(original);
+      55 |     await page.keyboard.press('Control+n'); await expect(page.locator('.video-clip')).toHaveCount(0); await expect(page.locator('.video-empty')).toBeVisible();
+      56 |     expect(await page.evaluate(() => (window as unknown as { videoFocusKeys: unknown[] }).videoFocusKeys)).toEqual([
+        at /home/goosnav/Desktop/code/gsnv-paint/src/video/video-export-focus.browser.spec.ts:53:105
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-7941d-tive-Save-and-New-shortcuts/error-context.md
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-7941d-tive-Save-and-New-shortcuts/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-7941d-tive-Save-and-New-shortcuts/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-7941d-tive-Save-and-New-shortcuts/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus toolbar keyboard Export retains immediate native Save and New shortcuts 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      51 |     const button = surface === 'inspector' ? inspectorExport(page) : page.locator('.gc-standard [data-command="video.export"]');
+      52 |     const movie = await download(page, async () => { if (activation === 'keyboard') { await button.focus(); await page.keyboard.press('Enter'); } else await button.click(); });
+    > 53 |     expect(await page.evaluate(() => document.querySelector('#app')!.contains(document.activeElement))).toBe(true);
+         |                                                                                                         ^
+      54 |     const saved = await download(page, () => page.keyboard.press('Control+s')); expect(saved.bytes).toEqual(original);
+      55 |     await page.keyboard.press('Control+n'); await expect(page.locator('.video-clip')).toHaveCount(0); await expect(page.locator('.video-empty')).toBeVisible();
+      56 |     expect(await page.evaluate(() => (window as unknown as { videoFocusKeys: unknown[] }).videoFocusKeys)).toEqual([
+        at /home/goosnav/Desktop/code/gsnv-paint/src/video/video-export-focus.browser.spec.ts:53:105
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-66cb9-tive-Save-and-New-shortcuts/error-context.md
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-66cb9-tive-Save-and-New-shortcuts/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-66cb9-tive-Save-and-New-shortcuts/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-66cb9-tive-Save-and-New-shortcuts/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) src/video/video-export-focus.browser.spec.ts:62:1 › VIDEO focus export refresh preserves a pending field value and the exact number control 
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator:  locator('.video-panel input[type="number"][data-field="volume"]')
+    Expected: focused
+    Received: inactive
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeFocused" locator('.video-panel input[type="number"][data-field="volume"]') with timeout 5000ms
+      - waiting for locator('.video-panel input[type="number"][data-field="volume"]')
+        14 × locator resolved to <input min="0" step="1" max="200" type="number" class="xp-field" data-field="volume" aria-label="Volume (%)"/>
+           - unexpected value "inactive"
+
+
+      63 |   const exporting = download(page, () => inspectorExport(page).click()); await expect(page.locator('.video-stage')).toHaveAttribute('aria-busy', 'true');
+      64 |   const field = page.locator('.video-panel input[type="number"][data-field="volume"]'); await field.fill('73'); await exporting;
+    > 65 |   await expect(field).toBeFocused(); await expect(field).toHaveValue('73');
+         |                       ^
+      66 |   const saved = await download(page, () => page.keyboard.press('Control+s'));
+      67 |   expect((nativeContainer({ op: 'decode', parts: [saved.bytes] }).project.content as { clips: { volume: number }[] }).clips[0]!.volume).toBe(.73);
+      68 | });
+        at /home/goosnav/Desktop/code/gsnv-paint/src/video/video-export-focus.browser.spec.ts:65:23
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-f859a-nd-the-exact-number-control/error-context.md
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-f859a-nd-the-exact-number-control/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-f859a-nd-the-exact-number-control/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-f859a-nd-the-exact-number-control/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) src/video/video-export-focus.browser.spec.ts:76:1 › VIDEO focus refresh restores the same title control and removed controls hand focus to the timeline 
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator:  locator('.video-panel [data-edit-title="two"]')
+    Expected: focused
+    Received: inactive
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeFocused" locator('.video-panel [data-edit-title="two"]') with timeout 5000ms
+      - waiting for locator('.video-panel [data-edit-title="two"]')
+        14 × locator resolved to <button type="button" class="xp-button" data-edit-title="two">Edit</button>
+           - unexpected value "inactive"
+
+
+      76 | test('VIDEO focus refresh restores the same title control and removed controls hand focus to the timeline', async ({ page }) => {
+      77 |   const exporting = download(page, () => inspectorExport(page).click()); await expect(page.locator('.video-stage')).toHaveAttribute('aria-busy', 'true');
+    > 78 |   const edit = page.locator('.video-panel [data-edit-title="two"]'); await edit.focus(); await exporting; await expect(edit).toBeFocused();
+         |                                                                                                                              ^
+      79 |   await page.locator('.video-panel [data-delete-title="two"]').click(); await expect(page.locator('.video-title-block')).toHaveText(['First title']);
+      80 |   await expect(page.locator('.video-timeline')).toBeFocused();
+      81 | });
+        at /home/goosnav/Desktop/code/gsnv-paint/src/video/video-export-focus.browser.spec.ts:78:126
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-ff593--hand-focus-to-the-timeline/error-context.md
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-ff593--hand-focus-to-the-timeline/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-ff593--hand-focus-to-the-timeline/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-qa/video-focus-results/video-export-focus.browser-ff593--hand-focus-to-the-timeline/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6 failed
+    src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus inspector mouse Export retains immediate native Save and New shortcuts 
+    src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus inspector keyboard Export retains immediate native Save and New shortcuts 
+    src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus toolbar mouse Export retains immediate native Save and New shortcuts 
+    src/video/video-export-focus.browser.spec.ts:50:3 › VIDEO focus toolbar keyboard Export retains immediate native Save and New shortcuts 
+    src/video/video-export-focus.browser.spec.ts:62:1 › VIDEO focus export refresh preserves a pending field value and the exact number control 
+    src/video/video-export-focus.browser.spec.ts:76:1 › VIDEO focus refresh restores the same title control and removed controls hand focus to the timeline 
+  1 passed (43.0s)

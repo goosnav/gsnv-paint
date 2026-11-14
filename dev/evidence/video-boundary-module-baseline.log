@@ -1,0 +1,4 @@
+FAIL: /tmp/gsnv-consumer-audit-20261113/security-scratch/video-timeline-baseline.ts
+  - PURPOSE reads as more than one responsibility; consider splitting the brick
+  - DECISIONS names no alternative considered
+  - 7 public entry points exceeds the maximum of 3

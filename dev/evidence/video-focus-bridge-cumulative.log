@@ -1,0 +1,51 @@
+
+Running 13 tests using 1 worker
+
+(node:1012296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+C35 capture proof {"size":[320,240],"corners":[0,0,0,0],"blue":[64,128,192,255],"green":[16,192,64,255],"edges":160,"maxFringeError":1,"unchanged":true}
+  ✓   1 src/bridge/bridge-raster.browser.spec.ts:15:1 › C35 real transparent capture retains all geometry, camera/color, edge alpha and visible renderer state (529ms)
+  ✓   2 src/bridge/bridge-raster.browser.spec.ts:22:1 › D05 real browser CompressionStream PNG preserves low-alpha bytes without Canvas conversion (262ms)
+  ✓   3 src/bridge/bridge-raster.browser.spec.ts:28:1 › D03 private decoder returns the requested adjacent frame, letterbox, fade and title (300ms)
+  ✓   4 src/bridge/bridge-raster.browser.spec.ts:37:1 › C35 lost source context fails before creating a capture (252ms)
+D03 trimmed endpoint proof {"frames":[{"sample":0.499999,"timelineSeconds":0.5,"rgba":[254,0,0,255]},{"sample":0.999999,"timelineSeconds":0.5,"rgba":[0,255,2,255]}],"beyond":"BridgeFrameReadbackError"}
+  ✓   5 src/bridge/bridge-raster.browser.spec.ts:38:1 › D03 samples inside trimmed End and rejects a trim beyond the actual decoded duration (270ms)
+  ✓   6 src/bridge/bridge-workspace.browser.spec.ts:44:1 › XWS Image composite arrives as an undoable bin-only PNG; frame becomes an editable native Image and prior source stays stored (3.7s)
+  ✓   7 src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0,0.5) keeps its last included frame in preview and native Image (1.0s)
+  ✓   8 src/bridge/bridge-workspace.browser.spec.ts:73:75 › XWS trimmed Video End [0.5,1) keeps its last included frame in preview and native Image (944ms)
+D03 MediaRecorder import proof {"initialDuration":"Infinity","rgba":[254,0,0,255],"sourceBytesPreserved":true}
+  ✓   9 src/bridge/bridge-workspace.browser.spec.ts:81:1 › XWS MediaRecorder WebM export can be imported and captured with an initially unknown decoded duration (3.6s)
+  ✘  10 src/bridge/bridge-workspace.browser.spec.ts:96:1 › XWS existing Video receives exactly one reversible append and pending Image floats remain untouched (1.0m)
+(node:1014125) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 src/bridge/bridge-workspace.browser.spec.ts:103:1 › XWS denied durable storage keeps a dirty Image target and stays in Video (1.1s)
+  ✓  12 src/bridge/bridge-workspace.browser.spec.ts:112:1 › XWS committed parametric CAD capture stays transparent, reopens exactly, and source dimensions remain editable (3.7s)
+  ✓  13 src/bridge/bridge-workspace.browser.spec.ts:120:1 › XWS imported CAD capture retains both disconnected STEP bodies and exact source bytes (3.4s)
+
+
+  1) src/bridge/bridge-workspace.browser.spec.ts:96:1 › XWS existing Video receives exactly one reversible append and pending Image floats remain untouched 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 60000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "download"
+    ============================================================
+
+      32 | const history = (page: Page) => page.locator('[data-panel-history] li').allTextContents();
+      33 | async function open(page: Page, name: string, bytes: Buffer) { const choosing = page.waitForEvent('filechooser'); await page.locator('[data-command="file.open"]:visible').first().click(); await (await choosing).setFiles({name,mimeType:'application/octet-stream',buffer:bytes}); await expect(page.locator('[data-window-title]')).toHaveText(nativeContainer({op:'decode',parts:[bytes]}).project.title); }
+    > 34 | async function save(page: Page) { const saving = page.waitForEvent('download'); await page.keyboard.press('Control+s'); const download = await saving, bytes = await readFile((await download.path())!); return { bytes, name: download.suggestedFilename(), pkg: nativeContainer({op:'decode',parts:[bytes]}) }; }
+         |                                                       ^
+      35 | async function storedBytes(page:Page,id:string){return Buffer.from(await page.evaluate(id=>new Promise<number[]>((resolve,reject)=>{const opening=indexedDB.open('gsnv-paint-recent',1);opening.onerror=()=>reject(opening.error);opening.onsuccess=()=>{const db=opening.result,tx=db.transaction('projects','readonly'),request=tx.objectStore('projects').get(id);tx.oncomplete=()=>{db.close();resolve(request.result?.parts.flatMap((part:Uint8Array)=>[...part])??[]);};tx.onerror=()=>{db.close();reject(tx.error);};};}),id));}
+      36 | function imageFixture() {
+      37 |   const width=32,height=24,bottom=new Uint8ClampedArray(width*height*4),top=bottom.slice(),expected=bottom.slice();
+        at save (/tmp/gsnv-consumer-qa/video-focus-production-source/src/bridge/bridge-workspace.browser.spec.ts:34:55)
+        at /tmp/gsnv-consumer-qa/video-focus-production-source/src/bridge/bridge-workspace.browser.spec.ts:101:231
+
+    Error Context: ../video-focus-bridge/gsnv-bridge-results/bridge-workspace.browser-X-25c27-age-floats-remain-untouched/error-context.md
+
+    Error Context: ../video-focus-bridge/gsnv-bridge-results/bridge-workspace.browser-X-25c27-age-floats-remain-untouched/error-context.md
+
+  1 failed
+    src/bridge/bridge-workspace.browser.spec.ts:96:1 › XWS existing Video receives exactly one reversible append and pending Image floats remain untouched 
+  12 passed (1.4m)
