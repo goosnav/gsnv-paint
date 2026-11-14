@@ -391,14 +391,14 @@ RAISES: `InvalidControlTargetError`, `DuplicateBindingError`; pointer cancellati
 DEPS: C29, C30, C31.
 Binding does not itself commit feature edits.
 
-### C35 cad-viewport-capture — SHELL — PLANNED
+### C35 cad-viewport-capture — SHELL — GREEN
 File `src/cad/cad-viewport-capture.ts`; public `captureCADViewport(request)`.
 Purpose: Capture the current CAD view with transparent background for Image.
-IN: `{viewport:object,width:number,height:number,revision:Revision}`; live C31 handle, positive integer dimensions within checked allocation budget.
-OUT: `ViewportCapture`; straight-alpha sRGB pixels, no background or selection/manipulator overlays, requested committed revision only.
-RAISES: `CaptureSizeError`, `StaleCaptureError`, `ContextLostError`, `CaptureReadbackError`.
-DEPS: C31.
-Phase 5 transfer code consumes this boundary; C35 remains a phase 2 CAD brick.
+IN: `{viewport:CadCapturePort,width:number,height:number,expected:CaptureStamp,signal?}`; explicit committed scene/camera/current-stamp port; positive integer dimensions, at most 4,194,304 pixels and viewport aspect ratio within integer rounding tolerance.
+OUT: `Promise<ViewportCapture>`; straight-alpha sRGB pixels from a cloned scene/camera and temporary transparent renderer; no background or editing overlays; all imported bodies retained, requested committed revision only.
+RAISES: `CaptureSizeError`, `StaleCaptureError`, `ContextLostError`, `CaptureReadbackError`, abort and native renderer errors.
+DEPS: none (pinned Three.js; C56 supplies the structural port, without a reverse runtime dependency).
+The approved [transfer refinement](CROSS-WORKSPACE.md) supersedes the earlier future-C31 handle. Exact alpha/orientation/black-white fringe, context loss, stale/cancel and multiple-body tests are GREEN on Linux Chrome/SwiftShader; other GPUs remain unverified. Phase 5 D04 consumes this boundary; broad C31 selection/rendering remains PLANNED.
 
 ### C36 cad-project-format — CORE — PLANNED
 File `src/cad/cad-project-format.ts`; public `cadProject(request)`.
@@ -717,3 +717,107 @@ OUT: `ProfileRegion = {outer:ProfileLoop,holes:ProfileLoop[]}` with `ProfileLoop
 RAISES: `ProfileError` for no closed loop, open/branched outlines (via C53), more than one outer boundary, holes touching or crossing the outline or each other, and holes nested in holes.
 DEPS: C53.
 Separation uses the document linear tolerance. Loops are grouped by shared endpoints within tolerance and each group is validated by C53. Testbench `src/cad/sketch-regions.test.ts`; the real-kernel seam is exercised by C59's testbench (exact plate-with-holes volume and STEP round trip). [CAD-HOLES-STL.md](CAD-HOLES-STL.md) records evidence and limits.
+
+## Default planes and editable source profiles
+
+The committed [CAD increment](CAD-NEXT-INCREMENT.md) refines the working editor,
+without marking the broader C05/C09/C18/C24 contracts complete. C50 now accepts
+XY/XZ/YZ and optional persisted profile descriptors. C51 is a pure routing
+assembly over C73/C75/C76, with one revision increment and final C50 validation.
+C52 materializes controlled profiles before real solving; C56–C58 expose default
+planes, center rectangles, regular polygons, group editing and construction flags.
+World placement occurs once after local feature evaluation. Imported STEP keeps
+its original coordinates. [CAD-MODELING-EVIDENCE.md](CAD-MODELING-EVIDENCE.md)
+records the focused/native/browser gates and the remaining limitations.
+
+### C70 default-plane-frame — CORE — GREEN
+Purpose: Resolve a default plane into an owned right-handed world frame.
+IN: `DefaultPlane = 'XY'|'XZ'|'YZ'`.
+OUT: `{frame:{origin,x,y,normal},localToWorld:number[]}`; literal origin bases and a column-major rigid matrix; XZ normal is −Y.
+RAISES: `DefaultPlaneError` for any other tag.
+DEPS: none.
+File `src/cad/default-plane-frame.ts`; literal handedness/coordinate tests and standalone demo.
+
+### C71 sketch-profile-source — CORE — GREEN
+Purpose: Materialize a preserved center-rectangle or regular-polygon descriptor.
+IN: `ProfileSource`, expression context and positive tolerance; unique supplied group/member IDs, length and angle expression strings.
+OUT: Owned closed canonical-mm segments, deterministic member order and unchanged source expressions; center stays fixed under dimension edits.
+RAISES: `SketchProfileSourceError` for invalid descriptors, counts, ranges or collapsed geometry; expression/geometry errors propagate.
+DEPS: C03, C07.
+File `src/cad/sketch-profile-source.ts`; exact coordinates, expression/invalid source tests, area oracle and demo.
+
+### C72 kernel-plane-transform — SHELL — GREEN
+Purpose: Place one completed local B-rep on its default world plane.
+IN: `{session:KernelSession,token:ShapeToken,plane:DefaultPlane}`; live retained single solid.
+OUT: Retained single valid world solid; XY returns the input token; successful other planes consume input exactly once. Ordinary failure preserves input ownership.
+RAISES: `PlaneTransformError`, `DisposedSessionError`; invalid token/plane propagate. Unexpected native/cleanup faults forbid further native calls and require worker termination.
+DEPS: C01, C70.
+File `src/cad/kernel-plane-transform.ts`; actual asymmetric bounds/COM, ±depth, all-plane STEP and ownership tests, real native demo.
+
+### C73 sketch-profile-edit — CORE — GREEN
+Purpose: Apply atomic edits to complete controlled sketch profile groups.
+IN: `{sketch,action?,usedIds,context,tolerance}`; structurally valid sketch; add/edit/detach/remove/construction actions and exact membership.
+OUT: Owned sketch with unrelated content unchanged; absent action validates only. Detach materializes current geometry explicitly; individual controlled-member edits reject.
+RAISES: `SketchProfileEditError` for invalid group/action/target/reference; C71/expression errors propagate.
+DEPS: C71, C03.
+File `src/cad/sketch-profile-edit.ts`; overlapping groups, stale/foreign references, detach after variable change, construction and source preservation tests/demo.
+
+### C74 cad-expression-policy — CORE — GREEN
+Purpose: Evaluate the shared CAD expression inventory and unit bindings.
+IN: `{units,variables,linearMm,parameters?,bindUnits?}`; ordered typed length/angle parameters with optional positive/nonzero range.
+OUT: `{context,values,boundSources}`; one evaluated variable graph, values in caller order, optional physically equivalent source bindings; no mutation.
+RAISES: `CADEditError` for range violations; C03/C04 errors propagate.
+DEPS: C03, C04.
+File `src/cad/cad-expression-policy.ts`; graph, unit, dimension/range/error tests and demo.
+
+### C75 cad-legacy-sketch-edit — CORE — GREEN
+Purpose: Apply the existing free-geometry sketch edits to one selected sketch.
+IN: `{content:CADContent,action:LegacySketchAction,sketch?:Id}`; line/rectangle/circle/position/dimension/clear/remove/constraint/relation operations.
+OUT: Owned C50-valid content with unchanged revision and unrelated sketches preserved; numeric legacy positions stay canonical mm, formulas stay sources.
+RAISES: `CADEditError` for invalid IDs/targets/conflicts/ranges; C50/C74/C07 errors propagate.
+DEPS: C50, C74, C07.
+File `src/cad/cad-legacy-sketch-edit.ts`; existing sketch tests plus direct isolation/revision tests/demo.
+
+### C76 cad-model-edit — CORE — GREEN
+Purpose: Apply current model and unit edits with complete expression validation.
+IN: `{content:CADContent,action:ModelAction}`; plane/variable/extrude/cut/edge-feature/removal/units operations.
+OUT: Owned C50-valid content with unchanged revision; cuts inherit the root plane; units bind every supported variable/dimension/position/profile/feature source.
+RAISES: `CADEditError` for invalid target/ID/range/name/units/plane; C50/C74 errors propagate. Referenced variable removal rejects atomically.
+DEPS: C50, C74.
+File `src/cad/cad-model-edit.ts`; native unit/plane/source invariants, direct model-action tests and demo. Production revolve is not implemented by this contract.
+
+## Production revolve increment
+
+[CAD-REVOLVE-INCREMENT.md](CAD-REVOLVE-INCREMENT.md) closes the bounded +V-axis
+boss contract after the real native proof. It defines the exact source union,
+signed angular range, graph guards, failure clearing, analytic/STEP oracles,
+worker lifetime and editing/UI seams. Implement after the current checkpoint
+repairs finish: C77 and characterized C59 extraction, C79, C78, then source,
+worker/export and connected UI. Existing C59 gains the explicit fail-stop and
+cleanup-before-retain amendment when C77 is joined. C50 keeps `bossOf`
+extrusion-only; C76 adds C79 as its third collaborator only when integrated.
+No proof-only fixture enters production. No requirement is promoted by this map.
+
+### C77 kernel-profile-face — SHELL — CONTRACTED
+Purpose: Build one analytic worker-local planar face from a validated region.
+IN: `{session:KernelSession,region:ProfileRegion}`; live C01 and C64 canonical-mm simple outer CCW polygon/circle plus validated disjoint CW holes.
+OUT: `{ok:true,face:TopoDS_Face}` with one caller-owned raw wrapper after all other temporaries are cleaned; or `{ok:false,reason:'outline-wire'|'hole-wire'|'outer-face'|'hole-face'}` after known rejection and complete cleanup.
+RAISES: `DisposedSessionError`; unexpected/native/cleanup exceptions propagate unchanged and forbid further native calls until worker termination.
+DEPS: C01, C64.
+File `src/cad/kernel-profile-face.ts`; no source compilation, region inference, tolerance repair, session retention or revolve policy. C59's polygon/circle/hole/negative-prism and STEP goldens must stay unchanged.
+
+### C79 revolve-recipe — CORE — CONTRACTED
+Purpose: Compile a bounded +V-axis revolve source into evaluated parameters or a solved native-ready section.
+IN: `{operation:'parameters'|'profile',source,sketchId,context,tolerance,entities?}`; exact definition from the linked contract, positive finite document tolerances; profile mode requires actual solved C64 entities.
+OUT: Owned `{axis:{origin:[0,0,0],direction:[0,1,0]},angleRad}`; profile mode additionally returns one owned hole-free `ProfileLoop`. Signed angle satisfies `angularRad < abs(angle) <= 2π`; polygon U is nonnegative, circles clear the axis by more than linear tolerance.
+RAISES: `RevolveRecipeError` for invalid source/axis/reference/tolerance/angle/selection/half-plane; C03 expression and C64 profile errors propagate readably.
+DEPS: C03, C64.
+File `src/cad/revolve-recipe.ts`; no reflection, modulo normalization, dropped holes, native access or source mutation. Parameters mode validates source edits without pretending to solve geometry.
+
+### C78 kernel-revolve — SHELL — CONTRACTED
+Purpose: Execute one validated bounded revolve recipe in OpenCascade.
+IN: `{session:KernelSession,recipe:C79 profile result}`; local XY section and radians, live C01 session.
+OUT: One retained valid positive-volume single solid token after temporary cleanup; caller consumes/releases it. No target body is fused or consumed.
+RAISES: `RevolveError` for known builder/null/non-solid/invalid-volume rejection, `DisposedSessionError`; unexpected/native/cleanup faults propagate with no further native calls.
+DEPS: C01, C77, C79.
+File `src/cad/kernel-revolve.ts`; real cylinder/tube/torus signed-sweep, analytic mass/bounds/caps and STEP fixtures; exact ownership/fault traces and no token before completed cleanup.
