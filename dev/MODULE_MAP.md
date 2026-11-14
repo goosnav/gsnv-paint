@@ -279,3 +279,9 @@ Other conceptual owners are bound by the CAD and media maps. `requirements.json`
 workspace importer seams. Implement transport tests first, then routing and
 workspace integration, then browser acceptance. No new file codecs or domain
 modules. Status: specified, not yet GREEN.
+
+## IMAGE-NAV image-navigator — SHELL — SPECIFIED
+
+The owner-requested [Paint navigator contract](IMAGE-NAVIGATOR.md) adds a compact
+view-only corner control and uses the existing original arrow cursor. Dependencies:
+DOM/Canvas ports only; IMAGE-APP composes S05 for zoom and its existing local view.
