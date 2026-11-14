@@ -1,6 +1,8 @@
 # Shared application assembly
 
-A-SHELL is the composition root for Phase 1. `src/app/app-shell.ts` wires the GREEN shared components; `src/app/main.ts` mounts the production entry. `npm run build` emits one static client in `dist/`. The production registry now installs the first CAD workspace adapter; Image and Video editing remain unavailable. The separate development fixture supplies explicitly marked one-pixel documents to prove shared seams. Its schema is not a CAD, Image or Video project specification.
+A-SHELL is the shared composition root. `src/app/app-shell.ts` wires the shared components; `src/app/main.ts` mounts the production entry. `npm run build` emits one static client in `dist/`. The production registry installs nine working workspace adapters; their supported subsets and remaining requirements are recorded in [CONSUMER-READINESS.md](CONSUMER-READINESS.md). The separate development fixture supplies explicitly marked one-pixel documents to prove shared seams. Its schema is not a CAD, Image or Video project specification.
+
+The current persistence amendment is [RECOVERY-CONSISTENCY.md](RECOVERY-CONSISTENCY.md): exact-revision recovery acknowledgment precedes Recent writes; successful file Save retries backup; startup preserves conflicting stored copies. Its implementation remains unverified until the named regression gates pass.
 
 ## Adapter boundary
 
