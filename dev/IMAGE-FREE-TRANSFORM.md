@@ -33,3 +33,9 @@ unless actually exercised. Existing bilinear alpha sampling is retained; no warp
 perspective or new interpolation algorithm is introduced.
 
 Status: specified; evidence pending.
+
+Small-selection refinement: automatically displayed handles must not intercept
+ordinary selection gestures on a tiny image. Below 48 screen pixels on either
+axis, show the selection outline and expose handles when Free transform/Ctrl+T is
+explicitly activated. Larger selections keep direct handles. Existing pixel-exact
+selection goldens remain the oracle; do not update them to accommodate UI changes.

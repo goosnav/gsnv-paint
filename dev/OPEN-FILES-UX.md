@@ -51,3 +51,15 @@ extra payload copy in the shared picker and does not claim streaming support.
 ## Evidence
 
 Pending implementation and verification. No requirement above is marked passed yet.
+
+## Native picker filter compatibility amendment
+
+OPEN-06: native File System Access filters accept suffixes up to 16 code points.
+`.gsnv-spreadsheet` is 17, so the existing all-project filter is rejected by
+Chromium. When an advertised suffix cannot be represented, S07 uses the native
+All files picker (`types: []`) without changing the actual filename or format.
+The HTML fallback retains its full extension filter. Native Save keeps the full
+suggested project filename and omits an incompatible filter, including A-SHELL's
+early destination acquisition. This is explicit filter adaptation, not fallback
+after a permission failure. Test both paths and preserve original formats.
+Source: [File System Access specification](https://wicg.github.io/file-system-access/#api-filepickeroptions).
