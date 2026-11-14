@@ -85,3 +85,115 @@ file case but leaves Recent-only recovery divergence reachable. Alternative
 rejected: choose the newest timestamp at startup. Neither existing store carries
 a shared revision clock. Revisit conflict policy only with a separately reviewed
 versioned persistence contract.
+
+## File-write availability amendment
+
+Mode A, 2026-11-13. The cumulative production bridge workflow timed out on
+Save immediately after Redo. Read-only inspection found a reachable gap:
+`saving[workspace]` disables Save through the recovery/Recent awaits even after
+the native file write or download handoff finishes. That makes an otherwise
+valid second Save disappear during browser storage latency. Focus repair is
+separate; this amendment changes only A-SHELL file-operation ownership.
+
+- Disable Save while the native picker, permission request or actual file write
+  is in flight. After that file operation settles, release that invocation's
+  file-operation guard before awaiting recovery/Recent. Do not wait for storage
+  merely to make the next user-initiated Save available.
+- Keep the original Save promise pending through its required exact-revision
+  backup work. This preserves step 3, close/reopen evidence and file success
+  reporting. Browser backups remain serialized through the existing queues.
+- Releasing or settling an older Save must never clear a newer Save's active
+  file guard. Duplicate Save during a pending native write remains guarded.
+  No deferred synthetic click, queued picker, replayed shortcut, timing delay,
+  new public boundary or storage-schema change is introduced.
+- Preserve captured revision/epoch ownership, disposal, cancellation, failure,
+  dirty markers, source flush and the exact acknowledgment rules above.
+
+Required RED → GREEN: hold recovery/Recent after the first successful file write,
+edit/Undo/Redo and invoke another Save immediately; its bytes must reflect the
+new revision. Hold that second native write, let the first backup finish, and
+prove a third Save cannot bypass its guard. The original bridge production
+case must pass without added waits, focus changes or weakened byte assertions.
+Run all shell/persistence tests and the final full-browser gates cumulatively.
+
+## Parent browser reproduction
+
+The parent independently ran all 84 shell/bridge/persistence cases: 84 pass,
+0 fail/cancelled/skipped/todo. It then built an isolated production candidate
+with the frozen recovery and focus repairs, before the separate S18/S20 cleanup
+repair. Build A was
+`6325bde3ba12a7d5974d3dd36ede8934f0cf9a6ebd551665f1d52c85180c479d`.
+
+```sh
+GSNV_OFFLINE_CANDIDATES=/tmp/gsnv-consumer-qa/recovery-fixed-candidates \
+GSNV_OFFLINE_CHROME_PATH=/home/goosnav/.cache/ms-playwright/chromium-1254/chrome-linux64/chrome \
+node_modules/.bin/playwright test --config dev/offline.playwright.config.ts \
+  --grep 'failed full-build updates'
+# 1 passed (30.8s); exit 0
+```
+
+Linux x64, Chrome for Testing 158.0.8127.18. The unchanged real denial → Stay →
+restored storage → native Save → actual tab closes → B startup case passes.
+Recovery and Recent each retain the same 300-byte final project at all four
+read-only snapshot points, including before and after B startup. Recovery stays
+at generation 5; startup does not rewrite it. Recovered native bytes equal the
+saved A file, and the reopened B document remains editable. No close warning
+was recorded after the explicit saves. Durable [browser output](evidence/recovery-consistency-browser-green.log)
+and [store snapshots](evidence/recovery-consistency-stores-green.json) preserve
+the exact result. The full combined candidate gate remains separate.
+
+## Repair evidence — focused gate GREEN, production gate pending
+
+The focused RED run was captured before changing the shell: **45 tests, 33
+passed, 12 failed**, all failures in the new recovery consistency cases. The
+final focused run passes **50/50**, with no skipped tests and no changes to the
+original test expectations. Five additional checks cover a newer returned
+generation with identical bytes, an unreadable Recent list, obsolete queued
+snapshots, a native Save finishing during disposal, and an editor import trying
+to bypass an unresolved recovery conflict.
+
+The assembly now acknowledges the actual returned S08 generation and native
+payload, rejects stale queued revisions before encoding, and waits for recovery
+before writing Recent. Native Save retries the current committed revision while
+its saved marker still identifies only the file's written revision. In-flight
+valid persistence can finish after disposal without rebuilding the UI. Startup
+performs no writes; identical or unopposed recovery reopens without writing, and
+divergence/read uncertainty exposes **Recover as copy** under a fresh project ID.
+File > Recent can still open the retained original. Explicit recovery discard
+does not get undone by a no-edit Recent flush; a later edit resumes backups.
+
+Reproduce the focused gates from the repository root:
+
+```sh
+node --import tsx --test src/app/app-shell.test.ts
+node --import tsx --test src/app/app-shell-bridge.test.ts src/bridge/workspace-bridge.test.ts src/shared/recovery-store.test.ts src/shared/recovery-session.test.ts src/shared/recent-projects.test.ts
+npx tsc --noEmit
+```
+
+The second command passes **34/34**. Its direct shell bridge test still proves
+hidden target input is flushed, failed retention keeps the target, successful
+replacement uses a fresh target identity, and source document/history stay
+unchanged. The coordinator and storage tests retain their existing stale-state,
+generation, corrupted-record, queue and retention coverage. TypeScript exits 0.
+
+Raw evidence:
+
+- [Initial RED: 45 tests, 12 failures](evidence/recovery-consistency-unit-red.log)
+- [Final shell GREEN: 50/50](evidence/recovery-consistency-unit-green.log)
+- [Persistence and bridge boundaries GREEN: 34/34](evidence/recovery-consistency-boundaries-green.log)
+- [Whole TypeScript check](evidence/recovery-consistency-types-green.log)
+- [Generic brick-check result](evidence/recovery-consistency-module-check.log)
+
+The generic brick checker rejects the assembly's existing KIND annotation,
+decision-header wording, and its 574 implementation lines. This is **not a
+brick-check pass**: [the module map](MODULE_MAP.md#a-shell--assembly-not-a-brick--green)
+classifies A-SHELL as an assembly, not a brick. No new public boundary, schema,
+storage-brick behavior or domain algorithm was introduced.
+
+Only `src/app/app-shell.ts`, its focused testbench, and this repair evidence were
+changed for this increment. Runtime and test sources are frozen for the parent
+to build the combined candidate. The real Chrome denial → Stay → restored
+storage → native Save → actual close/reopen test, production offline update
+gate and complete candidate suite remain pending here. These focused unit
+results do not substitute for those browser gates or claim multi-tab conflict
+resolution.
