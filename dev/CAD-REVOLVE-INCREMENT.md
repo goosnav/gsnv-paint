@@ -1,9 +1,11 @@
 # Production revolve — Mode A contract
 
-Reviewed by the parent, 2026-11-13. **CONTRACTED; implementation and acceptance tests remain unverified.**
-Current progress: step 1 (C77 plus characterized C59 integration) is GREEN;
-see [profile-face evidence](CAD-PROFILE-FACE-EVIDENCE.md). C79, C78 and connected
-production revolve remain contracted/unverified. The original contract follows.
+Reviewed by the parent, 2026-11-13. **Connected workflow CONTRACTED; not accepted.**
+Current progress: step 1 (C77 plus characterized C59 integration) and step 2
+(C79 recipe) are GREEN; see [profile-face evidence](CAD-PROFILE-FACE-EVIDENCE.md)
+and the C79 checkpoint below. C78 and connected production revolve remain
+contracted/unverified. The original contract follows, with checkpoint evidence
+appended. GREEN does not mean human ACCEPTED.
 This document closes the proposed gate 4 of [CAD-NEXT-INCREMENT.md](CAD-NEXT-INCREMENT.md)
 using the actual gate-3 fixtures in `revolve-proof-fixture.ts` and
 `revolve-proof.test.ts`. The parent reviewed the persisted source, analytic
@@ -11,7 +13,7 @@ oracles, ownership rules, dependency boundaries and cumulative gates. The owner'
 current-phase BATCH authorizes implementation after this map is committed and
 the current persistence/checkpoint repairs finish. This does not change any
 requirement status or mark a brick human ACCEPTED. No production revolve code
-has been implemented by this contract review.
+was implemented by the original contract review.
 
 ## Deliverable and limits
 
@@ -132,7 +134,7 @@ record and local source; C72 places the completed result once.
 
 ## New leaf contracts
 
-All are **CONTRACTED**. Each implementation needs a full method header, sibling
+All were **CONTRACTED** at approval. Each implementation needs a full method header, sibling
 testbench with observed RED, demo, then focused GREEN and seam evidence. The
 limits are at most 300 physical lines, three direct brick dependencies, three
 public symbols and one public entry point. Target below 200 lines; do not pack
@@ -402,8 +404,8 @@ unsupported browser or unavailable check is untested, never a pass.
 rectangular revolve/edit-dependent-rebuild procedure and connected persistence/
 worker/UI seams pass on the final candidate. This does not complete general
 C19/C23/C24, `CAD-072` revolve cut, broad history requirements or full CAD. Human
-acceptance remains the owner's decision. Current state of this proposal and
-every new gate is **UNTESTED / PLANNED**.
+acceptance remains the owner's decision. Gates without subsequent checkpoint
+evidence remain **UNTESTED / PLANNED**.
 
 ## Decisions for contract review
 
@@ -418,6 +420,41 @@ every new gate is **UNTESTED / PLANNED**.
 - Compile angle parameters separately from solved profile mode through C79's
   one entry. Alternative: solve or call WASM from source edits. Rejected because
   C76 must stay pure and invalid variable edits must reject synchronously.
+
+## C79 recipe checkpoint — GREEN, not accepted
+
+`revolve-recipe.ts` implements the approved pure parameters/profile boundary.
+Its 114 physical lines expose three public symbols and depend directly on C03
+and C64. It preserves signed angular sources, compiles analytic polygon/circle
+sections, and checks original solved endpoints as well as clustered vertices.
+No worker, solid builder, persisted source union or UI command is connected yet.
+
+Observed checks (Linux x64, Node 24.21.0):
+
+| Command | Observed output / exit | Evidence |
+| --- | --- | --- |
+| `node --import tsx --test src/cad/revolve-recipe.test.ts` against the contract stub | 17 failed, 0 passed; exit 1 (expected RED) | [RED](evidence/revolve-recipe-red.log) |
+| Same command after implementation | 17 passed; 0 failed, cancelled, skipped or todo; exit 0 | [GREEN](evidence/revolve-recipe-green.log) |
+| `npm test` | 940 passed; 0 failed, cancelled, skipped or todo; exit 0 | [full unit run](evidence/revolve-recipe-unit.log) |
+| `npm run typecheck` | TypeScript completed; exit 0 | [types](evidence/revolve-recipe-types.log) |
+| `npm run test:spec` | 402 requirements and procedures, 214 acyclic contracts; exit 0 | [trace audit](evidence/revolve-recipe-spec.log) |
+| Method checker on `src/cad/revolve-recipe.ts` | `PASS: src/cad/revolve-recipe.ts`; exit 0 | [module check](evidence/revolve-recipe-module.log) |
+| `node --import tsx src/cad/revolve-recipe.demo.ts` | Signed −π/2 circle recipe; exit 0, no solid claimed | [demo](evidence/revolve-recipe-demo.log) |
+
+Independent read-only review ran C79/C03/C64/C53 together: 50 passed and zero
+failed/cancelled/skipped/todo. The reviewer also reported 53 in-memory assertions
+covering exact-record descriptors/prototypes/symbols without getter invocation,
+concave axis contact under cyclic/reversed order, negative `Number.MIN_VALUE`
+endpoints, and unchanged C03/C64 diagnostic names/messages/locations. Those
+additional assertions are reviewer evidence, not a committed regression suite.
+No concrete defect or public widening was found. Reviewed runtime SHA-256:
+`a1183b453cf0859fc72673e8182fa6e40b121a52d42ca647ce4368a1135fafa9`.
+
+No new browser/build run is claimed for this unconnected leaf. The previous
+`44d2ee05c4dd8bca698c6925fd82ccb26739aadd` production checkpoint has 89 browser
+passes and a [successful Cloudflare build check](evidence/profile-face-cloudflare-check.json).
+No requirement status changes: 46 PASS, 0 FAIL, 356 UNTESTED. In particular
+`CAD-071 / V-CAD-071` remains UNTESTED until the connected workflow is verified.
   Revisit if the general C19 recipe layer replaces this bounded path.
 - Use a tagged ordinary C77 rejection and fail-stop unknown faults. Alternative:
   caller cleanup based only on exception name. Rejected because an unknown

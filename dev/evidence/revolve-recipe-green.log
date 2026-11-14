@@ -1,0 +1,25 @@
+✔ C79 literal parameter and profile goldens retain the sketch +V axis and analytic shapes (3.802615ms)
+✔ C79 degrees, radians and canonical angle variables keep their meaning in mm and inch (0.749857ms)
+✔ C79 variable edits are reevaluated, and missing or wrong-kind variables remain errors (0.959299ms)
+✔ C79 preserves expression error type and token instead of converting invalid text to a sweep (0.382602ms)
+✔ C79 angular limits reject exact resolution, zero and multiple turns without wrapping or losing sign (0.945659ms)
+✔ C79 tolerances must be complete finite positive document quantities (0.749703ms)
+✔ C79 malformed definitions, unsupported operations and selections reject with the affected field (1.132046ms)
+✔ C79 axis and root references cannot drift from the declared local +V sketch axis (0.489415ms)
+✔ C79 request modes reject unknown fields and require solved entities only for profile compilation (0.425861ms)
+✔ C79 polygon boundaries accept exact axis contact and reject every negative U (3.416562ms)
+✔ C79 clustering cannot hide a negative solved endpoint in either entity order (0.532543ms)
+✔ C79 circular boundaries need strictly more than the linear tolerance of axis clearance (0.947936ms)
+✔ C79 never drops holes or chooses one of several outer boundaries (1.194096ms)
+✔ C79 propagates empty, open and self-intersecting topology failures from the real compiler (0.644538ms)
+✔ C79 excludes construction geometry before testing half-plane and region policy (0.379597ms)
+✔ C79 returns owned axes and loops without mutating successful or rejected input (1.557386ms)
+✔ C79 equivalent endpoint directions and loop orders preserve the physical section (2.741546ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 224.724298

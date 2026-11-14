@@ -1,0 +1,24 @@
+{
+  "axis": {
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "direction": [
+      0,
+      1,
+      0
+    ]
+  },
+  "angleRad": -1.5707963267948966,
+  "profile": {
+    "kind": "circle",
+    "center": [
+      20,
+      6
+    ],
+    "radius": 3
+  }
+}
+Recipe only: a CAD worker must still build and validate the revolved solid.
