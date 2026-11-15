@@ -81,6 +81,7 @@ test('IMAGE-APP layers, soft brush clipped to a selection, opacity/blend, adjust
     await menu(page, 'Layer', 'New layer'); await expect(page.locator('.image-layer[aria-selected=true] .image-layer-name')).toHaveText('Layer 2');
     await page.keyboard.press('m'); await drag(page, p(100, 100), p(300, 300));
     await page.keyboard.press('b'); await page.locator('input[type=number][data-option=size]').fill('60'); await page.keyboard.press('Enter');
+    await page.getByLabel('Edges', { exact: true }).selectOption('smooth');
     await page.locator('input[type=number][data-option=hardness]').fill('100'); await page.keyboard.press('Enter');
     await drag(page, p(60, 200), p(340, 200));
     expect(await pixel(page, 200, 200)).toEqual([0, 0, 0, 255]); expect(await pixel(page, 80, 200)).toEqual([255, 255, 255, 255]); // Outside the ellipse selection.

@@ -1,0 +1,96 @@
+[WebServer] (node:2034586) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:2034629) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/image/image-pixel-drawing.browser.spec.ts:16:1 › Paint defaults to binary hard strokes, offers coarse brush pixels and keeps Smooth intentional (2.8s)
+(node:2034825) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 src/image/image-pixel-drawing.browser.spec.ts:29:1 › Sharp canvas rendering stays binary at fractional zoom; Smooth preview is reversible and view-only (30.1s)
+(node:2035364) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 src/image/image-pixel-drawing.browser.spec.ts:42:1 › Hard layer strokes and nearest free transform preserve alpha; saved PNG/project match the committed pixels (3.7s)
+
+
+  1) src/image/image-pixel-drawing.browser.spec.ts:16:1 › Paint defaults to binary hard strokes, offers coarse brush pixels and keeps Smooth intentional
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator: getByLabel('Edges', { exact: true })
+    Expected: "pixel"
+    Timeout: 2000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveValue" getByLabel('Edges', { exact: true }) with timeout 2000ms
+      - waiting for getByLabel('Edges', { exact: true })
+
+
+      16 | test('Paint defaults to binary hard strokes, offers coarse brush pixels and keeps Smooth intentional', async ({page})=>{
+      17 |  await page.locator('.gc-standard [data-command="file.new"]').click();
+    > 18 |  await expect(page.getByLabel('Edges',{exact:true})).toHaveValue('pixel',{timeout:2000});
+         |                                                      ^
+      19 |  await stroke(page);let out=await pixels(page);expect(new Set(out.bytes.filter((_,i)=>i%4!==3))).toEqual(new Set([0,255]));
+      20 |  await page.locator('.image-stage').focus();await page.keyboard.press('Control+z');
+      21 |  await page.getByRole('spinbutton',{name:'Pixel size (px)',exact:true}).fill('8');await page.getByRole('spinbutton',{name:'Pixel size (px)',exact:true}).press('Tab');
+        at /home/goosnav/Desktop/code/gsnv-paint/src/image/image-pixel-drawing.browser.spec.ts:18:54
+
+    Error Context: test-results/image-image-pixel-drawing.-52ae6-nd-keeps-Smooth-intentional/error-context.md
+
+    Error Context: test-results/image-image-pixel-drawing.-52ae6-nd-keeps-Smooth-intentional/error-context.md
+
+  2) src/image/image-pixel-drawing.browser.spec.ts:29:1 › Sharp canvas rendering stays binary at fractional zoom; Smooth preview is reversible and view-only
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 30000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "filechooser"
+    ============================================================
+
+      29 | test('Sharp canvas rendering stays binary at fractional zoom; Smooth preview is reversible and view-only', async ({page})=>{
+      30 |  const bytes=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=16;const ctx=c.getContext('2d')!;ctx.fillStyle='white';ctx.fillRect(0,0,16,16);ctx.fillStyle='black';for(let y=0;y<16;y++)ctx.fillRect(0,y,y,1);return c.toDataURL().split(',')[1]!;});
+    > 31 |  const chooser=page.waitForEvent('filechooser');await page.locator('.gc-standard [data-command="file.open"]').click();await (await chooser).setFiles({name:'pixels.png',mimeType:'image/png',buffer:Buffer.from(bytes,'base64')});
+         |                     ^
+      32 |  await expect(canvas(page)).toHaveAttribute('width','16');const original=await pixels(page),before=await history(page);
+      33 |  await menu(page,'View','View settings');await page.getByRole('spinbutton',{name:'Zoom (%)',exact:true}).fill('550');
+      34 |  const rendering=page.getByLabel('Canvas rendering',{exact:true});await expect(rendering).toHaveValue('pixels',{timeout:2000});await page.getByRole('button',{name:'OK',exact:true}).click();
+        at /home/goosnav/Desktop/code/gsnv-paint/src/image/image-pixel-drawing.browser.spec.ts:31:21
+
+    Error Context: test-results/image-image-pixel-drawing.-64529-is-reversible-and-view-only/error-context.md
+
+    Error Context: test-results/image-image-pixel-drawing.-64529-is-reversible-and-view-only/error-context.md
+
+  3) src/image/image-pixel-drawing.browser.spec.ts:42:1 › Hard layer strokes and nearest free transform preserve alpha; saved PNG/project match the committed pixels
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator: getByLabel('Transform sampling', { exact: true })
+    Expected: "nearest"
+    Timeout: 2000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveValue" getByLabel('Transform sampling', { exact: true }) with timeout 2000ms
+      - waiting for getByLabel('Transform sampling', { exact: true })
+
+
+      43 |  await page.locator('.gc-standard [data-command="file.new"]').click();await page.locator('.gc-standard [data-command="layer.new"]').click();await stroke(page);
+      44 |  await page.locator('.image-stage').focus();await page.keyboard.press('Control+t');
+    > 45 |  await expect(page.getByLabel('Transform sampling',{exact:true})).toHaveValue('nearest',{timeout:2000});
+         |                                                                   ^
+      46 |  await page.getByRole('spinbutton',{name:'Transform width',exact:true}).fill('1000');await page.getByRole('button',{name:'Apply transform',exact:true}).click();
+      47 |  const transformed=await pixels(page);expect(new Set(transformed.bytes)).toEqual(new Set([0,255]));
+      48 |  // Hide paper to inspect actual layer alpha through the composite.
+        at /home/goosnav/Desktop/code/gsnv-paint/src/image/image-pixel-drawing.browser.spec.ts:45:67
+
+    Error Context: test-results/image-image-pixel-drawing.-d7417--match-the-committed-pixels/error-context.md
+
+    Error Context: test-results/image-image-pixel-drawing.-d7417--match-the-committed-pixels/error-context.md
+
+  3 failed
+    src/image/image-pixel-drawing.browser.spec.ts:16:1 › Paint defaults to binary hard strokes, offers coarse brush pixels and keeps Smooth intentional
+    src/image/image-pixel-drawing.browser.spec.ts:29:1 › Sharp canvas rendering stays binary at fractional zoom; Smooth preview is reversible and view-only
+    src/image/image-pixel-drawing.browser.spec.ts:42:1 › Hard layer strokes and nearest free transform preserve alpha; saved PNG/project match the committed pixels

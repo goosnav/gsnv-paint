@@ -6,7 +6,8 @@
  *            RAISES: Error with offline.* code for network, bytes, headers, limits,
  *            cancellation, quota, storage or incomplete published generations.
  * GUARANTEES A failed attempt never replaces a published pointer; no project or blob
- *            request enters the cache; audit work is shared and absent from warm fetches.
+ *            request enters the cache; ordinary audit work is shared and absent from warm fetches.
+ *            audit(true) waits out any older inspection before reading a fresh snapshot.
  *            Only /index.html downloads from canonical /; its exact cache key and
  *            all content/header checks remain unchanged (OFFLINE-ROOT-ROUTE.md).
  *            Cleanup freshly audits current/fallback content and protects uncertain
@@ -151,7 +152,8 @@ export function offlineCache(input: { manifest: OfflineManifest; origin: string;
     } catch (error) { throw storageError(error); }
     finally { checked = true; }
   }
-  function audit(): Promise<OfflineReceipt> {
+  function audit(fresh = false): Promise<OfflineReceipt> {
+    if (fresh && auditing) return auditing.catch(() => undefined).then(() => audit());
     if (!auditing) auditing = inspect().finally(() => { auditing = undefined; });
     return auditing;
   }

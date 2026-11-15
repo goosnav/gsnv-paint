@@ -22,7 +22,8 @@ import { viewTransform, type View2D } from '../shared/view-transform.ts';
 import type { DialogSpec } from '../shared/dialog.ts';
 import { fileAccess, type FilePorts } from '../shared/file-access.ts';
 import { imageContent, type ImageContent, type LayerMeta } from './image-content.ts';
-import { paintRaster, transformRaster, affineRaster, clip, createRaster, MAX_PIXELS, type Raster, type RGBA, type Rect, type TransformOp } from './raster-ops.ts';
+import { transformRaster, affineRaster, type TransformOp } from './raster-transform.ts';
+import { paintRaster, clip, createRaster, MAX_PIXELS, type Raster, type RGBA, type Rect } from './raster-ops.ts';
 import { imageToolInput, IMAGE_TOOLS, type ImageTool, type ImageToolState, type SelectMode } from './image-tool-input.ts';
 import { imagePalette, DEFAULT_OPTIONS, type ToolOptions } from './image-palette.ts';
 import { imageLayersPanel, type LayerAction } from './image-layers-panel.ts';
@@ -32,6 +33,7 @@ import { adjustRaster, blurRaster, type AdjustOp } from './image-adjust.ts';
 import { imageTransformView } from './image-transform-view.ts';
 import type { TransformBox } from './image-transform.ts';
 import { imageNavigator } from './image-navigator.ts';
+import { pixelStroke } from './pixel-stroke.ts';
 import './image-workspace.css';
 
 type Snapshot = Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
@@ -48,7 +50,7 @@ const TOOLS: Record<ImageTool, { label: string; icon: string; key: string; hint:
   lasso: { label: 'Lasso', icon: 'paintLasso', key: 'Q', hint: 'Drag around an area to select it freehand · Shift adds, Ctrl subtracts.' },
   wand: { label: 'Magic wand', icon: 'paintWand', key: 'W', hint: 'Click to select similar colours · Tolerance and Contiguous are in Tool options.' },
   pencil: { label: 'Pencil', icon: 'paintPencil', key: 'P', hint: 'Hard-edged pixels · left button: primary colour · right: secondary.' },
-  brush: { label: 'Brush', icon: 'paintBrush', key: 'B', hint: 'Soft round brush · Size, Hardness, Opacity and Flow are in Tool options · [ ] change size.' },
+  brush: { label: 'Brush', icon: 'paintBrush', key: 'B', hint: 'Hard pixels by default · Pixel size makes larger blocks · choose Smooth for soft edges · [ ] change size.' },
   airbrush: { label: 'Airbrush', icon: 'paintAirbrush', key: 'A', hint: 'Sprays while you hold the button · Density sets how fast paint builds up.' },
   eraser: { label: 'Eraser', icon: 'paintEraser', key: 'E', hint: 'Erases to transparency (to the secondary colour on the bottom layer).' },
   clone: { label: 'Clone stamp', icon: 'paintClone', key: 'C', hint: 'Ctrl-click to choose the source, then paint to copy from it.' },
@@ -94,6 +96,8 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       let smudge: SmudgeCarry | null = null, cloneSource: [number, number] | null = null, opacityPreview: number | null = null, edges: Int32Array | null = null, phase = 0;
       let scale = 1, offset = { x: 0, y: 0 }, panning: { x: number; y: number } | null = null, cursor: [number, number] | null = null, message = '', disposed = false, marquee: { shape: string; points: [number, number][] } | null = null;
       let pendingImages = 0, rasterRevision = 0;
+      let canvasRendering: 'pixels' | 'smooth' = 'pixels', sampling: 'nearest' | 'bilinear' = 'nearest';
+      const sharpRendering = window.CSS.supports('image-rendering', 'crisp-edges') ? 'crisp-edges' : 'pixelated';
       let transform: { box: TransformBox; original: Raster } | null = null;
       const pendingTransfer = () => disposed ? 'closed workspace' : floating ? 'floating selection' : stroke ? 'brush stroke' : shapeBase ? 'shape' : marquee || tool.drag ? 'selection or tool gesture' : opacityPreview !== null ? 'opacity preview' : pendingImages ? 'image import or paste' : '';
       const bridge = imageSourceAdapter({ read: () => current ? { ...current, value: current.value as ImageContent } : undefined, pending: pendingTransfer });
@@ -130,6 +134,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         onChange(box) { if (!transform) return; transform.box = box; message = ''; layout(); },
         onApply() { placeFloating(); message = ''; refresh(); stage.focus(); host.invalidate(); },
         onCancel() { transform = null; floating = null; resync(); message = ''; refresh(); stage.focus(); host.invalidate(); },
+        onSampling(value) { sampling = value; layout(); },
         onError: fail,
       });
       function composite(rect: Rect | null = null) {
@@ -180,9 +185,10 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         const t = placement(), z = t.z;
         navigator.update(source ? { image: canvas, revision: rasterRevision, view: { x: t.x, y: t.y, zoom: z }, viewport: { width: stage.clientWidth, height: stage.clientHeight } } : null);
         surface.style.transform = `translate(${t.x}px,${t.y}px) scale(${z})`;
-        surface.style.width = `${source?.width ?? 0}px`; surface.style.height = `${source?.height ?? 0}px`; surface.dataset.zoom = z >= 1 ? 'pixels' : 'smooth';
+        surface.style.width = `${source?.width ?? 0}px`; surface.style.height = `${source?.height ?? 0}px`; surface.dataset.zoom = z >= 1 ? 'pixels' : 'smooth'; surface.dataset.rendering = canvasRendering;
         const bounds = transform?.box ?? (floating ? { x: floating.x, y: floating.y, width: floating.raster.width, height: floating.raster.height, angle: 0 } : selection && ['move', 'select', 'ellipseSelect', 'lasso', 'wand'].includes(tool.tool) && !tool.drag ? { ...selection.bounds, angle: 0 } : null);
-        transformView.update(bounds && source ? { box: bounds, active: !!transform, view: { x: t.x, y: t.y, zoom: z } } : null);
+        transformView.update(bounds && source ? { box: bounds, active: !!transform, sampling, view: { x: t.x, y: t.y, zoom: z } } : null);
+        float.style.imageRendering = transform ? (sampling === 'nearest' ? sharpRendering : 'auto') : '';
         if (floating) {
           float.hidden = false;
           if (transform) { const b = transform.box, r = transform.original; float.style.left = `${b.x + b.width / 2}px`; float.style.top = `${b.y + b.height / 2}px`; float.style.transformOrigin = '50% 50%'; float.style.transform = `translate(-50%,-50%) rotate(${b.angle}deg) scale(${b.width / r.width},${b.height / r.height})`; }
@@ -229,7 +235,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         if (!floating || !source) return;
         const f = floating;
         if (transform) { const b = transform.box, original = transform.original;
-          const r = affineRaster(original, { scaleX: b.width / original.width * 100, scaleY: b.height / original.height * 100, angle: b.angle });
+          const r = affineRaster(original, { scaleX: b.width / original.width * 100, scaleY: b.height / original.height * 100, angle: b.angle, sampling });
           f.raster = r; f.x = Math.round(b.x + b.width / 2 - r.width / 2); f.y = Math.round(b.y + b.height / 2 - r.height / 2); f.label = 'Transform'; transform = null;
         }
         floating = null; const raster = active();
@@ -281,7 +287,12 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         }
         if (!stroke) return;
         const s = stroke, last = points[points.length - 1]!; s.last = last;
-        if (s.mode === 'pencil') { strokeApply(paintRaster(raster, { kind: 'stroke', points, size: options.size, color: colors(button)[0], tip: 'square' })); return; }
+        if (s.mode === 'pencil') {
+          const rect = pixelStroke({ cov: s.cov, points, size: options.size, pixelSize: options.pixelSize, tip: 'square' });
+          if (rect) applyCoverage({ raster, base: s.base, cov: s.cov, rect, mode: { kind: 'paint', color: colors(button)[0] }, opacity: 1 });
+          strokeApply(rect); return;
+        }
+        if (['brush', 'eraser'].includes(t) && options.edge === 'pixel') { strokeApply(pixelStroke({ cov: s.cov, points, size: options.size, pixelSize: options.pixelSize, tip: 'round' })); return; }
         if (s.mode === 'smudge') {
           const from = points[0]!, length = Math.hypot(last[0] - from[0], last[1] - from[1]), step = Math.max(1, options.size * 0.1); let rect: Rect | null = null;
           if (!smudge) smudge = smudgeDab(raster, null, from, options.size, options.hardness / 100, options.strength / 100).carry;
@@ -362,7 +373,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       /** Photoshop-style outline of the brush footprint, so size is visible before and while painting. */
       function showRing(point: [number, number]) {
-        const t = placement(), d = options.size * t.z, sized = ['brush', 'airbrush', 'eraser', 'clone', 'blur', 'smudge', 'pencil'].includes(tool.tool);
+        const t = placement(), hard = tool.tool === 'pencil' || (['brush', 'eraser'].includes(tool.tool) && options.edge === 'pixel'), diameter = hard ? Math.max(1, Math.round(options.size / options.pixelSize)) * options.pixelSize : options.size, d = diameter * t.z, sized = ['brush', 'airbrush', 'eraser', 'clone', 'blur', 'smudge', 'pencil'].includes(tool.tool);
         ring.hidden = !sized || d < 5;
         if (!ring.hidden) Object.assign(ring.style, { width: `${Math.round(d)}px`, height: `${Math.round(d)}px`, left: `${Math.round(t.x + point[0] * t.z - d / 2)}px`, top: `${Math.round(t.y + point[1] * t.z - d / 2)}px` });
       }
@@ -503,7 +514,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           }
           placeFloating();
           const fit = pasted.width > source.width || pasted.height > source.height ? Math.min(source.width / pasted.width, source.height / pasted.height) * PASTE_FIT : 1;
-          const fitted = fit === 1 ? pasted : affineRaster(pasted, { scaleX: fit * 100, scaleY: fit * 100, angle: 0 });
+          const fitted = fit === 1 ? pasted : affineRaster(pasted, { scaleX: fit * 100, scaleY: fit * 100, angle: 0, sampling });
           const x = Math.floor((source.width - fitted.width) / 2), y = Math.floor((source.height - fitted.height) / 2), previousLayer = activeId();
           addLayer(fitted, 'Pasted image', 'Paste', { x, y, select: true });
           if (activeId() === previousLayer) return;
@@ -625,28 +636,29 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       function viewSettings() {
         if (!source || !current) return;
-        const original = { scale, offset }, placed = placement();
+        const original = { scale, offset, canvasRendering }, placed = placement();
         const base: View2D = { zoom: placed.z, pan: { x: placed.x, y: placed.y } };
         const center = { x: stage.clientWidth / 2, y: stage.clientHeight / 2 }, range = { min: 0.01, max: 64 };
-        host.dialog({ title: 'View settings', fields: [
+        host.dialog({ title: 'View settings', description: 'Sharp pixels keeps pixel boundaries crisp at every zoom. Smooth blends the display only; neither changes your image.', fields: [
+          { key: 'rendering', label: 'Canvas rendering', type: 'select', choices: [{ value: 'pixels', label: 'Sharp pixels (nearest)' }, { value: 'smooth', label: 'Smooth (interpolated)' }] },
           { key: 'zoom', label: 'Zoom (%)', type: 'number', min: 1, max: 6400 },
           { key: 'x', label: 'Horizontal offset (px)', type: 'number' },
           { key: 'y', label: 'Vertical offset (px)', type: 'number' },
-        ], initial: { zoom: base.zoom * 100, x: 0, y: 0 },
+        ], initial: { rendering: canvasRendering, zoom: base.zoom * 100, x: 0, y: 0 },
         validate(values) {
           try {
             const zoomed = viewTransform({ view: base, range, action: { type: 'zoom', factor: Number(values.zoom) / (100 * base.zoom), cursor: center } });
             const moved = viewTransform({ view: zoomed, range, action: { type: 'pan', delta: { x: Number(values.x), y: Number(values.y) } } });
-            return { ok: true, value: { zoom: moved.zoom, pan: { ...moved.pan } } };
+            return { ok: true, value: { rendering: String(values.rendering), zoom: moved.zoom, pan: { ...moved.pan } } };
           } catch (error) { return { ok: false, error: { code: 'image.view', message: error instanceof Error ? error.message : String(error) } }; }
         },
         preview(value) {
-          const next = value as View2D;
+          const next = value as View2D & { rendering: 'pixels' | 'smooth' }; canvasRendering = next.rendering;
           // Fit and wheel transforms compose; typed values describe their effective pixel scale.
           scale = next.zoom / view.zoom; offset = { x: 0, y: 0 };
           const o = origin(); offset = { x: (next.pan.x - view.pan.x) / view.zoom - o.x, y: (next.pan.y - view.pan.y) / view.zoom - o.y };
           refresh();
-        }, commit() {}, cancel() { scale = original.scale; offset = original.offset; refresh(); } });
+        }, commit() {}, cancel() { scale = original.scale; offset = original.offset; canvasRendering = original.canvasRendering; refresh(); } });
       }
       // Let the browser deliver clipboard image Files for Ctrl/Cmd+V, including when
       // Async Clipboard read permission is unavailable. Text fields keep native paste.

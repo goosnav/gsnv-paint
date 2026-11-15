@@ -1,5 +1,5 @@
 /**
- * PURPOSE    Render the Image workspace Colours and Tool Options panel.
+ * PURPOSE    Present Image tool controls.
  * KIND       SHELL
  * CONTRACT   IN: panel root and onChange callback. update(model) shows primary/secondary colours, the swatch
  *            palette and the active tool's options. Numeric options pair an XP trackbar with a typed number
@@ -9,27 +9,31 @@
  * GUARANTEES No document edits; every change routes through onChange. Listeners removed on dispose.
  * TUNING     SWATCHES (28 colours) and OPTIONS (per-tool option list with ranges).
  * DECISIONS  D1: Trackbar plus number box for every numeric option (owner direction): drag for feel,
- *            type for exact values. Native colour inputs for exact colour entry.
+ *            type for exact values. Alternative: drag-only controls, rejected because exact
+ *            values must be accessible. Native colour inputs for colour entry.
+ *            Revisit if: reusable application-wide option controls are introduced.
  * LIMITS     Opaque colour editing; no saved custom palettes or brush presets.
  * TESTBENCH  src/image/image-palette.test.ts -- run with: node --import tsx --test src/image/image-palette.test.ts
  */
 import type { RGBA } from './raster-ops.ts';
 import type { ImageTool } from './image-tool-input.ts';
 
-export type ToolOptions = { size: number; hardness: number; opacity: number; flow: number; strength: number; tolerance: number; contiguous: boolean; style: 'outline' | 'fill' | 'both'; gradient: 'linear' | 'radial'; gradientEnd: 'secondary' | 'transparent'; density: number };
-export const DEFAULT_OPTIONS: ToolOptions = { size: 8, hardness: 80, opacity: 100, flow: 100, strength: 50, tolerance: 32, contiguous: true, style: 'outline', gradient: 'linear', gradientEnd: 'secondary', density: 40 };
+export type ToolOptions = { edge: 'pixel' | 'smooth'; pixelSize: number; size: number; hardness: number; opacity: number; flow: number; strength: number; tolerance: number; contiguous: boolean; style: 'outline' | 'fill' | 'both'; gradient: 'linear' | 'radial'; gradientEnd: 'secondary' | 'transparent'; density: number };
+export const DEFAULT_OPTIONS: ToolOptions = { edge: 'pixel', pixelSize: 1, size: 8, hardness: 80, opacity: 100, flow: 100, strength: 50, tolerance: 32, contiguous: true, style: 'outline', gradient: 'linear', gradientEnd: 'secondary', density: 40 };
 export type PaletteModel = { primary: RGBA; secondary: RGBA; tool: ImageTool; options: ToolOptions; info: string; enabled: boolean };
 export type PaletteChange = { kind: 'primary' | 'secondary'; color: RGBA } | { kind: 'swap' } | { kind: 'option'; key: keyof ToolOptions; value: ToolOptions[keyof ToolOptions] };
-type NumberKey = 'size' | 'hardness' | 'opacity' | 'flow' | 'strength' | 'tolerance' | 'density';
+type NumberKey = 'pixelSize' | 'size' | 'hardness' | 'opacity' | 'flow' | 'strength' | 'tolerance' | 'density';
 const RANGES: Record<NumberKey, { label: string; min: number; max: number; unit: string }> = {
+  pixelSize: { label: 'Pixel size', min: 1, max: 32, unit: 'px' },
   size: { label: 'Size', min: 1, max: 500, unit: 'px' }, hardness: { label: 'Hardness', min: 0, max: 100, unit: '%' }, opacity: { label: 'Opacity', min: 1, max: 100, unit: '%' },
   flow: { label: 'Flow', min: 1, max: 100, unit: '%' }, strength: { label: 'Strength', min: 1, max: 100, unit: '%' }, tolerance: { label: 'Tolerance', min: 0, max: 255, unit: '' }, density: { label: 'Density', min: 1, max: 200, unit: '' },
 };
-type Choice = { key: 'style' | 'gradient' | 'gradientEnd'; label: string; choices: [string, string][] };
+type Choice = { key: 'edge' | 'style' | 'gradient' | 'gradientEnd'; label: string; choices: [string, string][] };
+const EDGE: Choice = { key: 'edge', label: 'Edges', choices: [['pixel', 'Hard pixels'], ['smooth', 'Smooth']] };
 const STYLE: Choice = { key: 'style', label: 'Shapes', choices: [['outline', 'Outline'], ['fill', 'Fill'], ['both', 'Outline and fill']] };
 export const OPTIONS: Record<ImageTool, readonly (NumberKey | Choice | 'contiguous')[]> = {
   move: [], select: [], ellipseSelect: [], lasso: [], wand: ['tolerance', 'contiguous'], picker: [], text: [],
-  pencil: ['size'], brush: ['size', 'hardness', 'opacity', 'flow'], airbrush: ['size', 'density', 'opacity'], eraser: ['size', 'hardness', 'opacity'],
+  pencil: ['size', 'pixelSize'], brush: ['size', EDGE, 'pixelSize', 'hardness', 'opacity', 'flow'], airbrush: ['size', 'density', 'opacity'], eraser: ['size', EDGE, 'pixelSize', 'hardness', 'opacity'],
   clone: ['size', 'hardness', 'opacity'], blur: ['size', 'hardness', 'opacity'], smudge: ['size', 'hardness', 'strength'], fill: ['tolerance', 'contiguous', 'opacity'],
   gradient: [{ key: 'gradient', label: 'Shape', choices: [['linear', 'Linear'], ['radial', 'Radial']] }, { key: 'gradientEnd', label: 'Ends at', choices: [['secondary', 'Secondary colour'], ['transparent', 'Transparent']] }, 'opacity'],
   line: ['size'], rectangle: ['size', STYLE], ellipse: ['size', STYLE],
@@ -100,7 +104,10 @@ export function imagePalette({ root, onChange }: { root: HTMLElement; onChange: 
     if (model.tool !== shown) build(model.tool);
     primary.value = hex(model.primary); secondary.value = hex(model.secondary);
     for (const control of options.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-option]')) {
-      const value = model.options[control.dataset.option as keyof ToolOptions];
+      const key = control.dataset.option as keyof ToolOptions, value = model.options[key];
+      const hard = model.tool === 'pencil' || model.options.edge === 'pixel';
+      const modeTool = ['brush', 'eraser', 'pencil'].includes(model.tool);
+      control.closest<HTMLElement>('.image-option')!.hidden = modeTool && (key === 'pixelSize' ? !hard : ['hardness', 'flow'].includes(key) && hard);
       if (control.type === 'checkbox') (control as HTMLInputElement).checked = !!value;
       else if (document.activeElement !== control) control.value = String(value);
     }

@@ -1,5 +1,5 @@
 import { test } from 'node:test'; import assert from 'node:assert/strict';
-import { createRaster, paintRaster, transformRaster, clip, type Raster, type RGBA } from './raster-ops.ts';
+import { createRaster, paintRaster, clip, type Raster, type RGBA } from './raster-ops.ts';
 
 const K: RGBA = [0, 0, 0, 255], W: RGBA = [255, 255, 255, 255], R: RGBA = [255, 0, 0, 255];
 /** Renders one channel as a picture: '#' for black, '.' for white, 'r' for red, '?' otherwise. */
@@ -72,30 +72,4 @@ test('I-RASTER clear, replace blit and source-over blit', () => {
   assert.equal(paintRaster(r, { kind: 'blit', source: half, x: 10, y: 10, mode: 'over' }), null);
   assert.deepEqual(clip({ x: -2, y: 1, width: 4, height: 5 }, r), { x: 0, y: 1, width: 2, height: 1 });
   assert.throws(() => clip({ x: 0.5, y: 0, width: 1, height: 1 }, r), RangeError);
-});
-
-test('I-RASTER flips, rotations, crop, resize, canvas and invert never alias the input', () => {
-  const r = createRaster(3, 2, W); paintRaster(r, { kind: 'stroke', points: [[0, 0]], size: 1, color: K, tip: 'square' });
-  paintRaster(r, { kind: 'stroke', points: [[2, 1]], size: 1, color: R, tip: 'square' });
-  assert.deepEqual(picture(r), ['#..', '..r']);
-  assert.deepEqual(picture(transformRaster(r, { kind: 'flip', axis: 'horizontal' })), ['..#', 'r..']);
-  assert.deepEqual(picture(transformRaster(r, { kind: 'flip', axis: 'vertical' })), ['..r', '#..']);
-  assert.deepEqual(picture(transformRaster(r, { kind: 'rotate', turns: 1 })), ['.#', '..', 'r.']);
-  assert.deepEqual(picture(transformRaster(r, { kind: 'rotate', turns: 2 })), ['r..', '..#']);
-  assert.deepEqual(picture(transformRaster(r, { kind: 'rotate', turns: 3 })), ['.r', '..', '#.']);
-  assert.deepEqual(picture(transformRaster(r, { kind: 'crop', rect: { x: 1, y: 1, width: 5, height: 5 } })), ['.r']);
-  assert.throws(() => transformRaster(r, { kind: 'crop', rect: { x: 5, y: 5, width: 1, height: 1 } }), RangeError);
-  assert.deepEqual(picture(transformRaster(r, { kind: 'resize', width: 6, height: 2 })), ['##....', '....rr']);
-  assert.deepEqual(picture(transformRaster(r, { kind: 'canvas', width: 4, height: 1, fill: R })), ['#..r']);
-  const inv = transformRaster(r, { kind: 'invert' }); assert.deepEqual(picture(inv)[0], '.##'); assert.deepEqual([...inv.data.slice(20, 24)], [0, 255, 255, 255]);
-  assert.deepEqual(picture(r), ['#..', '..r']);
-});
-
-test('I-RASTER free transform scales and rotates about the centre into rotated bounds', async () => {
-  const { affineRaster } = await import('./raster-ops.ts');
-  const r = createRaster(10, 4, [255, 0, 0, 255]);
-  const big = affineRaster(r, { scaleX: 200, scaleY: 50, angle: 0 }); assert.deepEqual([big.width, big.height], [20, 2]); assert.deepEqual([...big.data.slice(4 * 21, 4 * 22)], [255, 0, 0, 255]);
-  const turned = affineRaster(r, { scaleX: 100, scaleY: 100, angle: 90 }); assert.deepEqual([turned.width, turned.height], [4, 10]); assert.equal(turned.data[(5 * 4 + 2) * 4 + 3], 255);
-  const diamond = affineRaster(createRaster(10, 10, [0, 0, 255, 255]), { scaleX: 100, scaleY: 100, angle: 45 }); assert.equal(diamond.width, 14); assert.equal(diamond.data[3], 0, 'corners are transparent'); assert.equal(diamond.data[(7 * 14 + 7) * 4 + 3], 255);
-  assert.throws(() => affineRaster(r, { scaleX: 0, scaleY: 100, angle: 0 }), RangeError);
 });

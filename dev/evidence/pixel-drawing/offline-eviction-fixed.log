@@ -1,0 +1,15 @@
+{"directory":"/tmp/gsnv-offline-acceptance-Oq3O9J","buildA":"6c9ff1577f710c08369512a8b0bddc251e3bf9e410cfcc293877c113a95bf728","buildB":"8e9ac8111dada99e65cfe1d0f0580e7c3ee863443638f7ec74558385d2e41911","files":56,"bytes":41214163}
+
+Running 3 tests using 1 worker
+
+(node:2065182) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/shared/offline.browser.spec.ts:173:1 › OFFLINE eviction and denied storage fail visibly, retry repairs, and foreign messages cannot mutate installation (6.0s)
+(node:2065434) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 src/shared/offline.browser.spec.ts:173:1 › OFFLINE eviction and denied storage fail visibly, retry repairs, and foreign messages cannot mutate installation (6.3s)
+(node:2065706) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 src/shared/offline.browser.spec.ts:173:1 › OFFLINE eviction and denied storage fail visibly, retry repairs, and foreign messages cannot mutate installation (6.4s)
+
+  3 passed (21.4s)

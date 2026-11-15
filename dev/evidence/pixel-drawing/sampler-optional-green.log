@@ -1,0 +1,10 @@
+✔ transform handles track zoom and typed controls apply one validated box (121.378796ms)
+✔ I61 transform sampling is explicit, preview-only and disposed with its controls (18.951656ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 995.483916

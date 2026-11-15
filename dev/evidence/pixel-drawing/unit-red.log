@@ -1,0 +1,237 @@
+✔ I-PALETTE swatches, colour inputs and swap report exact changes (158.767282ms)
+✔ I-PALETTE each numeric option is a trackbar plus a typed box; typing applies on change and clamps (28.554807ms)
+✔ I-PALETTE colour text conversion is exact (0.421427ms)
+✖ I53 hard pixels default; pixel size and smooth-only options switch visibly and clamp (17.886623ms)
+✔ transform handles track zoom and typed controls apply one validated box (134.1311ms)
+✖ I61 transform sampling is explicit, preview-only and disposed with its controls (23.826858ms)
+✖ I62 round and square stamps have binary coverage and exact hard boundaries (1.001035ms)
+✖ I62 one-pixel diagonals connect sparse input without fractional coverage (0.246696ms)
+✖ I62 coarse pixels align to the origin, keep partial canvas-edge blocks and clip outside (0.205489ms)
+✖ I62 distant endpoints traverse only the clipped canvas and repeated strokes stay binary (0.260765ms)
+✖ I62 rejects invalid inputs before mutation (2.557109ms)
+✔ I-RASTER new rasters are filled and bounded (4.265984ms)
+✔ I-RASTER pencil stroke is a connected aliased line and reports its dirty rectangle (1.51655ms)
+✔ I-RASTER round brush stamps are symmetric and clip at edges (2.200252ms)
+✔ I-RASTER rectangle outline, fill and inverted drag direction (0.370653ms)
+✔ I-RASTER ellipse fill is inside its bounding box and outline leaves the centre (0.57112ms)
+✔ I-RASTER flood fill stays within a closed boundary and is a no-op on its own colour (0.381303ms)
+✔ I-RASTER flood fill handles a large concave region without recursion (25.279694ms)
+✔ I-RASTER clear, replace blit and source-over blit (0.518896ms)
+✔ I-RASTER flips, rotations, crop, resize, canvas and invert never alias the input (1.228211ms)
+✔ I-RASTER free transform scales and rotates about the centre into rotated bounds (2.300179ms)
+✖ I50 nearest affine sampling preserves exact colors and alpha, including rotated edges (6.579044ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 14
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1202.474857
+
+✖ failing tests:
+
+test at src/image/image-palette.test.ts:1:3760
+✖ I53 hard pixels default; pixel size and smooth-only options switch visibly and clamp (17.886623ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'pixel'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/image/image-palette.test.ts:47:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'pixel',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/image/image-transform-view.test.ts:1:1568
+✖ I61 transform sampling is explicit, preview-only and disposed with its controls (23.826858ms)
+  TypeError: Cannot read properties of null (reading 'value')
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/image/image-transform-view.test.ts:21:113)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/image/pixel-stroke.test.ts:1:436
+✖ I62 round and square stamps have binary coverage and exact hard boundaries (1.001035ms)
+  Error: Not implemented
+      at pixelStroke (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.ts:3:185)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.test.ts:7:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+
+test at src/image/pixel-stroke.test.ts:1:779
+✖ I62 one-pixel diagonals connect sparse input without fractional coverage (0.246696ms)
+  Error: Not implemented
+      at pixelStroke (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.ts:3:185)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.test.ts:12:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at src/image/pixel-stroke.test.ts:1:1076
+✖ I62 coarse pixels align to the origin, keep partial canvas-edge blocks and clip outside (0.205489ms)
+  Error: Not implemented
+      at pixelStroke (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.ts:3:185)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.test.ts:16:42)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/image/pixel-stroke.test.ts:1:1591
+✖ I62 distant endpoints traverse only the clipped canvas and repeated strokes stay binary (0.260765ms)
+  Error: Not implemented
+      at pixelStroke (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.ts:3:185)
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.test.ts:22:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at src/image/pixel-stroke.test.ts:1:1909
+✖ I62 rejects invalid inputs before mutation (2.557109ms)
+  AssertionError [ERR_ASSERTION]: The error is expected to be an instance of "RangeError". Received "Error"
+
+  Error message:
+
+  Not implemented
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.test.ts:27:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Not implemented
+        at pixelStroke (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.ts:3:185)
+        at <anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.test.ts:27:25)
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/image/pixel-stroke.test.ts:27:12)
+        at Test.runInAsyncScope (node:async_hooks:227:14)
+        at Test.run (node:internal/test_runner/test:1402:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+        at Test.postRun (node:internal/test_runner/test:1542:19)
+        at Test.run (node:internal/test_runner/test:1467:12),
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at src/image/raster-ops.test.ts:1:6760
+✖ I50 nearest affine sampling preserves exact colors and alpha, including rotated edges (6.579044ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    [
+      '0,0,0,0',
+  +   '0,0,255,10',
+  +   '0,0,255,14',
+  +   '0,0,255,30',
+  +   '0,0,255,42',
+  +   '0,0,255,50',
+  +   '0,0,255,70',
+  +   '0,0,255,98',
+  +   '0,255,0,100',
+  +   '0,255,0,139',
+  +   '0,255,0,195',
+  +   '0,255,0,20',
+  +   '0,255,0,28',
+  +   '0,255,0,60',
+  +   '0,255,0,84',
+  +   '105,63,88,146',
+  +   '129,18,108,166',
+  +   '134,80,40,189',
+  +   '139,0,116,110',
+  +   '139,0,116,154',
+  +   '153,92,11,233',
+  +   '159,96,0,159',
+  +   '159,96,0,223',
+  +   '177,25,53,201',
+  +   '196,0,59,130',
+  +   '196,0,59,181',
+  +   '210,30,15,237',
+  +   '22,155,78,46',
+  +   '223,32,0,159',
+  +   '223,32,0,223',
+  +   '238,0,17,149',
+  +   '238,0,17,209',
+  +   '255,0,0,100',
+  +   '255,0,0,139',
+  +   '255,0,0,195',
+  +   '29,202,24,106',
+  +   '31,215,9,165',
+  +   '32,221,2,225',
+  +   '32,223,0,159',
+  +   '32,223,0,223',
+  +   '41,69,145,74',
+  +   '50,30,175,102',
+  +   '55,8,192,130',
+  +   '56,0,199,126',
+  +   '56,0,199,90',
+  +   '73,121,61,126',
+  +   '86,143,26,177',
+  +   '93,155,7,229',
+  +   '96,159,0,159',
+  +   '96,159,0,223'
+  -   '0,0,255,128',
+  -   '0,255,0,255',
+  -   '255,0,0,255'
+    ]
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/image/raster-ops.test.ts:108:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      '0,0,0,0',       '0,0,255,10',     '0,0,255,14',
+      '0,0,255,30',    '0,0,255,42',     '0,0,255,50',
+      '0,0,255,70',    '0,0,255,98',     '0,255,0,100',
+      '0,255,0,139',   '0,255,0,195',    '0,255,0,20',
+      '0,255,0,28',    '0,255,0,60',     '0,255,0,84',
+      '105,63,88,146', '129,18,108,166', '134,80,40,189',
+      '139,0,116,110', '139,0,116,154',  '153,92,11,233',
+      '159,96,0,159',  '159,96,0,223',   '177,25,53,201',
+      '196,0,59,130',  '196,0,59,181',   '210,30,15,237',
+      '22,155,78,46',  '223,32,0,159',   '223,32,0,223',
+      '238,0,17,149',  '238,0,17,209',   '255,0,0,100',
+      '255,0,0,139',   '255,0,0,195',    '29,202,24,106',
+      '31,215,9,165',  '32,221,2,225',   '32,223,0,159',
+      '32,223,0,223',  '41,69,145,74',   '50,30,175,102',
+      '55,8,192,130',  '56,0,199,126',   '56,0,199,90',
+      '73,121,61,126', '86,143,26,177',  '93,155,7,229',
+      '96,159,0,159',  '96,159,0,223'
+    ],
+    expected: [ '0,0,0,0', '0,0,255,128', '0,255,0,255', '255,0,0,255' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

@@ -5,7 +5,8 @@
 .image-surface { position:absolute; left:0; top:0; transform-origin:0 0; outline:1px solid #000; box-shadow:4px 4px 0 #0000004d; background:repeating-conic-gradient(#c0c0c0 0 25%,#fff 0 50%) 0 0/16px 16px; }
 .image-surface[hidden] { display:none; }
 .image-surface canvas { position:absolute; left:0; top:0; display:block; }
-.image-surface[data-zoom="pixels"] canvas { image-rendering:pixelated; }
+.image-surface[data-rendering="pixels"] canvas { image-rendering:pixelated; image-rendering:crisp-edges; }
+.image-surface[data-rendering="smooth"] canvas { image-rendering:auto; }
 .image-overlay { pointer-events:none; image-rendering:pixelated; }
 .image-floating { outline:1px dashed #000; }
 .image-floating[hidden] { display:none; }
@@ -26,6 +27,7 @@
 .image-option { display:grid; grid-template-columns:62px minmax(0,1fr) 52px; align-items:center; gap:4px; margin:2px 0; }
 .image-option:has(select) { grid-template-columns:62px minmax(0,1fr); }
 .image-option:has(.image-check) { grid-template-columns:1fr; }
+.image-option[hidden] { display:none; }
 .image-check { display:flex; align-items:center; gap:4px; }
 .image-none { margin:2px 0; color:var(--xp-text-muted); }
 .image-info { margin:8px 0 0; color:var(--xp-text-muted); }

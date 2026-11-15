@@ -1,0 +1,9 @@
+WARN: src/shared/offline-cache.ts
+  ~ 212 implementation lines exceeds the soft cap of 200
+PASS: src/image/pixel-stroke.ts
+PASS: src/image/raster-ops.ts
+PASS: src/image/raster-transform.ts
+PASS: src/image/image-palette.ts
+PASS: src/image/image-transform-view.ts
+PASS: src/shared/offline-cache.ts
+PASS: src/shared/offline-worker.ts

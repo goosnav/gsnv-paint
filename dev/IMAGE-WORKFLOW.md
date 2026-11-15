@@ -7,7 +7,7 @@
 | Group | Tools |
 |---|---|
 | Move and select | Move (V), Rectangle select (S), Ellipse select (M), Lasso (Q), Magic wand (W). Shift adds to the selection, Ctrl subtracts. Selections are pixel masks shown with marching ants; dragging inside one moves its pixels. |
-| Paint | Pencil (P, hard pixels), Brush (B: size, hardness, opacity, flow), Airbrush (A: sprays while held), Eraser (E: to transparency; to the secondary colour on the bottom layer), Clone stamp (C: Ctrl-click sets the source), Blur brush (U), Smudge (K: the brush carries picked-up colour; Strength), Fill (G: tolerance, contiguous), Gradient (N: linear/radial, to the secondary colour or transparent) |
+| Paint | Pencil (P, hard pixels), Brush (B: hard pixels by default, pixel size, opacity; optional Smooth with hardness/flow), Airbrush (A: sprays while held), Eraser (E: to transparency; to the secondary colour on the bottom layer), Clone stamp (C: Ctrl-click sets the source), Blur brush (U), Smudge (K: the brush carries picked-up colour; Strength), Fill (G: tolerance, contiguous), Gradient (N: linear/radial, to the secondary colour or transparent) |
 | Draw | Text (T), Line (L), Rectangle (R), Ellipse (O): outline, fill or both; Shift for squares, circles and 45° |
 | Colour | Pick colour (I), 28-colour XP palette, exact colour inputs, X swap, D defaults |
 
@@ -20,7 +20,7 @@ Every numeric option is an XP trackbar paired with a typed number box (applied o
 - **Filters:** Gaussian blur, Unsharp mask, Add noise, Pixelate, Find edges, Emboss.
 - **Image:** Open image as a new document, Export PNG (flattened), Resize, Canvas size, Crop to selection, rotate, flip.
 - **Files:** `.gsnv-image` projects store each layer and the current selection as separate assets; both earlier project layouts still open. Selection changes have their own undo steps and survive recovery.
-- **View:** View → View settings shows the effective pixel zoom after Fit or wheel zoom. Type 1–6400% and optional horizontal/vertical offsets in screen pixels; preview stays centered, and Cancel restores the prior view.
+- **View:** View → View settings shows the effective pixel zoom after Fit or wheel zoom. Type 1–6400% and optional horizontal/vertical offsets in screen pixels; preview stays centered, and Cancel restores the prior view. Canvas rendering defaults to Sharp pixels (nearest); Smooth blends the display without editing image pixels. Pixel size 1–32 controls coarse drawing blocks for Pencil and hard Brush/Eraser. Free transform offers Pixels (nearest, default) or Smooth (bilinear) sampling.
 
 ## Verification — 2026-11-12
 

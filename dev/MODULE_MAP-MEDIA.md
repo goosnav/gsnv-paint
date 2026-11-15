@@ -269,9 +269,9 @@ RAISES: `PixelWorkerUnavailableError`, `PixelWorkerProtocolError`, `PixelWorkerC
 D20 delivers a usable paint-style Image workspace before the full I01–I37 layer/selection/adjustment roster, in the same way D16 delivered the working CAD path. I01–I37 remain PLANNED and keep their contracts; the bricks below are a single-layer subset behind the same workspace adapter seam. Evidence and limits are in [IMAGE-WORKFLOW.md](IMAGE-WORKFLOW.md). No brick is human-ACCEPTED.
 
 ### I50 `image/raster-ops.ts` — CORE — GREEN
-Purpose: Draw and transform straight-alpha RGBA rasters for the Image workspace.
-IN: `Raster{width,height,data:Uint8ClampedArray}` plus `PaintOp` (stroke, rectangle, ellipse, fill, clear, blit) or `TransformOp` (flip, rotate, invert, crop, resize, canvas); colours are byte RGBA, points are document pixels.
-OUT: `paintRaster` mutates the caller-owned working raster and returns the changed rectangle or null; `transformRaster` returns a new raster. Aliased deterministic pixels; flood fill is iterative scanline with 4-connectivity.
+Purpose: Draw straight-alpha RGBA rasters for the Image workspace.
+IN: `Raster{width,height,data:Uint8ClampedArray}` plus `PaintOp` (stroke, rectangle, ellipse, fill, clear, blit); colours are byte RGBA, points are document pixels.
+OUT: `paintRaster` mutates the caller-owned working raster and returns the changed rectangle or null. I63 owns resampling. Aliased deterministic pixels; flood fill is iterative scanline with 4-connectivity.
 RAISES: `RangeError` for invalid sizes (over 4096² pixels), colours, rectangles, tool sizes or nonfinite points.
 DEPS: none.
 
@@ -767,7 +767,7 @@ DEMO: `/src/image/image-transform-view.demo.html` through the dev server.
 
 Evidence for I59–I61 and their composition: [Open/navigation/transform checkpoint](PAINT-OPEN-NAVIGATION-EVIDENCE.md). GREEN is provisional; acceptance belongs to the owner.
 
-### I62 `image/pixel-stroke.ts` — CORE — PLANNED
+### I62 `image/pixel-stroke.ts` — CORE — GREEN
 Purpose: Accumulate hard, grid-aligned stroke coverage without antialiasing.
 IN: `{cov,points,size,pixelSize,tip}`; matching coverage buffer; finite points; whole size 1–500, pixel size 1–32, round/square tip.
 OUT: mutated caller-owned binary coverage and clipped dirty bounds or null; bounded traversal.
@@ -777,9 +777,9 @@ TEST: `src/image/pixel-stroke.test.ts`; production `image-pixel-drawing.browser.
 DEMO: production Image Brush with Hard pixels and Pixel size controls.
 
 [Pixel drawing amendment](PAINT-PIXEL-DRAWING.md) defines PIX-01–04 and updates
-I50 sampling, I53 tool options, I61 transform sampling and IMAGE-APP wiring.
+I63 sampling, I53 tool options, I61 transform sampling and IMAGE-APP wiring.
 
-### I63 `image/raster-transform.ts` — CORE — PLANNED
+### I63 `image/raster-transform.ts` — CORE — GREEN
 Purpose: Resample owned raster transforms with explicit sampling.
 IN: matching RGBA raster; existing TransformOp or finite affine percent scales/angle, optional nearest/bilinear sampler.
 OUT: new raster, input unchanged; exact source RGBA under nearest sampling.
@@ -788,3 +788,6 @@ DEPS: I50 createRaster, paintRaster, clip and types.
 TEST: `src/image/raster-transform.test.ts` (existing transform goldens retained).
 DEMO: Image Free transform with Pixels/Smooth sampling.
 Mode D extraction keeps I50 within three entry points; no compatibility facade or dependency cycle.
+
+I62/I63 and amended I50/I53/I61 are GREEN, not human-ACCEPTED.
+Evidence: [pixel rendering checkpoint](PAINT-PIXEL-DRAWING-EVIDENCE.md).

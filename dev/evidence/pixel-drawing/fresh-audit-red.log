@@ -1,0 +1,34 @@
+✔ S18 publishes a complete golden build and audits only once across asset fetches (37.547011ms)
+✔ S18 fetches only the HTML entry through the canonical root without following index redirects (6.090764ms)
+✔ S18 every quota boundary and failed candidate preserve published A exactly (24.777441ms)
+✔ S18 installation rejects network, HTML fallback, missing headers, redirect and corrupt bytes (16.058459ms)
+✔ S18 stops oversized streams and cancellation before publication (1.395207ms)
+✔ S18 detects eviction and corruption; repair uses a fresh generation (2.86637ms)
+✔ S18 exact Request matching preserves ranges and never consumes file/blob or foreign URLs (2.218246ms)
+✔ S18 cleanup retains current and newest other complete build and leaves unrelated caches (6.031812ms)
+✔ S18 interrupted candidates are never served and fresh concurrent candidates survive cleanup (3.2886ms)
+✔ S18 timeout and storage denial produce stable errors and normalize decoded transport headers (1.760418ms)
+✖ S18 fresh audits cannot reuse an older in-flight snapshot after cache eviction (1.898158ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 10
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 320.375376
+
+✖ failing tests:
+
+test at src/shared/offline-cache.test.ts:1:10314
+✖ S18 fresh audits cannot reuse an older in-flight snapshot after cache eviction (1.898158ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-cache.test.ts:159:25)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }

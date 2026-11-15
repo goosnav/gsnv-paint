@@ -1,0 +1,19 @@
+[WebServer] (node:2056550) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 9 tests using 1 worker
+
+(node:2056583) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Paint navigation/transform: Chrome 154.0.8037.97 linux/x64
+  ✓  1 src/image/image-navigation.browser.spec.ts:15:1 › Paint has an arrow cursor and compact wheel-independent navigator with view-only controls (1.5s)
+  ✓  2 src/image/image-navigation.browser.spec.ts:29:1 › Selection handles resize visually, cancel restores pixels and apply supports one-step undo/redo (2.3s)
+  ✓  3 src/image/image-navigation.browser.spec.ts:40:1 › Ctrl+T exposes on-canvas rotation and moving with synchronized zoom (1.5s)
+  ✓  4 src/image/image-navigation.browser.spec.ts:47:1 › Touch pointer dragging pans the mini map and resizes without painting (1.4s)
+  ✓  5 src/image/image-navigation.browser.spec.ts:54:1 › Save captures the visible graphical transform and a still-focused typed size (1.9s)
+  ✓  6 src/image/image-pixel-drawing.browser.spec.ts:24:1 › Paint defaults to binary hard strokes, offers coarse brush pixels and keeps Smooth intentional (1.9s)
+  ✓  7 src/image/image-pixel-drawing.browser.spec.ts:37:1 › Sharp canvas rendering stays binary at fractional zoom; Smooth preview is reversible and view-only (1.5s)
+  ✓  8 src/image/image-pixel-drawing.browser.spec.ts:50:1 › Hard layer strokes and nearest free transform preserve alpha; saved PNG/project match the committed pixels (3.7s)
+  ✓  9 src/image/image-pixel-drawing.browser.spec.ts:64:1 › Hard brush and eraser respect selections with one history entry per stroke (2.3s)
+
+  9 passed (19.5s)

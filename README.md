@@ -104,6 +104,14 @@ V selects sketch edges, L draws lines, R draws a rectangle, C draws a circle, F 
 
 Switch to the Image tab and press Ctrl+N. Pick a tool from the toolbox (B brush, P pencil, E eraser, G fill, N gradient, S/M/Q/W selections, V move, C clone), set size and opacity with the trackbars or by typing in the boxes, click a swatch for the primary colour or right-click for the secondary, and paint. Use the Layer, Adjustments and Filters menus for Photoshop-style work. Ctrl+Z undoes each step. Image → Export PNG saves a picture; Ctrl+S saves an editable `.gsnv-image` project. See [Image workflow evidence](dev/IMAGE-WORKFLOW.md).
 
+Paint defaults to **Sharp pixels**: zooming enlarges each pixel without blurring
+it. **View → View settings → Canvas rendering** switches between Sharp pixels
+and Smooth without changing the image. Brush and Eraser default to **Hard pixels**;
+choose Smooth edges for soft strokes. **Pixel size** (1–32) makes larger drawing
+blocks on the same canvas. Free transform defaults to **Pixels (nearest)** to
+keep edges crisp when scaling; its Smooth option blends neighboring pixels.
+
+
 ## First photo
 
 Switch to the Photo tab, choose Import photo… (or drop a RAW/JPEG file), press Auto or pick a preset, then refine with the sliders (type exact values in the boxes; double-click a label to reset). `\` compares before/after and R crops. Photo → Export… saves a full-size JPEG or PNG. See [Photo workflow](dev/PHOTO-WORKFLOW.md).

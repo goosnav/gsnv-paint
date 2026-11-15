@@ -1,0 +1,9 @@
+{"directory":"/tmp/gsnv-offline-acceptance-wLSds5","buildA":"3250a55ef6057531f43e010bf780b9cb5680cc6759510232b49ba8ccfd9590d5","buildB":"517b159e8f820240dc2b4835009afa7c34706a42d4477eda712faf141f03379f","files":56,"bytes":41214163}
+
+Running 1 test using 1 worker
+
+(node:2061472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/shared/offline.browser.spec.ts:173:1 › OFFLINE eviction and denied storage fail visibly, retry repairs, and foreign messages cannot mutate installation (6.4s)
+
+  1 passed (7.3s)

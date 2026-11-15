@@ -1,0 +1,36 @@
+✔ S19 waits for complete installation and claims only matching first-install windows (51.587993ms)
+✔ S19 failed install rejects the lifecycle and cannot publish a usable candidate (1.751287ms)
+✔ S19 update and mismatched/unresponsive clients never cause an unsafe claim (44.82161ms)
+✔ S19 root navigation aliases keep cached headers and exclude unknown, POST, blob and foreign URLs (5.327447ms)
+✔ S19 corrupted cache falls through with the original Range Request and never returns HTML as WASM (3.089963ms)
+✔ S19 validates window source, protocol bounds and fresh checks before replying through a port (5.340544ms)
+✔ S19 startup navigation and ordinary status share one integrity audit (4.108471ms)
+✔ S19 refuses a claim when the window set changes during identification (4.27247ms)
+✖ S19 fresh status reports eviction even while an older startup audit is in flight (4.593629ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 8
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 306.501972
+
+✖ failing tests:
+
+test at src/shared/offline-worker.test.ts:1:7322
+✖ S19 fresh status reports eviction even while an older startup audit is in flight (4.593629ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'ready' !== 'error'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-worker.test.ts:127:49)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ready',
+    expected: 'error',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

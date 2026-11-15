@@ -23,7 +23,7 @@ test('I-PALETTE swatches, colour inputs and swap report exact changes', () => {
 test('I-PALETTE each numeric option is a trackbar plus a typed box; typing applies on change and clamps', () => {
   const { dom, root, changes, palette } = setup();
   palette.update({ primary: [0, 0, 0, 255], secondary: [255, 255, 255, 255], tool: 'brush', options: DEFAULT_OPTIONS, info: '', enabled: true });
-  assert.equal(root.querySelectorAll('input[type=range][data-option]').length, 4); assert.equal(root.querySelectorAll('input[type=number][data-option]').length, 4);
+  assert.equal(root.querySelectorAll('input[type=range][data-option]').length, 5); assert.equal(root.querySelectorAll('input[type=number][data-option]').length, 5);
   const range = root.querySelector<HTMLInputElement>('input[type=range][data-option=size]')!, box = root.querySelector<HTMLInputElement>('input[type=number][data-option=size]')!;
   assert.equal(range.value, '8'); assert.equal(box.value, '8');
   range.value = '40'; fire(dom, range, 'input'); box.value = '12'; fire(dom, box, 'input'); fire(dom, box, 'change'); box.value = '9999'; fire(dom, box, 'change'); box.value = ''; fire(dom, box, 'change');
@@ -40,4 +40,23 @@ test('I-PALETTE each numeric option is a trackbar plus a typed box; typing appli
 
 test('I-PALETTE colour text conversion is exact', () => {
   assert.equal(hex([1, 171, 255, 9]), '#01abff'); assert.deepEqual(parseHex('#01ABff'), [1, 171, 255, 255]); assert.throws(() => parseHex('red'), RangeError);
+});
+
+test('I53 hard pixels default; pixel size and smooth-only options switch visibly and clamp', () => {
+  const { dom, root, changes, palette } = setup();
+  assert.equal(DEFAULT_OPTIONS.edge, 'pixel'); assert.equal(DEFAULT_OPTIONS.pixelSize, 1);
+  const model = { primary: [0, 0, 0, 255] as const, secondary: [255, 255, 255, 255] as const, tool: 'brush' as const, options: DEFAULT_OPTIONS, info: '', enabled: true };
+  palette.update(model);
+  const edge = root.querySelector<HTMLSelectElement>('select[data-option=edge]')!;
+  assert.equal(edge.value, 'pixel');
+  const pixel = root.querySelector<HTMLInputElement>('input[type=number][data-option=pixelSize]')!;
+  assert.equal(pixel.closest<HTMLElement>('.image-option')!.hidden, false);
+  assert.equal(root.querySelector('[data-option=hardness]')!.closest<HTMLElement>('.image-option')!.hidden, true);
+  pixel.value = '8'; fire(dom, pixel, 'change'); assert.deepEqual(changes.at(-1), { kind: 'option', key: 'pixelSize', value: 8 });
+  pixel.value = '999'; fire(dom, pixel, 'change'); assert.equal((changes.at(-1) as any).value, 32);
+  edge.value = 'smooth'; fire(dom, edge, 'change'); assert.deepEqual(changes.at(-1), { kind: 'option', key: 'edge', value: 'smooth' });
+  palette.update({ ...model, options: { ...DEFAULT_OPTIONS, edge: 'smooth' } });
+  assert.equal(pixel.closest<HTMLElement>('.image-option')!.hidden, true);
+  assert.equal(root.querySelector('[data-option=hardness]')!.closest<HTMLElement>('.image-option')!.hidden, false);
+  palette.dispose(); edge.dispatchEvent(new dom.window.Event('change', { bubbles: true })); assert.equal(changes.length, 3);
 });

@@ -1,0 +1,30 @@
+✔ I-PALETTE swatches, colour inputs and swap report exact changes (168.784044ms)
+✔ I-PALETTE each numeric option is a trackbar plus a typed box; typing applies on change and clamps (28.690317ms)
+✔ I-PALETTE colour text conversion is exact (0.464ms)
+✔ I53 hard pixels default; pixel size and smooth-only options switch visibly and clamp (17.547861ms)
+✔ transform handles track zoom and typed controls apply one validated box (129.513005ms)
+✔ I61 transform sampling is explicit, preview-only and disposed with its controls (22.120213ms)
+✔ I62 round and square stamps have binary coverage and exact hard boundaries (3.132243ms)
+✔ I62 one-pixel diagonals connect sparse input without fractional coverage (0.407721ms)
+✔ I62 coarse pixels align to the origin, keep partial canvas-edge blocks and clip outside (0.549969ms)
+✔ I62 distant endpoints traverse only the clipped canvas and repeated strokes stay binary (0.359385ms)
+✔ I62 rejects invalid inputs before mutation (0.971273ms)
+✔ I-RASTER new rasters are filled and bounded (3.476205ms)
+✔ I-RASTER pencil stroke is a connected aliased line and reports its dirty rectangle (1.490605ms)
+✔ I-RASTER round brush stamps are symmetric and clip at edges (0.715732ms)
+✔ I-RASTER rectangle outline, fill and inverted drag direction (0.533044ms)
+✔ I-RASTER ellipse fill is inside its bounding box and outline leaves the centre (0.764508ms)
+✔ I-RASTER flood fill stays within a closed boundary and is a no-op on its own colour (1.139629ms)
+✔ I-RASTER flood fill handles a large concave region without recursion (46.346666ms)
+✔ I-RASTER clear, replace blit and source-over blit (3.863394ms)
+✔ I-RASTER flips, rotations, crop, resize, canvas and invert never alias the input (5.308736ms)
+✔ I-RASTER free transform scales and rotates about the centre into rotated bounds (1.865603ms)
+✔ I63 nearest affine sampling preserves exact colors and alpha, including rotated edges (1.569718ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1319.841884

@@ -1,0 +1,13 @@
+[WebServer] (node:2042835) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:2042902) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/image/image-pixel-drawing.browser.spec.ts:24:1 › Paint defaults to binary hard strokes, offers coarse brush pixels and keeps Smooth intentional (5.9s)
+  ✓  2 src/image/image-pixel-drawing.browser.spec.ts:37:1 › Sharp canvas rendering stays binary at fractional zoom; Smooth preview is reversible and view-only (5.1s)
+  ✓  3 src/image/image-pixel-drawing.browser.spec.ts:50:1 › Hard layer strokes and nearest free transform preserve alpha; saved PNG/project match the committed pixels (12.9s)
+  ✓  4 src/image/image-pixel-drawing.browser.spec.ts:64:1 › Hard brush and eraser respect selections with one history entry per stroke (6.2s)
+
+  4 passed (33.0s)

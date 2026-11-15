@@ -14,8 +14,9 @@
  * TESTBENCH  src/image/image-transform-view.test.ts — node --import tsx --test src/image/image-transform-view.test.ts
  */
 import { imageTransform, type TransformBox } from './image-transform.ts';
-type State={box:TransformBox;active:boolean;view:{x:number;y:number;zoom:number}};
-type Ports={root:HTMLElement;onBegin():void;onChange(box:TransformBox):void;onApply():void;onCancel():void;onError(cause:unknown):void};
+type Sampling='nearest'|'bilinear';
+type State={sampling?:Sampling;box:TransformBox;active:boolean;view:{x:number;y:number;zoom:number}};
+type Ports={root:HTMLElement;onBegin():void;onChange(box:TransformBox):void;onApply():void;onCancel():void;onError(cause:unknown):void;onSampling?(sampling:Sampling):void};
 export function imageTransformView(ports:Ports){
  const doc=ports.root.ownerDocument,box=doc.createElement('div'),bar=doc.createElement('form');box.className='image-transform-box';bar.className='image-transform-controls';bar.setAttribute('aria-label','Free transform');box.hidden=bar.hidden=true;ports.root.append(box,bar);
  let state:State|null=null,drag:{id:number;target:HTMLElement;box:TransformBox;start:{x:number;y:number};handle:string}|null=null,disposed=false;
@@ -34,6 +35,9 @@ export function imageTransformView(ports:Ports){
  function flush(){
   if(!state?.active)return;const next={...state.box};for(const [key,input] of fields){if(!input.value.trim())throw new Error('Enter a transform value.');next[key]=Number(input.value);}ports.onChange(imageTransform({op:'validate',box:next}));
  }
+ const samplerLabel=doc.createElement('label'),sampler=doc.createElement('select');samplerLabel.textContent='Sampling';sampler.setAttribute('aria-label','Transform sampling');
+ for(const [value,label] of [['nearest','Pixels'],['bilinear','Smooth']]){const option=doc.createElement('option');option.value=value!;option.textContent=label!;sampler.append(option);}samplerLabel.append(sampler);if(ports.onSampling)bar.append(samplerLabel);
+ listen(sampler,'change',()=>safely(()=>{if(state?.active)ports.onSampling?.(sampler.value as Sampling);}));
  const apply=()=>{flush();ports.onApply();};
  const keepLabel=doc.createElement('label');keepLabel.append(keep,doc.createTextNode('Link'));bar.append(keepLabel);
  for(const [label,callback] of [['Apply transform',apply],['Cancel transform',ports.onCancel]] as const){const button=doc.createElement('button');button.type='button';button.textContent=label.split(' ')[0]!;button.setAttribute('aria-label',label);listen(button,'click',()=>safely(callback));bar.append(button);}
@@ -48,6 +52,7 @@ export function imageTransformView(ports:Ports){
  function update(next:State|null){
   if(disposed)return;state=next;box.hidden=!next;bar.hidden=!next?.active;
   if(!next){if(drag){const previous=drag;drag=null;if(previous.target.hasPointerCapture(previous.id))previous.target.releasePointerCapture(previous.id);}return;}
+  sampler.value=next.sampling??'bilinear';
   const b=next.box,v=next.view;box.dataset.active=String(next.active);box.dataset.compact=String(!next.active&&(b.width*v.zoom<48||b.height*v.zoom<48));Object.assign(box.style,{left:`${v.x+(b.x+b.width/2)*v.zoom}px`,top:`${v.y+(b.y+b.height/2)*v.zoom}px`,width:`${b.width*v.zoom}px`,height:`${b.height*v.zoom}px`,transform:`translate(-50%,-50%) rotate(${b.angle}deg)`});
   for(const [key,input] of fields)if(doc.activeElement!==input)input.value=String(Math.round(b[key]*100)/100);
  }

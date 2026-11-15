@@ -71,8 +71,8 @@ export function installOfflineWorker({ scope, manifest: value }: { scope: Offlin
     try { await cache.install(); phase('ready'); await publish(); }
     catch (error) { failed(error); await publish(); throw error; }
   }
-  async function audit() {
-    try { await cache.audit(); if (state.phase !== 'reopen-required') phase('ready'); state.completedBytes = state.totalBytes; }
+  async function audit(fresh = false) {
+    try { await cache.audit(fresh); if (state.phase !== 'reopen-required') phase('ready'); state.completedBytes = state.totalBytes; }
     catch (error) { failed(error); }
   }
   function identify(client: WindowClient): Promise<boolean> {
@@ -129,7 +129,7 @@ export function installOfflineWorker({ scope, manifest: value }: { scope: Offlin
         const pending = install();
         port.postMessage({ ...state, requestId: d.requestId }); port.close(); await pending.catch(() => {});
       } else {
-        if (d.fresh || state.phase === 'checking') await audit();
+        if (d.fresh || state.phase === 'checking') await audit(d.fresh === true);
         port.postMessage({ ...state, requestId: d.requestId }); port.close();
       }
     })().catch(() => { port.close(); }));

@@ -109,3 +109,20 @@ test('S19 refuses a claim when the window set changes during identification', as
   f.scope.clients.matchAll = async () => identified ? [...f.clients, { ...f.clients[0]!, id: 'new-window' }] : f.clients;
   await f.lifecycle('activate'); assert.equal(f.claims(), 0);
 });
+
+test('S19 fresh status reports eviction even while an older startup audit is in flight', async () => {
+  const f = setup(); await f.lifecycle('install'); f.restart();
+  const generation = (await f.memory.storage.keys()).find(name => name.includes(':build:'))!, stored = await f.memory.storage.open(generation);
+  const digest = f.scope.crypto.subtle.digest; let release!: () => void, entered!: () => void, calls = 0;
+  const gate = new Promise<void>(resolve => { release = resolve; }), reading = new Promise<void>(resolve => { entered = resolve; });
+  f.scope.crypto.subtle.digest = async (...args) => { if (++calls === 2) { entered(); await gate; } return digest(...args); };
+  function status(requestId: string, fresh: boolean) {
+    const channel = new MessageChannel(); let pending!: Promise<unknown>;
+    const response = new Promise<any>(resolve => { channel.port1.onmessage = event => resolve(event.data); });
+    f.listeners.get('message')!({ source: { id: '0' }, data: { protocol: 1, kind: 'status', requestId, pageBuild: 'a'.repeat(64), fresh }, ports: [channel.port2], waitUntil(p: Promise<unknown>) { pending = p; } });
+    return Promise.all([pending, response]).then(([, result]) => result).finally(() => { channel.port1.close(); channel.port2.close(); });
+  }
+  const old = status('old', false); await reading; assert.equal(await stored.delete(origin + '/index.html'), true);
+  const fresh = status('fresh', true); await new Promise(resolve => setImmediate(resolve)); release();
+  await old; const result = await fresh; assert.equal(result.phase, 'error'); assert.equal(result.error.code, 'offline.incomplete');
+});

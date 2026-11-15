@@ -146,3 +146,26 @@ test('S18 timeout and storage denial produce stable errors and normalize decoded
   const cache = h.cache(); await cache.install(); const response = await cache.match(request());
   assert.equal(response?.headers.get('content-encoding'), null); assert.equal(response?.headers.get('content-length'), '5');
 });
+
+test('S18 fresh audits cannot reuse an older in-flight snapshot after cache eviction', async () => {
+  const f = setup(), cache = f.cache(), installed = await cache.install(), stored = await f.storage.open(installed.generation);
+  let release!: () => void, entered!: () => void, calls = 0;
+  const gate = new Promise<void>(resolve => { release = resolve; }), reading = new Promise<void>(resolve => { entered = resolve; });
+  f.ports.digest = async bytes => { if (++calls === 2) { entered(); await gate; } return sha(bytes); };
+  const old = cache.audit(); await reading; // Metadata then index bytes already read into the old snapshot.
+  assert.equal(await stored.delete(request('/index.html')), true);
+  const fresh = cache.audit(true);
+  const rejected = assert.rejects(fresh, code('offline.incomplete'));
+  release(); await old; await rejected;
+  await assert.rejects(cache.match(request()), code('offline.incomplete'));
+});
+
+test('S18 a failed older audit does not prevent a fresh inspection of intact storage', async () => {
+  const f = setup(), cache = f.cache(); await cache.install();
+  let release!: () => void, entered!: () => void, calls = 0;
+  const gate = new Promise<void>(resolve => { release = resolve; }), reading = new Promise<void>(resolve => { entered = resolve; });
+  f.ports.digest = async bytes => { if (++calls === 2) { entered(); await gate; throw new Error('Old inspection failed'); } return sha(bytes); };
+  const old = cache.audit(), failed = assert.rejects(old, code('offline.storage')); await reading;
+  const fresh = cache.audit(true); release(); await failed; assert.equal((await fresh).complete, true);
+  assert.equal(await (await cache.match(request()))?.text(), 'hello');
+});

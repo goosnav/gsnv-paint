@@ -1,0 +1,72 @@
+[WebServer] (node:2039040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:2039073) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/image/image-pixel-drawing.browser.spec.ts:16:1 › Paint defaults to binary hard strokes, offers coarse brush pixels and keeps Smooth intentional (34.7s)
+(node:2039695) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 src/image/image-pixel-drawing.browser.spec.ts:29:1 › Sharp canvas rendering stays binary at fractional zoom; Smooth preview is reversible and view-only (30.1s)
+(node:2040277) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 src/image/image-pixel-drawing.browser.spec.ts:42:1 › Hard layer strokes and nearest free transform preserve alpha; saved PNG/project match the committed pixels (30.1s)
+
+
+  1) src/image/image-pixel-drawing.browser.spec.ts:16:1 › Paint defaults to binary hard strokes, offers coarse brush pixels and keeps Smooth intentional
+
+    Test timeout of 30000ms exceeded.
+
+    Error Context: test-results/image-image-pixel-drawing.-52ae6-nd-keeps-Smooth-intentional/error-context.md
+
+    Error Context: test-results/image-image-pixel-drawing.-52ae6-nd-keeps-Smooth-intentional/error-context.md
+
+  2) src/image/image-pixel-drawing.browser.spec.ts:29:1 › Sharp canvas rendering stays binary at fractional zoom; Smooth preview is reversible and view-only
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 30000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "filechooser"
+    ============================================================
+
+      29 | test('Sharp canvas rendering stays binary at fractional zoom; Smooth preview is reversible and view-only', async ({page})=>{
+      30 |  const bytes=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=c.height=16;const ctx=c.getContext('2d')!;ctx.fillStyle='white';ctx.fillRect(0,0,16,16);ctx.fillStyle='black';for(let y=0;y<16;y++)ctx.fillRect(0,y,y,1);return c.toDataURL().split(',')[1]!;});
+    > 31 |  const chooser=page.waitForEvent('filechooser');await page.locator('.gc-standard [data-command="file.open"]').click();await (await chooser).setFiles({name:'pixels.png',mimeType:'image/png',buffer:Buffer.from(bytes,'base64')});
+         |                     ^
+      32 |  await expect(canvas(page)).toHaveAttribute('width','16');const original=await pixels(page),before=await history(page);
+      33 |  await menu(page,'View','View settings');await page.getByRole('spinbutton',{name:'Zoom (%)',exact:true}).fill('550');
+      34 |  const rendering=page.getByLabel('Canvas rendering',{exact:true});await expect(rendering).toHaveValue('pixels',{timeout:2000});await page.getByRole('button',{name:'OK',exact:true}).click();
+        at /home/goosnav/Desktop/code/gsnv-paint/src/image/image-pixel-drawing.browser.spec.ts:31:21
+
+    Error Context: test-results/image-image-pixel-drawing.-64529-is-reversible-and-view-only/error-context.md
+
+    Error Context: test-results/image-image-pixel-drawing.-64529-is-reversible-and-view-only/error-context.md
+
+  3) src/image/image-pixel-drawing.browser.spec.ts:42:1 › Hard layer strokes and nearest free transform preserve alpha; saved PNG/project match the committed pixels
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 30000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "download"
+    ============================================================
+
+      48 |  // Hide paper to inspect actual layer alpha through the composite.
+      49 |  await page.locator('.image-layer').filter({hasText:'Background'}).locator('.image-layer-eye').click();const transparent=await pixels(page);expect(new Set(transparent.bytes.filter((_,i)=>i%4===3))).toEqual(new Set([0,255]));
+    > 50 |  const download=page.waitForEvent('download');await menu(page,'Image','Export PNG…');const png=await download;const data=await (await import('node:fs/promises')).readFile((await png.path())!);expect(data.length).toBeGreaterThan(100);
+         |                      ^
+      51 |  const save=page.waitForEvent('download');await page.locator('.image-stage').focus();await page.keyboard.press('Control+s');const project=await save;const saved=await (await import('node:fs/promises')).readFile((await project.path())!);
+      52 |  await page.locator('.gc-standard [data-command="file.new"]').click();const choose=page.waitForEvent('filechooser');await page.locator('.gc-standard [data-command="file.open"]').click();await (await choose).setFiles({name:'hard.gsnv-image',mimeType:'application/octet-stream',buffer:saved});
+      53 |  await expect(page.locator('.image-layer')).toHaveCount(2);expect((await pixels(page)).png).toBe(transparent.png);
+        at /home/goosnav/Desktop/code/gsnv-paint/src/image/image-pixel-drawing.browser.spec.ts:50:22
+
+    Error Context: test-results/image-image-pixel-drawing.-d7417--match-the-committed-pixels/error-context.md
+
+    Error Context: test-results/image-image-pixel-drawing.-d7417--match-the-committed-pixels/error-context.md
+
+  3 failed
+    src/image/image-pixel-drawing.browser.spec.ts:16:1 › Paint defaults to binary hard strokes, offers coarse brush pixels and keeps Smooth intentional
+    src/image/image-pixel-drawing.browser.spec.ts:29:1 › Sharp canvas rendering stays binary at fractional zoom; Smooth preview is reversible and view-only
+    src/image/image-pixel-drawing.browser.spec.ts:42:1 › Hard layer strokes and nearest free transform preserve alpha; saved PNG/project match the committed pixels

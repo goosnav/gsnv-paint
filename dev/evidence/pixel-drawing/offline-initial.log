@@ -1,0 +1,62 @@
+{"directory":"/tmp/gsnv-offline-acceptance-RK7LTs","buildA":"3250a55ef6057531f43e010bf780b9cb5680cc6759510232b49ba8ccfd9590d5","buildB":"1e1d0d50cde2f63cc9016799b17826bf4595b656293e3224cfeaa90f2170d019","files":56,"bytes":41214163}
+
+Running 9 tests using 1 worker
+
+(node:2057598) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/shared/offline-client.browser.spec.ts:8:1 › S20 real client reports failed B while A stays usable, then installs B without disturbing typing (4.3s)
+  ✓  2 src/shared/offline-retain.browser.spec.ts:8:1 › S18 real CacheStorage cleanup preserves A after partial B eviction and C activation (2.8s)
+  ✓  3 src/shared/offline-status.browser.spec.ts:8:1 › S21 XP footer details stay inside 1280×720 and Escape restores summary focus (532ms)
+  ✓  4 src/shared/offline-worker.browser.spec.ts:8:1 › S19 real Chrome installs, reloads offline and defers a complete update until all tabs close (1.8s)
+COLD root ready after complete browser restart, server stopped.
+COLD CAD solver/kernel/native/STEP complete.
+COLD Document/Slides/Spreadsheet edit/native/export complete.
+COLD Image/RAW/Audio/Video edit/native/export complete.
+COLD JS/Python stdlib/HTML/CSS/Stop/native/export complete.
+  ✓  5 src/shared/offline.browser.spec.ts:70:1 › OFFLINE production survives complete Chrome shutdown and first-use editing/export in all nine workspaces with the server stopped (37.1s)
+  ✓  6 src/shared/offline.browser.spec.ts:101:1 › OFFLINE failed full-build updates preserve A through cold restarts; complete B waits for dirty tabs and native close warnings (29.3s)
+  ✘  7 src/shared/offline.browser.spec.ts:173:1 › OFFLINE eviction and denied storage fail visibly, retry repairs, and foreign messages cannot mutate installation (7.7s)
+(node:2060357) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  8 src/shared/offline.browser.spec.ts:199:1 › OFFLINE first installation refuses to claim an unresponsive existing same-origin window (8.6s)
+  ✓  9 src/shared/offline.browser.spec.ts:211:1 › OFFLINE real local launcher retains control headers and its origin opens after the launcher and browser both stop (4.9s)
+
+
+  1) src/shared/offline.browser.spec.ts:173:1 › OFFLINE eviction and denied storage fail visibly, retry repairs, and foreign messages cannot mutate installation
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  locator('.gc-offline > summary')
+    Expected: "Offline unavailable"
+    Received: "Ready offline"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" locator('.gc-offline > summary') with timeout 5000ms
+      - waiting for locator('.gc-offline > summary')
+        14 × locator resolved to <summary title="Offline setup and updates">Ready offline</summary>
+           - unexpected value "Ready offline"
+
+
+      176 |     const page = context.pages()[0]!; await page.goto(server.url); await ready(page, a.build); const lazy = a.assets.find(asset => asset.url.includes('python_stdlib-'))!.url;
+      177 |     await page.evaluate(async ({ build, lazy }) => { const name = (await caches.keys()).find(name => name.startsWith(`gsnv-paint:offline:v1:build:${build}:`))!; await (await caches.open(name)).delete(lazy); }, { build: a.build, lazy });
+    > 178 |     await action(page, 'Check for updates'); await expect(summary(page)).toHaveText('Offline unavailable'); await expect(page.getByRole('group', { name: 'Offline setup' })).toContainText('missing or changed');
+          |                                                                          ^
+      179 |     await page.getByRole('tab', { name: 'Document', exact: true }).click(); await page.getByRole('button', { name: 'New blank document' }).click(); await page.locator('.doc-page').fill('online editing remains available 7391');
+      180 |     await action(page, 'Retry offline setup'); await ready(page, a.build); await expect(page.locator('.doc-page')).toHaveText('online editing remains available 7391');
+      181 |     const worker = context.serviceWorkers()[0]!;
+        at /home/goosnav/Desktop/code/gsnv-paint/src/shared/offline.browser.spec.ts:178:74
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-ev-5c5b7--cannot-mutate-installation/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-ev-5c5b7--cannot-mutate-installation/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-ev-5c5b7--cannot-mutate-installation/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    src/shared/offline.browser.spec.ts:173:1 › OFFLINE eviction and denied storage fail visibly, retry repairs, and foreign messages cannot mutate installation
+  8 passed (1.7m)
