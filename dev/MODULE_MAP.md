@@ -323,3 +323,9 @@ DEFAULT_PAGE, pageInches tuple and pageCss string. No I/O, errors or dependencie
 invalid setup remains DOC-CONTENT's responsibility. Status: GREEN; exact
 existing page/print assertions remain the characterization oracle. See the linked
 increment's boundary correction before implementation.
+# Paint touch increment — 2026-11-14
+
+S12 → IMAGE-APP: optional single-pointer policy and explicit browser-interruption
+reason; S12 remains domain-free. I59 and shared chrome CSS retain native controls
+while adapting the phone layout. Contracts, tests and scope are in
+[PAINT-TOUCH.md](PAINT-TOUCH.md). Status: CONTRACTED under existing BATCH authority.
