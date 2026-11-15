@@ -309,3 +309,9 @@ DOM/Canvas ports only; IMAGE-APP composes S05 for zoom and its existing local vi
 [Graphical transform contract](IMAGE-FREE-TRANSFORM.md) declares pure geometry,
 DOM pointer/numeric controls and the IMAGE-APP seam. Existing raster-ops performs
 final sampling; CSS previews reuse the original pixels. Tests precede each brick.
+
+## Paint control consistency and document footer amendment
+
+[Contract and verification plan](PAINT-CONTROLS-DOCUMENT-FOOTER.md) amends I59, I53,
+S09, DOC-CONTENT and DOCUMENT-APP under the owner’s existing BATCH authorization.
+Status: CONTRACTED for this increment. Existing ports and project formats remain.
