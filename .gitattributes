@@ -7,3 +7,8 @@ src/cad/fixtures/*.step binary
 # Preserve the upstream Fugue notice's CRLF bytes and recognize those line endings.
 vendor/paint-icons/FUGUE-README.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 public/licenses/fugue-3.5.6.README.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Preserve the newly vendored upstream notices/resources byte for byte.
+vendor/paint-icons/reactos/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+vendor/paint-icons/silk/README.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+public/licenses/silk.README.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+public/licenses/reactos-paint.LICENSE.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

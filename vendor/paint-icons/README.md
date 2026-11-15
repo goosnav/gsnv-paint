@@ -1,35 +1,64 @@
-# Native Paint icons
+# Classic Paint artwork — owner revision, 2026-11-15
 
-Paint uses **Fugue Icons 3.5.6**, copyright 2013 Yusuke Kamiyamane, licensed under
-[Creative Commons Attribution 3.0](https://creativecommons.org/licenses/by/3.0/).
-[Official source](https://p.yusukekamiyamane.com/). The 32 selected shadowless
-16×16 PNGs are **unmodified** generic interface objects; no logo/trademark icons
-or the archive's separately licensed exceptions are included. `FUGUE-README.txt`
-is the unmodified upstream notice; an identical copy ships with the application.
-The archive URL, SHA-256, individual source paths/hashes and mappings are pinned
-in `provenance.json`. No archive-wide runtime dependency is included.
+The owner rejected the previous thin, muted Fugue-first set. Paint now uses fuller
+source silhouettes, a stronger 32-colour palette and binary coverage. Toolbox
+images have 16×16 source pixels displayed at 24 CSS pixels with nearest-neighbour
+sampling inside unchanged 32px desktop / 40px touch buttons. Common toolbar/menu
+icons stay 16px. Workspace tabs and other editors are unchanged.
 
-Five selection/shape symbols come from the previously pinned **Tabler Icons
-3.52.0**, MIT, copyright 2020–2026 Paweł Kuna (`../tabler/`). Those derivatives
-use 1.5-unit square/miter strokes rendered on a 16px grid, then alpha threshold
-96/255 gives one-bit coverage. This keeps the lasso, ellipse selection and basic
-shapes thin. The rest of the set uses solid colour objects rather than enlarged
-outline geometry. These derivations do not modify the upstream SVGs.
+## Sources and licenses
 
-All artwork is embedded as PNG data in `src/shared/paint-bitmaps.ts`. The runtime
-creates an SVG accessibility wrapper with a local image child; no assets are
-fetched. The icon is 16 CSS pixels inside the existing larger click/touch target.
-Nearest-neighbour display preserves its pixel edges. Workspace tabs are unchanged.
-Attribution is visible under Help → Icon credits and in distributed notices.
+- **ReactOS Paint**, independently authored tool strip by Benedikt Freisen, 2009,
+  and ReactOS contributors. **LGPL-2.0-or-later**. Acquired from the author's
+  maintained standalone RPaint repository, pinned commit
+  `825ab84c3f23400c084f310e8b492b654ab064f6`. `reactos/iconbar.bmp` is byte-identical
+  to the original ReactOS submission `1ef38b9a3c9a635a44662f770d01aeb16386cf4d`.
+  The resource declaration, upstream README and full LGPL text are preserved.
+  Eleven tiles supply lasso, rectangle selection, eraser, bucket, eyedropper,
+  brush, airbrush, text, line, rectangle and ellipse. The magenta key is made
+  transparent; tiles are cropped and colour-processed. These derivatives remain
+  LGPL-2.0-or-later. This is not extracted Microsoft artwork.
+- **Silk**, Mark James, **CC BY 2.5**, creator's repository pinned at
+  `ae40eb194a6e4e86ad64d677611868c3d22d3c2a`. Seventeen PNGs supply common commands,
+  the wand and transform handles. Upstream notice is `silk/README.txt`.
+- **Fugue 3.5.6**, copyright 2013 Yusuke Kamiyamane, **CC BY 3.0**. Selected
+  complementary shapes, including the familiar pencil, remain. The original
+  32-file subset and source hashes remain archived unchanged; current rendered
+  versions have stronger saturation/contrast and a restricted palette.
+- **Tabler 3.52.0**, copyright 2020–2026 Paweł Kuna, **MIT**. Move and ellipse
+  selection use 2.25-unit source strokes rasterized onto the 16px grid. Earlier
+  thin shape derivatives remain archived; current drawing shapes come from Paint.
+
+`provenance.json` records source URLs/commits/hashes, every tool mapping and each
+colour-processing recipe. The visible Help credits link to the creator/project
+pages, full notices and a locally shipped artwork source ZIP. The source ZIP
+contains the preferred, directly editable PNGs plus original BMP/PNG/SVG sources,
+licenses and recipes; no app logic is incorporated from another editor.
+
+## Reproduce or replace
 
 ```sh
-node vendor/paint-icons/rasterize.mjs         # rebuild the five derivatives (local Chromium)
-node vendor/paint-icons/rasterize.mjs --check # compare exact PNGs with the pinned derivation
-node vendor/paint-icons/generate.mjs          # embed reviewed local assets
-node vendor/paint-icons/generate.mjs --check  # verify source hashes/dimensions/catalog offline
+node --import tsx vendor/paint-icons/build-classic.mjs
+node --import tsx vendor/paint-icons/build-classic.mjs --check
+node vendor/paint-icons/generate.mjs
+node vendor/paint-icons/generate.mjs --check
 ```
 
-The raster script requires the repository's Playwright and installed Chrome,
-not a network connection. Review native-size output when updating the browser or
-sources. Do not enlarge icons to fill their buttons, introduce Microsoft artwork,
-or apply this theme to the top workspace switcher or other editors.
+The development-only builder uses installed Chrome/Playwright for decoding and
+the app's `quantizeImage` CORE for colour mapping. It retains source geometry,
+removes only ReactOS's exact magenta key, applies each recipe's saturation and
+contrast, then maps to the listed RGB palette without dithering. The New page
+receives a one-pixel grey keyline so it remains visible against the toolbar.
+No processing, packages or network requests are needed at runtime.
+
+Manual recipe: saturation uses luminance `0.2126R + 0.7152G + 0.0722B` and scales
+each channel's distance from it; contrast scales distance from 128. Clamp/round
+channels to bytes. Alpha below 128 becomes transparent; other pixels become
+opaque. Choose the nearest listed palette RGB by squared Euclidean distance,
+with the first colour winning ties. Directly editable output PNGs are in
+`classic/`; no proprietary tool or hidden source is needed to change them.
+
+The reviewed PNGs are embedded by `generate.mjs` into `paint-bitmaps.ts`. Runtime
+SVG wrappers only supply accessibility, layout and local PNG display. Prefer
+reviewing the actual toolbox over enlarged contact sheets; passing tests does
+not imply owner approval of artwork.

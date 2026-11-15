@@ -92,3 +92,42 @@ availability and transformation recipes. Run the artwork through the app's own
 palette quantizer on a 16px grid; inspect colour, silhouettes and spacing in the
 real UI before committing the implementation. Test existing accessibility and
 workspace isolation plus source hashes, binary coverage and palette membership.
+
+### Revised implementation and verification
+
+The original visual design above is **owner-rejected**, despite its passing
+technical checks. This revision replaces eleven main tools with the ReactOS Paint
+strip, seventeen commands/tools with Silk, and keeps complementary shapes such as
+the pencil. The 37 source bitmaps map to 56 catalog names, using a documented
+32-colour palette, stronger saturation/contrast and binary coverage. Native 16px
+artwork displays at **24px in the toolbox**, 16px in the common toolbar, within
+unchanged button targets. Earlier “do not enlarge” guidance is superseded by this
+owner-directed proportion correction. Other workspace artwork remains untouched.
+
+PIR-01–04 automated verification: **PASS**, none failed or skipped:
+
+- `npm test`: **1,216 passed, 0 failed, 0 skipped**, exit 0 (36.9s).
+- `npm run build`: **PASS**, exit 0; TypeScript and production build (3.06s).
+  Existing bundle-size advisory remains.
+- `npx playwright test src/shared/paint-icons.browser.spec.ts
+  src/shared/icons.browser.spec.ts src/shared/chrome.browser.spec.ts
+  src/image/image-upgrade-visual.browser.spec.ts`: **6 passed**, exit 0 (12.5s).
+  The added palette/coverage test first failed on the previous artwork (940
+  partially transparent pixels), then passed on the revised assets. Existing
+  checks cover tool activation, label/shortcut preservation, 32px/40px targets,
+  desktop DPR1/2, 390px touch emulation, credits and the unchanged switcher.
+- `node --import tsx vendor/paint-icons/build-classic.mjs --check`: **PASS**,
+  exit 0; 37 classic icons reproduced exactly using pinned sources and the app's
+  quantizer. No application logic was imported from another editor.
+- `node vendor/paint-icons/generate.mjs --check`: **PASS**, exit 0;
+  32 retained Fugue + 22 new source hashes, 37 bitmaps and 56 mappings verified.
+- Module check: icons and chrome **PASS**, existing chrome 245-line soft advisory.
+- Reviewed actual-size screenshots: [desktop](evidence/paint-icon-classic/desktop.png),
+  [DPR2](evidence/paint-icon-classic/desktop-dpr2.png),
+  [touch emulation](evidence/paint-icon-classic/touch.png).
+
+Source licenses, unchanged originals, colour recipes and directly editable PNGs
+ship in `public/licenses/classic-paint-artwork.zip`, linked from Help credits.
+The ReactOS-derived artwork remains LGPL-2.0-or-later; independent app logic is
+unchanged. Untested: physical iPhone/iPad, macOS Safari, Windows and hosted rollout.
+**GREEN for technical checks; owner visual acceptance remains pending.**

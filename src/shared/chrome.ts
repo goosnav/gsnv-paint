@@ -160,7 +160,7 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     const signature = JSON.stringify([item.icon, item.label, item.shortcut, surface, current.workspace]);
     if (presentation.get(button) !== signature) {
       button.replaceChildren();
-      if (item.icon) button.append(renderIcon({ document, name: item.icon, label: item.label, size: current.workspace === 'image' ? 16 : 18, ...(current.workspace === 'image' ? { theme: 'paint' as const } : {}) }));
+      if (item.icon) button.append(renderIcon({ document, name: item.icon, label: item.label, size: current.workspace === 'image' ? (surface === 'tool' ? 24 : 16) : 18, ...(current.workspace === 'image' ? { theme: 'paint' as const } : {}) }));
       if (surface === 'toolbar') button.append(make('span', 'gc-command-label', item.label));
       if (isMenu) { button.setAttribute('role', 'menuitem'); button.append(make('span', 'gc-menu-label', item.label), make('span', 'gc-key', item.shortcut)); }
       presentation.set(button, signature);

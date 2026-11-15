@@ -92,5 +92,26 @@ test('PIR-04 native Paint source PNGs, licenses and generated data stay pinned a
   assert.match(credits, /Yusuke Kamiyamane/); assert.match(credits, /https:\/\/creativecommons.org\/licenses\/by\/3.0\//);
   assert.match(credits, /raster derivatives/);
   const output = execFileSync(process.execPath, ['vendor/paint-icons/generate.mjs', '--check'], { cwd: fileURLToPath(root), encoding: 'utf8' });
-  assert.match(output, /32 Fugue hashes, 37 native bitmaps and 56 mappings verified/);
+  assert.match(output, /32 Fugue \+ 22 new source hashes, 37 native bitmaps and 56 mappings verified/);
+});
+
+test('PIR-04 revised classic sources retain their hashes, license notices and editable distribution', () => {
+  const directory = new URL('vendor/paint-icons/', root);
+  const manifest = JSON.parse(readFileSync(new URL('provenance.json', directory), 'utf8')) as {
+    classicSources: { file: string; source: string; sha256: string; license: string }[];
+    activeArtworkLicenses: Record<string, string>;
+  };
+  assert.equal(manifest.classicSources.length, 22);
+  for (const source of manifest.classicSources) {
+    assert.match(source.source, /^https:\/\/github.com\/(?:katahiromz\/RPaint|markjames\/famfamfam-silk-icons)\/blob\/[a-f0-9]{40}\//);
+    assert.equal(createHash('sha256').update(readFileSync(new URL(source.file, directory))).digest('hex'), source.sha256);
+  }
+  assert.equal(Object.keys(manifest.activeArtworkLicenses).length, 37);
+  assert.equal(Object.values(manifest.activeArtworkLicenses).filter(license => license === 'LGPL-2.0-or-later').length, 11);
+  assert.equal(readFileSync(new URL('public/licenses/reactos-paint.LICENSE.txt', root), 'utf8'), readFileSync(new URL('reactos/LICENSE.txt', directory), 'utf8'));
+  assert.equal(readFileSync(new URL('public/licenses/silk.README.txt', root), 'utf8'), readFileSync(new URL('silk/README.txt', directory), 'utf8'));
+  const archive = readFileSync(new URL('public/licenses/classic-paint-artwork.zip', root));
+  for (const source of ['paint-icons/reactos/iconbar.bmp', 'paint-icons/reactos/LICENSE.txt', 'paint-icons/provenance.json', 'paint-icons/classic/paintBrush.png']) assert.ok(archive.includes(Buffer.from(source)), source);
+  const credits = readFileSync(new URL('public/icon-credits.html', root), 'utf8');
+  assert.match(credits, /classic-paint-artwork.zip/); assert.match(credits, /Benedikt Freisen/); assert.match(credits, /Mark James/);
 });

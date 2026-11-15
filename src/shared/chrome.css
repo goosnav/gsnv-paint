@@ -72,6 +72,7 @@
 .gc-window[data-active-workspace=image] .gc-palette { grid-template-columns:repeat(2,32px); gap:2px; }
 .gc-window[data-active-workspace=image] .gc-palette .gc-icon-button { width:32px; height:32px; }
 .gc-window svg[data-icon-style=paint-bitmap] { width:16px; height:16px; image-rendering:crisp-edges; image-rendering:pixelated; }
+.gc-palette svg[data-icon-style=paint-bitmap] { width:24px; height:24px; }
 .gc-viewport { min-width:0; min-height:0; position:relative; overflow:hidden; background:var(--xp-workspace); box-shadow:inset 1px 1px 0 var(--xp-dark),inset -1px -1px 0 #fff; outline:none; }
 .gc-viewport > .app-editor { z-index:0; }
 .gc-viewport:focus-visible { outline:1px dotted #fff; outline-offset:-4px; }

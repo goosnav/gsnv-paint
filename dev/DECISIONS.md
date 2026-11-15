@@ -426,3 +426,25 @@ SVG outlines. Existing 32px/40px targets, labels, shortcuts and editing behaviou
 stay intact. Shared command artwork is themed only in Paint. The approved top
 workspace icons and every other workspace's artwork stay unchanged. Revisit
 only after an actual-size recognition review; owner visual acceptance remains open.
+
+## D37 — classic Paint source silhouettes and stronger colour (2026-11-15)
+
+Owner review rejected D36's thin, pale appearance. Use the independently authored
+ReactOS Paint strip for eleven tools, Silk by Mark James for seventeen commands
+and tools, and complementary Fugue/Tabler shapes including the familiar pencil.
+Pin sources and license records in `vendor/paint-icons/provenance.json`. LGPL
+ReactOS art is redistributed with its full license, originals, editable PNGs and
+transformation recipes in a locally served source ZIP. Silk is CC BY 2.5, Fugue
+CC BY 3.0 and Tabler MIT. No source code from those editors is imported.
+
+Process source art through the app's existing strict palette quantizer, with
+explicit saturation/contrast, a shared 32-colour palette and binary coverage.
+This changes stored asset pixels, not merely a CSS blur/filter. The toolbox shows
+16px source art at 24 CSS pixels using nearest-neighbour sampling; toolbar icons
+stay 16px and click/touch targets are unchanged. It corrects D36's excessive
+empty space and weak silhouettes. At DPR2 each source pixel occupies 3 physical
+pixels; DPR1 uses the browser's nearest-neighbour sampling at 1.5×.
+
+The header/workspace icons remain unchanged. Rejecting this artwork again calls
+for another concrete source/proportion review, not an assertion that tests prove
+it looks right. See the icon refinement checkpoint for screenshots and test scope.

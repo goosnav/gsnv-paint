@@ -205,6 +205,64 @@
     }
   },
   "glyphs": {
+    "paintMove": "classic/paintMove.png",
+    "paintSelect": "classic/paintSelect.png",
+    "paintWand": "classic/paintWand.png",
+    "paintPencil": "classic/paintPencil.png",
+    "paintBrush": "classic/paintBrush.png",
+    "paintAirbrush": "classic/paintAirbrush.png",
+    "paintEraser": "classic/paintEraser.png",
+    "paintSmudge": "classic/paintSmudge.png",
+    "paintClone": "classic/paintClone.png",
+    "paintBlur": "classic/paintBlur.png",
+    "paintFill": "classic/paintFill.png",
+    "paintGradient": "classic/paintGradient.png",
+    "paintPicker": "classic/paintPicker.png",
+    "paintText": "classic/paintText.png",
+    "new": "classic/new.png",
+    "open": "classic/open.png",
+    "save": "classic/save.png",
+    "export": "classic/export.png",
+    "undo": "classic/undo.png",
+    "redo": "classic/redo.png",
+    "copy": "classic/copy.png",
+    "paste": "classic/paste.png",
+    "cut": "classic/cut.png",
+    "crop": "classic/crop.png",
+    "rotate": "classic/rotate.png",
+    "flip": "classic/flip.png",
+    "layerAdd": "classic/layerAdd.png",
+    "hand": "classic/hand.png",
+    "zoomIn": "classic/zoomIn.png",
+    "zoomOut": "classic/zoomOut.png",
+    "fit": "classic/fit.png",
+    "paintLasso": "classic/paintLasso.png",
+    "paintEllipseSelect": "classic/paintEllipseSelect.png",
+    "paintLine": "classic/paintLine.png",
+    "paintRectangle": "classic/paintRectangle.png",
+    "paintEllipse": "classic/paintEllipse.png",
+    "move": "classic/paintMove.png",
+    "select": "classic/paintSelect.png",
+    "wand": "classic/paintWand.png",
+    "pencil": "classic/paintPencil.png",
+    "brush": "classic/paintBrush.png",
+    "airbrush": "classic/paintAirbrush.png",
+    "eraser": "classic/paintEraser.png",
+    "smudge": "classic/paintSmudge.png",
+    "clone": "classic/paintClone.png",
+    "blur": "classic/paintBlur.png",
+    "fill": "classic/paintFill.png",
+    "gradient": "classic/paintGradient.png",
+    "picker": "classic/paintPicker.png",
+    "text": "classic/paintText.png",
+    "lasso": "classic/paintLasso.png",
+    "ellipseSelect": "classic/paintEllipseSelect.png",
+    "line": "classic/paintLine.png",
+    "rectangle": "classic/paintRectangle.png",
+    "ellipse": "classic/paintEllipse.png",
+    "paintTransform": "classic/paintTransform.png"
+  },
+  "previousGlyphs": {
     "paintMove": "fugue/arrow-move.png",
     "paintSelect": "fugue/selection.png",
     "paintWand": "fugue/wand.png",
@@ -261,5 +319,413 @@
     "rectangle": "derived/paintRectangle.png",
     "ellipse": "derived/paintEllipse.png",
     "paintTransform": "fugue/selection-resize.png"
+  },
+  "classicSources": [
+    {
+      "file": "reactos/iconbar.bmp",
+      "source": "https://github.com/katahiromz/RPaint/blob/825ab84c3f23400c084f310e8b492b654ab064f6/img/iconbar.bmp",
+      "sha256": "e73af9a48e5b0bc2124f6378be155564e0bd089e890ecca5a42b98eb7db1d235",
+      "license": "LGPL-2.0-or-later"
+    },
+    {
+      "file": "reactos/LICENSE.txt",
+      "source": "https://github.com/katahiromz/RPaint/blob/825ab84c3f23400c084f310e8b492b654ab064f6/LICENSE.txt",
+      "sha256": "681e386e44a19d7d0674b4320272c90e66b6610b741e7e6305f8219c42e85366",
+      "license": "LGPL-2.0-or-later"
+    },
+    {
+      "file": "reactos/rsrc.rc",
+      "source": "https://github.com/katahiromz/RPaint/blob/825ab84c3f23400c084f310e8b492b654ab064f6/rsrc.rc",
+      "sha256": "4fe00435fbc6703cda0a239fe8995403ff270427054fef79cdd2aeadf452e6fd",
+      "license": "LGPL-2.0-or-later"
+    },
+    {
+      "file": "reactos/README.md",
+      "source": "https://github.com/katahiromz/RPaint/blob/825ab84c3f23400c084f310e8b492b654ab064f6/README.md",
+      "sha256": "8e04f69e894bbe6fa18f4a597d3c38f006929283d2e3c5456efc116256b6c24e",
+      "license": "LGPL-2.0-or-later"
+    },
+    {
+      "file": "silk/page_white.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/page_white.png",
+      "sha256": "55686d27b3fb5fd43abbae4afcbbebfe39b3f58bd1ef4babe39dd1939451933a",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/folder.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/folder.png",
+      "sha256": "d049b83cadc5ae55a1639837a7653db1def729761f1913ee5dc4e4eb47fbd2a6",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/disk.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/disk.png",
+      "sha256": "9697f3ae90bfdbcffe8811d9a5cd2e2a98f1d44a06c2cc9d8eb5674fc414f33e",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/page_white_go.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/page_white_go.png",
+      "sha256": "918b2a2ba8bd4494b11c4a930fd2753434ebfc717e63961682c261281b5ad341",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/arrow_undo.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/arrow_undo.png",
+      "sha256": "e65ff33d80110401713ce6b9501e42458e2ee8739a4f4b7c1270f6e690d4af63",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/arrow_redo.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/arrow_redo.png",
+      "sha256": "dab1b969813e5b2514ded0c54ec5c749dde1e1a371a6f3e162b5d8f66c62974b",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/page_copy.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/page_copy.png",
+      "sha256": "e5a55f716a2d21757ca30812d5e35e5b9048113ce3bc0bf37565dba5c5e2e1d1",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/page_paste.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/page_paste.png",
+      "sha256": "a9773e7818099acd84f60693b3222e7fd154be450225c6421eb1d48223313f61",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/cut.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/cut.png",
+      "sha256": "06983a476c59e259995d89ee587843068461e683bab25e95944a77c1df8a8872",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/arrow_rotate_clockwise.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/arrow_rotate_clockwise.png",
+      "sha256": "29eddb8fe7beea1fc07a1d8c275ada1d39a0b12ca6f1583ca0fa175eb992319a",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/shape_flip_horizontal.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/shape_flip_horizontal.png",
+      "sha256": "5bf0dbf63ab34f143b53a553c9b438acd6ab82b8b38f2765b9580fa856f20353",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/image_add.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/image_add.png",
+      "sha256": "0d8857ccad2f5229a4ba2adf6dbb2b94392fe2bb08079d572546dde81de37a1b",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/zoom_in.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/zoom_in.png",
+      "sha256": "ba16b1f40d9f38942d77b2e8dd0d1bd56b1a7d25ffbd80908b9028d705fc9eca",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/zoom_out.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/zoom_out.png",
+      "sha256": "631b930cb4c6f8d16f67221b4ca840cc15f367eb0ff6bc2d955165e8d187ae25",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/zoom.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/zoom.png",
+      "sha256": "3bda017383ceb591c5e0519dbf50fcb6886156c12ca548560119b7d03b54e419",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/wand.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/wand.png",
+      "sha256": "b1f3cee2528782aef4dff60ddb3867d1837349856e8b846d16d967f90ce987b5",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/shape_handles.png",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/icons/shape_handles.png",
+      "sha256": "db01b17b197b5e5fb144899367e36ebf4908c974b7e49fe5a232ac824233b0f3",
+      "license": "CC-BY-2.5"
+    },
+    {
+      "file": "silk/README.txt",
+      "source": "https://github.com/markjames/famfamfam-silk-icons/blob/ae40eb194a6e4e86ad64d677611868c3d22d3c2a/readme.txt",
+      "sha256": "d3d2bdafd2f0f7d199919c47334b6c1214c3c67674ef7b3e7ff6c0816d39215d",
+      "license": "CC-BY-2.5"
+    }
+  ],
+  "classicRecipes": {
+    "paintBrush": {
+      "source": "reactos/iconbar.bmp",
+      "tile": 7,
+      "saturation": 1.3,
+      "contrast": 1.15
+    },
+    "paintPicker": {
+      "source": "reactos/iconbar.bmp",
+      "tile": 4,
+      "saturation": 1.3,
+      "contrast": 1.15
+    },
+    "paintEllipse": {
+      "source": "reactos/iconbar.bmp",
+      "tile": 14,
+      "saturation": 1.3,
+      "contrast": 1.15
+    },
+    "paintPencil": {
+      "source": "fugue/pencil.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintText": {
+      "source": "reactos/iconbar.bmp",
+      "tile": 9,
+      "saturation": 1.3,
+      "contrast": 1.15
+    },
+    "paintGradient": {
+      "source": "fugue/gradient.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintLasso": {
+      "source": "reactos/iconbar.bmp",
+      "tile": 0,
+      "saturation": 1.3,
+      "contrast": 1.15
+    },
+    "paste": {
+      "source": "silk/page_paste.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "export": {
+      "source": "silk/page_white_go.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintEllipseSelect": {
+      "source": "../tabler/circle-dashed.svg",
+      "stroke": 2.25,
+      "saturation": 1,
+      "contrast": 1
+    },
+    "crop": {
+      "source": "fugue/ruler-crop.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintWand": {
+      "source": "silk/wand.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "hand": {
+      "source": "fugue/hand.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintTransform": {
+      "source": "silk/shape_handles.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintSelect": {
+      "source": "reactos/iconbar.bmp",
+      "tile": 1,
+      "saturation": 1.3,
+      "contrast": 1.15
+    },
+    "zoomIn": {
+      "source": "silk/zoom_in.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "save": {
+      "source": "silk/disk.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "undo": {
+      "source": "silk/arrow_undo.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintSmudge": {
+      "source": "fugue/hand-finger.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintEraser": {
+      "source": "reactos/iconbar.bmp",
+      "tile": 2,
+      "saturation": 1.3,
+      "contrast": 1.15
+    },
+    "paintAirbrush": {
+      "source": "reactos/iconbar.bmp",
+      "tile": 8,
+      "saturation": 1.3,
+      "contrast": 1.15
+    },
+    "rotate": {
+      "source": "silk/arrow_rotate_clockwise.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintRectangle": {
+      "source": "reactos/iconbar.bmp",
+      "tile": 12,
+      "saturation": 1.3,
+      "contrast": 1.15
+    },
+    "copy": {
+      "source": "silk/page_copy.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "fit": {
+      "source": "silk/zoom.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintMove": {
+      "source": "../tabler/arrows-move.svg",
+      "stroke": 2.25,
+      "saturation": 1,
+      "contrast": 1
+    },
+    "paintClone": {
+      "source": "fugue/stamp.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "zoomOut": {
+      "source": "silk/zoom_out.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintLine": {
+      "source": "reactos/iconbar.bmp",
+      "tile": 10,
+      "saturation": 1.3,
+      "contrast": 1.15
+    },
+    "paintBlur": {
+      "source": "fugue/water.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "paintFill": {
+      "source": "reactos/iconbar.bmp",
+      "tile": 3,
+      "saturation": 1.3,
+      "contrast": 1.15
+    },
+    "new": {
+      "source": "silk/page_white.png",
+      "saturation": 1.5,
+      "contrast": 1.15,
+      "outline": "#606060"
+    },
+    "redo": {
+      "source": "silk/arrow_redo.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "flip": {
+      "source": "silk/shape_flip_horizontal.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "open": {
+      "source": "silk/folder.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "cut": {
+      "source": "silk/cut.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    },
+    "layerAdd": {
+      "source": "silk/image_add.png",
+      "saturation": 1.5,
+      "contrast": 1.15
+    }
+  },
+  "classicPalette": [
+    "#000000",
+    "#800000",
+    "#008000",
+    "#c09000",
+    "#000080",
+    "#800080",
+    "#008080",
+    "#c0c0c0",
+    "#808080",
+    "#ff0000",
+    "#00ff00",
+    "#ffff00",
+    "#0000ff",
+    "#ff00ff",
+    "#00ffff",
+    "#ffffff",
+    "#404040",
+    "#606060",
+    "#e0e0e0",
+    "#804000",
+    "#c06000",
+    "#ff8000",
+    "#ffc040",
+    "#ffe080",
+    "#80c0ff",
+    "#4080ff",
+    "#0040c0",
+    "#0080ff",
+    "#804020",
+    "#c08040",
+    "#ffc080",
+    "#ff8080"
+  ],
+  "activeArtworkLicenses": {
+    "classic/paintBrush.png": "LGPL-2.0-or-later",
+    "classic/paintPicker.png": "LGPL-2.0-or-later",
+    "classic/paintEllipse.png": "LGPL-2.0-or-later",
+    "classic/paintPencil.png": "CC-BY-3.0",
+    "classic/paintText.png": "LGPL-2.0-or-later",
+    "classic/paintGradient.png": "CC-BY-3.0",
+    "classic/paintLasso.png": "LGPL-2.0-or-later",
+    "classic/paste.png": "CC-BY-2.5",
+    "classic/export.png": "CC-BY-2.5",
+    "classic/paintEllipseSelect.png": "MIT",
+    "classic/crop.png": "CC-BY-3.0",
+    "classic/paintWand.png": "CC-BY-2.5",
+    "classic/hand.png": "CC-BY-3.0",
+    "classic/paintTransform.png": "CC-BY-2.5",
+    "classic/paintSelect.png": "LGPL-2.0-or-later",
+    "classic/zoomIn.png": "CC-BY-2.5",
+    "classic/save.png": "CC-BY-2.5",
+    "classic/undo.png": "CC-BY-2.5",
+    "classic/paintSmudge.png": "CC-BY-3.0",
+    "classic/paintEraser.png": "LGPL-2.0-or-later",
+    "classic/paintAirbrush.png": "LGPL-2.0-or-later",
+    "classic/rotate.png": "CC-BY-2.5",
+    "classic/paintRectangle.png": "LGPL-2.0-or-later",
+    "classic/copy.png": "CC-BY-2.5",
+    "classic/fit.png": "CC-BY-2.5",
+    "classic/paintMove.png": "MIT",
+    "classic/paintClone.png": "CC-BY-3.0",
+    "classic/zoomOut.png": "CC-BY-2.5",
+    "classic/paintLine.png": "LGPL-2.0-or-later",
+    "classic/paintBlur.png": "CC-BY-3.0",
+    "classic/paintFill.png": "LGPL-2.0-or-later",
+    "classic/new.png": "CC-BY-2.5",
+    "classic/redo.png": "CC-BY-2.5",
+    "classic/flip.png": "CC-BY-2.5",
+    "classic/open.png": "CC-BY-2.5",
+    "classic/cut.png": "CC-BY-2.5",
+    "classic/layerAdd.png": "CC-BY-2.5"
   }
 }

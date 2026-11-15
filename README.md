@@ -64,7 +64,7 @@ All use shared save/open, undo/redo, stored projects and local recovery. Failed 
 
 The [Open/navigation/transform checkpoint](dev/PAINT-OPEN-NAVIGATION-EVIDENCE.md) records this update, its regression checks and platform limits.
 
-The [Paint icon refinement](dev/PAINT-ICON-REFINEMENT.md) replaces Paint’s enlarged outlines with slender native colour bitmaps, preserves the workspace switcher, and records licensing and actual-size checks.
+The [Paint icon refinement](dev/PAINT-ICON-REFINEMENT.md) reworks Paint’s tools with fuller classic Paint silhouettes, saturated pixel colours and clearer sizing. It preserves the workspace switcher and records licensing, source artwork and actual-size checks.
 
 The preceding [Save/export UI checkpoint](dev/SAVE-EXPORT-UX.md) passes 993 unit tests and 93 combined browser checks, plus local Cloudflare hosting and a cold offline workflow through all nine editors. It adds the Save choices, Image-first startup and locally bundled pixel Paint icons. This UI work does not change the broader readiness ledger.
 

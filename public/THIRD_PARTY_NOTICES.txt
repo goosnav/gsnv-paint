@@ -62,13 +62,28 @@ Unmodified SVG sources, application mapping, generator and SHA-256 provenance ar
 retained in vendor/tabler. Paths retain the original 24-unit geometry and round
 strokes; the app supplies toolbar colours. All assets are bundled locally.
 
-Fugue Icons 3.5.6 — selected Paint colour icons
-Copyright (C) 2013 Yusuke Kamiyamane. All rights reserved.
+Classic Paint icon revision (2026-11-15)
+ReactOS Paint tool strip: copyright 2009 Benedikt Freisen and ReactOS contributors.
+Source: https://github.com/katahiromz/RPaint/tree/825ab84c3f23400c084f310e8b492b654ab064f6
+License: LGPL-2.0-or-later, full text in licenses/reactos-paint.LICENSE.txt.
+Eleven tiles extracted, exact magenta background removed and colours quantized.
+These modified artwork files remain LGPL-2.0-or-later. No editor code was imported.
+
+Silk icons: Mark James, Creative Commons Attribution 2.5.
+Source: https://github.com/markjames/famfamfam-silk-icons/tree/ae40eb194a6e4e86ad64d677611868c3d22d3c2a
+Creator: http://www.famfamfam.com/lab/icons/silk/
+License: https://creativecommons.org/licenses/by/2.5/
+Original notice: licenses/silk.README.txt.
+
+Fugue Icons 3.5.6: copyright (C) 2013 Yusuke Kamiyamane.
 Source: https://p.yusukekamiyamane.com/
 License: Creative Commons Attribution 3.0, https://creativecommons.org/licenses/by/3.0/
-Unmodified shadowless 16x16 PNG subset. No logo or separately licensed exception icons.
-Upstream notice: licenses/fugue-3.5.6.README.txt
-Visible attribution: icon-credits.html (also linked from Help).
-Five companion selection/shape icons are raster derivatives of the Tabler subset
-above: thinner strokes, 16x16 resolution and binary coverage. Their MIT license
-and original sources remain distributed; see vendor/paint-icons for provenance.
+Original notice: licenses/fugue-3.5.6.README.txt.
+
+Selected Silk and Fugue PNGs have modified saturation/contrast, a 32-colour palette
+and binary alpha. The New document receives a grey keyline. Move and ellipse
+selection are raster derivatives of the Tabler subset credited above (MIT).
+Changes made by gsnv-paint on November 15, 2026.
+Visible attribution and download link: icon-credits.html (linked from Help).
+Editable PNGs, original source artwork, licenses and exact recipes:
+licenses/classic-paint-artwork.zip. Source artwork is independently replaceable.

@@ -27,7 +27,7 @@ const WORKSPACES = new Set(['image', 'cad', 'photo', 'video', 'document', 'slide
 const ARTICLES: readonly Article[] = [
   { id: 'help.icon-credits', title: 'Icon credits', workspace: 'shared', section: 'faq', keywords: ['icons', 'artwork', 'Fugue', 'Tabler', 'license', 'credits'], steps: [
     'Choose Icon credits at the bottom of Help for source and license links.',
-    'Paint uses unmodified Fugue 3.5.6 colour icons by Yusuke Kamiyamane (Creative Commons Attribution 3.0), plus five raster derivatives of Tabler 3.52.0 symbols by Paweł Kuna (MIT).',
+    'Paint uses classic-palette artwork derived from ReactOS Paint (LGPL), Silk by Mark James (CC BY 2.5), Fugue by Yusuke Kamiyamane (CC BY 3.0) and Tabler by Paweł Kuna (MIT). The credits include editable source artwork.',
     'The workspace icons retain their existing artwork. All icons are bundled locally and work offline.',
   ] },
   { id: 'help.paint', title: 'Begin drawing in Paint', workspace: 'image', section: 'getting-started', keywords: ['canvas', 'new', 'draw', 'brush', 'pencil', 'size'], target: 'image.pencil', steps: [

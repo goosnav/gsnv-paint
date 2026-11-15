@@ -5,9 +5,10 @@
  *            OUT: SVGSVGElement, accessible label; local paths or embedded 16px Paint PNG.
  *            RAISES: RangeError for unknown glyph or nonfinite/out-of-range size.
  * GUARANTEES No fetched imagery, Microsoft assets, markup injection or shared DOM nodes.
- * TUNING     Paint bitmaps display at native 16px in chrome; nearest-neighbour scaling.
+ * TUNING     Paint bitmaps: 16px source, 24px toolbox / 16px commands, nearest-neighbour.
  *            Other glyphs retain Tabler 2-unit or original 1.5-unit SVG strokes.
- * DECISIONS  D1: Paint uses Fugue colour PNGs and five thin Tabler raster derivatives.
+ * DECISIONS  D1: Paint uses classic-palette derivatives of ReactOS, Silk and complementary
+ *            Fugue/Tabler artwork. Fuller source silhouettes replace the rejected thin set.
  *            Alternative: runtime package/CDN; pinned local paths keep offline behavior.
  *            Upstream originals, mapping, hashes and licenses live in vendor/paint-icons
  *            and vendor/tabler; other workspaces retain existing vector artwork.
