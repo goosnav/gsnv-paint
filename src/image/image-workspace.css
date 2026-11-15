@@ -53,8 +53,11 @@
 /* A compact view aid, kept separate from the image pixels. */
 .image-navigator { position:absolute;right:12px;bottom:12px;width:184px;padding:7px;background:var(--xp-face,#ece9d8);border:1px solid #97978b;border-radius:3px;box-shadow:0 1px 3px #0003;font-size:11px;z-index:3;cursor:var(--cursor-arrow); }
 .image-navigator[hidden] { display:none; }
-.image-navigator summary { padding:2px 0 5px;color:#515b63;cursor:var(--cursor-hand);user-select:none; }
+.image-navigator summary { padding:2px 0 5px;color:#324b69;font-weight:700;cursor:var(--cursor-hand);user-select:none; }
 .navigator-map { display:block;position:relative;width:168px;height:88px;border:0;padding:0;background:repeating-conic-gradient(#ddd 0 25%,#fff 0 50%) 0 0/10px 10px;overflow:hidden;touch-action:none;cursor:var(--cursor-arrow); }
+.navigator-empty { position:absolute;inset:8px;align-content:center;text-align:center;color:#515b63; }
+.navigator-hint { margin:5px 0 0;color:#515b63; }
+.navigator-map:disabled { background:#f6f5ee;opacity:1; }
 .navigator-map canvas { display:block;width:168px;height:88px;pointer-events:none; }
 .navigator-frame { position:absolute;border:1px solid #174f94;box-shadow:0 0 0 1px #fff9;pointer-events:none;background:#3a6bbd12; }
 .navigator-controls { display:flex;align-items:center;gap:4px;margin-top:5px; }

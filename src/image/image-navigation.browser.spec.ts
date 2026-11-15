@@ -61,3 +61,37 @@ test('Save captures the visible graphical transform and a still-focused typed si
  const layer=pkg.assets[0]!.bytes;expect(Array.from(layer.subarray((160*800+125)*4,(160*800+125)*4+4))).toEqual([0,0,0,255]);expect(Array.from(layer.subarray((160*800+175)*4,(160*800+175)*4+4))).toEqual([255,255,255,255]);
  const content=imageContent({operation:'decode',content:pkg.project.content,assets:pkg.assets});expect(content.selection!.bounds.width).toBe(202);
 });
+
+test('Visible Zoom panel opens raw images and works on a tablet-sized touch viewport',async({browser})=>{
+ const context=await browser.newContext({viewport:{width:1024,height:768},hasTouch:true}),page=await context.newPage();
+ await page.addInitScript(()=>Object.defineProperty(window,'showOpenFilePicker',{value:undefined}));
+ await page.goto(server.resolvedUrls!.local[0]!);
+ const panel=page.locator('.image-navigator'),map=page.getByRole('button',{name:'Pan canvas preview'}),zoomIn=page.getByRole('button',{name:'Zoom in',exact:true}),zoomOut=page.getByRole('button',{name:'Zoom out',exact:true});
+ await expect(panel).toBeVisible();await expect(panel.locator('summary')).toHaveText('Zoom');await expect(panel.getByText('Open or create an image',{exact:true})).toBeVisible();await expect(zoomIn).toBeDisabled();
+ async function reachable(){
+  for(const control of [map,zoomIn,zoomOut,page.getByRole('slider',{name:'Canvas zoom'}),page.getByRole('spinbutton',{name:'Zoom percent',exact:true}),page.getByRole('button',{name:'Fit image',exact:true})]){
+   const b=(await control.boundingBox())!,stage=(await page.locator('.image-stage').boundingBox())!;
+   expect(b.x).toBeGreaterThanOrEqual(stage.x);expect(b.y).toBeGreaterThanOrEqual(stage.y);expect(b.x+b.width).toBeLessThanOrEqual(stage.x+stage.width);expect(b.y+b.height).toBeLessThanOrEqual(stage.y+stage.height);
+   expect(await control.evaluate(e=>{const b=e.getBoundingClientRect(),hit=document.elementFromPoint(b.x+b.width/2,b.y+b.height/2);return hit===e||e.contains(hit);})).toBe(true);
+  }
+ }
+ await reachable();
+ const png=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=800;c.height=600;const ctx=c.getContext('2d')!;ctx.fillStyle='#ffffff';ctx.fillRect(0,0,800,600);ctx.fillStyle='#1248ab';ctx.fillRect(450,300,200,180);return c.toDataURL().split(',')[1]!;});
+ const choosing=page.waitForEvent('filechooser');await page.locator('.gc-standard [data-command="file.open"]').click();await(await choosing).setFiles({name:'Zoom-check.png',mimeType:'image/png',buffer:Buffer.from(png,'base64')});
+ await expect(page.locator('.image-canvas')).toBeVisible();await expect(panel.getByText('Drag map to move view',{exact:true})).toBeVisible();await expect(zoomIn).toBeEnabled();await reachable();
+ const before=await history(page),data=await pixels(page);await percent(page,'200');
+ const b=(await map.boundingBox())!,x=b.x+b.width/2,y=b.y+b.height/2,cdp=await context.newCDPSession(page);
+ await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+20,y:y+10}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await cdp.detach();
+ const center=()=>page.evaluate(()=>{const c=document.querySelector<HTMLCanvasElement>('.image-canvas')!,cb=c.getBoundingClientRect(),v=document.querySelector('.image-stage')!.getBoundingClientRect();return {x:(v.x+v.width/2-cb.x)/(cb.width/c.width),y:(v.y+v.height/2-cb.y)/(cb.height/c.height)};});
+ const target=await center();expect(target.x).toBeGreaterThan(500);expect(target.y).toBeGreaterThan(350);
+ await zoomIn.tap();await expect(page.getByRole('spinbutton',{name:'Zoom percent',exact:true})).toHaveValue('250');
+ const after=await center();expect(Math.abs(after.x-target.x)).toBeLessThan(1);expect(Math.abs(after.y-target.y)).toBeLessThan(1);
+ await zoomOut.tap();await expect(page.getByRole('spinbutton',{name:'Zoom percent',exact:true})).toHaveValue('200');
+ // Use the native slider with touch, without wheel or keyboard shortcuts.
+ const slider=page.getByRole('slider',{name:'Canvas zoom'}),sb=(await slider.boundingBox())!;await page.touchscreen.tap(sb.x+sb.width*.7,sb.y+sb.height/2);await expect.poll(async()=>Number(await page.getByRole('spinbutton',{name:'Zoom percent',exact:true}).inputValue())).not.toBe(200);
+ await page.getByRole('button',{name:'Fit image',exact:true}).tap();await panel.locator('summary').tap();await expect(map).toBeHidden();await expect(zoomIn).toBeVisible();await zoomIn.tap();await panel.locator('summary').tap();await reachable();
+ expect(await pixels(page)).toEqual(data);expect(await history(page)).toEqual(before);
+ await page.getByRole('tab',{name:'Photo',exact:true}).click();await expect(panel).toBeHidden();await page.getByRole('tab',{name:'Image',exact:true}).click();await expect(panel).toBeVisible();await reachable();
+ expect(await pixels(page)).toEqual(data);expect(await history(page)).toEqual(before);
+ await page.screenshot({path:'dev/evidence/IMAGE-zoom-touch.png'});await context.close();
+});

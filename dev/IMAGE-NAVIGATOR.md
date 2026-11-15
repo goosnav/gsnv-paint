@@ -69,5 +69,6 @@ slider, typed percent, map mouse/touch drag, wheel synchronization, no accidenta
 paint/history mutation and containment at 1280x720. A touch-enabled Chromium test
 is evidence for pointer input only; physical iPad/Safari remains untested.
 
-Visibility amendment status: CONTRACTED under the existing BATCH authorization.
-Previous increment: provisional GREEN. See [checkpoint evidence](PAINT-OPEN-NAVIGATION-EVIDENCE.md).
+Visibility amendment status: GREEN under the existing BATCH authorization.
+See [visibility evidence](PAINT-ZOOM-VISIBILITY-EVIDENCE.md). Human acceptance remains
+with the owner. Previous increment: provisional GREEN. See [checkpoint evidence](PAINT-OPEN-NAVIGATION-EVIDENCE.md).

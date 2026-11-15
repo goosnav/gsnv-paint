@@ -735,7 +735,7 @@ These are not bricks, do not evade the brick size/dependency rules, and contain 
 - The M1a skill's default private-doc rule is overridden by the user asking to put this specification in the code repo. Its generic state-changing GUI quit/API example is overridden by the user's static-only application backend; shutdown remains supervisor/process lifecycle responsibility. Setup/status orchestration contains no application business logic or document API.
 - Native target smoke coverage cannot be inferred from this Linux host. M1a still requires Windows x64/ARM64, macOS Intel/Apple Silicon and Linux x86_64/ARM64 evidence. No unavailable target or codec check becomes a pass.
 
-### I59 `image/image-navigator.ts` — SHELL — CONTRACTED
+### I59 `image/image-navigator.ts` — SHELL — GREEN
 
 Purpose: Navigate the Image canvas without a wheel (IMAGE-NAV contract).
 IN: DOM root and view callbacks; update(canvas, revision, effective view, viewport) or null.
