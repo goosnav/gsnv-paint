@@ -417,7 +417,7 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 |---|---:|---:|---:|---:|
 | SYS | 16 | 2 | 0 | 14 |
 | CTL | 30 | 0 | 0 | 30 |
-| CAD | 124 | 17 | 0 | 107 |
+| CAD | 124 | 18 | 0 | 106 |
 | IMG | 104 | 2 | 0 | 102 |
 | VID | 73 | 0 | 0 | 73 |
 | XWS | 3 | 2 | 0 | 1 |
@@ -429,7 +429,7 @@ Writing a procedure establishes planned coverage only. It does not demonstrate a
 | SHEET | 3 | 3 | 0 | 0 |
 | CODE | 3 | 3 | 0 | 0 |
 | AUTH | 1 | 0 | 0 | 1 |
-| **Total** | **402** | **46** | **0** | **356** |
+| **Total** | **402** | **47** | **0** | **355** |
 
 ## Need-to-requirement closure
 

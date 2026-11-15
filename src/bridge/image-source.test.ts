@@ -22,3 +22,9 @@ test('D02 opacity/blend goldens use the declared integer rounding', () => {
     assert.deepEqual([...imageSource({ value, source: stamp, label: 'Blend' }).pixels.rgba], expected);
   }
 });
+
+test('PU-07 Image bridge shares strict document output without rewriting layer pixels',()=>{
+ const base=imageContent({operation:'new',width:1,height:1,fill:[120,120,120,255],policy:{mode:'pixel-art',palette:{colours:[[0,0,0],[255,255,255]],dither:'none'}}});
+ assert.deepEqual([...imageSource({value:base,source:stamp,label:'Strict'}).pixels.rgba],[0,0,0,255]);
+ assert.deepEqual([...imageContent({operation:'raster',value:base,layerId:'background'}).data],[120,120,120,255]);
+});

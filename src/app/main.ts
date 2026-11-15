@@ -16,6 +16,7 @@ import type { FilePorts } from '../shared/file-access.ts';
 import type { RecoveryPorts } from '../shared/recovery-store.ts';
 import '../shared/chrome.css';
 import '../shared/dialog.css';
+import '../shared/help.css';
 import './app.css';
 import '../spreadsheet/spreadsheet-workspace.css';
 

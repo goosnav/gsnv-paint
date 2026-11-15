@@ -1,0 +1,4 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {applyImageOperation} from './image-operations.ts';import {imageContent} from './image-content.ts';
+test('full pasted asset survives fitted/clipped placement during later transform',()=>{const image=imageContent({operation:'new',width:4,height:4,fill:[255,255,255,255]});const asset={id:'original',width:8,height:1,data:Uint8ClampedArray.from({length:32},(_,i)=>i%4===3?255:i%4===0?Math.floor(i/4)*30:0)};
+ const state=applyImageOperation({image,clipboard:null},{kind:'affine',box:{x:0,y:0,width:4,height:1,angle:0},sampling:'nearest',background:[255,255,255,255],asset:'original'},[asset]);const r=imageContent({operation:'raster',value:state.image,layerId:state.image.activeLayerId});assert.deepEqual([r.data[0],r.data[4],r.data[8],r.data[12]],[30,90,150,210]);assert.equal(image.layers[0]!.tiles[0]![0],255);
+});

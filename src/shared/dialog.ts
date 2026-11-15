@@ -36,7 +36,7 @@ type Choice = { value: string; label: string; notice?: string };
 type FieldBase = { key: string; label: string };
 type Field = FieldBase & ({ type: 'text'; placeholder?: string; multiline?: boolean } | { type: 'number'; min?: number; max?: number; step?: number } | { type: 'checkbox' } | { type: 'color' } | { type: 'select'; choices: readonly Choice[]; loadChoices?: () => Promise<{ choices: Choice[]; notice?: string }>; importChoice?: { label: string; run(): Promise<Choice | null> } });
 export type DialogSpec = {
-  title: string; description?: string; confirmLabel?: string; fields: readonly Field[]; initial: Values;
+  title: string; previewElement?: HTMLElement; description?: string; confirmLabel?: string; fields: readonly Field[]; initial: Values;
   validate(values: Values): { ok: true; value: Json } | { ok: false; error: { code: string; message: string } };
   preview(value: Json): void; commit(value: Json): void; cancel(): void;
 };
@@ -83,6 +83,7 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   const title = document.createElement('h2'); title.className = 'gc-dialog-title'; title.textContent = spec.title;
   const body = document.createElement('div'); body.className = 'gc-dialog-body';
   if (spec.description) { const description=document.createElement('p');description.className='gc-dialog-description';description.textContent=spec.description;body.append(description); }
+  if (spec.previewElement) { if (spec.previewElement.ownerDocument !== document) throw new TypeError('Dialog preview must belong to the same document.'); body.append(spec.previewElement); }
   const controls = new Map<string, HTMLInputElement | HTMLSelectElement>();
   const allowed = new Map<string, Set<string>>(), imports: HTMLButtonElement[] = [];
   for (const field of spec.fields) {

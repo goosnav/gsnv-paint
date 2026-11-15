@@ -13,19 +13,18 @@ class Element {
 const document = { createElementNS: (namespace: string, tag: string) => new Element(namespace, tag) } as unknown as Document;
 const fake = (svg: SVGSVGElement) => svg as unknown as Element;
 
-test('S09 golden accessible original close glyph', () => {
+test('S09/PU-03 golden accessible Tabler close glyph', () => {
   const svg = fake(renderIcon({ document, name: 'close', label: 'Close', size: 16 }));
   assert.deepEqual({ ...svg }, {
     namespace: 'http://www.w3.org/2000/svg', tag: 'svg', textContent: '',
     attributes: { viewBox: '0 0 24 24', width: '16', height: '16', role: 'img', 'aria-label': 'Close',
-      focusable: 'false', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.5', 'stroke-linecap': 'square', 'stroke-linejoin': 'miter', 'shape-rendering': 'crispEdges', 'data-icon': 'close' },
+      focusable: 'false', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'shape-rendering': 'auto', 'data-icon': 'close' },
     children: [Object.assign(new Element('http://www.w3.org/2000/svg', 'title'), { textContent: 'Close' }),
-      Object.assign(new Element('http://www.w3.org/2000/svg', 'path'), { attributes: { d: 'M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5' } })],
+      Object.assign(new Element('http://www.w3.org/2000/svg', 'path'), { attributes: { d: 'M18 6l-12 12 M6 6l12 12' } })],
   });
 });
 
-test('S09 every catalog glyph has unique local path data and an accessible name', () => {
-  const paths = new Set<string>();
+test('S09 every catalog name renders local path data and an accessible name', () => {
   assert.equal(new Set(iconCatalog).size, iconCatalog.length);
   for (const name of iconCatalog) {
     const svg = fake(renderIcon({ document, name, label: name, size: 24 }));
@@ -34,9 +33,31 @@ test('S09 every catalog glyph has unique local path data and an accessible name'
     assert.deepEqual(svg.children.map(child => child.tag), ['title', 'path']);
     const path = svg.children[1]!.attributes.d!;
     assert.match(path, /^M/);
-    assert.ok(!paths.has(path), name);
-    paths.add(path);
     assert.ok(!JSON.stringify(svg).match(/(?:href|<script|data:|https:)/));
+  }
+});
+
+test('PU-03 Paint tools use recognizable distinct outline symbols without coarse pixel edges', () => {
+  const paths = new Set<string>();
+  for (const name of iconCatalog.filter(name => name.startsWith('paint'))) {
+    const svg = fake(renderIcon({ document, name, label: name, size: 24 }));
+    assert.equal(svg.attributes.fill, 'none', name);
+    assert.equal(svg.attributes.stroke, 'currentColor', name);
+    assert.equal(svg.attributes['stroke-width'], '2', name);
+    assert.equal(svg.attributes['stroke-linecap'], 'round', name);
+    assert.equal(svg.attributes['stroke-linejoin'], 'round', name);
+    assert.equal(svg.attributes['shape-rendering'], 'auto', name);
+    const path = svg.children[1]!.attributes.d!;
+    assert.ok(!paths.has(path), `${name} needs a distinct tool silhouette`);
+    paths.add(path);
+  }
+});
+
+test('PU-03 equivalent Paint and shared actions use the same symbol', () => {
+  for (const name of ['move', 'lasso', 'wand', 'pencil', 'brush', 'airbrush', 'eraser', 'clone', 'blur', 'smudge', 'fill', 'gradient', 'picker', 'text', 'line', 'rectangle', 'ellipse', 'ellipseSelect']) {
+    const paint = `paint${name[0]!.toUpperCase()}${name.slice(1)}`;
+    const path = (name: string) => fake(renderIcon({ document, name, label: name, size: 24 })).children[1]!.attributes.d;
+    assert.equal(path(name), path(paint), name);
   }
 });
 

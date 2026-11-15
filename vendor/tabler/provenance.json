@@ -1,0 +1,317 @@
+{
+  "source": "https://github.com/tabler/tabler-icons",
+  "version": "3.52.0",
+  "tag": "v3.52.0",
+  "commit": "4581ad20d8d13e24f6c3be75caaea1c4ad6c4b35",
+  "license": "MIT",
+  "integration": "Unmodified official outline SVG subset. Path d attributes are joined in source order; original 24-unit viewBox and 2px round strokes are retained. Existing CSS supplies muted XP colours. No runtime fetches. Generic action names alias the matching Paint icon.",
+  "glyphs": {
+    "paintMove": "arrows-move",
+    "paintSelect": "square-dashed",
+    "paintLasso": "lasso",
+    "paintWand": "wand",
+    "paintPencil": "pencil",
+    "paintBrush": "brush",
+    "paintAirbrush": "spray",
+    "paintEraser": "eraser",
+    "paintSmudge": "hand-finger",
+    "paintRectangle": "rectangle",
+    "paintEllipse": "oval-vertical",
+    "paintEllipseSelect": "circle-dashed",
+    "paintClone": "rubber-stamp",
+    "paintBlur": "droplet",
+    "paintFill": "bucket-droplet",
+    "paintGradient": "square-half",
+    "paintPicker": "color-picker",
+    "paintText": "letter-t",
+    "paintLine": "line",
+    "new": "file-plus",
+    "open": "folder-open",
+    "save": "device-floppy",
+    "export": "file-export",
+    "undo": "arrow-back-up",
+    "redo": "arrow-forward-up",
+    "cut": "cut",
+    "copy": "copy",
+    "paste": "clipboard",
+    "delete": "trash",
+    "select": "pointer",
+    "hand": "hand-stop",
+    "zoomIn": "zoom-in",
+    "zoomOut": "zoom-out",
+    "fit": "arrows-maximize",
+    "history": "history",
+    "properties": "adjustments-horizontal",
+    "layers": "stack-2",
+    "grid": "grid-3x3",
+    "ruler": "ruler-2",
+    "crop": "crop",
+    "rotate": "rotate-clockwise",
+    "flip": "flip-horizontal",
+    "layerAdd": "stack-plus",
+    "close": "x",
+    "help": "help",
+    "chevronRight": "chevron-right",
+    "chevronDown": "chevron-down",
+    "move": "arrows-move",
+    "ellipseSelect": "circle-dashed",
+    "lasso": "lasso",
+    "wand": "wand",
+    "airbrush": "spray",
+    "clone": "rubber-stamp",
+    "blur": "droplet",
+    "gradient": "square-half",
+    "smudge": "hand-finger",
+    "line": "line",
+    "rectangle": "rectangle",
+    "pencil": "pencil",
+    "brush": "brush",
+    "eraser": "eraser",
+    "fill": "bucket-droplet",
+    "picker": "color-picker",
+    "ellipse": "oval-vertical",
+    "text": "letter-t"
+  },
+  "files": [
+    {
+      "file": "LICENSE",
+      "upstreamPath": "LICENSE",
+      "sha256": "b740a1d46122672da62833e97f7e7c8a13fa85cbc7445b584b297cc00dde93db"
+    },
+    {
+      "file": "adjustments-horizontal.svg",
+      "upstreamPath": "icons/outline/adjustments-horizontal.svg",
+      "sha256": "51c876babc598cf69ad1146f0fb621919a975758df0cc7abf45052006358a353"
+    },
+    {
+      "file": "arrow-back-up.svg",
+      "upstreamPath": "icons/outline/arrow-back-up.svg",
+      "sha256": "42a20a833068ac155cc2e3a4176a9e80a918cc62c8bf48d3f826a2c47bde739d"
+    },
+    {
+      "file": "arrow-forward-up.svg",
+      "upstreamPath": "icons/outline/arrow-forward-up.svg",
+      "sha256": "fd66d62f72c9c638108fbb97738d9ca1f969b4cf2cb54ece6f79b44d586409ad"
+    },
+    {
+      "file": "arrows-maximize.svg",
+      "upstreamPath": "icons/outline/arrows-maximize.svg",
+      "sha256": "106923855401d2164938e7db50f20c6a47c90d8f4aa4e299b94792ea87dd75e5"
+    },
+    {
+      "file": "arrows-move.svg",
+      "upstreamPath": "icons/outline/arrows-move.svg",
+      "sha256": "a79bec1191ad25cb9e072b69706af0656d4d55f0404b2238e8114cf69fa2975a"
+    },
+    {
+      "file": "brush.svg",
+      "upstreamPath": "icons/outline/brush.svg",
+      "sha256": "3067f83bfe52f9e09b631b0ef414b4c7c072cab6dd8bb5f4aed167de5d37ab97"
+    },
+    {
+      "file": "bucket-droplet.svg",
+      "upstreamPath": "icons/outline/bucket-droplet.svg",
+      "sha256": "d2bb50a334b9d2d87ad0235639f118dfc10c2a3bed7a8f0a0beffde87093f711"
+    },
+    {
+      "file": "chevron-down.svg",
+      "upstreamPath": "icons/outline/chevron-down.svg",
+      "sha256": "5a2e5c2a155ce06264a3f7299073ed636142dfd0b324b747387d9cfbf9fb5e3e"
+    },
+    {
+      "file": "chevron-right.svg",
+      "upstreamPath": "icons/outline/chevron-right.svg",
+      "sha256": "83733bb6e03e1d20fd2674d06a493642c8ea6eef76c44ebb2239b9ef17dedff7"
+    },
+    {
+      "file": "circle-dashed.svg",
+      "upstreamPath": "icons/outline/circle-dashed.svg",
+      "sha256": "7df7f2cf05d1283c7443382168b4dfa5c1d91cab1d709d48117df4d567e7ed54"
+    },
+    {
+      "file": "clipboard.svg",
+      "upstreamPath": "icons/outline/clipboard.svg",
+      "sha256": "46bcd71c2d4a42d8ad6c59ef07a9cfce09af42843aac908a0829c3bdfb44d8ae"
+    },
+    {
+      "file": "color-picker.svg",
+      "upstreamPath": "icons/outline/color-picker.svg",
+      "sha256": "0d6c5fcd1a27bff803d73b439c9badaca2265ce0a87311686c970d50d7929f27"
+    },
+    {
+      "file": "copy.svg",
+      "upstreamPath": "icons/outline/copy.svg",
+      "sha256": "3a455a299db4ec939fd0473d15c81c1d3f30f65dec81a7de816317c989b06073"
+    },
+    {
+      "file": "crop.svg",
+      "upstreamPath": "icons/outline/crop.svg",
+      "sha256": "fc184b9acc82e67ab38db926f01a921400ce17fefc5e2a75c887a8959e9f248e"
+    },
+    {
+      "file": "cut.svg",
+      "upstreamPath": "icons/outline/cut.svg",
+      "sha256": "44b8992321eec304e9a18a81a765ce220ef30426b984074d67e53640ecbb9418"
+    },
+    {
+      "file": "device-floppy.svg",
+      "upstreamPath": "icons/outline/device-floppy.svg",
+      "sha256": "332fb64778e96e0de3ef6a4262baa8bf2c1983d478bb14d284c4a2450f9e0130"
+    },
+    {
+      "file": "droplet.svg",
+      "upstreamPath": "icons/outline/droplet.svg",
+      "sha256": "c9432a9be52d7375c760add5d405903b6b8b29e88f38abd0d192c87048df7a0f"
+    },
+    {
+      "file": "eraser.svg",
+      "upstreamPath": "icons/outline/eraser.svg",
+      "sha256": "8bc50a8fa57161602f922f08ba7e24833155c3e531fcda56836df646b23d76ee"
+    },
+    {
+      "file": "file-export.svg",
+      "upstreamPath": "icons/outline/file-export.svg",
+      "sha256": "0e3f251271b59c97bc61dc755f815c18f662f062b53ae0cd6030a93d709fe48d"
+    },
+    {
+      "file": "file-plus.svg",
+      "upstreamPath": "icons/outline/file-plus.svg",
+      "sha256": "fb1afebc6cdfe0679ed76018d2d2dbb96d927dddb093857e0c6a992d06cf38df"
+    },
+    {
+      "file": "flip-horizontal.svg",
+      "upstreamPath": "icons/outline/flip-horizontal.svg",
+      "sha256": "c6198c8f73b56df2665950edc8300da66921a5b43ecd616d41e9bc326f7cff60"
+    },
+    {
+      "file": "folder-open.svg",
+      "upstreamPath": "icons/outline/folder-open.svg",
+      "sha256": "eed6d7ccbb5452986fa4f1083cc8d1afdee8f49a68af5c875f0689cdf5fb93a4"
+    },
+    {
+      "file": "grid-3x3.svg",
+      "upstreamPath": "icons/outline/grid-3x3.svg",
+      "sha256": "d8271fd174a8ffee7439f8da34568cd9edf44307dec5dd38f04ac403d3a86488"
+    },
+    {
+      "file": "hand-finger.svg",
+      "upstreamPath": "icons/outline/hand-finger.svg",
+      "sha256": "80a9d665bf07067be44bb9a7089a9bdab2bd6c553cdb408382dc9d63cdbebef9"
+    },
+    {
+      "file": "hand-stop.svg",
+      "upstreamPath": "icons/outline/hand-stop.svg",
+      "sha256": "4a434c0cf83b70d5b7900b12a7531c7759e1467927a611454cb4e71b7140e377"
+    },
+    {
+      "file": "help.svg",
+      "upstreamPath": "icons/outline/help.svg",
+      "sha256": "d17d4bd218a0090cfb7d59c90693fcd5f2c5dd12a3fc4370c353315afa204392"
+    },
+    {
+      "file": "history.svg",
+      "upstreamPath": "icons/outline/history.svg",
+      "sha256": "5f8a5a975a8136a4755380c18db1fe533acf7dc4e34250ceae0272c5d2cb7312"
+    },
+    {
+      "file": "lasso.svg",
+      "upstreamPath": "icons/outline/lasso.svg",
+      "sha256": "5e8b6eec3ee2f8758e84e50615e7743a4598c9216da5436c9a8744eb5ee80532"
+    },
+    {
+      "file": "letter-t.svg",
+      "upstreamPath": "icons/outline/letter-t.svg",
+      "sha256": "09bba9f5f3142601b3bbe8e4df1d2a71235602ec83baf0f3dd9ff86fd6ce5183"
+    },
+    {
+      "file": "line.svg",
+      "upstreamPath": "icons/outline/line.svg",
+      "sha256": "560073b9b34b30f6c831d47ec0fde54f78550e3ab2ce5949638600e9aca9b26b"
+    },
+    {
+      "file": "oval-vertical.svg",
+      "upstreamPath": "icons/outline/oval-vertical.svg",
+      "sha256": "ece33c8d36f3fbb6ab554c180b588530f4a21ba590f0faad91e22b1d4c1073ec"
+    },
+    {
+      "file": "pencil.svg",
+      "upstreamPath": "icons/outline/pencil.svg",
+      "sha256": "422796681dab2177b958836952b0a581025013a78d8a8c9df9c1af43f62d0e97"
+    },
+    {
+      "file": "pointer.svg",
+      "upstreamPath": "icons/outline/pointer.svg",
+      "sha256": "811735d187eaf6c8a7b7f06053140b8284cf4b1b2ea7ba1c8f340f1fbafbac24"
+    },
+    {
+      "file": "rectangle.svg",
+      "upstreamPath": "icons/outline/rectangle.svg",
+      "sha256": "718463a9c2e832fecb673fc7ab3cb6dc99efad9b27ac1f1c7af46353ff92a151"
+    },
+    {
+      "file": "rotate-clockwise.svg",
+      "upstreamPath": "icons/outline/rotate-clockwise.svg",
+      "sha256": "df4126db6c4a8ef7fc713b2497e21d3b8c70bac9a9fb45db1f58e5dd486f467d"
+    },
+    {
+      "file": "rubber-stamp.svg",
+      "upstreamPath": "icons/outline/rubber-stamp.svg",
+      "sha256": "f4930af612507ab3b7f05478425bb4a1c77544e3b9cf44ece7567dae0f1f303f"
+    },
+    {
+      "file": "ruler-2.svg",
+      "upstreamPath": "icons/outline/ruler-2.svg",
+      "sha256": "d7024458069cdabbdd59a8c21e279bdd42c7e8e2400f95196259c32800a223b2"
+    },
+    {
+      "file": "spray.svg",
+      "upstreamPath": "icons/outline/spray.svg",
+      "sha256": "5fbed35f329d3c88fe36f4e7bf9ab9ee8d0668bedc8cd579f7fafd5da65779a2"
+    },
+    {
+      "file": "square-dashed.svg",
+      "upstreamPath": "icons/outline/square-dashed.svg",
+      "sha256": "f035c83add81333dca10cddb4d3b1cc47b2cb9d85cecc5c77dcdee81695496bb"
+    },
+    {
+      "file": "square-half.svg",
+      "upstreamPath": "icons/outline/square-half.svg",
+      "sha256": "040a75daf1e5cee5f46c94051c4eca42ca33aa44113f642e51884c17ff52e2f8"
+    },
+    {
+      "file": "stack-2.svg",
+      "upstreamPath": "icons/outline/stack-2.svg",
+      "sha256": "fbe45033ef093505d88dd56cc421290aebc51a5e9dd6c49b68bda588f4d952d9"
+    },
+    {
+      "file": "stack-plus.svg",
+      "upstreamPath": "icons/outline/stack-plus.svg",
+      "sha256": "35af4744e013195994a5a625a1203c4f467a59f09a658d1ba9c132259c402340"
+    },
+    {
+      "file": "trash.svg",
+      "upstreamPath": "icons/outline/trash.svg",
+      "sha256": "4b90fa07a6d980736951d9e83b91432972b2bcecf81be4578608a0983f2ebc9d"
+    },
+    {
+      "file": "wand.svg",
+      "upstreamPath": "icons/outline/wand.svg",
+      "sha256": "e03ed04a7160a1db83ba1007868be4a9124b9ae9a8e283d0281c7ce6fd1a0348"
+    },
+    {
+      "file": "x.svg",
+      "upstreamPath": "icons/outline/x.svg",
+      "sha256": "9350785360414c39450c3505f17d1745e55a7534edace8548e30cf49e3727d43"
+    },
+    {
+      "file": "zoom-in.svg",
+      "upstreamPath": "icons/outline/zoom-in.svg",
+      "sha256": "b361e358c8d0035b2b822b2b497f83b60a00c31a6300b502838292c706070c4e"
+    },
+    {
+      "file": "zoom-out.svg",
+      "upstreamPath": "icons/outline/zoom-out.svg",
+      "sha256": "ada8ed3ab671ad3161e032a0f2f0e8c57b75632cc7c03d0fef270b44c81baeed"
+    }
+  ]
+}

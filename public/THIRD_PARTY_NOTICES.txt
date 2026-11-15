@@ -52,3 +52,12 @@ Selected Paint tool glyphs from https://github.com/halfmage/pixelarticons
 Pinned source: c9ecc2da61afde85dbe539025e3d931c6152ad75.
 Full license: licenses/pixelarticons.LICENSE.txt
 Source SVGs and SHA-256 provenance are retained in vendor/pixelarticons.
+
+Tabler Icons 3.52.0 — MIT
+Copyright (c) 2020-2026 Paweł Kuna
+Paint tool and common interface glyphs from https://github.com/tabler/tabler-icons
+Pinned commit: 4581ad20d8d13e24f6c3be75caaea1c4ad6c4b35 (v3.52.0)
+Full license: licenses/tabler-3.52.0.LICENSE.txt
+Unmodified SVG sources, application mapping, generator and SHA-256 provenance are
+retained in vendor/tabler. Paths retain the original 24-unit geometry and round
+strokes; the app supplies toolbar colours. All assets are bundled locally.

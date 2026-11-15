@@ -22,7 +22,7 @@ async function screenshotColors(page: Page) {
  return page.evaluate(async bytes=>{const bitmap=await createImageBitmap(new Blob([new Uint8Array(bytes)],{type:'image/png'})),c=document.createElement('canvas');c.width=bitmap.width;c.height=bitmap.height;const ctx=c.getContext('2d')!;ctx.drawImage(bitmap,0,0);bitmap.close();const data=ctx.getImageData(0,0,c.width,c.height).data;return [...new Set(Array.from({length:c.width*c.height},(_,p)=>data[p*4]!))];},[...png]);
 }
 test('Paint defaults to binary hard strokes, offers coarse brush pixels and keeps Smooth intentional', async ({page})=>{
- await page.locator('.gc-standard [data-command="file.new"]').click();
+ await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();
  await expect(page.getByLabel('Edges',{exact:true})).toHaveValue('pixel',{timeout:2000});
  await stroke(page);let out=await pixels(page);expect(new Set(out.rgb)).toEqual(new Set([0,255]));
  await page.locator('.image-stage').focus();await page.keyboard.press('Control+z');
@@ -48,7 +48,7 @@ test('Sharp canvas rendering stays binary at fractional zoom; Smooth preview is 
  await menu(page,'View','View settings');await rendering.selectOption('pixels');await page.getByRole('button',{name:'OK',exact:true}).click();await page.screenshot({path:'dev/evidence/IMAGE-sharp-pixels.png'});
 });
 test('Hard layer strokes and nearest free transform preserve alpha; saved PNG/project match the committed pixels',async({page})=>{
- await page.locator('.gc-standard [data-command="file.new"]').click();await page.locator('.gc-standard [data-command="layer.new"]').click();await stroke(page);
+ await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();await page.locator('.gc-standard [data-command="layer.new"]').click();await stroke(page);
  await page.locator('.image-stage').focus();await page.keyboard.press('Control+t');
  await expect(page.getByLabel('Transform sampling',{exact:true})).toHaveValue('nearest',{timeout:2000});
  await page.getByRole('spinbutton',{name:'Transform width',exact:true}).fill('1000');await page.getByRole('button',{name:'Apply transform',exact:true}).click();
@@ -57,12 +57,12 @@ test('Hard layer strokes and nearest free transform preserve alpha; saved PNG/pr
  await page.locator('.image-layer').filter({hasText:'Background'}).locator('.image-layer-eye').click();const transparent=await pixels(page);expect(new Set(transparent.alpha)).toEqual(new Set([0,255]));
  const download=page.waitForEvent('download');await menu(page,'Image','Export PNG…');const png=await download;const data=await (await import('node:fs/promises')).readFile((await png.path())!);expect(await page.evaluate(async bytes=>{const bitmap=await createImageBitmap(new Blob([new Uint8Array(bytes)],{type:'image/png'})), c=document.createElement('canvas');c.width=bitmap.width;c.height=bitmap.height;c.getContext('2d')!.drawImage(bitmap,0,0);bitmap.close();return c.toDataURL();},[...data])).toBe(transparent.png);
  const save=page.waitForEvent('download');await page.locator('.image-stage').focus();await page.keyboard.press('Control+s');const project=await save;const saved=await (await import('node:fs/promises')).readFile((await project.path())!);
- await page.locator('.gc-standard [data-command="file.new"]').click();const choose=page.waitForEvent('filechooser');await page.locator('.gc-standard [data-command="file.open"]').click();await (await choose).setFiles({name:'hard.gsnv-image',mimeType:'application/octet-stream',buffer:saved});
+ await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();const choose=page.waitForEvent('filechooser');await page.locator('.gc-standard [data-command="file.open"]').click();await (await choose).setFiles({name:'hard.gsnv-image',mimeType:'application/octet-stream',buffer:saved});
  await expect(page.locator('.image-layer')).toHaveCount(2);expect((await pixels(page)).png).toBe(transparent.png);
 });
 
 test('Hard brush and eraser respect selections with one history entry per stroke', async ({page}) => {
- await page.locator('.gc-standard [data-command="file.new"]').click();await page.locator('.gc-standard [data-command="layer.new"]').click();
+ await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();await page.locator('.gc-standard [data-command="layer.new"]').click();
  const b=(await canvas(page).boundingBox())!, at=(x:number,y:number)=>[b.x+x*b.width/800,b.y+y*b.height/600] as const;
  await page.locator('.gc-palette [data-command="image.select"]').click();await page.mouse.move(...at(100.5,100.5));await page.mouse.down();await page.mouse.move(...at(160.5,160.5));await page.mouse.up();
  await page.locator('.gc-palette [data-command="image.brush"]').click();await page.getByRole('spinbutton',{name:'Size (px)',exact:true}).fill('200');await page.getByRole('spinbutton',{name:'Size (px)',exact:true}).press('Tab');

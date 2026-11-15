@@ -1,0 +1,25 @@
+/* Shared Help uses the same XP dialog controls; the results never cover the canvas outside the modal. */
+.gc-help { width:720px; max-width:calc(100vw - 24px); max-height:calc(100dvh - 24px); }
+.gc-help-body { display:flex; flex-direction:column; gap:10px; }
+.gc-help-search { display:flex; flex-direction:column; gap:4px; }
+.gc-help-search input { width:100%; min-height:28px; }
+.gc-help-sections { display:flex; flex-wrap:wrap; gap:6px; }
+.gc-help-sections [aria-pressed=true] { box-shadow:inset 1px 1px 0 var(--xp-shadow); background:var(--xp-highlight); color:var(--xp-highlight-text); }
+.gc-help-count { margin:0; min-height:16px; color:var(--xp-text-muted); }
+.gc-help-columns { display:grid; grid-template-columns:minmax(150px,2fr) minmax(0,3fr); min-height:200px; height:min(340px,48dvh); gap:10px; }
+.gc-help-results { margin:0; padding:2px; list-style:none; overflow:auto; border:1px solid var(--xp-field-edge); background:var(--xp-field); }
+.gc-help-results .gc-help-result { display:flex; flex-direction:column; gap:3px; width:100%; min-width:0; min-height:42px; padding:7px 8px; border:0; border-radius:0; background:transparent; box-shadow:none; text-align:left; overflow-wrap:anywhere; }
+.gc-help-results .gc-help-result[aria-pressed=true] { background:var(--xp-highlight); color:var(--xp-highlight-text); }
+.gc-help-result small { font:inherit; opacity:.8; }
+.gc-help-detail { overflow:auto; padding:8px 10px; background:var(--xp-field); border:1px solid var(--xp-field-edge); line-height:1.65; overflow-wrap:anywhere; }
+.gc-help-detail h3 { margin:0 0 8px; font-size:inherit; }
+.gc-help-detail ol { margin:0 0 12px; padding-left:20px; }
+.gc-help-detail li { margin-bottom:8px; }
+.gc-help-scope { margin:0 0 4px; color:var(--xp-text-muted); }
+.gc-help-detail p { margin-top:0; }
+@media (max-width:500px) {
+  .gc-help-columns { grid-template-columns:1fr; grid-template-rows:minmax(70px,1fr) minmax(100px,2fr); height:54dvh; min-height:170px; }
+  .gc-help .gc-dialog-body { padding:8px; gap:6px; }
+  .gc-help-sections button,.gc-help .gc-dialog-buttons button { min-height:32px; }
+}
+@media (forced-colors:active) { .gc-help-results,.gc-help-detail { border-color:CanvasText; } }

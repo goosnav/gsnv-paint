@@ -7,7 +7,7 @@ function wav() {
   for (let i = 0; i < 48000; i++) bytes.writeInt16LE(Math.round(Math.sin(i * Math.PI * 2 * 440 / 48000) * 12000), 44 + i * 2); return bytes;
 }
 export async function mediaJourneys(page: Page, evidence: string) {
-  await page.getByRole('tab', { name: 'Image', exact: true }).click(); await command(page, 'file.new').click();
+  await page.getByRole('tab', { name: 'Image', exact: true }).click(); await command(page, 'file.new').click(); await page.getByRole('dialog', { name: 'New image', exact: true }).getByRole('button', { name: 'Create', exact: true }).click();
   const canvas = page.locator('.image-canvas'); await expect(canvas).toHaveAttribute('width', '800');
   await page.locator('.gc-palette button[data-command="image.pencil"]').click(); await page.locator('[data-color="#ff0000"]').click();
   const bounds = (await canvas.boundingBox())!; await page.mouse.move(bounds.x + 80, bounds.y + 80); await page.mouse.down(); await page.mouse.move(bounds.x + 120, bounds.y + 100, { steps: 4 }); await page.mouse.up();

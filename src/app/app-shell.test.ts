@@ -63,7 +63,7 @@ function nativeHandle(value: File, close: () => Promise<void> = async () => {}) 
   } as unknown as FileSystemFileHandle;
   return { handle, writes, deny() { permission = 'denied'; }, get requested() { return requested; } };
 }
-function setup(options: { storage?: ReturnType<typeof resource>; available?: Workspace[]; recent?: RecentPort; viewSettings?: () => void } = {}) {
+function setup(options: { storage?: ReturnType<typeof resource>; available?: Workspace[]; recent?: RecentPort; viewSettings?: () => void; startup?: boolean } = {}) {
   const dom = new JSDOM('<!doctype html><body><div id="app"></div></body>', { url: 'https://fixture.test' });
   const window = dom.window;
   const captures = new WeakMap<HTMLElement, Set<number>>();
@@ -78,6 +78,7 @@ function setup(options: { storage?: ReturnType<typeof resource>; available?: Wor
   const fixtures = { cad: fixture('cad'), image: fixture('image'), video: fixture('video') };
   const files: FilePorts = { document: window.document, URL: { createObjectURL: () => 'blob:fixture', revokeObjectURL() {} }, setTimeout: callback => { callback(); } };
   const storage = options.storage ?? resource();
+  if (options.startup) fixtures.image.adapter.createOnStartup = true;
   const adapters = Object.fromEntries((options.available ?? ['cad', 'image', 'video']).map(workspace => {
     const adapter = fixtures[workspace].adapter;
     return [workspace, options.viewSettings && workspace === 'cad' ? { ...adapter, mount: (host: Parameters<WorkspaceAdapter['mount']>[0]) => ({ ...adapter.mount(host), viewSettings: options.viewSettings! }) } : adapter];
@@ -724,4 +725,22 @@ test('Open raw media keeps replacement consent and rejects changed workspaces or
     gate.resolve(); await opening; assert.notEqual(s.app.snapshot().documents.image!.id, 'raw-file'); assert.match(status(s.root), /workspace changed/i);
   }
   await s.app.idle(); s.close();
+});
+
+test('PU-02 Help uses the shared modal lifecycle without changing the document', async () => {
+ const s=setup();try{
+  await s.app.ready;await s.app.dispatch('file.new');const before=s.app.snapshot().documents.cad;
+  await s.app.dispatch('help.search');assert.ok(s.root.querySelector('dialog'),'Help dialog opens');
+  await s.app.dispatch('fixture.change');assert.equal(s.app.snapshot().documents.cad,before,'modal shields commands');
+  s.root.querySelector('dialog')!.dispatchEvent(new s.window.Event('cancel',{cancelable:true}));await turn();
+  assert.equal(s.root.querySelector('dialog'),null);await s.app.dispatch('fixture.change');assert.notEqual(s.app.snapshot().documents.cad,before);
+ }finally{s.close();}
+});
+
+
+test('PU-04 startup canvas stays out of Recent and recovery until an edit', async () => {
+ const recent=recentProjects(new FakeFactory()),s=setup({startup:true,recent});try{
+  await s.app.ready;const blank=s.app.snapshot().documents.image;assert.ok(blank);assert.equal(blank.title,'image fixture');
+  assert.deepEqual(await recent.list(),[]);s.close();await s.app.idle();assert.deepEqual(await recent.list(),[]);
+ }finally{if(s.root.isConnected)s.close();}
 });

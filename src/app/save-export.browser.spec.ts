@@ -16,7 +16,7 @@ async function downloaded(page:Page,action:()=>Promise<unknown>){const [file]=aw
 test('Save discovery: Image first, clear popup, real PNG/project output, reopen and keyboard submenu',async({page})=>{
  const errors:string[]=[],external:string[]=[];page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url())&&new URL(r.url()).origin!==new URL(page.url()).origin)external.push(r.url());});
  await expect(page.getByRole('tab').first()).toHaveAttribute('aria-label','Image');await expect(page.getByRole('tab').first()).toHaveAttribute('aria-selected','true');
- await expect(toolbar(page,'file.export')).toBeDisabled();await toolbar(page,'file.new').click();await expect(page.locator('.image-canvas')).toBeVisible();
+ await expect(toolbar(page,'file.export')).toBeEnabled();await toolbar(page,'file.new').click();await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();await expect(page.locator('.image-canvas')).toBeVisible();
  await page.locator('.gc-palette [data-command="image.pencil"]').click();await page.locator('input[type=number][data-option="size"]').fill('3');await page.keyboard.press('Enter');
  const canvas=page.locator('.image-canvas'),box=(await canvas.boundingBox())!;
  await page.mouse.move(box.x+80,box.y+80);await page.mouse.down();await page.mouse.move(box.x+220,box.y+160,{steps:10});await page.mouse.up();

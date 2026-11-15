@@ -1,0 +1,95 @@
+[WebServer] (node:2997792) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 46 tests using 1 worker
+
+(node:2997839) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+A-SHELL browser: Chrome 154.0.8037.97; runner linux/x64; viewport {"width":1280,"height":720}.
+A-SHELL: actual wheel/Space pan and typed 2D view settings applied through the shared seams; right-click target reached the fixture adapter.
+A-SHELL emitted production capability results: [
+  {
+    state: 'supported',
+    text: 'Native file pickers: Native file pickers are available; access requires your file selection.'
+  },
+  {
+    state: 'supported',
+    text: 'Background workers: Background worker API is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebAssembly: WebAssembly compilation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebGL 2: WebGL 2 context creation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'Isolated execution: Cross-origin isolation is active.'
+  },
+  {
+    state: 'supported',
+    text: 'Image clipboard: Image clipboard API is available; access may require permission.'
+  },
+  {
+    state: 'supported',
+    text: 'Pen pressure API: Pressure API is available; pen hardware has not been tested.'
+  }
+]
+A-SHELL: emitted dist via Vite preview exposes one shell with nine real workspace adapters and no fixture tools. Live deployment remains untested.
+A-SHELL: one window; fixture preview/cancel/commit; undo/redo; exact downloaded container reopens; IDB recovery survives page close/reopen. Native picker interaction and product editing remain untested.
+  ✓   1 src/app/app-shell.browser.spec.ts:20:1 › A-SHELL actual window composes fixture editing, history, project files and local recovery (4.9s)
+Open files: Chrome 154.0.8037.97 linux/x64
+  ✓   2 src/app/open-files.browser.spec.ts:29:1 › Open PNG, JPEG and native Paint project through toolbar, menu and Ctrl+O (1.2s)
+  ✓   3 src/app/open-files.browser.spec.ts:44:13 › Open ordinary Photo file through the shared picker (1.2s)
+  ✓   4 src/app/open-files.browser.spec.ts:44:13 › Open ordinary Video file through the shared picker (1.1s)
+  ✓   5 src/app/open-files.browser.spec.ts:44:13 › Open ordinary Slides file through the shared picker (989ms)
+  ✓   6 src/app/open-files.browser.spec.ts:44:13 › Open ordinary Document file through the shared picker (841ms)
+  ✓   7 src/app/open-files.browser.spec.ts:44:13 › Open ordinary Spreadsheet file through the shared picker (1.1s)
+  ✓   8 src/app/open-files.browser.spec.ts:44:13 › Open ordinary Code file through the shared picker (1.1s)
+  ✓   9 src/app/open-files.browser.spec.ts:44:13 › Open ordinary Audio file through the shared picker (1.1s)
+  ✓  10 src/app/open-files.browser.spec.ts:57:1 › Open STEP uses the existing worker validator and preserves the last solid on failure (4.2s)
+  ✓  11 src/app/open-files.browser.spec.ts:65:1 › Native picker options remain valid and an opened image handle is never a project destination (1.3s)
+Save/export Chrome 154.0.8037.97 linux/x64, 1280×720
+  ✓  12 src/app/save-export.browser.spec.ts:16:1 › Save discovery: Image first, clear popup, real PNG/project output, reopen and keyboard submenu (3.6s)
+  ✓  13 src/app/save-export.browser.spec.ts:45:1 › Save discovery: Document and Slides PDF choices reach their real printable output (1.9s)
+K02 isolated production assets: 13548151 bytes
+K02 demo output: answer 42 undefined
+  ✓  14 src/code/code-runtime.browser.spec.ts:34:1 › K02 explicit-only JavaScript output, errors and no DOM (471ms)
+  ✓  15 src/code/code-runtime.browser.spec.ts:42:1 › K02 Python stdlib/local imports, errors and repeat run (8.1s)
+  ✓  16 src/code/code-runtime.browser.spec.ts:47:1 › K02 real infinite-loop Stop remains responsive and restart works in both engines (10.7s)
+  ✓  17 src/code/code-runtime.browser.spec.ts:58:1 › K02 opaque worker denies editor IndexedDB and network even through Python JS bridge (6.5s)
+  ✓  18 src/code/code-runtime.browser.spec.ts:68:1 › K02 direct empty-message floods are capped and disposal settles a running promise (618ms)
+  ✓  19 src/code/code-runtime.browser.spec.ts:76:1 › K02 cached local Python assets work with browser offline and console output is capped (9.3s)
+  ✓  20 src/code/code-runtime.browser.spec.ts:82:1 › K02 missing local runtime asset reports an error and retries without changing source (5.4s)
+  ✓  21 src/code/code-runtime.browser.spec.ts:88:1 › K02 HTML/CSS preview is script-free and blocks navigation/remote resources (652ms)
+K04 isolated production assets: 14291162 bytes
+  ✓  22 src/code/code-workspace.browser.spec.ts:29:1 › K04 immediate native save, shared undo, multi-file edits/import/export and reopen preserve source (1.6s)
+  ✓  23 src/code/code-workspace.browser.spec.ts:41:1 › K04 immediate shared project rename keeps pending source in the renamed revision (966ms)
+  ✓  24 src/code/code-workspace.browser.spec.ts:46:1 › K04 explicit JS/Python run, errors, real Stop/restart and HTML/CSS preview work through controls (6.6s)
+  ✓  25 src/code/code-workspace.browser.spec.ts:58:1 › K04 invalid paths, duplicate imports and oversized pending edits preserve source; file tabs support keyboard travel (2.1s)
+  ✓  26 src/image/image-automation.browser.spec.ts:8:1 › PU-10/11/12 full recorded edit sequence replays pixel-exact and Apply is one Undo (4.0s)
+  ✓  27 src/image/image-automation.browser.spec.ts:16:1 › PU-11 recorder follows Undo and preserves edited actions after stopping (2.2s)
+  ✓  28 src/image/image-automation.browser.spec.ts:20:1 › PU-13 JavaScript builds a recipe without applying it; stale code results stay disabled (1.7s)
+  ✓  29 src/image/image-automation.browser.spec.ts:24:1 › PU-11 recorded clipboard transfers reuse the new input rather than embedding old pixels (2.5s)
+  ✓  30 src/image/image-automation.browser.spec.ts:28:1 › PU-12/13 keyboard activates script buttons and an action can be re-enabled (1.1s)
+  ✓  31 src/image/image-automation.browser.spec.ts:31:1 › PU-10/11 midstroke size and colour shortcuts cannot diverge saved replay pixels (2.2s)
+  ✓  32 src/image/image-automation.browser.spec.ts:34:1 › PU-12 a slow action-file read cannot overwrite a newer recording (1.8s)
+  ✓  33 src/image/image-automation.browser.spec.ts:37:1 › PU-11 text pixels are embedded and replayed without relying on installed fonts (2.4s)
+  ✓  34 src/image/image-automation.browser.spec.ts:40:37 › PU-11 clipboard provenance after Undo preserves the actual clipboard as an asset (3.5s)
+  ✓  35 src/image/image-automation.browser.spec.ts:40:37 › PU-11 clipboard provenance after Undo recovers after a fresh copy (3.2s)
+  ✓  36 src/image/image-batch.browser.spec.ts:6:1 › PU-14/15 browser file fallback previews each size and exports a timestamped ZIP with honest bad-input report (1.6s)
+  ✓  37 src/image/image-batch.browser.spec.ts:13:1 › PU-15 real browser filesystem handles preserve originals and write only a fresh source child (1.8s)
+  ✓  38 src/image/image-upgrade.browser.spec.ts:8:1 › PU-02 offline Help locates fonts and safely highlights the Text tool (942ms)
+  ✓  39 src/image/image-upgrade.browser.spec.ts:16:1 › PU-04 starts on a blank canvas and New offers reversible document settings (1.0s)
+  ✓  40 src/image/image-upgrade.browser.spec.ts:22:1 › PU-06 Pixel art custom text has exact RGB and binary coverage; Smooth retains antialiasing (1.7s)
+  ✓  41 src/image/image-upgrade.browser.spec.ts:34:1 › PU-07/08 strict palettes preview reversibly and export only chosen colours (2.1s)
+  ✓  42 src/image/image-upgrade.browser.spec.ts:44:1 › PU-09 down-pixel worker previews and cancels; Resize applies once and Undo restores (1.4s)
+  ✓  43 src/image/image-upgrade.browser.spec.ts:48:1 › PU-07 a single committed stroke on a worker-rendered palette reaches the canvas (1.9s)
+  ✓  44 src/image/image-upgrade.browser.spec.ts:51:1 › PU-06/07 strict text previews use palette colours and policy changes reset the sampling default (2.3s)
+  ✓  45 src/image/image-upgrade.browser.spec.ts:54:1 › PU-06 applying an unchanged transform restores the lifted raster, not its empty preview (2.1s)
+S08: generation 7 and exact payload bytes survived page close/reopen and reload; journal contains metadata only.
+  ✓  46 src/shared/recovery-store.browser.spec.ts:3:1 › S08 actual browser recovery survives page close/reopen and reload with exact bytes (741ms)
+
+  46 passed (2.1m)

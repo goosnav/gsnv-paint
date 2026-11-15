@@ -1,5 +1,5 @@
 /**
- * PURPOSE    Render the Photo Develop inspector: histogram, Auto/profile/presets and slider sections.
+ * PURPOSE    Render the Photo Develop inspector.
  * KIND       SHELL
  * CONTRACT   IN: root and callbacks. update({settings,histogram,enabled,cropMode,before,aspect}) reflects state.
  *            OUT: {update,dispose}. Each slider pairs an XP trackbar with a typed number box (Enter/blur commits).
@@ -9,6 +9,9 @@
  * GUARANTEES No document edits; values come from SLIDERS ranges; listeners removed on dispose.
  * TUNING     SECTIONS orders the panel; slider tracks for Temp/Tint show their colour direction.
  * DECISIONS  D1: Native range inputs for accessibility and keyboard control, styled to the theme.
+ *            Alternative: custom pointer-only sliders; rejected because browser controls
+ *            already expose keyboard and assistive input. Revisit if: a measured browser
+ *            limitation prevents required precision or accessibility.
  * LIMITS     Parametric curve only (no draggable point curve).
  * TESTBENCH  src/photo/photo-controls.test.ts -- run with: node --import tsx --test src/photo/photo-controls.test.ts
  */
@@ -131,8 +134,10 @@ export function photoControls({ root, onPreview, onCommit, onAction }: { root: H
   }
   function render() {
     if (!state) return; const s = state.settings;
-    for (const [key, { input, value }] of sliders) { if (document.activeElement !== input) input.value = String(s[key]); if (document.activeElement !== value) value.value = format(key, s[key]); }
-    bandInputs.forEach(({ input, value }, i) => { const v = s[mixerMode][i]!; if (document.activeElement !== input) input.value = String(v); if (document.activeElement !== value) value.value = String(v); });
+    // A reset label focuses its range before committing. Ranges must reflect that commit;
+    // only typed number boxes have unfinished text that needs protection while focused.
+    for (const [key, { input, value }] of sliders) { input.value = String(s[key]); if (document.activeElement !== value) value.value = format(key, s[key]); }
+    bandInputs.forEach(({ input, value }, i) => { const v = s[mixerMode][i]!; input.value = String(v); if (document.activeElement !== value) value.value = String(v); });
     for (const b of tabs.children) b.setAttribute('aria-checked', String((b as HTMLElement).dataset.action === `mixer.${mixerMode}`));
     for (const b of profile.children) b.setAttribute('aria-checked', String((b as HTMLElement).dataset.action === `profile.${s.profile}`));
     root.querySelector('[data-action="photo.crop"]')!.setAttribute('aria-pressed', String(state.cropMode));

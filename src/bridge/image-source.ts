@@ -1,6 +1,6 @@
 /**
  * PURPOSE    Copy the committed layered Image composite to the Video bin (D02).
- * KIND       CORE
+ * KIND       CORE assembly D02; tiled composition, output policy and transfer validation.
  * CONTRACT   IN: validated ImageContent, Image source stamp and label. OUT: D01
  *            owned full-size straight-alpha sRGB raster, with visibility/blends.
  *            RAISES: BridgeCompositeError; D01 validation errors.
@@ -12,6 +12,7 @@
  * LIMITS     Current Image layer model only; source readiness belongs to assembly.
  * TESTBENCH  src/bridge/image-source.test.ts
  */
+import { imageOutput } from '../image/image-output.ts';
 import { TILE, type ImageContent } from '../image/image-content.ts';
 import { compositeLayers } from '../image/image-composite.ts';
 import { transferRaster, type TransferRaster } from './transfer-contract.ts';
@@ -30,5 +31,5 @@ export function imageSource({ value, source, label }: { value: ImageContent; sou
     compositeLayers({ width: w, height: h, layers, rect: { x: 0, y: 0, width: w, height: h }, out });
     for (let row = 0; row < h; row++) rgba.set(out.subarray(row * w * 4, (row + 1) * w * 4), ((y + row) * width + x) * 4);
   }
-  return transferRaster({ version: 1, route: 'image-to-video-bin', source, label, pixels: { width, height, rgba, colorSpace: 'srgb', alpha: 'straight' } }) as ImageTransfer;
+  return transferRaster({ version: 1, route: 'image-to-video-bin', source, label, pixels: { width, height, rgba: imageOutput({width,height,data:rgba},value.policy).data, colorSpace: 'srgb', alpha: 'straight' } }) as ImageTransfer;
 }

@@ -5,8 +5,9 @@
  *            OUT: bounded text/status messages. RAISES: errors become text messages.
  * GUARANTEES Fresh memory-only filesystem, no app-origin authority, no automatic package loading.
  * TUNING     CHUNK=4096 characters; total output limit is enforced again by the broker.
- * DECISIONS  D1: Blob module execution. Alternative: eval; rejected because CSP can then keep
- *            string compilation disabled. Revisit if a separately verified JS bundler is added.
+ * DECISIONS  D1: Data module execution; WebKit rejects opaque blob module imports.
+ *            Alternative: eval; rejected to retain CSP's string-compilation ban.
+ *            Revisit if a separately verified JS bundler is added.
  * LIMITS     Python stdlib/local imports; JavaScript entry only. No DOM, native files or npm.
  * TESTBENCH  src/code/code-runtime.browser.spec.ts -- see dev/CODE-RUNTIME.md
  */
@@ -32,8 +33,7 @@ for (const key of ['Worker', 'SharedWorker']) Object.defineProperty(globalThis, 
 onmessage = async event => {
   onmessage = null;
   const { files, entry, language, assets } = event.data;
-  const urls = [];
-  const moduleURL = text => { const url = URL.createObjectURL(new Blob([text], { type: 'text/javascript' })); urls.push(url); return url; };
+  const moduleURL = text => 'data:text/javascript;charset=utf-8,' + encodeURIComponent(text.toWellFormed());
   try {
     if (language === 'javascript') {
       send({ type: 'status', status: 'running' });
@@ -62,5 +62,4 @@ onmessage = async event => {
     }
     send({ type: 'status', status: 'done' });
   } catch (cause) { emit('error', cause?.stack || cause?.message || String(cause)); send({ type: 'status', status: 'done' }); }
-  finally { for (const url of urls) URL.revokeObjectURL(url); }
 };

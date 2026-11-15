@@ -8,7 +8,7 @@ test.beforeAll(async({browser})=>{server=await preview({preview:{host:'127.0.0.1
 test.afterAll(async()=>{await server.close();});
 const history=(page:Page)=>page.locator('[data-panel-history] li').allTextContents();
 const pixels=(page:Page)=>page.locator('.image-canvas').evaluate(async(c:HTMLCanvasElement)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',c.getContext('2d')!.getImageData(0,0,c.width,c.height).data))).join(','));
-async function start(page:Page){await page.goto(server.resolvedUrls!.local[0]!);await page.locator('.gc-standard [data-command="file.new"]').click();await expect(page.locator('.image-canvas')).toBeVisible();}
+async function start(page:Page){await page.goto(server.resolvedUrls!.local[0]!);await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();await expect(page.locator('.image-canvas')).toBeVisible();}
 async function percent(page:Page,value:string){await page.getByRole('spinbutton',{name:'Zoom percent',exact:true}).fill(value);await page.getByRole('spinbutton',{name:'Zoom percent',exact:true}).press('Enter');}
 async function drag(page:Page,from:{x:number;y:number},to:{x:number;y:number}){await page.mouse.move(from.x,from.y);await page.mouse.down();await page.mouse.move(to.x,to.y,{steps:8});await page.mouse.up();}
 async function select(page:Page){await page.locator('.gc-palette [data-command="image.select"]').click();const b=(await page.locator('.image-canvas').boundingBox())!;await drag(page,{x:b.x+100,y:b.y+110},{x:b.x+200,y:b.y+170});await expect(page.locator('[data-transform-handle=se]')).toBeVisible();}
@@ -87,7 +87,7 @@ test('Visible Zoom panel opens raw images and works on a tablet-sized touch view
  await page.addInitScript(()=>Object.defineProperty(window,'showOpenFilePicker',{value:undefined}));
  await page.goto(server.resolvedUrls!.local[0]!);
  const panel=page.locator('.image-navigator'),map=page.getByRole('button',{name:'Pan canvas preview'}),zoomIn=page.getByRole('button',{name:'Zoom in',exact:true}),zoomOut=page.getByRole('button',{name:'Zoom out',exact:true});
- await expect(panel).toBeVisible();await expect(panel.locator('summary')).toHaveText('Zoom');await expect(panel.getByText('Open or create an image',{exact:true})).toBeVisible();await expect(zoomIn).toBeDisabled();
+ await expect(panel).toBeVisible();await expect(panel.locator('summary')).toHaveText('Zoom');await expect(page.locator('.image-canvas')).toHaveAttribute('width','800');await expect(panel.getByText('Drag map to move view',{exact:true})).toBeVisible();await expect(zoomIn).toBeEnabled();
  async function reachable(){
   for(const control of [map,zoomIn,zoomOut,page.getByRole('slider',{name:'Canvas zoom'}),page.getByRole('spinbutton',{name:'Zoom percent',exact:true}),page.getByRole('button',{name:'Fit image',exact:true})]){
    const b=(await control.boundingBox())!,stage=(await page.locator('.image-stage').boundingBox())!;

@@ -60,3 +60,28 @@ test('S10 XP-inspired web shell fits 1280×720 and preserves focus, menus and wo
   await expect(input).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('PU-01 opaque menus cover disabled toolbar icons and keep click ownership', async ({ page }) => {
+  await page.goto('/dev/fixtures/chrome.html');
+  await page.evaluate(async () => {
+    const modulePath = '/src/shared/chrome.ts'; const { createChrome } = await import(modulePath);
+    const root = document.querySelector<HTMLElement>('#app')!; root.replaceChildren();
+    const model = { title: 'Menu layering', workspace: 'image', dirty: false, status: 'Ready', tools: [], capabilities: [], panels: [], menus: [
+      { id: 'layer', label: 'Layer', items: [{ id: 'add', label: 'New layer', shortcut:'', enabled: true }] },
+      { id: 'edit', label: 'Edit', items: Array.from({length:8},(_,i)=>({id:`undo-${i}`,label:'Undo',shortcut:'',icon:'undo',toolbar:true,enabled:false})) },
+    ] };
+    createChrome({ root, model, onCommand: (id:string) => { root.dataset.received = id; root.dataset.count = String(Number(root.dataset.count ?? 0)+1); }, onWorkspace() {} });
+  });
+  await page.getByRole('menuitem', { name:'Layer',exact:true }).click();
+  const popup=page.locator('.gc-menu-popup:not([hidden])'); const rect=(await popup.boundingBox())!;
+  const png=await page.screenshot({clip:{x:rect.x+125,y:rect.y+3,width:75,height:17}});
+  const colours=await page.evaluate(async bytes=>{
+    const img=await createImageBitmap(new Blob([new Uint8Array(bytes)],{type:'image/png'}));
+    const c=document.createElement('canvas');c.width=img.width;c.height=img.height;const ctx=c.getContext('2d')!;ctx.drawImage(img,0,0);img.close();
+    const d=ctx.getImageData(0,0,c.width,c.height).data;let nonWhite=0;for(let i=0;i<d.length;i+=4)if(d[i]!==255||d[i+1]!==255||d[i+2]!==255)nonWhite++;return nonWhite;
+  },[...png]);
+  expect(colours).toBe(0);
+  await page.mouse.click(rect.x+170,rect.y+10);
+  await expect(page.locator('#app')).toHaveAttribute('data-received','add');
+  await expect(page.locator('#app')).toHaveAttribute('data-count','1');
+});

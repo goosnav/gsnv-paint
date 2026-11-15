@@ -100,7 +100,7 @@ test('S05 unspecified modifier combinations and unknown keys are untouched', () 
     assert.deepEqual(mapped(key, { shift: true }), unhandled);
     assert.deepEqual(mapped(key, { ctrl: true, shift: true }), unhandled);
   }
-  for (const key of ['Tab', 'F1', 'q', 'Unidentified']) assert.deepEqual(mapped(key), unhandled);
+  for (const key of ['Tab', 'F2', 'q', 'Unidentified']) assert.deepEqual(mapped(key), unhandled);
 });
 
 test('S05 output property: only handled commands request preventDefault; input stays frozen', () => {
@@ -139,4 +139,10 @@ test('S05 Photo before/after and crop keys are limited to the Photo workspace', 
   assert.deepEqual(mapped('\\', { workspace: 'photo', viewRole: 'preview2d' }), handled('photo.beforeAfter'));
   assert.deepEqual(mapped('r', { workspace: 'photo', viewRole: 'preview2d' }), handled('photo.crop'));
   assert.deepEqual(mapped('\\'), unhandled); assert.deepEqual(mapped('b', { workspace: 'photo', viewRole: 'preview2d' }), unhandled);
+});
+
+test('PU-02 F1 opens Help outside modal focus, including text fields', () => {
+  for (const target of ['view','text'] as const) assert.deepEqual(mapped('F1',{target}),handled('help.search'));
+  assert.deepEqual(mapped('F1',{target:'dialog'}),unhandled);
+  assert.deepEqual(mapped('F1',{ctrl:true}),unhandled);
 });

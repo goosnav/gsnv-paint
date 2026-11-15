@@ -60,6 +60,7 @@ export function keymap(event: CommandEvent): CommandResult {
     if (primary || event.shift) return result();
     return result(key === 'Escape' ? 'dialog.cancel' : key === 'Enter' ? 'dialog.confirm' : null);
   }
+  if (key === 'F1' && !primary && !event.shift) return result('help.search');
   if (event.target === 'text') {
     // Rich-text workspaces keep one history: typing commits to the document, so undo must be the document's.
     if (primary && (event.workspace === 'document' || event.workspace === 'slides' || event.workspace === 'code') && (key === 'z' || key === 'y')) return result(key === 'y' || event.shift ? 'edit.redo' : 'edit.undo');

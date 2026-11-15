@@ -1,6 +1,32 @@
-# Image workspace (Paint + Photoshop/GIMP essentials) — provisional GREEN
+# Image workspace — workflows and native format
 
 [D20](DECISIONS.md#d20--deliver-a-working-paint-style-image-workspace-before-the-full-layer-roster) introduced a paint-style editor. The 2026-11-12 plan (item 2) extends it with the Photoshop/GIMP functionality people use most. The full I01–I37 roster stays planned; this working increment is I50–I58 plus IMAGE-APP. Nothing is human-ACCEPTED.
+
+The current upgrade contract is [PAINT-UPGRADE-2026-11.md](PAINT-UPGRADE-2026-11.md).
+The historical verification below applies to its dated checkpoint, not to every
+feature now described here. Remaining consumer gaps are tracked separately in
+[CONSUMER-GAPS-2026-11.md](CONSUMER-GAPS-2026-11.md).
+
+## Start, open and find tools
+
+On a fresh start Image supplies an 800 × 600 white canvas in Pixel art mode with
+full colour. Recovery takes priority: an unresolved recoverable document is not
+replaced by a starter. **New / Ctrl+N** opens a previewed dialog for width, height,
+background (white, transparent or foreground colour), rendering, colour limit and
+dithering. Cancel keeps the current document.
+
+**Open / Ctrl+O** accepts `.gsnv-image`, PNG, JPEG, WebP, GIF and BMP. Ordinary
+images open as a document; **Image → Import as layer…** adds an image instead.
+Animated files are opened as a still image through the browser decoder.
+**Copy canvas** places the flattened result on the system clipboard where browser
+permission permits. Paste into the untouched starter adopts the image dimensions;
+paste into existing work adds a layer with free-transform handles. Clipboard
+failure is reported; an internal copy is not claimed as a system copy.
+
+**Help** searches the available commands and local tutorials/FAQ. Searching
+“font” describes **Text → Import font…**. Help shows a command's menu path and
+availability; its navigation action locates the command rather than silently
+running a destructive edit.
 
 ## Tools (shortcut)
 
@@ -11,16 +37,85 @@
 | Draw | Text (T), Line (L), Rectangle (R), Ellipse (O): outline, fill or both; Shift for squares, circles and 45° |
 | Colour | Pick colour (I), 28-colour XP palette, exact colour inputs, X swap, D defaults |
 
-Every numeric option is an XP trackbar paired with a typed number box (applied on Enter or blur). `[` and `]` change brush size; a ring follows the cursor at the brush's footprint. All painting, fills, gradients, text and adjustments are clipped to the selection.
+Numeric tool options pair an XP trackbar with a typed number box (applied on Enter
+or blur). `[` and `]` change brush size; a ring shows the brush footprint. Painting,
+fills, gradients and adjustments respect the selection. Text creates a separate
+raster layer with transform handles; it is not an editable text object or a
+selection-clipped text operation. Its dialog supports multiline text, colour,
+font, size, bold, italic, alignment and line spacing. **Import font…** accepts
+TTF/OTF up to 32 MiB; fonts stay on this device. Placed text is stored as pixels,
+including in recorded actions, so reopening does not need that font installed.
 
 ## Layers, adjustments, filters
 
 - **Layers:** new, duplicate, delete, move up/down, visibility, rename (double-click), opacity, blend mode (normal, multiply, screen, overlay, darken, lighten, difference), merge down, flatten. Paste and Import as layer create new layers.
 - **Adjustments** (live preview, OK/Cancel): Brightness/Contrast, Hue/Saturation, Levels, Curves (outputs at 64/128/192 through a monotone curve), Colour balance, Desaturate, Invert, Sepia, Posterize, Threshold.
-- **Filters:** Gaussian blur, Unsharp mask, Add noise, Pixelate, Find edges, Emboss.
+- **Filters:** Gaussian blur, Unsharp mask, Add noise, Down-pixel, Pixelate (averaged), Find edges, Emboss.
 - **Image:** Open image as a new document, Export PNG (flattened), Resize, Canvas size, Crop to selection, rotate, flip.
-- **Files:** `.gsnv-image` projects store each layer and the current selection as separate assets; both earlier project layouts still open. Selection changes have their own undo steps and survive recovery.
+- **Files:** `.gsnv-image` projects store each layer and the current selection as separate assets, plus document pixel policy. Earlier project layouts still open. Selection and policy changes have their own undo steps and survive recovery.
 - **View:** View → View settings shows the effective pixel zoom after Fit or wheel zoom. Type 1–6400% and optional horizontal/vertical offsets in screen pixels; preview stays centered, and Cancel restores the prior view. Canvas rendering defaults to Sharp pixels (nearest); Smooth blends the display without editing image pixels. Pixel size 1–32 controls coarse drawing blocks for Pencil and hard Brush/Eraser. Free transform offers Pixels (nearest, default) or Smooth (bilinear) sampling.
+
+## Pixel art, smooth edges and limited palettes
+
+These are separate choices. A raster always consists of pixels. **Nearest-neighbour
+display** enlarges each pixel into a distinct block; **antialiasing** puts partially
+covered pixels into a generated edge; **palette quantization** reduces colours to
+chosen swatches. Bicubic is a smoothing resampler, not the name for hard pixels.
+Gaussian blur is an explicit filter, not the underlying image format.
+
+**Image → Pixel settings…** controls the document:
+
+- **Pixel art — hard edges** makes newly rendered text use binary coverage
+  (coverage below 128 becomes transparent, otherwise opaque), draws hard shape
+  edges, and uses nearest-neighbour image resizing. The browser still determines
+  the font outline before coverage is hardened. Thin glyph details can disappear
+  at tiny sizes; there is no recovery of detail that the canvas never contained.
+- **Smooth artwork — antialiased edges** retains fractional text coverage, samples
+  shape edges and uses bilinear image resizing. Free transform has its own explicit
+  nearest/bilinear choice. Brush edges, intentional opacity and blur filters remain
+  independent controls; Pixel art/full colour does not prohibit soft artwork.
+- **Full colour** preserves the composite's RGBA values. A **colour limit** stores
+  a fixed palette and maps the final composite to it, after layers, opacity and
+  blend modes. Standard counts are 2, 4, 8, 16, 32, 64, 128 and 256. Choose preset
+  colours, generate from the current image, or enter exact custom hex swatches.
+  Generation is deterministic and sampled once per selected count in the dialog;
+  later drawing does not silently change the palette.
+- With a limit, each output pixel is either an opaque palette colour or fully
+  transparent black. There are no partially transparent output pixels. **None**
+  thresholds alpha at 128. **Ordered (Bayer 4×4)** and **Floyd–Steinberg** distribute
+  colour and opacity across neighbouring pixels. Transparency does not count as
+  an extra opaque swatch. The image can use fewer colours than the selected limit.
+
+Policy changes are nondestructive metadata: the original full-colour layer bytes,
+including intentional transparency, remain in the project. Switching to Full
+colour removes quantization; it does not reverse already-applied edits, text
+rasterization or resampling. Opening an older or ordinary image does not remove
+its existing soft pixels. Use a limited palette or an explicit filter to alter
+that appearance. The hard-edged default cannot reconstruct a blurred source.
+
+The visible composite, PNG export, canvas copy and Image-to-Video transfer use
+the output policy. Native project save retains editable source layers and policy.
+PNG is lossless and preserves the final pixel colours at native resolution; this
+is not a promise of an indexed PNG encoding. Other viewers can smooth a PNG when
+zooming. No exact-colour promise applies to later JPEG conversion or video encoding.
+
+**Filters → Down-pixel…** samples a smaller logical grid with nearest neighbours.
+Keep the original canvas dimensions for larger crisp blocks, or choose to resize
+the image to the grid. Preview/cancel do not edit the document; confirmation applies
+to all layers, clears the selection and forms one undo step. It does not average
+colours. **Pixelate (averaged)** is a different, destructive filter that averages
+each cell on the active layer and can introduce new colours before output policy.
+
+## Actions and batches
+
+**Automation** records semantic edits and provides an editable list, preview on a
+copy, explicit Apply once, `.gsnv-actions` save/open, JavaScript-generated recipes
+and folder/file batch processing. Opening an action file never executes it.
+Batch output is PNG or an editable Paint project. Originals remain inputs;
+outputs go to a timestamped child folder or an explicit ZIP download fallback.
+See [IMAGE-ACTIONS-V1.md](IMAGE-ACTIONS-V1.md) for exact schemas, scaling,
+cancellation behavior, resource caps and examples. Action files are saved
+separately from the image project; an unsaved recording is session state.
 
 ## Verification — 2026-11-12
 
@@ -35,7 +130,17 @@ Every numeric option is an XP trackbar paired with a typed number box (applied o
 
 ## Limits
 
-No layer masks, groups or editable text layers. Selections are hard-edged (no feather). Colour editing is opaque. Images are limited to 4096 × 4096 pixels. Pen pressure is not used. Other browsers and operating systems are untested.
+No layer masks, groups, layer/alpha locking or editable text layers. Selections
+have no feather/grow/shrink controls. There is no skew handle, rounded-rectangle
+or polygon drawing tool, bicubic resize, anchored canvas resize, or Image JPEG/
+WebP exporter. Pen pressure is not used. Images allow at most 16,777,216 pixels
+total (4096 × 4096 is one possible size) and 100 layers; UI fields can impose
+smaller per-axis limits. These limits are not performance guarantees for maximum
+size documents. Automation has additional memory and time caps.
+
+Linux Chromium/WebKit checks and touch emulation do not establish physical
+iPhone/iPad, Apple Pencil, Safari/macOS or Windows acceptance. Refer to each dated
+evidence file for the browser/OS actually tested.
 
 
 ## Exact acceptance and selection persistence — 2026-11-13
@@ -46,11 +151,43 @@ and all 768 selection bytes are checked; the reopened background remains
 editable. The fixture has no text or layer masks, so this is no evidence for
 those separate missing features. [Commands and evidence](IMAGE-ACCEPTANCE.md).
 
-The native container envelope remains `gsnv-image`, version 1. Its JSON domain
-layout is now `rgba8-layers-v2`: width, height, activeLayerId, ordered layer
-records `{id,name,visible,opacity,blend,asset}`, and required `selection`.
-Selection is null or `{encoding:'gray8',asset:'selection'}`; that asset has one
-coverage byte per pixel in row-major order (0 excluded, 255 included). Layer
-assets contain exact straight-alpha RGBA bytes, including RGB under zero
-alpha. Old `rgba8` and `rgba8-layers` layouts migrate with no selection. Unknown
-future layouts and malformed/missing/duplicate asset records fail visibly.
+## Current native format — `rgba8-layers-v3`
+
+The native container envelope remains `gsnv-image`, version **1**. The domain
+layout advances independently to `rgba8-layers-v3`. Exact content fields:
+
+```json
+{
+  "width": 32,
+  "height": 32,
+  "encoding": "rgba8-layers-v3",
+  "policy": { "mode": "pixel-art", "palette": null },
+  "activeLayerId": "background",
+  "layers": [
+    { "id": "background", "name": "Background", "visible": true,
+      "opacity": 1, "blend": "normal", "asset": "pixels-0" }
+  ],
+  "selection": null
+}
+```
+
+Layers are ordered bottom-to-top. Each `pixels-N` asset contains exactly
+`width × height × 4` straight-alpha RGBA bytes in row-major order, including RGB
+under zero alpha. `opacity` is 0–1; blend is `normal`, `multiply`, `screen`,
+`overlay`, `darken`, `lighten` or `difference`. IDs are unique and the active ID
+must name an existing layer.
+
+`selection` is null or `{"encoding":"gray8","asset":"selection"}`. Its asset
+has exactly one coverage byte per pixel (0 excluded, 255 included); bounds are
+derived from the mask. `policy` has exactly `mode` and `palette`. Mode is
+`pixel-art` or `smooth`; palette is null or
+`{"colours":[[0,0,0],[255,255,255]],"dither":"none"}`. There must be 1–256 unique
+integer RGB triples in 0–255. Dither is `none`, `bayer` or `floyd-steinberg`.
+There is no embedded font or action-recording state in this format.
+
+Old `rgba8` and `rgba8-layers` layouts migrate with no selection;
+`rgba8-layers-v2` retains its selection. All three receive Pixel art/full-colour
+policy without changing any stored pixels. Saving writes v3. Unknown future
+layouts and malformed/missing/duplicate asset records fail visibly. The exact
+reader/writer is [image-content.ts](../src/image/image-content.ts); policy
+validation is [image-pixel-policy.ts](../src/image/image-pixel-policy.ts).

@@ -287,3 +287,125 @@ Move physical page layout into DOC-PAGE and consolidate serializer overloads
 into one generic entry, preserving the exact characterization tests and format.
 This keeps the changed CORE modules within the method's public-entry limit.
 See [contract and evidence](PAINT-CONTROLS-DOCUMENT-FOOTER.md).
+
+## D32 — document pixel policy and nondestructive palette output (2026-11-15)
+
+The owner needs clean, discrete pixels, including custom-font text, rather than
+only a sharper zoom. Keep three concepts separate: generated edge coverage,
+display interpolation and colour quantization. Pixel art hardens newly generated
+text coverage at alpha 128 and uses aliased shape edges/nearest image resize;
+Smooth retains antialiased edges and bilinear resize. Brush softness and authored
+opacity remain explicit. Existing imported/legacy pixels are never silently
+thresholded. Alternative: only change CSS `image-rendering`; rejected because
+it cannot remove antialiasing already present in the saved raster. Bicubic is
+not the hard-pixel mode, and Gaussian remains an explicit blur filter.
+
+Persist `policy:{mode,palette}` in the `rgba8-layers-v3` domain layout, keeping
+the `gsnv-image` container version 1. Older three domain layouts migrate to Pixel
+art/full colour with unchanged bytes; v2 selection data is retained. Palette
+limits are a final composite policy, after blend modes and layer opacity. Store
+full-colour source layers, so changing a palette or returning to Full colour
+does not destroy them. Fixed unique RGB swatches plus none/Bayer/Floyd–Steinberg
+produce only opaque palette pixels or canonical transparent black. Dithering
+represents partial opacity spatially; fractional output alpha would create
+unlisted colours against arbitrary backgrounds. Alternative: quantize each
+layer destructively or leave final alpha fractional; rejected for source recovery
+and a truthful strict-colour guarantee. Revisit for an explicitly specified
+indexed-layer authoring model.
+
+PNG export, canvas copy and Image transfer consume the same output policy; native
+save retains source and metadata. PNG exactness concerns decoded pixel values,
+not palette-indexed encoding or later video/JPEG conversions. Down-pixel uses
+nearest samples with a controllable grid, separate from the existing averaged
+Pixelate filter. Pure bounded algorithms run through terminable workers for
+expensive previews. Small synchronous paths remain; this is not evidence of
+the original maximum-size performance target. Text still becomes pixels, and
+thresholding cannot invent missing thin glyph detail. See
+[format and limitations](IMAGE-WORKFLOW.md) and the
+[upgrade contract](PAINT-UPGRADE-2026-11.md).
+
+## D33 — portable semantic actions with explicit local execution (2026-11-15)
+
+The owner explicitly expands the original no-scripting scope to reusable actions,
+JavaScript and batch image processing. Record validated semantic operations with
+per-step reference dimensions, deterministic stroke seeds and embedded RGBA
+assets for external paste/raster text. Saved pixel diffs were rejected because
+they cannot meaningfully process a different input. An internal copy samples
+each input during replay; external data is embedded, never a path or future OS
+clipboard read. Layer references use stack indices. Undo/Redo follows recording
+history identities; unsupported edits or navigation beyond the boundary pause
+visibly rather than silently losing steps. Action files are separately saved
+`gsnv-actions` version 1 JSON, not part of the image project.
+
+Exact schemas reject unknown fields/versions. Coordinate scaling uses each
+step's reference; resize/canvas/down-pixel target sizes stay absolute. Validate
+before replay and return one atomic image result. Preview, Apply once and batch
+Run are distinct actions; opening a file does not execute it. JavaScript reuses
+the Code sandbox (opaque iframe plus terminable worker), receives only image
+dimensions/layer count and returns bounded operation data. It has no app/file/
+storage/network authority. No runtime CDN or server is introduced. Arbitrary
+JavaScript still has no hard heap quota; source/result caps and a deadline are
+not a claim of total resource isolation.
+
+Batch processing reads direct children only, decodes/replays/encodes sequentially,
+and writes a timestamped child directory. Explicit file selections require a
+chosen destination; browsers without directory writing offer ZIP. Output naming
+guards collisions and traversal without claiming an atomic exclusive-create API.
+Directory cancellation retains completed files and attempts incomplete-file
+cleanup. ZIP cancellation discards the unfinished archive. A write error stops
+the run; a bad image is reported and other inputs continue. ZIP is capped at
+128 MiB including metadata and is a memory fallback, not a streaming archive.
+Revisit for separately scoped recursive folders, streaming ZIP, editable text
+operations or raw-pixel scripting. Exact formats, bounds and operational limits:
+[IMAGE-ACTIONS-V1.md](IMAGE-ACTIONS-V1.md).
+
+## D34 — findable tools, usable startup and licensed consistent icons (2026-11-15)
+
+Provide an untouched Image starter only after recovery is resolved; New opens a
+previewed settings dialog. This preserves quick first use without replacing
+recoverable work. Help indexes actual command metadata alongside local tutorials
+and FAQ. Search results expose paths, availability and navigation rather than
+executing matched destructive commands. It requires no search server.
+
+The owner prefers recognizable open-source icons to overly coarse original
+glyphs. Supersede D30/D31's active Paint subset with reviewed **Tabler Icons
+3.52.0**, MIT, pinned to commit `4581ad20d8d13e24f6c3be75caaea1c4ad6c4b35`.
+Retain original SVGs, hashes, provenance and copyright/license in
+`vendor/tabler/`, with the shipped license under `public/licenses/`. A local
+generator extracts validated paths; the runtime creates SVG nodes without remote
+fetches or injected markup. Keep native 24-unit outline geometry; compact
+dimensions and restrained XP colours provide the visual influence. Deliberately
+coarsening every icon was rejected because it harmed recognition at actual tool
+size. Earlier Pixelarticons sources remain archived but are not rendered.
+
+The Goosnav white brand mark is a separately derived local pixel asset, aligned
+inside its own fixed chrome slot. It does not replace the source brand artwork.
+Shared menus layer above toolbars and tooltips; touch controls retain selection
+protection. These UI changes do not imply physical iOS/Safari acceptance; that
+requires separate device evidence. See the upgrade contract and vendored icon
+provenance for the bounded implementation.
+
+## D35 — browser-portable workers and recovery storage (2026-11-15)
+
+Actual Linux WebKit checks found two independent transport failures. Repeated
+external module-worker loads alternated between success and a COEP error, even
+without a service worker. Paint effects/replay now use Vite's locally bundled
+inline workers. Production uses trusted Blob/classic workers; development uses
+module workers. Isolation headers stay intact, no cache-busting URLs are needed,
+and asynchronous construction cannot start a cancelled job. Repeated execution,
+supersession and Stop were checked online and offline in Chromium and WebKit.
+Revisit if external workers have reliable cross-browser cache behavior.
+
+The isolated Code/recipe runtime also encountered WebKit's opaque `blob:null`
+module-import restriction. A bounded encoded data-module URL transports the
+same explicit user program inside the existing sandbox. This changes no runtime
+authority: no host DOM, network, files or storage, and no implicit execution on
+open. See [CODE-RUNTIME.md](CODE-RUNTIME.md) for the CSP and security evidence.
+
+The same WebKit engine rejected IndexedDB Blob writes, including a standalone
+three-byte reproduction. Recovery now snapshots byte views into owned
+ArrayBuffers. Reads accept old Blob records as well as byte segments; DB version
+1, monotonic generation checks and transaction atomicity remain unchanged. This
+prevents a failed recovery save from blocking replacement with a New document.
+It does not change the rule that a real storage failure must preserve current
+work. Revisit if browser-tested streaming storage avoids whole-segment copies.

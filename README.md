@@ -45,6 +45,21 @@ page numbers (off by default). Print CSS suppresses browser-added headings and
 footers where supported; if a title, date or address still appears, turn off
 **Print headers and footers** in the browser's print options.
 
+Paint now starts with a blank canvas. **New** asks for size, background and
+rendering; **Image → Pixel settings…** switches between hard Pixel art edges
+and Smooth artwork, with optional fixed palettes and dithering. Original layer
+colours remain editable; the palette constrains the finished image. **Filters →
+Down-pixel…** makes crisp blocks at a chosen resolution. **Automation** records
+edits, builds recipes with offline JavaScript, and processes files/folders into a
+timestamped output folder or bounded ZIP. Preview before applying or running a
+batch. **Help** searches tools and includes tutorials/FAQ, including custom fonts.
+See [pixel behavior and limits](dev/IMAGE-WORKFLOW.md) and the
+[portable actions format and batch limits](dev/IMAGE-ACTIONS-V1.md).
+The [Paint upgrade checkpoint](dev/PAINT-UPGRADE-CHECKPOINT.md) records the
+verified behavior, browser evidence and remaining limitations. The
+[consumer gap audit](dev/CONSUMER-GAPS-2026-11.md) keeps unfinished CAD and
+other original requirements visible.
+
 All use shared save/open, undo/redo, stored projects and local recovery. Failed browser backups keep unsaved work open with a Save instruction. Send Image composites to the Video bin, current Video frames to Image, or transparent CAD views to Image through each workspace's menus. These are working subsets; the full original CAD/Image/Video scope and packaged release remain unfinished. [Readiness ledger](dev/CONSUMER-READINESS.md).
 
 The [Open/navigation/transform checkpoint](dev/PAINT-OPEN-NAVIGATION-EVIDENCE.md) records this update, its regression checks and platform limits.
@@ -132,14 +147,25 @@ V selects sketch edges, L draws lines, R draws a rectangle, C draws a circle, F 
 
 ## First image
 
-Switch to the Image tab and press Ctrl+N. Pick a tool from the toolbox (B brush, P pencil, E eraser, G fill, N gradient, S/M/Q/W selections, V move, C clone), set size and opacity with the trackbars or by typing in the boxes, click a swatch for the primary colour or right-click for the secondary, and paint. Use the Layer, Adjustments and Filters menus for Photoshop-style work. Ctrl+Z undoes each step. Image → Export PNG saves a picture; Ctrl+S saves an editable `.gsnv-image` project. See [Image workflow evidence](dev/IMAGE-WORKFLOW.md).
+Start drawing on the initial 800 × 600 white canvas, or choose **New / Ctrl+N**
+to set its dimensions, background and pixel options. Pick a tool from the toolbox
+(B brush, P pencil, E eraser, G fill, N gradient, S/M/Q/W selections, V move,
+C clone), set size and opacity with the trackbars or typed boxes, and choose a
+colour. Right-click a swatch for the secondary colour. The Layer, Adjustments
+and Filters menus provide further edits. Ctrl+Z undoes each step. **Export… →
+Save PNG image** saves a picture; Ctrl+S saves an editable `.gsnv-image` project.
+See [Image workflows and native format](dev/IMAGE-WORKFLOW.md).
 
-Paint defaults to **Sharp pixels**: zooming enlarges each pixel without blurring
-it. **View → View settings → Canvas rendering** switches between Sharp pixels
-and Smooth without changing the image. Brush and Eraser default to **Hard pixels**;
-choose Smooth edges for soft strokes. **Pixel size** (1–32) makes larger drawing
-blocks on the same canvas. Free transform defaults to **Pixels (nearest)** to
-keep edges crisp when scaling; its Smooth option blends neighboring pixels.
+Paint defaults to **Pixel art**: new text and shapes have hard pixel edges, image
+resize uses nearest neighbours, and the view enlarges pixels sharply. **Image →
+Pixel settings…** changes document behavior and optional colour limits;
+**View → View settings → Canvas rendering** changes display interpolation only.
+Neither removes blur already stored in an imported image. Brush/Eraser offer
+explicit soft edges, and **Pixel size** (1–32) makes larger drawing blocks.
+Free transform has its own **Pixels (nearest)** or Smooth sampling choice.
+Placed text is rasterized; very small fonts can lose thin details. Export PNG
+to preserve exact palette colours; a limited palette uses opaque swatches or
+fully transparent pixels, with dithering available for intermediate tones.
 
 
 ## First photo

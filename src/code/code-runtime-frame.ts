@@ -22,7 +22,7 @@ export function executeCodeFrame({ root, input, signal, emit }: Request): Promis
     const document = root.ownerDocument, window = document.defaultView!, frame = document.createElement('iframe');
     frame.hidden = true; frame.title = 'Isolated code runner'; frame.setAttribute('sandbox', 'allow-scripts');
     const nonce = crypto.randomUUID(); let complete = false, output = 0;
-    frame.srcdoc = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}' blob: 'wasm-unsafe-eval'; worker-src data:; connect-src 'none'; base-uri 'none'; form-action 'none';"><script nonce="${nonce}">${brokerSource}</script>`;
+    frame.srcdoc = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}' data: 'wasm-unsafe-eval'; worker-src data:; connect-src 'none'; base-uri 'none'; form-action 'none';"><script nonce="${nonce}">${brokerSource}</script>`;
     const finish = () => { if (complete) return; complete = true; clearTimeout(timer); signal.removeEventListener('abort', abort); window.removeEventListener('message', receive); frame.contentWindow?.postMessage({ type: 'stop' }, '*'); frame.remove(); resolve(); };
     const abort = () => { if (!complete) emit({ type: 'status', status: 'stopped' }); finish(); };
     const timeout = () => { emit({ type: 'error', text: 'Execution time limit reached. Run stopped.' }); abort(); };

@@ -48,7 +48,7 @@ or folder without modifying originals; save/reopen/export consistently.
 
 ## Requirement / verification matrix
 
-All rows start UNTESTED. Results must name actual commands and outputs.
+All rows began UNTESTED. Final **PU-01–PU-16 PASS** results, actual commands, outputs and platform limits are recorded in [the candidate checkpoint](PAINT-UPGRADE-CHECKPOINT.md). Original requirement statuses remain unchanged.
 
 | ID | Contract | Verification |
 |---|---|---|
@@ -130,7 +130,32 @@ checks as passes. Final report must leave incomplete original requirements visib
 
 Baseline: 1,047 passing unit tests, production build and 38 focused browser tests
 from font increment (historical evidence, not fresh validation of this upgrade).
-No implementation has been credited yet.
+Implementation completed as GREEN bricks. Final evidence: **1,214 units**, **160 main browser checks plus 46 final affected checks**, **20 Linux WebKit checks**, **9 complete offline checks**, and local Cloudflare/deployment validation. See [the checkpoint](PAINT-UPGRADE-CHECKPOINT.md) for exact commands, logs, limitations and remaining original requirements. These are verification results, not owner acceptance.
 
 Map correction: existing `image-palette.ts` is the colour/tool UI SHELL. The new
 pure palette generator is `image-palette-core.ts`; existing UI ownership is unchanged.
+
+### Operation interface refinement (before implementation)
+
+I-CONTENT is a bounded CORE assembly composing raster storage, selection, blend
+metadata and policy validation; four seams justify its assembly classification.
+New recipe executor is similarly an assembly over bounded drawing/selection/layer
+and processing leaves. Exposed operation data uses active-layer indices instead of
+opaque document IDs. Each recipe step has a reference width/height; replay scales
+coordinates, scalar radii and embedded image placements from this reference.
+The executor owns no DOM, clock or randomness. Seeded spray events record their
+actual points and seeds. Full strokes retain ordered pointer segments so their
+spacing/flow matches interactive delivery. Recipe state contains image plus a
+private clipboard, with copy/cut/paste acting on the current input. External image
+and committed text pixels are embedded losslessly as asset IDs. Layer actions,
+selection shape/wand/all/none/invert, delete, move/affine, shape/fill/gradient,
+adjustment, whole-image transform, pixel-policy and downpixel are explicit operation
+variants. Unknown variants and out-of-bounds resource requests reject visibly.
+
+Recipe v1 JSON: `{format:'gsnv-actions',version:1,name,steps,assets,output}`; each
+step `{id,label,enabled,reference:{width,height},operation}`. Assets encode bounded
+RGBA bytes losslessly with dimensions; output is PNG or editable project. Maximum
+1,000 steps, 1,000,000 total stroke samples, 128 MiB decoded assets, 192 MiB file.
+Application never evaluates recipes. Scripting accepts JavaScript separately and
+returns this validated operation list via a bounded worker channel. Recipe editing
+and recording use the same validation before execution.

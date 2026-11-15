@@ -14,7 +14,7 @@ const history = (page: Page) => page.locator('[data-panel-history] li').allTextC
 const menu = async (page: Page, top: string, name: string) => { await page.getByRole('menuitem', { name: top, exact: true }).click(); await page.getByRole('menuitem', { name }).click(); };
 async function start(page: Page) {
   await page.getByRole('tab', { name: 'Image', exact: true }).click();
-  await expect(page.locator('.gc-standard button[data-command="file.new"]')).toBeEnabled(); await page.keyboard.press('Control+n');
+  await expect(page.locator('.gc-standard button[data-command="file.new"]')).toBeEnabled(); await page.keyboard.press('Control+n'); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();
   await expect(page.locator('.image-canvas')).toBeVisible(); const dims = await size(page), box = (await page.locator('.image-canvas').boundingBox())!;
   return { dims, p: (x: number, y: number) => at(box, dims, x, y) };
 }
@@ -45,7 +45,7 @@ test('IMAGE-APP production: paint tools, selection move, undo, layered native fi
 
     const downloading = page.waitForEvent('download'); await page.keyboard.press('Control+s'); const download = await downloading;
     const bytes = await readFile((await download.path())!), pkg = nativeContainer({ op: 'decode', parts: [bytes] }), content = pkg.project.content as { encoding: string; layers: { name: string }[] };
-    expect(pkg.project.format).toBe('gsnv-image'); expect(content.encoding).toBe('rgba8-layers-v2'); expect(content.layers.map(l => l.name)).toEqual(['Background', 'Layer 2']);
+    expect(pkg.project.format).toBe('gsnv-image'); expect(content.encoding).toBe('rgba8-layers-v3'); expect(content.layers.map(l => l.name)).toEqual(['Background', 'Layer 2']);
     const offset = (340 * 800 + 450) * 4; expect([...pkg.assets[0]!.bytes.slice(offset, offset + 4)]).toEqual([0, 0, 255, 255]); expect(pkg.assets[1]!.bytes[offset + 3]).toBe(0);
 
     const exporting = page.waitForEvent('download'); await page.locator('.gc-standard button[data-command="file.export"]').click(); await page.getByRole('dialog').getByRole('button',{name:'Continue',exact:true}).click(); const png = await exporting;

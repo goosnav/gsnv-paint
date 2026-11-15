@@ -1,0 +1,27 @@
+
+Running 20 tests using 1 worker
+
+(node:2997805) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 src/image/image-automation.browser.spec.ts:8:1 › PU-10/11/12 full recorded edit sequence replays pixel-exact and Apply is one Undo (6.0s)
+  ✓   2 src/image/image-automation.browser.spec.ts:16:1 › PU-11 recorder follows Undo and preserves edited actions after stopping (3.7s)
+  ✓   3 src/image/image-automation.browser.spec.ts:20:1 › PU-13 JavaScript builds a recipe without applying it; stale code results stay disabled (3.7s)
+  ✓   4 src/image/image-automation.browser.spec.ts:24:1 › PU-11 recorded clipboard transfers reuse the new input rather than embedding old pixels (5.0s)
+  ✓   5 src/image/image-automation.browser.spec.ts:28:1 › PU-12/13 keyboard activates script buttons and an action can be re-enabled (2.5s)
+  ✓   6 src/image/image-automation.browser.spec.ts:31:1 › PU-10/11 midstroke size and colour shortcuts cannot diverge saved replay pixels (3.7s)
+  ✓   7 src/image/image-automation.browser.spec.ts:34:1 › PU-12 a slow action-file read cannot overwrite a newer recording (2.8s)
+  ✓   8 src/image/image-automation.browser.spec.ts:37:1 › PU-11 text pixels are embedded and replayed without relying on installed fonts (3.5s)
+  ✓   9 src/image/image-automation.browser.spec.ts:40:37 › PU-11 clipboard provenance after Undo preserves the actual clipboard as an asset (6.1s)
+  ✓  10 src/image/image-automation.browser.spec.ts:40:37 › PU-11 clipboard provenance after Undo recovers after a fresh copy (8.7s)
+  ✓  11 src/image/image-batch.browser.spec.ts:6:1 › PU-14/15 browser file fallback previews each size and exports a timestamped ZIP with honest bad-input report (4.5s)
+  ✓  12 src/image/image-upgrade-visual.browser.spec.ts:3:1 › PU-02/03 actual-size chrome and Help remain reachable at desktop DPR1/2 and narrow touch size (7.1s)
+  ✓  13 src/image/image-upgrade.browser.spec.ts:8:1 › PU-02 offline Help locates fonts and safely highlights the Text tool (2.1s)
+  ✓  14 src/image/image-upgrade.browser.spec.ts:16:1 › PU-04 starts on a blank canvas and New offers reversible document settings (2.5s)
+  ✓  15 src/image/image-upgrade.browser.spec.ts:22:1 › PU-06 Pixel art custom text has exact RGB and binary coverage; Smooth retains antialiasing (4.3s)
+  ✓  16 src/image/image-upgrade.browser.spec.ts:34:1 › PU-07/08 strict palettes preview reversibly and export only chosen colours (3.9s)
+  ✓  17 src/image/image-upgrade.browser.spec.ts:44:1 › PU-09 down-pixel worker previews and cancels; Resize applies once and Undo restores (3.2s)
+  ✓  18 src/image/image-upgrade.browser.spec.ts:48:1 › PU-07 a single committed stroke on a worker-rendered palette reaches the canvas (2.5s)
+  ✓  19 src/image/image-upgrade.browser.spec.ts:51:1 › PU-06/07 strict text previews use palette colours and policy changes reset the sampling default (4.3s)
+  ✓  20 src/image/image-upgrade.browser.spec.ts:54:1 › PU-06 applying an unchanged transform restores the lifted raster, not its empty preview (4.0s)
+
+  20 passed (1.4m)

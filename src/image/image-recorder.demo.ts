@@ -1,0 +1,12 @@
+import { imageRecorder } from './image-recorder.ts';
+import { imageContent } from './image-content.ts';
+const image = imageContent({ operation: 'new', width: 32, height: 32, fill: [255, 255, 255, 255] });
+let state = imageRecorder({ kind: 'start', image, name: 'Copy then invert' });
+state = imageRecorder({ kind: 'observe', state, before: image, after: image, label: 'Copy canvas', operations: [{ operation: { kind: 'clipboard', action: 'copy', source: 'canvas', background: [255, 255, 255, 255] }, reference: { width: 32, height: 32 } }] });
+const changed = imageContent({ operation: 'new', width: 32, height: 32, fill: [0, 0, 0, 255] });
+state = imageRecorder({ kind: 'observe', state, before: image, after: changed, label: 'Invert', operations: [{ operation: { kind: 'adjust', adjustment: { kind: 'invert' } }, reference: { width: 32, height: 32 } }] });
+console.log('Recorded:', state.recipe.steps.map(s => s.label).join(' → '));
+state = imageRecorder({ kind: 'navigate', state, image });
+console.log('After Undo:', state.recipe.steps.map(s => s.label).join(' → '));
+state = imageRecorder({ kind: 'stop', state });
+console.log('Save this portable recipe only:', JSON.stringify(state.recipe, null, 2));

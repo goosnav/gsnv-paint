@@ -23,7 +23,7 @@ export async function documentStorage(surface: { evaluate<R>(fn: () => Promise<R
       } finally { database.close(); }
       for (const value of values.filter(value => value.workspace === 'document')) {
         const { payload, parts, ...metadata } = value;
-        const bytes = await Promise.all(((payload ?? parts) as (Blob | Uint8Array)[]).map(async part => [...(part instanceof Blob ? new Uint8Array(await part.arrayBuffer()) : part)]));
+        const bytes = await Promise.all(((payload ?? parts) as (Blob | Uint8Array | ArrayBuffer)[]).map(async part => [...(part instanceof Blob ? new Uint8Array(await part.arrayBuffer()) : part instanceof ArrayBuffer ? new Uint8Array(part) : part)]));
         result.push({ database: name, metadata, parts: bytes });
       }
     }

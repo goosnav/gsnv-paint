@@ -246,3 +246,8 @@ test('FONT-02/03 restored choices retain current selection and report a storage 
   f.button('Import font…').click(); await tick(); assert.equal(f.root.querySelectorAll('option').length, 3);
   f.button('OK').click(); assert.equal(f.commits.length, 1); f.dom.window.close();
 });
+
+test('PU-04 dialogs mount an owned live preview and remove it on cancel', () => {
+ const f=fixture();const preview=f.document.createElement('output');preview.textContent='800 × 600';f.spec.previewElement=preview;
+ f.open();assert.equal(preview.closest('dialog'),f.root.querySelector('dialog'));f.button('Cancel').click();assert.equal(preview.isConnected,false);f.dom.window.close();
+});

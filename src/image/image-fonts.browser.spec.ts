@@ -13,7 +13,7 @@ async function start(page: Page) {
     Object.defineProperty(window, 'showSaveFilePicker', { value: undefined });
   });
   await page.goto(server.resolvedUrls!.local[0]!);
-  await page.locator('.gc-standard [data-command="file.new"]').click();
+  await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();
 }
 async function textDialog(page: Page) {
   await page.locator('.gc-palette [data-command="image.text"]').click();
@@ -61,7 +61,7 @@ test('FONT-01–06 TTF/OTF render, persist offline, reject bad files, and travel
   expect(await page.evaluate(async bytes => { const image = await createImageBitmap(new Blob([new Uint8Array(bytes)], { type: 'image/png' })), c = document.createElement('canvas'); c.width = image.width; c.height = image.height; c.getContext('2d')!.drawImage(image, 0, 0); image.close(); return c.toDataURL(); }, [...png])).toBe(painted);
   await expect(page.locator('.gc-offline > summary')).toHaveText('Ready offline', { timeout: 90_000 });
   await context.setOffline(true); await page.reload();
-  await page.locator('.gc-standard [data-command="file.new"]').click(); const restored = await textDialog(page);
+  await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click(); const restored = await textDialog(page);
   const restoredFont = restored.getByRole('combobox', { name: 'Font', exact: true }); await expect(restoredFont.locator('option')).toHaveCount(options);
   await restored.getByRole('textbox', { name: 'Text (Enter for a new line)' }).fill('A\nB'); await restored.getByLabel('Size (px)', { exact: true }).fill('48'); await restored.getByLabel('Color', { exact: true }).fill('#c01020'); await restoredFont.selectOption(otf);
   expect(await pixels(page, '.image-floating')).toBe(second); await restored.getByRole('button', { name: 'Cancel', exact: true }).click(); await context.setOffline(false);

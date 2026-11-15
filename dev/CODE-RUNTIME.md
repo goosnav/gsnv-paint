@@ -29,7 +29,7 @@ The frame installs this policy before its broker script:
 
 ```text
 default-src 'none';
-script-src 'nonce-<random>' blob: 'wasm-unsafe-eval';
+script-src 'nonce-<random>' data: 'wasm-unsafe-eval';
 worker-src data:;
 connect-src 'none';
 base-uri 'none';
@@ -39,6 +39,8 @@ form-action 'none';
 Data-URL workers inherit the creating document's policy, as described in [MDN's worker CSP documentation](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers#content_security_policy). This blocks fetch, XHR, WebSocket, and HTTP module imports even if user code replaces JavaScript wrappers. The tested fetch, WebSocket, and HTTP-import attempts produce no requests at the probe server. Python's unrestricted JavaScript bridge stays inside this same worker boundary. Subworker constructors are unavailable.
 
 Chrome rejected an opaque-origin **blob module worker** in the initial probe. A data-URL module bootstrap works with the same opaque origin and deny-network policy. This is a browser-tested compatibility choice; no origin permission is relaxed. Pyodide [requires module workers](https://pyodide.org/en/stable/usage/webworker.html). Do not replace this with an editor-origin worker.
+
+2026-11-15 transport correction: WebKit 27.2 also rejects a `blob:null/…` JavaScript module imported *inside* the opaque worker, producing “Cross-origin script load denied by Cross-Origin Resource Sharing policy.” A controlled probe reproduced that error, confirmed data modules were blocked by the former policy, then verified that an in-memory data module executes with worker origin `null`. Both user JavaScript and the already-bundled Python loader/engine now use UTF-8 data module URLs. `script-src data:` replaces `blob:`; it does not add HTTP sources, `unsafe-eval`, `allow-same-origin`, storage permission or host commands. The nonce remains required for the iframe's inline broker, `worker-src data:` and `connect-src 'none'` stay unchanged, and the existing execution/message/deadline limits remain in force. This changes the module transport available to already-authorized local code, not its authority. WebKit and Chrome runtime/isolation regression evidence is recorded below.
 
 Stop is owned outside the executing worker. The broker calls [`Worker.terminate()`](https://developer.mozilla.org/en-US/docs/Web/API/Worker/terminate); source cannot catch it as a Python exception. The host removes the frame and settles its promise. The host also imposes a 30-second loading deadline and a 30-second execution deadline. Only the first `running` event can start the execution deadline.
 
@@ -68,11 +70,20 @@ node node_modules/@playwright/test/cli.js test --config src/code/code-runtime.pl
 node node_modules/typescript/bin/tsc --noEmit
 ```
 
-The browser suite builds only K02 and dependencies into a fresh temporary directory and serves it on loopback port 4189. It never changes application `dist/`. `CODE_RUNTIME_TEST_TMP` can select a temporary parent directory. Chrome is the tested browser; other browsers remain unverified. The fixture uses the application's COOP, COEP, and CORP headers and asserts `crossOriginIsolated`.
+The browser suite builds only K02 and dependencies into a fresh temporary directory and serves it on loopback port 4189. It never changes application `dist/`. `CODE_RUNTIME_TEST_TMP` can select a temporary parent directory. Chrome covers the full runtime; the narrower JavaScript recipe boundary also has Linux WebKit evidence below. Other full-runtime/browser combinations remain unverified. The fixture uses the application's COOP, COEP, and CORP headers and asserts `crossOriginIsolated`.
 
 The JavaScript demo prints `answer 42 undefined`; the last value confirms that a worker has no `document`. The Python fixture imports a project-local module and prints `9.0 42`. Contract tests cover errors, Stop and restart during real infinite loops in both engines, storage/network denial, missing asset retry, warm offline execution, bounded console and direct message floods, disposal, no execution at construction, and script-free preview including CSS markup escape attempts. Stop also waits for the browser's worker target to disappear. The build checks the total isolated runtime payload is below 25 MiB.
 
 Verified 2026-11-13: K01 **4/4**, K02 production browser suite **8/8**, isolated runtime assets **13,548,224 bytes**, TypeScript **exit 0**, and the modular checker **PASS** for all seven implementation files. A focused rerun with the worker-target closure assertions passed **1/1**. These are GREEN verification results, not owner acceptance or full-application/offline-distribution acceptance.
+
+Verified 2026-11-15 after the data-module correction:
+
+- `IMAGE_RECIPE_SCRIPT_TEST_PORT=4221 LD_LIBRARY_PATH=/tmp/paint-webkit-deps/usr/lib/x86_64-linux-gnu npx playwright test --config src/image/image-recipe-script.webkit.playwright.config.ts`: **7 passed (37.5s)**. The first test failed before the fix with the exact WebKit CORS error. After the fix, execution, opaque DOM/storage/network boundaries, Stop/restart/disposal, forged-result rejection, source/output/message limits, warm offline execution and the 30-second deadline all passed.
+- `IMAGE_RECIPE_SCRIPT_TEST_PORT=4222 npx playwright test --config src/image/image-recipe-script.playwright.config.ts`: **7 passed (36.6s)** in Chrome, exercising the same recipe boundary.
+- `npx playwright test --config src/code/code-runtime.playwright.config.ts`: **8 passed (40.7s)** in Chrome, including Python stdlib/local imports, Python bridge isolation, warm offline Python and infinite-loop Stop in both engines. Isolated production assets: **13,548,151 bytes**.
+- Scoped strict TypeScript check for the runtime frame and updated recipe browser fixture/configuration: **exit 0**.
+
+All three browser suites build into temporary directories; application `dist/` is untouched. These WebKit results are Playwright WebKit 27.2 on Linux, not a Safari, iPhone or iPad device smoke test. The full Code/Python suite remains unverified in WebKit. Main application integration must be rebuilt and checked separately. The recipe fixture port defaults to 4197 and can be overridden to avoid concurrent suites.
 
 Tuning lives in the document's named size constants, the frame's loading/execution deadlines, the broker's message/output limits, and the preview's tag/attribute allowlists. The matching document boundary tests and runtime browser tests gate changes. Keep frame, broker, and worker output constants consistent. Do not add network or same-origin sandbox permissions to solve a loader error.
 

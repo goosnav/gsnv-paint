@@ -33,6 +33,8 @@ import { session, type Session, type SessionEvent } from '../shared/session.ts';
 import { createChrome, type ChromeModel } from '../shared/chrome.ts';
 import { bindInput, type CommandContext, type Gesture } from '../shared/input-adapter.ts';
 import { viewTransform, type View2D } from '../shared/view-transform.ts';
+import { showHelp } from '../shared/help-dialog.ts';
+import type { HelpCommand, HelpSection } from '../shared/help-index.ts';
 import { showDialog, type DialogSpec } from '../shared/dialog.ts';
 import { fileAccess, type FilePorts } from '../shared/file-access.ts';
 import { recoveryStore, type RecoveryPorts } from '../shared/recovery-store.ts';
@@ -58,6 +60,8 @@ type EditorView = {
   gesture(gesture: Gesture): void;
   /** Presents effective zoom/typed pan when the adapter owns an additional view transform. */
   viewSettings?(): void;
+  /** Presents workspace-specific creation settings; confirmation uses host.open. */
+  newDocument?(): void;
   /** Commits pending view edits synchronously before save, replacement or unload. */
   flush?(): void;
   /** Readiness and immutable snapshot capture for the three declared transfer routes. */
@@ -66,6 +70,8 @@ type EditorView = {
 };
 export type WorkspaceAdapter = {
   create?: () => AppDocument;
+  /** Creates a pristine starter only after recovery has resolved safely. */
+  createOnStartup?: boolean;
   decode(packageValue: Package): AppDocument;
   encode(document: AppDocument): Package;
   mount(host: {
@@ -129,6 +135,7 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
   const remembered: Partial<Record<Workspace, string>> = {};
   const backedUp: Partial<Record<Workspace, string>> = {};
   const backingUp: Partial<Record<Workspace, { identity: string; epoch: number; task: Promise<boolean> }>> = {};
+  const starter: Partial<Record<Workspace, string>> = {};
   const startupRestored: Partial<Record<Workspace, string>> = {};
   const discarded: Partial<Record<Workspace, string>> = {};
   const rememberQueues: Partial<Record<Workspace, Promise<boolean>>> = {};
@@ -195,7 +202,7 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
   }
   function backup(workspace: Workspace): Promise<boolean> {
     const snapshot = state.documents[workspace]; const epoch = epochs[workspace];
-    if (!snapshot || candidates[workspace] || recoveryBlocked[workspace] || !initialized || discarded[workspace] === snapshot.identity) return Promise.resolve(false);
+    if (!snapshot || snapshot.identity === starter[workspace] || candidates[workspace] || recoveryBlocked[workspace] || !initialized || discarded[workspace] === snapshot.identity) return Promise.resolve(false);
     if (backedUp[workspace] === snapshot.identity) return Promise.resolve(true);
     if (backingUp[workspace]?.identity === snapshot.identity && backingUp[workspace]?.epoch === epoch) return backingUp[workspace]!.task;
     delete backedUp[workspace]; delete remembered[workspace];
@@ -264,8 +271,31 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
         { id: 'edit', label: 'Edit', items: [item('edit.undo', 'Undo', 'Ctrl+Z', !!history?.past.length, 'undo'), item('edit.redo', 'Redo', 'Ctrl+Y', !!history?.future.length, 'redo')] },
         { id: 'view', label: 'View', items: [item('view.settings', 'View settings', '', !!current && is2D())] },
         ...(editor?.menus??[]).map(menu=>({...menu,items:menu.items.map(item=>exportIds.has(item.id)&&workspace!=='cad'?{...item,toolbar:false}:item)})),
+        { id: 'help', label: 'Help', items: [item('help.search', 'Search Help…', 'F1', true), item('help.getting-started', 'Getting started', '', true), item('help.faq', 'FAQ', '', true)] },
       ], tools: editor?.tools ?? [], panels: [...(editor?.panels ?? []), { id: 'history', title: 'History', content: historyPanel }, { id: 'recovery', title: 'Recovery', content: recoveryPanel }],
     };
+  }
+  function help(section: HelpSection) {
+    const workspace=state.workspace, m=model(), seen=new Set<string>(), commands:HelpCommand[]=[];
+    const add=(id:string,label:string,enabled:boolean,shortcut:string,path:string[],showMe=false)=>{
+      if(seen.has(id))return;seen.add(id);commands.push({id,label,enabled,shortcut,path,workspace,showMe});
+    };
+    for(const menu of m.menus) for(const item of menu.items) {
+      add(item.id,item.label,item.enabled,item.shortcut,[menu.label,item.label]);
+      for(const child of item.children??[])add(child.id,child.label,child.enabled,child.shortcut,[menu.label,item.label,child.label]);
+    }
+    for(const tool of m.tools){const old=commands.find(c=>c.id===tool.id);if(old){old.showMe=true;}else add(tool.id,tool.label,tool.enabled,tool.shortcut,['Tool palette',tool.label],true);}
+    modalActive=true;
+    try{
+      const handle=showHelp({document,root,workspace,commands,section,onCommand(id){
+        if(disposed||state.workspace!==workspace)return;
+        void dispatch(id).then(()=>{
+          const control=[...root.querySelectorAll<HTMLButtonElement>('.gc-palette [data-command]')].find(n=>n.dataset.command===id);
+          if(control){control.focus({preventScroll:true});control.classList.add('gc-help-target');window.setTimeout(()=>control.classList.remove('gc-help-target'),2200);}
+        });
+      }});modal=handle;
+      void handle.closed.then(()=>{if(modal===handle){modalActive=false;modal=null;render();}});
+    }catch(cause){modalActive=false;modal=null;throw cause;}
   }
   function saveOptions(exportsOnly: boolean) {
     const workspace=state.workspace;if(!flushView(workspace))return;
@@ -371,6 +401,7 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
   function remember(workspace: Workspace): Promise<boolean> {
     const snapshot = state.documents[workspace], epoch = epochs[workspace];
     if (!recent || !snapshot) return Promise.resolve(false);
+    if (snapshot.identity === starter[workspace]) return Promise.resolve(true);
     if (remembered[workspace] === snapshot.identity) return Promise.resolve(true);
     if (remembering[workspace]?.identity === snapshot.identity) return remembering[workspace]!.task;
     // Any queued write can replace an earlier stored revision, including after Undo.
@@ -404,7 +435,7 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
   async function mayReplace(workspace: Workspace, replacementId?: string): Promise<boolean> {
     if (modalActive) { status('Close the current dialog, then try opening the document again.'); return false; }
     if (!flushView(workspace)) return false;
-    if (!state.dirty[workspace]) return true;
+    if (!state.dirty[workspace] || state.documents[workspace]?.identity === starter[workspace]) return true;
     const protectedDocument = state.documents[workspace];
     if (recent) {
       if (replacementId === protectedDocument?.id) {
@@ -517,10 +548,11 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
     const menu = model(); const entry = [...menu.menus.flatMap(group => group.items.flatMap(item=>[item,...item.children??[]])), ...menu.tools].find(item => item.id === id);
     if (!entry?.enabled) return;
     const workspace = state.workspace;
+    if (id.startsWith('help.')) { help(id.slice(5) as HelpSection); return; }
     if (id === 'file.open') return open();
     if(id==='file.saveOptions'||id==='file.export'){saveOptions(id==='file.export');return;}
     if (id === 'file.save') { await save(workspace); return; }
-    if (id === 'file.new') { if (await mayReplace(workspace) && !disposed && !modalActive) replace(workspace, adapters[workspace]!.create!(), false); return; }
+    if (id === 'file.new') { if (activeView()?.newDocument) { activeView()!.newDocument!(); return; } if (await mayReplace(workspace) && !disposed && !modalActive) replace(workspace, adapters[workspace]!.create!(), false); return; }
     if (id === 'file.rename') {
       if (!flushView(workspace)) return;
       const current = state.documents[workspace]!;
@@ -591,7 +623,7 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
       if (!flushView(workspace)) pendingEdit = true;
       if (recent && state.documents[workspace] && startupRestored[workspace] !== state.documents[workspace]?.identity) void flushRemember(workspace);
     }
-    if (pendingEdit || WORKSPACES.some(workspace => state.dirty[workspace] && (!recent || (remembered[workspace] !== state.documents[workspace]?.identity && !(startupRestored[workspace] === state.documents[workspace]?.identity && backedUp[workspace] === startupRestored[workspace]))))) { event.preventDefault(); event.returnValue = ''; }
+    if (pendingEdit || WORKSPACES.some(workspace => state.dirty[workspace] && state.documents[workspace]?.identity !== starter[workspace] && (!recent || (remembered[workspace] !== state.documents[workspace]?.identity && !(startupRestored[workspace] === state.documents[workspace]?.identity && backedUp[workspace] === startupRestored[workspace]))))) { event.preventDefault(); event.returnValue = ''; }
   };
   window.addEventListener('beforeunload', beforeUnload);
   const recentReady = recent ? recent.list().then(entries => { recentEntries = entries; return true; }, () => false) : Promise.resolve(true);
@@ -641,7 +673,16 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
       }
     }),
     recentReady,
-  ]).then(() => { initialized = true; render(); }).catch(cause => { status(reason(cause)); });
+  ]).then(() => {
+    initialized = true;
+    const adapter = adapters[initialWorkspace];
+    if (!disposed && adapter?.createOnStartup && adapter.create && !state.documents[initialWorkspace] && !candidates[initialWorkspace] && !recoveryBlocked[initialWorkspace]) {
+      const value = adapter.create(); validate(initialWorkspace, value); epochs[initialWorkspace]++;
+      mark({ type: 'open', workspace: initialWorkspace, snapshot: { ...value, identity: `revision-${++sequence}` }, isSaved: false });
+      starter[initialWorkspace] = state.documents[initialWorkspace]!.identity;
+    }
+    render();
+  }).catch(cause => { status(reason(cause)); });
   return { ready, dispatch, offlineSlot: chrome.offlineSlot, snapshot: () => state,
     async idle() {
       await ready; let work: Promise<unknown>[];

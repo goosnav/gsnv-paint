@@ -22,7 +22,7 @@ async function clipboardPixels(page: Page) {
   });
 }
 test('Paint native paste opens an image and Copy canvas writes the full transparent composite', async ({ page }) => {
-  await expect(page.locator('.image-canvas')).toBeHidden(); await seed(page, 32, 24, true);
+  await expect(page.locator('.image-canvas')).toHaveAttribute('width','800'); await seed(page, 32, 24, true);
   await page.locator('.gc-viewport').focus(); await page.keyboard.press('Control+v');
   await expect(page.locator('.image-canvas')).toHaveAttribute('width', '32'); await expect(page.locator('.image-canvas')).toHaveAttribute('height', '24');
   await expect(page.locator('.image-layer')).toHaveCount(1);
@@ -43,10 +43,10 @@ test('Paint native paste opens an image and Copy canvas writes the full transpar
   await page.screenshot({ path: 'dev/evidence/IMAGE-clipboard.png' });
 });
 test('Paint oversized paste exposes a whole-source transform, cancel and undo; text paste stays native', async ({ page }) => {
-  await page.locator('.gc-standard [data-command="file.new"]').click(); await seed(page, 1600, 400);
+  await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click(); await seed(page, 1600, 400);
   const before = await history(page); await page.locator('.gc-standard [data-command="edit.paste"]').click();
   await expect(page.locator('.image-layer')).toHaveCount(2); await expect(page.getByRole('form', { name: 'Free transform' })).toBeVisible();
-  await expect(page.locator('.image-floating')).toHaveAttribute('width', '1600');
+  await expect(page.locator('.image-floating')).toHaveAttribute('width', '640');
   await expect(page.getByRole('spinbutton', { name: 'Transform width', exact: true })).toHaveValue('640');
   await expect(page.getByRole('spinbutton', { name: 'Transform height', exact: true })).toHaveValue('160');
   await page.getByRole('button', { name: 'Cancel transform', exact: true }).click(); await expect(page.locator('.image-layer')).toHaveCount(2);
@@ -60,7 +60,7 @@ test('Paint oversized paste exposes a whole-source transform, cancel and undo; t
   await expect(text).toHaveValue('hello world'); await expect(page.locator('.image-layer')).toHaveCount(1);
 });
 test('Paint clipboard denial is honest and a late read cannot replace another workspace', async ({ page }) => {
-  await page.locator('.gc-standard [data-command="file.new"]').click(); const before = await history(page);
+  await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click(); const before = await history(page);
   await page.evaluate(() => { Object.defineProperty(navigator.clipboard, 'write', { configurable: true, value: async () => { throw new DOMException('denied', 'NotAllowedError'); } }); });
   await page.locator('.gc-standard [data-command="image.copyCanvas"]').click();
   await expect(page.locator('.image-tool-hint')).toContainText('Export PNG'); expect(await history(page)).toEqual(before);
@@ -79,7 +79,7 @@ test('Paint clipboard denial is honest and a late read cannot replace another wo
   await page.getByRole('tab', { name: 'Image', exact: true }).click(); await expect(page.locator('.image-layer')).toHaveCount(1); expect(await history(page)).toEqual(before);
 });
 test('Paint ignores non-image clipboard contents and rejects invalid images without changing the canvas', async ({ page }) => {
-  await page.locator('.gc-standard [data-command="file.new"]').click();
+  await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();
   await page.locator('.gc-standard [data-command="image.copyCanvas"]').click();
   await expect(page.locator('.image-tool-hint')).toContainText('Canvas copied');
   const before = await history(page);
@@ -91,4 +91,7 @@ test('Paint ignores non-image clipboard contents and rejects invalid images with
   await expect(page.locator('.image-tool-hint')).toContainText('could not be pasted');
   await expect(page.locator('.image-layer')).toHaveCount(1); expect(await history(page)).toEqual(before);
   await expect(page.getByRole('form', { name: 'Free transform' })).toBeHidden();
+});
+test('PU-07 system clipboard PNG matches the strict palette viewport including transparency',async({page})=>{
+ await seed(page,32,24,true);await page.locator('.image-stage').focus();await page.keyboard.press('Control+v');await expect(page.locator('.image-canvas')).toHaveAttribute('width','32');await page.getByRole('menubar').getByRole('menuitem',{name:'Image',exact:true}).click();await page.getByRole('menuitem',{name:'Pixel settings…',exact:true}).click();const d=page.getByRole('dialog',{name:'Pixel settings',exact:true});await d.getByLabel('Colour limit',{exact:true}).selectOption('2');await d.getByLabel('Dithering',{exact:true}).selectOption('bayer');await d.getByRole('button',{name:'OK',exact:true}).click();const expected=await page.locator('.image-canvas').evaluate((c:HTMLCanvasElement)=>[...c.getContext('2d')!.getImageData(0,0,c.width,c.height).data]);await page.locator('.gc-standard [data-command="image.copyCanvas"]').click();await expect(page.locator('.image-tool-hint')).toContainText('Canvas copied');const copied=await clipboardPixels(page);expect(copied.bytes).toEqual(expected);expect(copied.bytes.every(n=>n===0||n===255)).toBe(true);expect(copied.bytes[3]).toBe(0);
 });

@@ -13,9 +13,11 @@
  * DECISIONS  D1: IndexedDB transactions are authoritative; localStorage is a hint.
  *            Alternative: journal pointer as truth; rejected because a crash between
  *            storage APIs would strand valid data. Revisit with a single atomic API.
- *            D2: Store payload segments as Blobs rather than JSON/base64. Alternative:
- *            text localStorage; rejected for synchronous quota and encoding overhead.
- *            Revisit if browser storage interoperability changes.
+ *            D2: Store owned ArrayBuffer segments; accept legacy Blob/Uint8Array reads.
+ *            Alternative: Blob segments; rejected because WebKit can reject IndexedDB
+ *            Blob persistence even when byte buffers commit. DBv1 remains readable;
+ *            a newer generation naturally replaces legacy segments in one transaction.
+ *            Revisit if: browser-tested streaming storage avoids whole-segment copies.
  * LIMITS     Container checksums and domain validation belong to consumers. Browsers can
  *            evict storage; explicit project files remain necessary for durable copies.
  * TESTBENCH  src/shared/recovery-store.test.ts -- run with: node --import tsx --test src/shared/recovery-store.test.ts
@@ -26,14 +28,14 @@ export type RecoveryRecord = { workspace: Workspace; generation: number; payload
 type RecoveryRequest = { op: 'write'; record: RecoveryRecord } | { op: 'read' | 'remove'; workspace: Workspace };
 export type RecoveryPorts = { indexedDB?: IDBFactory; localStorage?: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> };
 type RecoveryOutcome = { ok: true; value: RecoveryRecord | null } | { ok: false; error: { code: string; message: string } };
-type Stored = Omit<RecoveryRecord, 'payload'> & { payload: Blob[] };
+type Stored = Omit<RecoveryRecord, 'payload'> & { payload: (ArrayBuffer | Uint8Array | Blob)[] };
 const DB_NAME = 'gsnv-paint-recovery';
 const DB_VERSION = 1;
 const STORE = 'workspaces';
 const JOURNAL_PREFIX = 'gsnv-paint:recovery:';
 class CorruptRecovery extends Error {}
 
-function checkRecord(value: unknown, kind: 'bytes' | 'blobs'): void {
+function checkRecord(value: unknown, kind: 'bytes' | 'stored'): void {
   if (!value || typeof value !== 'object') throw new CorruptRecovery('Recovery record is missing.');
   const record = value as Record<string, unknown>;
   if (!['cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code'].includes(record.workspace as string) ||
@@ -43,7 +45,8 @@ function checkRecord(value: unknown, kind: 'bytes' | 'blobs'): void {
   }
   for (let index = 0; index < record.payload.length; index++) {
     const part = record.payload[index];
-    if (!Object.hasOwn(record.payload, index) || !(kind === 'bytes' ? part instanceof Uint8Array : part instanceof Blob)) {
+    if (!Object.hasOwn(record.payload, index) || !(part instanceof Uint8Array ||
+        (kind === 'stored' && (part instanceof ArrayBuffer || part instanceof Blob)))) {
       throw new CorruptRecovery('Recovery payload must be a dense array of byte segments.');
     }
   }
@@ -85,7 +88,7 @@ function transaction(db: IDBDatabase, request: RecoveryRequest, workspace: Works
         try {
           const current = getting.result as Stored | undefined;
           if (current !== undefined) {
-            checkRecord(current, 'blobs');
+            checkRecord(current, 'stored');
             if (current.workspace !== workspace) throw new CorruptRecovery('Recovery workspace does not match its storage key.');
           }
           selected = current ?? null;
@@ -112,15 +115,16 @@ export async function recoveryStore(request: RecoveryRequest, ports: RecoveryPor
     let next: Stored | undefined;
     if (request.op === 'write') {
       checkRecord(request.record, 'bytes');
-      next = { ...request.record, payload: request.record.payload.map(part =>
-        new Blob([part.buffer instanceof ArrayBuffer ? part as Uint8Array<ArrayBuffer> : part.slice()])) };
+      // Copy only each view's bytes before awaiting IDB. Never retain caller buffers.
+      next = { ...request.record, payload: request.record.payload.map(part => new Uint8Array(part).buffer) };
     }
     db = await open(ports.indexedDB);
     const stored = await transaction(db, request, workspace, next, ports.localStorage);
     if (!stored) return { ok: true, value: null };
     if (stored === next && request.op === 'write') return { ok: true, value: request.record };
     const payload: Uint8Array[] = [];
-    for (const part of stored.payload) payload.push(new Uint8Array(await part.arrayBuffer()));
+    for (const part of stored.payload) payload.push(part instanceof Blob
+      ? new Uint8Array(await part.arrayBuffer()) : new Uint8Array(part instanceof ArrayBuffer ? part.slice(0) : part));
     return { ok: true, value: { workspace: stored.workspace, generation: stored.generation, title: stored.title, payload } };
   } catch (error) {
     const name = error instanceof Error ? error.name : '';

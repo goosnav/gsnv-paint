@@ -142,3 +142,46 @@ test('S08 rejects sparse input and stored payloads without replacing intact reco
   assert.ok(!recovered.ok);
   assert.equal(recovered.error.code, 'recovery.corrupt');
 });
+
+test('S08 writes recoverable bytes when the browser cannot persist Blob/File payloads', async () => {
+  const { ports } = resources();
+  const originalPut = IDBObjectStore.prototype.put;
+  IDBObjectStore.prototype.put = function (...args: Parameters<typeof originalPut>) {
+    if (args[0].payload.some((part: unknown) => part instanceof Blob)) {
+      throw new DOMException('Error preparing Blob/File data to be stored in object store', 'UnknownError');
+    }
+    return originalPut.apply(this, args);
+  };
+  try {
+    assert.deepEqual(await recoveryStore({ op: 'write', record: record() }, ports), { ok: true, value: record() });
+    assert.deepEqual(await recoveryStore({ op: 'read', workspace: 'cad' }, ports), { ok: true, value: record() });
+  } finally { IDBObjectStore.prototype.put = originalPut; }
+});
+
+test('S08 legacy Blob generations remain readable and can advance to portable byte storage', async () => {
+  const { ports } = resources();
+  await recoveryStore({ op: 'read', workspace: 'cad' }, ports);
+  await corrupt(ports.indexedDB!, { ...record(7), payload: record(7).payload.map(part => new Blob([new Uint8Array(part)])) });
+  assert.deepEqual(await recoveryStore({ op: 'read', workspace: 'cad' }, ports), { ok: true, value: record(7) });
+  assert.deepEqual(await recoveryStore({ op: 'write', record: record(6) }, ports), { ok: true, value: record(7) });
+  assert.deepEqual(await recoveryStore({ op: 'write', record: record(8) }, ports), { ok: true, value: record(8) });
+  assert.deepEqual(await recoveryStore({ op: 'read', workspace: 'cad' }, ports), { ok: true, value: record(8) });
+});
+
+test('S08 reads structured-cloned byte segments without changing generation or bytes', async () => {
+  const { ports } = resources();
+  await recoveryStore({ op: 'read', workspace: 'cad' }, ports);
+  await corrupt(ports.indexedDB!, { ...record(9), payload: [new Uint8Array([0, 127, 255]).buffer, new Uint8Array([10, 20])] });
+  assert.deepEqual(await recoveryStore({ op: 'read', workspace: 'cad' }, ports), { ok: true, value: record(9) });
+  assert.deepEqual(await recoveryStore({ op: 'write', record: record(9) }, ports), { ok: true, value: record(9) });
+});
+
+test('S08 snapshots only the supplied byte views before asynchronous storage opens', async () => {
+  const { ports } = resources();
+  const bytes = new Uint8Array([99, 0, 127, 255, 88]);
+  const input = { ...record(), payload: [bytes.subarray(1, 4), new Uint8Array([10, 20])] };
+  const saving = recoveryStore({ op: 'write', record: input }, ports);
+  bytes.fill(42);
+  assert.equal((await saving).ok, true);
+  assert.deepEqual(await recoveryStore({ op: 'read', workspace: 'cad' }, ports), { ok: true, value: record() });
+});

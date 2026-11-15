@@ -30,7 +30,7 @@ test('I-CONTENT native encode/decode is byte exact per layer and still opens sin
   const base = imageContent({ operation: 'new', width: 3, height: 2, fill: [1, 2, 3, 4] });
   const doc = imageContent({ operation: 'layers', previous: base, width: 3, height: 2, activeLayerId: 'top', layers: [{ meta: meta('background') }, { meta: meta('top', { name: 'Top', visible: false, opacity: 0.25, blend: 'screen' }), raster: createRaster(3, 2, [9, 8, 7, 6]) }] });
   const encoded = imageContent({ operation: 'encode', value: doc });
-  assert.equal(encoded.content.encoding, 'rgba8-layers-v2'); assert.deepEqual(encoded.assets.map(a => a.id), ['pixels-0', 'pixels-1']); assert.deepEqual([...encoded.assets[1]!.bytes.slice(0, 4)], [9, 8, 7, 6]);
+  assert.equal(encoded.content.encoding, 'rgba8-layers-v3'); assert.deepEqual(encoded.assets.map(a => a.id), ['pixels-0', 'pixels-1']); assert.deepEqual([...encoded.assets[1]!.bytes.slice(0, 4)], [9, 8, 7, 6]);
   const decoded = imageContent({ operation: 'decode', content: JSON.parse(JSON.stringify(encoded.content)), assets: encoded.assets.map(a => ({ id: a.id, bytes: a.bytes.slice() })) });
   assert.deepEqual(decoded, doc);
   const legacy = imageContent({ operation: 'decode', content: { width: 3, height: 2, encoding: 'rgba8', asset: 'pixels' }, assets: [{ id: 'pixels', bytes: new Uint8Array(24).fill(5) }] });
@@ -54,7 +54,7 @@ test('I51 selection is owned, retained by pixel/layer edits, cleared by resize, 
   const stacked = imageContent({ operation: 'layers', previous: painted, width: 3, height: 2, activeLayerId: 'background', layers: [{ meta: meta('background', { opacity: 0.5 }) }] });
   assert.equal(stacked.selection, selected.selection);
   const encoded = imageContent({ operation: 'encode', value: stacked });
-  assert.deepEqual(encoded.content, { width: 3, height: 2, encoding: 'rgba8-layers-v2', activeLayerId: 'background',
+  assert.deepEqual(encoded.content, { width: 3, height: 2, encoding: 'rgba8-layers-v3', policy:{mode:'pixel-art',palette:null}, activeLayerId: 'background',
     layers: [{ id: 'background', name: 'background', visible: true, opacity: 0.5, blend: 'normal', asset: 'pixels-0' }], selection: { encoding: 'gray8', asset: 'selection' } });
   assert.deepEqual(encoded.assets.map(a => [a.id, [...a.bytes]]), [
     ['pixels-0', [30, 8, 7, 0, 9, 8, 7, 0, 9, 8, 7, 0, 9, 8, 7, 0, 9, 8, 7, 0, 9, 8, 7, 0]], ['selection', [0, 1, 128, 0, 255, 0]],
@@ -70,13 +70,32 @@ test('I51 selection is owned, retained by pixel/layer edits, cleared by resize, 
 test('I51 legacy layers migrate with no selection and malformed v2 selection assets fail atomically', () => {
   const value = imageContent({ operation: 'new', width: 2, height: 1, fill: [1, 2, 3, 4] });
   const encoded = imageContent({ operation: 'encode', value: imageContent({ operation: 'selection', previous: value, mask: new Uint8Array([0, 255]) }) });
-  const { selection: _selection, ...fields } = encoded.content;
+  const { selection: _selection, policy: _policy, ...fields } = encoded.content;
   const legacy = imageContent({ operation: 'decode', content: { ...fields, encoding: 'rgba8-layers' }, assets: encoded.assets.slice(0, 1) });
   assert.deepEqual(legacy, value);
   for (const selection of [{ encoding: 'other', asset: 'selection' }, { encoding: 'gray8', asset: 'pixels-0' }, { encoding: 'gray8', asset: 'missing' }, { encoding: 'gray8', asset: 'selection', bounds: {} }, 'selection'])
     assert.throws(() => imageContent({ operation: 'decode', content: { ...encoded.content, selection }, assets: encoded.assets }), ImageContentError);
   for (const assets of [encoded.assets.slice(0, 1), [...encoded.assets, encoded.assets[1]!], [encoded.assets[0]!, { id: 'selection', bytes: new Uint8Array(3) }]])
     assert.throws(() => imageContent({ operation: 'decode', content: encoded.content, assets }), ImageContentError);
-  assert.throws(() => imageContent({ operation: 'decode', content: { ...encoded.content, encoding: 'rgba8-layers-v3' }, assets: encoded.assets }), ImageContentError);
+  assert.throws(() => imageContent({ operation: 'decode', content: { ...encoded.content, encoding: 'rgba8-layers-v4' }, assets: encoded.assets }), ImageContentError);
   assert.deepEqual(imageContent({ operation: 'decode', ...encoded }).selection!.bounds, { x: 1, y: 0, width: 1, height: 1 });
+});
+
+test('PU-05 document policy survives all edits and v3 serialization while legacy pixels stay exact', () => {
+ const policy={mode:'smooth' as const,palette:{colours:[[0,0,0],[255,255,255]] as const,dither:'bayer' as const}};
+ const original=imageContent({operation:'new',width:2,height:1,fill:[23,45,67,128],policy});
+ assert.deepEqual(original.policy,policy);
+ const edited=imageContent({operation:'update',previous:original,layerId:'background',raster:createRaster(2,1,[4,3,2,9])});
+ const resized=imageContent({operation:'layers',previous:edited,width:1,height:1,layers:[{meta:meta('background'),raster:createRaster(1,1,[4,3,2,9])}],activeLayerId:'background'});
+ assert.deepEqual(resized.policy,policy);
+ const encoded=imageContent({operation:'encode',value:original});assert.equal(encoded.content.encoding,'rgba8-layers-v3');
+ assert.deepEqual(imageContent({operation:'decode',...encoded}),original);
+ const {policy: ignored,...v2}=encoded.content;
+ const migrated=imageContent({operation:'decode',content:{...v2,encoding:'rgba8-layers-v2'},assets:encoded.assets});
+ assert.deepEqual(migrated.policy,{mode:'pixel-art',palette:null});
+ assert.deepEqual([...imageContent({operation:'raster',value:migrated,layerId:'background'}).data],[23,45,67,128,23,45,67,128]);
+ const changed=imageContent({operation:'policy',previous:original,policy:{mode:'pixel-art',palette:null}});
+ assert.equal(changed.layers[0]!.tiles[0],original.layers[0]!.tiles[0]);
+ for(const bad of [null,{mode:'gaussian',palette:null},{...policy,extra:true},{mode:'smooth',palette:{colours:[[300,0,0]],dither:'bayer'}}])
+  assert.throws(()=>imageContent({operation:'decode',content:{...encoded.content,policy:bad},assets:encoded.assets}),ImageContentError);
 });

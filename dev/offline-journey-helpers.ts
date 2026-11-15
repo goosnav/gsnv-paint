@@ -14,7 +14,7 @@ export async function download(page: Page, action: () => Promise<unknown>, timeo
 export async function roundtrip(page: Page, format: string, verify: () => Promise<unknown>, newDocument = true) {
   const file = await download(page, () => page.keyboard.press('Control+s'));
   const before = nativeContainer({ op: 'decode', parts: [file.bytes] }); expect(before.project.format).toBe(format);
-  if (newDocument) await command(page, 'file.new').click();
+  if (newDocument) { await command(page, 'file.new').click(); if (format === 'gsnv-image') await page.getByRole('dialog', { name: 'New image', exact: true }).getByRole('button', { name: 'Create', exact: true }).click(); }
   const choosing = page.waitForEvent('filechooser'); await command(page, 'file.open').click();
   await (await choosing).setFiles({ name: file.name, mimeType: 'application/octet-stream', buffer: file.bytes });
   // A newly created blank document also has only "Current state" in history.

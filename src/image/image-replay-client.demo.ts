@@ -1,0 +1,2 @@
+import {createImageReplay} from './image-replay-client.ts';import {imageContent} from './image-content.ts';
+const job=createImageReplay();const result=await job.run(imageContent({operation:'new',width:2,height:2,fill:[255,255,255,255]}),{format:'gsnv-actions',version:1,name:'Invert',output:'png',assets:[],steps:[{id:'one',label:'Invert',enabled:true,reference:{width:2,height:2},operation:{kind:'adjust',adjustment:{kind:'invert'}}}]});document.querySelector('#result')!.textContent=String(result.layers[0]!.tiles[0]!.slice(0,4));job.dispose();
