@@ -89,7 +89,7 @@ Parent owns shared schemas, migration, assemblies, security policy and integrati
    `pixelPolicy(unknown?)` validates/copies/freezes; default pixel-art/null;
    `pixelCoverage(Raster,mode)` returns new raster, thresholds alpha>=128 in pixel
    mode (zero RGB when clear), preserves opaque RGB; smooth byte copy. No I/O.
-4. **PALETTE CORE** `image-palette.ts`: `generatePalette(raster,count)` deterministic
+4. **PALETTE CORE** `image-palette-core.ts`: `generatePalette(raster,count)` deterministic
    median cut, stable tie rules; `presetPalette(count)` stable fixed RGB swatches.
    **QUANTIZE CORE** `image-quantize.ts`: `quantizeImage(raster,palette)` copies
    strict final output, closest squared RGB, stable first tie; dithers RGB/alpha.
@@ -131,3 +131,6 @@ checks as passes. Final report must leave incomplete original requirements visib
 Baseline: 1,047 passing unit tests, production build and 38 focused browser tests
 from font increment (historical evidence, not fresh validation of this upgrade).
 No implementation has been credited yet.
+
+Map correction: existing `image-palette.ts` is the colour/tool UI SHELL. The new
+pure palette generator is `image-palette-core.ts`; existing UI ownership is unchanged.
