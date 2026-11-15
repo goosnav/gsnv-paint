@@ -24,6 +24,13 @@ the handles to resize; use **Free transform / Ctrl+T** for rotation and precise
 values. **Enter** applies and **Esc** cancels. Small selections expose handles when
 Free transform is activated, so normal selection gestures stay usable.
 
+In Image, expand **More colours** below the swatches for foreground/background
+RGB sliders, exact channel values and hex entry. The navigator uses the same XP
+trackbar as Layers. In Document, **Document → PDF footer…** controls optional
+page numbers (off by default). Print CSS suppresses browser-added headings and
+footers where supported; if a title, date or address still appears, turn off
+**Print headers and footers** in the browser's print options.
+
 All use shared save/open, undo/redo, stored projects and local recovery. Failed browser backups keep unsaved work open with a Save instruction. Send Image composites to the Video bin, current Video frames to Image, or transparent CAD views to Image through each workspace's menus. These are working subsets; the full original CAD/Image/Video scope and packaged release remain unfinished. [Readiness ledger](dev/CONSUMER-READINESS.md).
 
 The [Open/navigation/transform checkpoint](dev/PAINT-OPEN-NAVIGATION-EVIDENCE.md) records this update, its regression checks and platform limits.
@@ -49,6 +56,10 @@ The launcher builds the application, serves it only to this computer at `http://
 ## Develop
 
 Run `npm ci` and `npm run dev` to open the current application shell with live reload. `npm start` is the launcher without the runtime check; `npm run test:launcher` starts it for real and checks the served page, isolation headers and second-launch reuse. The production CAD workspace is connected. The development-only `/dev/fixtures/app-shell.html` page exercises shared controls and persistence with explicit one-pixel test data.
+
+The Document PDF browser regression also needs Poppler's `pdftotext` on PATH. It
+checks the text of real two-page PDFs with browser headers/footers enabled; a
+missing extractor is a failed prerequisite, not a skipped pass.
 
 `npm run build` creates the static output in `dist/`, an integrity manifest and the offline worker. It rejects any individual asset at or above the configured 25 MiB limit. `npm test` runs unit and assembly seams; `npm run test:browser` builds first, then runs the default Chrome component and assembly checks. The default suite uses installed system Chrome, currently 154.0.8037.97 on the verification host. `npm run test:offline-build` checks manifest generation; `npm run test:offline` builds fresh disposable candidates and checks complete-browser restarts, all nine offline workflows and update recovery. `npm run test:static-host` builds and checks local Wrangler hosting, including exact cached bytes and an offline reload. Run build-owning commands sequentially, including `npm run test:launcher`: its real source-launcher smoke may rebuild shared `dist`. Keep the output frozen throughout browser and static-host verification.
 

@@ -51,3 +51,11 @@ test('Zoom is discoverable before opening an image, and empty controls cannot na
  assert.equal(percent.value, '100'); assert.equal(panel.querySelector<HTMLElement>('.navigator-frame')!.hidden, false);
  s.close();
 });
+
+test('navigator shares the Layers trackbar, fields and button styles', () => {
+ const s=setup();
+ assert.ok(s.root.querySelector('[aria-label="Canvas zoom"]')!.classList.contains('xp-range'));
+ assert.ok(s.root.querySelector('[aria-label="Zoom percent"]')!.classList.contains('xp-field'));
+ for(const name of ['Zoom in','Zoom out','Fit image'])assert.ok(s.root.querySelector(`[aria-label="${name}"]`)!.classList.contains('xp-button'));
+ s.close();
+});

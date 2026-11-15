@@ -2,7 +2,7 @@
   "source": "https://github.com/halfmage/pixelarticons",
   "commit": "c9ecc2da61afde85dbe539025e3d931c6152ad75",
   "license": "MIT",
-  "integration": "Concatenate original path d values; render with currentColor at native 24px. No remote loads. Eight additional paint glyphs are original to gsnv-paint.",
+  "integration": "Unmodified source archive. Seven paths remain bundled locally at native 24px; paintWand, paintPencil, paintBrush and paintEraser were replaced with original simplified paths in D31. All twelve other Paint glyphs are original to gsnv-paint. No remote loads.",
   "files": [
     {
       "glyph": "paintMove",

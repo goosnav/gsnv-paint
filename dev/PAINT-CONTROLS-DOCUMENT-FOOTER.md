@@ -84,3 +84,82 @@ boxes and optional numbers; a console demo prints the default/numbered CSS.
 DOC-CONTENT retains content/HTML validation and serialization and uses a single
 generic signature instead of repeated overload declarations. No persisted or public
 application behavior changes. DOCUMENT-APP imports the page functions directly.
+
+## Verification report
+
+GREEN for this bounded increment; human acceptance and the broader consumer release
+remain open. Runtime verification: Chrome 154.0.8037.97, Linux x64, desktop 1280×720
+and touch-emulated 1024×768. No physical iPad, Safari, macOS or Windows smoke claim.
+
+| Requirement | Result | Evidence |
+|---|---|---|
+| STYLE-01 | PASS | Shared classes, reviewed desktop/touch screenshots, zoom/map/touch/keyboard regressions |
+| COLOUR-01, COLOUR-02 | PASS | Expanded RGB/hex callbacks, validation, disabled/disposal, exact `[36,125,198,255]` stroke, no history edit for colour selection |
+| ICON-01 | PASS | Catalog/accessibility tests, local glyph sheet and 24px production toolbar review; original replacement paths |
+| FOOTER-01 | PASS in tested Chromium | Real two-page PDFs with `displayHeaderFooter:true`; extracted text contains only body text, plus 1/2 when opted in |
+| FOOTER-02 | PASS | Top menu, Cancel/Apply, single history edit, undo/redo, existing project round trip and page setup |
+| Other browsers' native print behavior | UNTESTED | Export and footer dialog explain browser-owned headers/footers |
+
+Commands and output (all final commands exited 0, no skipped checks):
+
+```text
+npm test
+tests 1027; pass 1027; fail 0; cancelled 0; skipped 0
+
+node_modules/.bin/playwright test src/image/image-navigation.browser.spec.ts src/image/image-pixel-drawing.browser.spec.ts src/image/image-clipboard.browser.spec.ts src/document/document-workspace.browser.spec.ts src/shared/icons.browser.spec.ts
+22 passed (40.2s)
+
+npm run build
+tsc --noEmit && vite build; built in 1.25s
+
+node_modules/.bin/playwright test --config dev/static-host.playwright.config.ts
+1 passed (10.9s): complete isolated static build, exact bytes, offline reload
+
+WRANGLER_SEND_METRICS=false node_modules/.bin/wrangler deploy --dry-run --no-autoconfig
+Read 61 files; No bindings found; --dry-run: exiting now
+
+npm run test:spec
+TRACE PASS: 402 requirements, 402 verification procedures
+MAP PASS: 220 original tracked contracts
+LINK PASS
+Original requirement ledger: PASS 47; FAIL 0; UNTESTED 355
+```
+
+The original ledger is unchanged; this focused UI increment does not complete the
+original CAD/Image/Video scope. Build retains the existing chunk-size and PlaneGCS
+node:module warnings. Static asset size/isolation gates pass.
+
+Full logs: [unit](evidence/paint-controls-unit.log),
+[browser](evidence/paint-controls-browser.log), [build](evidence/paint-controls-build.log),
+[static host](evidence/paint-controls-static-host.log),
+[deployment dry-run](evidence/paint-controls-deploy.log).
+`check_module.py` passes all five affected bricks ([output](evidence/paint-controls-modules.log));
+the Document workspace remains an assembly. The page demo prints literal default
+Letter and numbered A4 layout rules ([output](evidence/paint-controls-page-demo.log)).
+
+Reviewed artifacts: [expanded colours and navigator](evidence/IMAGE-consistent-controls.png),
+[touch layout](evidence/PAINT-controls-touch.png),
+[glyph sheet](evidence/PAINT-controls-glyph-sheet.png),
+[clean PDF](evidence/DOCUMENT-clean-footer.pdf),
+[numbered PDF](evidence/DOCUMENT-numbered-footer.pdf).
+PDF text assertions require Poppler `pdftotext` (documented in README); no missing
+tool is reported as a pass.
+
+Retained diagnosis: initial new Navigator/palette tests failed as intended (7 pass,
+2 fail); new footer policy test failed as intended (2 pass, 1 fail). The first
+browser run had 13 pass and one test selector failure because Open matched both
+menu and toolbar; the test now selects the toolbar explicitly. A later run made
+while the full unit suite was executing timed out in the pre-existing Document
+Ctrl+O round-trip test (17 pass, 1 fail). Its unchanged isolated rerun passed, and
+the final sequential 22-test suite passed. No assertions were weakened. One early
+unit command wrapper exited 143 after printing its successful totals; the final
+unit command above exited 0. Structural checking exposed DOC-CONTENT's inherited
+seven declarations; the characterized page extraction and generic serializer
+resolved it. DOC-PAGE's purpose wording was clarified after the checker mistook
+the conjunction in “page size and margins” for separate responsibilities.
+
+Tuning: shared trackbar visuals stay in `theme.css`; navigator placement and palette
+spacing stay in `image-workspace.css`; glyphs in `PAINT_PATHS`; paper dimensions and
+clean-margin policy in DOC-PAGE. Re-run the corresponding exact-value/unit and
+browser journeys when changing these. Do not turn off the map touch cancellation
+or replace the empty margin-box strings with `content:none`.

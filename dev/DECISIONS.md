@@ -255,3 +255,35 @@ The owner requested a File → Save submenu, a toolbar Save popup, clearer expor
 Image is the first workspace and startup adapter; if absent in a test/embedded host, the first available adapter in the rendered order starts instead. CAD-specific tests now explicitly select CAD. This does not change document formats or recovery ownership.
 
 The owner's request permits free web icons, superseding the original all-original-glyph rule for this bounded subset. Use 11 free MIT [Pixelarticons](https://github.com/halfmage/pixelarticons/tree/c9ecc2da61afde85dbe539025e3d931c6152ad75) SVGs pinned at `c9ecc2da61afde85dbe539025e3d931c6152ad75`, copyright Gerrit Halfmann, with eight original matching glyphs. Retain unmodified source SVGs, hashes and LICENSE in `vendor/pixelarticons/`; ship the copyright/license in `public/licenses/pixelarticons.LICENSE.txt` and THIRD_PARTY_NOTICES. Paths are bundled locally at build time. No package execution, remote runtime loads, paid assets or Microsoft/Adobe assets. Alternative: borrow original OS/application icon bitmaps; rejected because they are not covered by this free license. Native 24 px rendering preserves the intended pixel shapes; larger 32 px buttons make the tools readable and easier to select.
+
+## D31 — consistent controls, expanded colours and clean PDF margins (2026-11-14)
+
+Reuse the existing XP trackbar, field and button styles for the navigator and an
+expandable RGB/hex palette. Keep the compact 28 swatches and native colour pickers.
+Alternative: a separate wheel with bespoke controls; RGB uses existing controls,
+provides precise values and works with keyboard/touch without new dependencies.
+Revisit if colour-wheel input is requested after trying RGB.
+
+Replace Paint's pencil, brush, eraser, wand, fill and gradient with original,
+simplified 24-unit paths. Seven of the D30 licensed paths remain in use; retain
+their notices and the complete unmodified upstream archive. No Microsoft or
+Adobe assets. Review the glyph sheet and actual 24px toolbar, not enlarged icons
+alone. Revisit individual shapes if users confuse them in normal use.
+
+The owner's PDF screenshots identify browser print decorations: title, date,
+`about:srcdoc` and page count. DOC-PAGE owns all ten top/bottom print margin boxes,
+including corners, with empty content by default; only an explicitly requested
+bottom-centre page number is added. `content:none` did not suppress browser
+decorations in the Chromium spike. Empty strings in only six non-corner boxes
+still left the browser page count. Keep the chosen page margins intact.
+Alternative: a new PDF renderer or zero page margins; rejected because either
+changes the existing text/layout behavior. The top Document → PDF footer menu
+controls optional numbers. Print options are ultimately browser-owned; the UI
+explains disabling browser headers/footers where CSS is not honored (Safari/macOS
+remains untested). Revisit for a separately requested direct PDF exporter.
+
+The existing DOC-CONTENT checker counted seven public function declarations.
+Move physical page layout into DOC-PAGE and consolidate serializer overloads
+into one generic entry, preserving the exact characterization tests and format.
+This keeps the changed CORE modules within the method's public-entry limit.
+See [contract and evidence](PAINT-CONTROLS-DOCUMENT-FOOTER.md).

@@ -1,8 +1,19 @@
 import { test } from 'node:test'; import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
-import { documentContent, sanitizeHtml, wordCount, pageCss, pageInches, DEFAULT_PAGE } from './document-content.ts';
+import { documentContent, sanitizeHtml, wordCount } from './document-content.ts';
+import { pageCss, pageInches, DEFAULT_PAGE } from './document-page.ts';
 
 const parse = (html: string) => new JSDOM(html).window.document;
+
+test('DOC-CONTENT owns all print header/footer boxes, with only opt-in page numbers', () => {
+  const blank = pageCss(DEFAULT_PAGE), numbered = pageCss({ ...DEFAULT_PAGE, numbers: true });
+  for (const box of ['top-left-corner', 'top-left', 'top-center', 'top-right', 'top-right-corner', 'bottom-left-corner', 'bottom-left', 'bottom-center', 'bottom-right', 'bottom-right-corner']) {
+    assert.ok(blank.includes(`@${box} { content: ""; }`), `${box} must suppress browser print decorations`);
+    if (box !== 'bottom-center') assert.ok(numbered.includes(`@${box} { content: ""; }`));
+  }
+  assert.doesNotMatch(blank, /counter\(page\)/); assert.equal((numbered.match(/counter\(page\)/g) ?? []).length, 1);
+  assert.match(blank, /size: 8.5in 11in; margin: 1in;/);
+});
 
 test('DOC-CONTENT sanitizer keeps formatting and drops anything that could run', () => {
   const dirty = '<h1 onclick="x()">Title</h1><p style="text-align:center;position:fixed;color:red">Hi <b>there</b> <script>alert(1)</script><u>u</u></p>'

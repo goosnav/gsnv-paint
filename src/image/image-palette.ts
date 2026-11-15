@@ -10,7 +10,7 @@
  * TUNING     SWATCHES (28 colours) and OPTIONS (per-tool option list with ranges).
  * DECISIONS  D1: Trackbar plus number box for every numeric option (owner direction): drag for feel,
  *            type for exact values. Alternative: drag-only controls, rejected because exact
- *            values must be accessible. Native colour inputs for colour entry.
+ *            values must be accessible. Expandable RGB/hex entry supplements the compact swatches.
  *            Revisit if: reusable application-wide option controls are introduced.
  * LIMITS     Opaque colour editing; no saved custom palettes or brush presets.
  * TESTBENCH  src/image/image-palette.test.ts -- run with: node --import tsx --test src/image/image-palette.test.ts
@@ -60,8 +60,50 @@ export function imagePalette({ root, onChange }: { root: HTMLElement; onChange: 
   const grid = make('div', 'image-swatches'); grid.setAttribute('role', 'group'); grid.setAttribute('aria-label', 'Colour palette. Click for primary, right-click for secondary.');
   for (const value of SWATCHES) { const b = make('button', 'image-swatch'); b.type = 'button'; b.dataset.color = value; b.style.background = value; b.title = `${value} — click: primary, right-click: secondary`; b.setAttribute('aria-label', value); grid.append(b); }
   const heading = make('h3', '', 'Tool options'), options = make('div', 'image-options'), info = make('p', 'image-info'); info.setAttribute('aria-live', 'polite');
-  root.append(current, grid, heading, options, info);
-  let shown = '', model: PaletteModel | null = null;
+  const more = make('details', 'image-more-colours'), summary = make('summary', '', 'More colours');
+  const targetRow = make('label', 'image-colour-target', 'Edit'), targetChoice = make('select', 'xp-field'); targetChoice.setAttribute('aria-label', 'Colour to edit');
+  for (const [value, label] of [['primary', 'Foreground'], ['secondary', 'Background']]) { const option = make('option', '', label); option.value = value!; targetChoice.append(option); }
+  targetRow.append(targetChoice); more.append(summary, targetRow);
+  for (const [channel, name] of ['Red', 'Green', 'Blue'].entries()) {
+    const row = make('div', 'image-option'), label = make('label', '', name), range = make('input', 'xp-range'), number = make('input', 'xp-field');
+    range.type = 'range'; number.type = 'number'; range.id = `image-colour-${channel}`; label.htmlFor = range.id;
+    for (const n of [range, number]) { n.min = '0'; n.max = '255'; n.step = '1'; n.dataset.channel = String(channel); n.setAttribute('aria-label', `${name}${n === number ? ' value' : ''}`); }
+    row.append(label, range, number); more.append(row);
+  }
+  const hexRow = make('div', 'image-colour-hex'), hexLabel = make('label', '', 'Hex'), hexBox = make('input', 'xp-field'), sample = make('span', 'image-colour-sample'), colourError = make('p', 'image-colour-error');
+  hexBox.type = 'text'; hexBox.id = 'image-hex-colour'; hexBox.setAttribute('aria-label', 'Hex colour'); hexBox.spellcheck = false; hexBox.maxLength = 7; hexLabel.htmlFor = hexBox.id;
+  sample.setAttribute('aria-hidden', 'true'); colourError.setAttribute('role', 'status'); colourError.hidden = true;
+  hexRow.append(hexLabel, hexBox, sample); more.append(hexRow, colourError);
+  root.append(current, grid, more, heading, options, info);
+  let shown = '', model: PaletteModel | null = null, editing: 'primary' | 'secondary' = 'primary';
+
+  function colourMessage(target?: HTMLInputElement, message = '') {
+    for (const n of more.querySelectorAll('[aria-invalid]')) n.removeAttribute('aria-invalid');
+    if (message) target?.setAttribute('aria-invalid', 'true');
+    colourError.textContent = message; colourError.hidden = !message;
+  }
+  function renderColours(force = false) {
+    if (!model) return;
+    targetChoice.value = editing;
+    for (const n of more.querySelectorAll<HTMLInputElement>('[data-channel]')) if (force || document.activeElement !== n) n.value = String(model[editing][Number(n.dataset.channel)]);
+    if (force || document.activeElement !== hexBox) hexBox.value = hex(model[editing]);
+    sample.style.background = hex(model[editing]);
+  }
+  function applyColour(target: HTMLInputElement) {
+    if (!model?.enabled) return;
+    let color: RGBA;
+    if (target === hexBox) {
+      const value = target.value.trim().replace(/^#/, '');
+      if (!/^[a-f0-9]{6}$/i.test(value)) { colourMessage(target, 'Use six hex digits, such as #3366cc.'); return; }
+      color = parseHex(`#${value}`); target.value = hex(color);
+    } else {
+      const value = Number(target.value);
+      if (!target.value.trim() || !Number.isFinite(value)) { colourMessage(target, 'Enter a colour value from 0 to 255.'); return; }
+      const channels = [...model[editing]] as [number, number, number, number]; channels[Number(target.dataset.channel)] = Math.max(0, Math.min(255, Math.round(value))); channels[3] = 255;
+      color = channels; target.value = String(channels[Number(target.dataset.channel)]);
+    }
+    colourMessage(); onChange({ kind: editing, color });
+  }
 
   function build(tool: ImageTool) {
     options.replaceChildren(); shown = tool;
@@ -81,15 +123,19 @@ export function imagePalette({ root, onChange }: { root: HTMLElement; onChange: 
     }
   }
   const click = (event: MouseEvent) => {
+    if (!model?.enabled) return;
     const target = event.target as HTMLElement, swatch = target.closest<HTMLElement>('[data-color]');
-    if (swatch) onChange({ kind: event.type === 'contextmenu' ? 'secondary' : 'primary', color: parseHex(swatch.dataset.color!) });
+    if (swatch) { editing = event.type === 'contextmenu' ? 'secondary' : 'primary'; colourMessage(); onChange({ kind: editing, color: parseHex(swatch.dataset.color!) }); }
     else if (target === swap && event.type === 'click') onChange({ kind: 'swap' });
     else return;
     event.preventDefault();
   };
   const input = (event: Event) => {
+    if (!model?.enabled) return;
     const target = event.target as HTMLInputElement | HTMLSelectElement;
-    if (target === primary || target === secondary) { onChange({ kind: target === primary ? 'primary' : 'secondary', color: parseHex(target.value) }); return; }
+    if (target === targetChoice) { if (event.type === 'change') { editing = targetChoice.value as typeof editing; colourMessage(); renderColours(true); } return; }
+    if (target === hexBox || target.dataset.channel !== undefined) { if (event.type === 'change' || target.type === 'range') applyColour(target as HTMLInputElement); return; }
+    if (target === primary || target === secondary) { editing = target === primary ? 'primary' : 'secondary'; colourMessage(); onChange({ kind: editing, color: parseHex(target.value) }); return; }
     const key = target.dataset.option as keyof ToolOptions | undefined; if (!key) return;
     if (target.tagName === 'SELECT') { if (event.type === 'change') onChange({ kind: 'option', key, value: target.value as never }); return; }
     if (target.type === 'checkbox') { if (event.type === 'change') onChange({ kind: 'option', key, value: target.checked }); return; }
@@ -98,11 +144,18 @@ export function imagePalette({ root, onChange }: { root: HTMLElement; onChange: 
     if (!Number.isFinite(value) || target.value === '') { render(); return; }
     onChange({ kind: 'option', key, value: Math.min(r.max, Math.max(r.min, value)) });
   };
-  root.addEventListener('click', click); root.addEventListener('contextmenu', click); root.addEventListener('input', input); root.addEventListener('change', input);
+  const keydown = (event: KeyboardEvent) => {
+    const target = event.target as HTMLInputElement;
+    if (!model?.enabled || target.tagName !== 'INPUT' || !more.contains(target)) return;
+    if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); applyColour(target); }
+    else if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); colourMessage(); renderColours(true); }
+  };
+  root.addEventListener('click', click); root.addEventListener('contextmenu', click); root.addEventListener('input', input); root.addEventListener('change', input); root.addEventListener('keydown', keydown);
   function render() {
     if (!model) return;
     if (model.tool !== shown) build(model.tool);
     primary.value = hex(model.primary); secondary.value = hex(model.secondary);
+    renderColours();
     for (const control of options.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-option]')) {
       const key = control.dataset.option as keyof ToolOptions, value = model.options[key];
       const hard = model.tool === 'pencil' || model.options.edge === 'pixel';
@@ -116,6 +169,6 @@ export function imagePalette({ root, onChange }: { root: HTMLElement; onChange: 
   }
   return {
     update(next: PaletteModel) { model = next; render(); },
-    dispose() { root.removeEventListener('click', click); root.removeEventListener('contextmenu', click); root.removeEventListener('input', input); root.removeEventListener('change', input); root.replaceChildren(); },
+    dispose() { root.removeEventListener('click', click); root.removeEventListener('contextmenu', click); root.removeEventListener('input', input); root.removeEventListener('change', input); root.removeEventListener('keydown', keydown); root.replaceChildren(); },
   };
 }

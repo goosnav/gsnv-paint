@@ -12,6 +12,26 @@ async function start(page:Page){await page.goto(server.resolvedUrls!.local[0]!);
 async function percent(page:Page,value:string){await page.getByRole('spinbutton',{name:'Zoom percent',exact:true}).fill(value);await page.getByRole('spinbutton',{name:'Zoom percent',exact:true}).press('Enter');}
 async function drag(page:Page,from:{x:number;y:number},to:{x:number;y:number}){await page.mouse.move(from.x,from.y);await page.mouse.down();await page.mouse.move(to.x,to.y,{steps:8});await page.mouse.up();}
 async function select(page:Page){await page.locator('.gc-palette [data-command="image.select"]').click();const b=(await page.locator('.image-canvas').boundingBox())!;await drag(page,{x:b.x+100,y:b.y+110},{x:b.x+200,y:b.y+170});await expect(page.locator('[data-transform-handle=se]')).toBeVisible();}
+test('Expanded colours share XP controls and the next stroke uses the exact chosen RGB',async({page})=>{
+ await start(page);const before=await history(page),palette=page.locator('.image-palette'),more=palette.locator('.image-more-colours');
+ await expect(more).not.toHaveAttribute('open','');await more.locator('summary').click();
+ const red=palette.getByRole('slider',{name:'Red',exact:true}),green=palette.getByRole('spinbutton',{name:'Green value',exact:true}),blue=palette.getByRole('spinbutton',{name:'Blue value',exact:true}),hex=palette.getByRole('textbox',{name:'Hex colour',exact:true});
+ await red.fill('36');await green.fill('125');await green.press('Enter');await blue.fill('198');await blue.press('Tab');await expect(hex).toHaveValue('#247dc6');
+ await expect(palette.locator('.image-primary')).toHaveValue('#247dc6');
+ for(const selector of ['.navigator-controls input[type=range]','.image-more-colours input[type=range]'])expect(await page.locator(selector).first().evaluate(e=>getComputedStyle(e).appearance)).toBe('none');
+ const layer=page.locator('.image-layers input[type=range]');
+ expect(await red.evaluate(e=>getComputedStyle(e).backgroundColor)).toBe(await layer.evaluate(e=>getComputedStyle(e).backgroundColor));
+ await hex.fill('oops');await hex.press('Enter');await expect(hex).toHaveAttribute('aria-invalid','true');await hex.press('Escape');await expect(hex).toHaveValue('#247dc6');
+ await palette.getByLabel('Colour to edit').selectOption('secondary');await hex.fill('#f0e0d0');await hex.press('Enter');await expect(palette.locator('.image-secondary')).toHaveValue('#f0e0d0');
+ await palette.locator('.image-swap').click();await expect(palette.locator('.image-primary')).toHaveValue('#f0e0d0');await expect(hex).toHaveValue('#247dc6');await palette.locator('.image-swap').click();
+ await palette.getByLabel('Colour to edit').selectOption('primary');await expect(hex).toHaveValue('#247dc6');expect(await history(page)).toEqual(before);
+ await page.locator('.gc-palette [data-command="image.pencil"]').click();const canvas=(await page.locator('.image-canvas').boundingBox())!;
+ await page.mouse.click(canvas.x+canvas.width/2,canvas.y+canvas.height/2);
+ expect(await page.locator('.image-canvas').evaluate((c:HTMLCanvasElement)=>Array.from(c.getContext('2d')!.getImageData(c.width/2,c.height/2,1,1).data))).toEqual([36,125,198,255]);
+ expect((await history(page)).length).toBe(before.length+1);
+ await page.screenshot({path:'dev/evidence/IMAGE-consistent-controls.png'});
+ await more.locator('summary').click();await expect(hex).toBeHidden();await expect(page.locator('.image-swatches')).toBeVisible();
+});
 test('Paint has an arrow cursor and compact wheel-independent navigator with view-only controls',async({page})=>{
  await start(page);expect(await page.locator('.image-stage').evaluate(e=>getComputedStyle(e).cursor===getComputedStyle(document.body).cursor)).toBe(true);
  const before=await history(page),data=await pixels(page);await percent(page,'100');await expect(page.getByRole('slider',{name:'Canvas zoom'})).toHaveAttribute('aria-valuetext','100 percent');

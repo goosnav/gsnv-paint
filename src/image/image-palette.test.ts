@@ -60,3 +60,20 @@ test('I53 hard pixels default; pixel size and smooth-only options switch visibly
   assert.equal(root.querySelector('[data-option=hardness]')!.closest<HTMLElement>('.image-option')!.hidden, false);
   palette.dispose(); edge.dispatchEvent(new dom.window.Event('change', { bubbles: true })); assert.equal(changes.length, 3);
 });
+
+test('I53 expanded RGB/hex controls preserve compact swatches and emit exact opaque colours',()=>{
+ const {dom,root,changes,palette}=setup(),model={primary:[10,20,30,255] as const,secondary:[40,50,60,255] as const,tool:'brush' as const,options:DEFAULT_OPTIONS,info:'',enabled:true};palette.update(model);
+ const more=root.querySelector<HTMLDetailsElement>('.image-more-colours')!;assert.ok(more);assert.equal(more.open,false);assert.equal(root.querySelectorAll('[data-color]').length,28);
+ const red=root.querySelector<HTMLInputElement>('input[type=range][data-channel="0"]')!,green=root.querySelector<HTMLInputElement>('input[type=number][data-channel="1"]')!,hexBox=root.querySelector<HTMLInputElement>('[aria-label="Hex colour"]')!;
+ assert.equal(red.value,'10');assert.ok(red.classList.contains('xp-range'));red.value='120';fire(dom,red,'input');assert.deepEqual(changes.at(-1),{kind:'primary',color:[120,20,30,255]});
+ green.value='260';fire(dom,green,'change');assert.deepEqual(changes.at(-1),{kind:'primary',color:[10,255,30,255]});
+ hexBox.value='#1020ff';hexBox.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));assert.deepEqual(changes.at(-1),{kind:'primary',color:[16,32,255,255]});
+ const target=root.querySelector<HTMLSelectElement>('[aria-label="Colour to edit"]')!;target.value='secondary';fire(dom,target,'change');assert.equal(red.value,'40');assert.equal(hexBox.value,'#28323c');
+ hexBox.value='aabbcc';fire(dom,hexBox,'change');assert.deepEqual(changes.at(-1),{kind:'secondary',color:[170,187,204,255]});
+ palette.update({...model,secondary:[170,187,204,255]});assert.equal(root.querySelector<HTMLInputElement>('.image-secondary')!.value,'#aabbcc');assert.equal(red.value,'170');
+ const before=changes.length;hexBox.value='wrong';fire(dom,hexBox,'change');assert.equal(changes.length,before);assert.equal(hexBox.getAttribute('aria-invalid'),'true');assert.match(root.querySelector('.image-colour-error')!.textContent!,/hex/i);
+ hexBox.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert.equal(hexBox.value,'#aabbcc');assert.equal(hexBox.hasAttribute('aria-invalid'),false);
+ green.value='';fire(dom,green,'change');assert.equal(changes.length,before);
+ palette.update({...model,enabled:false});red.value='0';fire(dom,red,'input');assert.equal(changes.length,before);assert.equal(red.disabled,true);
+ palette.dispose();dom.window.close();
+});

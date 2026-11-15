@@ -17,7 +17,8 @@
 import type { WorkspaceAdapter } from '../app/app-shell.ts';
 import { fileAccess, type FilePorts } from '../shared/file-access.ts';
 import { renderIcon } from '../shared/icons.ts';
-import { documentContent, pageCss, pageInches, wordCount, sanitizeHtml, type DocumentContent, type PageSetup } from './document-content.ts';
+import { documentContent, wordCount, sanitizeHtml, type DocumentContent } from './document-content.ts';
+import { pageCss, pageInches, type PageSetup } from './document-page.ts';
 import './document-workspace.css';
 
 type Snapshot = Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
@@ -172,6 +173,7 @@ export function createDocumentWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       function printDocument(): Promise<void> {
         if (!content || !current) return Promise.resolve(); flush();
+        setStatus('Choose Save as PDF in the print dialog. If a title, date, address or extra page count appears, turn off “Headers and footers” in the browser’s print options.');
         const frame = make('iframe', 'doc-print'); frame.setAttribute('aria-hidden', 'true'); frame.tabIndex = -1;
         frame.srcdoc = `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(current.title || 'document')}</title><style>${pageCss(content.page)}${CONTENT_CSS}${PRINT_CSS}</style></head><body><div class="doc-body">${content.html}</div></body></html>`;
         return new Promise(resolve => {
@@ -193,6 +195,15 @@ export function createDocumentWorkspace(files: FilePorts): WorkspaceAdapter {
           { key: 'orientation', label: 'Orientation', type: 'select', choices: [{ value: 'portrait', label: 'Portrait' }, { value: 'landscape', label: 'Landscape' }] }, { key: 'margin', label: 'Margins (in)', type: 'number', min: 0.25, max: 2.5, step: 0.05 }, { key: 'numbers', label: 'Page numbers in the PDF', type: 'checkbox' }],
           initial: { ...p }, validate: v => { const m = Number((v as Record<string, unknown>).margin); return m >= 0.25 && m <= 2.5 ? { ok: true, value: v } : { ok: false, error: { code: 'doc.page', message: 'Margins are 0.25–2.5 in.' } }; }, preview() {}, cancel() {},
           commit: v => { const x = v as Record<string, unknown>; flush(); const page: PageSetup = { size: x.size as PageSetup['size'], orientation: x.orientation as PageSetup['orientation'], margin: Number(x.margin), numbers: !!x.numbers }; host.commit({ ...current!, value: documentContent({ operation: 'edit', value: content!, page, parse }) }, 'Page setup', current!.identity); } });
+      }
+      function footerSetup() {
+        if (!content) return;
+        host.dialog({ title: 'PDF footer', confirmLabel: 'Apply',
+          description: 'The footer is blank by default. Add page numbers below. If the PDF still shows a title, date, address or extra page count, turn off “Print headers and footers” (or “Headers and footers”) in your browser’s print options.',
+          fields: [{ key: 'numbers', label: 'Page numbers in the PDF', type: 'checkbox' }], initial: { numbers: content.page.numbers },
+          validate: value => ({ ok: true, value }), preview() {}, cancel() {},
+          commit: value => { const numbers = !!(value as { numbers: boolean }).numbers; flush(); if (numbers === content!.page.numbers) return;
+            host.commit({ ...current!, value: documentContent({ operation: 'edit', value: content!, page: { ...content!.page, numbers }, parse }) }, 'PDF footer', current!.identity); } });
       }
       // A modal dialog makes the page inert, so editing commands wait until it has closed.
       const afterDialog = (work: () => void) => window.setTimeout(() => { if (!disposed) work(); }, 0);
@@ -226,6 +237,7 @@ export function createDocumentWorkspace(files: FilePorts): WorkspaceAdapter {
         else if (id === 'doc.link') linkDialog();
         else if (id === 'doc.pictureSize') pictureSize();
         else if (id === 'doc.pageSetup') pageSetup();
+        else if (id === 'doc.footer') footerSetup();
         else if (id === 'doc.pdf') void printDocument();
         else if (id === 'doc.html') void exportFile('html');
         else if (id === 'doc.text') void exportFile('txt');
@@ -273,7 +285,7 @@ export function createDocumentWorkspace(files: FilePorts): WorkspaceAdapter {
         model() {
           const on = !!content, item = (id: string, label: string, shortcut = '', enabled = on, icon?: string, toolbar = false) => ({ id, label, shortcut, enabled, ...(icon ? { icon } : {}), ...(toolbar ? { toolbar } : {}) });
           return { menus: [
-            { id: 'document', label: 'Document', items: [item('doc.pdf', 'Export PDF…', '', on, 'pdf', true), item('doc.html', 'Export HTML…'), item('doc.text', 'Export plain text…'), item('doc.import', 'Import text or HTML…', '', true, 'open'), item('doc.pageSetup', 'Page setup…', '', on, 'properties', true)] },
+            { id: 'document', label: 'Document', items: [item('doc.pdf', 'Export PDF…', '', on, 'pdf', true), item('doc.html', 'Export HTML…'), item('doc.text', 'Export plain text…'), item('doc.import', 'Import text or HTML…', '', true, 'open'), item('doc.pageSetup', 'Page setup…', '', on, 'properties', true), item('doc.footer', 'PDF footer…')] },
             { id: 'insert', label: 'Insert', items: [item('doc.picture', 'Picture…', '', on, 'image'), item('doc.pictureSize', 'Picture size…', '', on && !!picked), item('doc.table', 'Table…', '', on, 'table'), item('doc.link', 'Link…', '', on, 'link'), item('doc.rule', 'Horizontal line'), item('doc.pageBreak', 'Page break', '', on, 'pageBreak')] },
             { id: 'format', label: 'Format', items: [item('doc.bold', 'Bold', 'Ctrl+B', on, 'bold'), item('doc.italic', 'Italic', 'Ctrl+I', on, 'italic'), item('doc.underline', 'Underline', 'Ctrl+U', on, 'underline'), item('doc.strike', 'Strikethrough', '', on, 'strike'),
               item('doc.normal', 'Normal text'), item('doc.h1', 'Heading 1'), item('doc.h2', 'Heading 2'), item('doc.h3', 'Heading 3'), item('doc.bullets', 'Bullets', '', on, 'listBullet'), item('doc.numbers', 'Numbering', '', on, 'listNumber'),

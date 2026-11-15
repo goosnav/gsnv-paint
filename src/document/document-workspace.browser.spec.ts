@@ -1,11 +1,42 @@
 import { test, expect, type Page } from '@playwright/test';
 import { preview } from 'vite';
 import { readFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import { nativeContainer } from '../shared/native-container.ts';
 
 const history = (page: Page) => page.locator('[data-panel-history] li').allTextContents();
 const editor = (page: Page) => page.locator('.doc-page');
 const html = (page: Page) => editor(page).evaluate(e => e.innerHTML);
+
+test('DOCUMENT-APP footer menu, undo and clean two-page PDFs with browser decorations enabled', async ({ page, context, browser }, testInfo) => {
+  const server = await preview({ preview: { host: '127.0.0.1', port: 4181, strictPort: true } });
+  await context.addInitScript(() => Object.defineProperty(window, 'showOpenFilePicker', { value: undefined }));
+  try {
+    await page.goto(server.resolvedUrls!.local[0]!); await page.getByRole('tab', { name: 'Document', exact: true }).click();
+    const choose = page.waitForEvent('filechooser'); await page.locator('.gc-standard [data-command="file.open"]').click();
+    await (await choose).setFiles({ name: 'Private document title.html', mimeType: 'text/html', buffer: Buffer.from('<p>First page body</p><hr style="break-after:page"><p>Second page body</p>') });
+    await expect(editor(page)).toContainText('First page body');
+    const menu = async () => { await page.getByRole('menuitem', { name: 'Document', exact: true }).click(); await page.getByRole('menuitem', { name: 'PDF footer…', exact: true }).click(); };
+    const dialog = page.getByRole('dialog'); const before = await history(page);
+    await menu(); await expect(dialog.getByLabel('Page numbers in the PDF')).not.toBeChecked();
+    await expect(dialog).toContainText('headers and footers'); await dialog.getByLabel('Page numbers in the PDF').check(); await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    expect(await history(page)).toEqual(before); await menu(); await expect(dialog.getByLabel('Page numbers in the PDF')).not.toBeChecked(); await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    async function printedText(numbers: boolean) {
+      await page.getByRole('menuitem', { name: 'Document', exact: true }).click(); await page.getByRole('menuitem', { name: 'Export PDF…', exact: true }).click();
+      const frame = page.locator('iframe.doc-print'); await expect(frame).toHaveCount(1); const source = await frame.getAttribute('srcdoc');
+      const printer = await browser.newPage(); await printer.setContent(source!);
+      const path = testInfo.outputPath(numbers ? 'numbered.pdf' : 'clean.pdf'); const pdf = await printer.pdf({ path, preferCSSPageSize: true, displayHeaderFooter: true }); await printer.close(); await frame.evaluate(e => e.remove());
+      expect(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)).toHaveLength(2);
+      const pages = execFileSync('pdftotext', [path, '-'], { encoding: 'utf8' }).split('\f').filter(p => p.trim());
+      expect(pages.map(p => p.trim().replace(/\s+/g, ' '))).toEqual(numbers ? ['First page body 1', 'Second page body 2'] : ['First page body', 'Second page body']);
+      await testInfo.attach(numbers ? 'Optional page numbers' : 'Clean default PDF', { path, contentType: 'application/pdf' });
+    }
+    await printedText(false); await menu(); await dialog.getByLabel('Page numbers in the PDF').check(); await dialog.getByRole('button', { name: 'Apply', exact: true }).click();
+    expect((await history(page)).length).toBe(before.length + 1); await expect(page.locator('.doc-info')).toContainText('page numbers');
+    await page.keyboard.press('Control+z'); await expect(page.locator('.doc-info')).not.toContainText('page numbers');
+    await page.keyboard.press('Control+y'); await expect(page.locator('.doc-info')).toContainText('page numbers'); await printedText(true);
+  } finally { await server.close(); }
+});
 
 test('DOCUMENT-APP type, style, lists, table, sanitized paste, undo, page setup, PDF, HTML export and project round trip', async ({ page, context, browser }, testInfo) => {
   test.setTimeout(90000);

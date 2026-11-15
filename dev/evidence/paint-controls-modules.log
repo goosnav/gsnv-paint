@@ -1,0 +1,5 @@
+PASS: src/image/image-navigator.ts
+PASS: src/image/image-palette.ts
+PASS: src/shared/icons.ts
+PASS: src/document/document-content.ts
+PASS: src/document/document-page.ts

@@ -28,11 +28,11 @@ export function imageNavigator(ports: Ports) {
   const hint = doc.createElement('p'); hint.className = 'navigator-hint'; hint.textContent = 'Drag map to move view';
   map.append(thumbnail,frame,empty); details.append(map,hint);
   const row = doc.createElement('div'); row.className = 'navigator-controls';
-  const button = (name:string,label:string,action:()=>void) => { const b = doc.createElement('button'); b.type='button'; b.textContent=label; b.title=name; b.setAttribute('aria-label',name); b.addEventListener('click',action); row.append(b); return b; };
+  const button = (name:string,label:string,action:()=>void) => { const b = doc.createElement('button'); b.type='button'; b.className='xp-button'; b.textContent=label; b.title=name; b.setAttribute('aria-label',name); b.addEventListener('click',action); row.append(b); return b; };
   const minus = button('Zoom out','−',()=>state&&ports.onZoom(Math.max(.01,state.view.zoom/1.25)));
-  const slider = doc.createElement('input'); slider.type='range'; slider.min='0'; slider.max='1000'; slider.step='1'; slider.setAttribute('aria-label','Canvas zoom'); row.append(slider);
+  const slider = doc.createElement('input'); slider.type='range'; slider.className='xp-range'; slider.min='0'; slider.max='1000'; slider.step='1'; slider.setAttribute('aria-label','Canvas zoom'); row.append(slider);
   const plus = button('Zoom in','+',()=>state&&ports.onZoom(Math.min(64,state.view.zoom*1.25)));
-  const percent = doc.createElement('input'); percent.type='number'; percent.min='1'; percent.max='6400'; percent.step='1'; percent.setAttribute('aria-label','Zoom percent');
+  const percent = doc.createElement('input'); percent.type='number'; percent.className='xp-field'; percent.min='1'; percent.max='6400'; percent.step='1'; percent.setAttribute('aria-label','Zoom percent');
   const lower = doc.createElement('div'); lower.className='navigator-values'; lower.append(percent,doc.createTextNode('%'));
   const fit = button('Fit image','Fit',()=>state&&ports.onFit()); lower.append(fit); root.append(details,row,lower); ports.root.append(root);
   let state:State|null=null, previousRevision:unknown, previousImage:HTMLCanvasElement|undefined, raf=0, disposed=false, pointer:number|null=null;
