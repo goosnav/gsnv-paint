@@ -9,6 +9,9 @@
  *            Invalid values show an error, disable OK and never preview or commit.
  *            Tab stays inside the modal. Blank numbers are invalid; omitted step=any.
  *            Optional description and confirmLabel are literal text; confirmation defaults to OK.
+ *            Color fields use six-digit hex strings and native color controls.
+ *            Textarea Enter/Shift+Enter stays native and stops before app shortcuts;
+ *            Ctrl/Cmd+Enter confirms. IME composition remains native.
  *            RAISES: TypeError for invalid root, fields, initial values or callbacks.
  * GUARANTEES No domain decisions, initial-value mutation or implicit document commit.
  *            Supplied labels are text; terminal actions and disposal are idempotent.
