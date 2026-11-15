@@ -137,6 +137,9 @@ Slides mouse Save/File-menu test, including last-typed native-file content.
 Purpose: Present a transactional live-preview modal.
 IN: `{root:HTMLElement,spec:DialogSpec}` with all callbacks present.
 OUT: `{close():void}`; changes invoke valid previews, OK/Enter invokes one commit, Cancel/Esc invokes one cancel, restores focus, prevents invalid commit and traps focus while open.
+TEXT-01: six-digit hex color fields use native color controls; textarea Enter and
+Shift+Enter insert newlines without reaching global shortcuts; Ctrl/Cmd+Enter
+confirms. [Text usability](PAINT-TEXT-USABILITY.md) records the assembly contract.
 RAISES: `TypeError` for invalid fields/callbacks.
 DEPS: none.
 TEST: live preview/typed values, invalid range, Esc rollback/Enter commit, keyboard focus, one actual browser smoke. Requirement group AppShell.
@@ -229,7 +232,7 @@ RAISES: Browser/registration/protocol failures become visible state; `ready` set
 DEPS: S19 protocol, without a production runtime import.
 TEST: `src/shared/offline-client.test.ts`, six state/protocol/disposal/retry tests; real Chrome failed-B/offline-A/retry/waiting-B fixture. No session, navigation or local project mutation occurs here.
 
-## S21 offline-status — SHELL — CONTRACTED (OPEN-08 repair)
+## S21 offline-status — SHELL — GREEN
 
 Purpose: Present readiness without interrupting editing.
 Repair contract: [OPEN-07/08](OPEN-FILES-UX.md#disabled-image-picker-repair-2026-11-14)
@@ -239,13 +242,18 @@ IN: `mountOfflineStatus({root:HTMLElement,onRetry:()=>void|Promise<void>,onCheck
 OUT: `{update(state):void,dispose():void}`; stable native details/summary, progress, text-only errors and Retry/Check buttons. Summary says Preparing offline, Ready offline, Reopen to enable offline, or Offline unavailable. Update instructions require saving and closing all app tabs. Escape closes details and focuses its summary; progress announcements are throttled to one second, state/error changes immediate.
 RAISES: `TypeError` for invalid DOM/callback ports; unexpected action rejection is visible and politely announced.
 DEPS: S20 state type only.
-TEST: `src/shared/offline-status.test.ts`, five DOM/focus/error/announcement cases; Chrome 1280×720 panel bounds and Escape/focus demo. Full production native Enter/Space and focus-preservation acceptance is tracked separately in the ledger.
+TEST: `src/shared/offline-status.test.ts`, six DOM/focus/error/announcement cases; Chrome 1280×720 panel bounds, visible waiting-update summary and Escape/focus demo. Full production native Enter/Space and focus-preservation acceptance is tracked separately in the ledger.
 
 S11/IMAGE-APP text repair: [PAINT-TEXT-USABILITY.md](PAINT-TEXT-USABILITY.md)
 contracts color fields, native multiline keyboard entry, and automatic graphical
-transform after text placement. Implementation and verification pending.
+transform after text placement. Unit and actual-browser seams are GREEN; release
+gate evidence is in [PAINT-OPEN-TEXT-REPAIR-EVIDENCE.md](PAINT-OPEN-TEXT-REPAIR-EVIDENCE.md).
 
 ## A-SHELL — assembly, not a brick — GREEN
+
+IMAGE-APP clipboard amendment: [PAINT-CLIPBOARD-USABILITY.md](PAINT-CLIPBOARD-USABILITY.md)
+contracts explicit system Copy canvas and blank/existing-document Paste with
+graphical transforms, native paste-event support and late-result guards.
 
 Wire S02, S04, S06, S10–S14 and existing built workspace adapters. S01/S03/S05/S07/S08/S09 are reached through their declared consumers. Phase 1 provides the window, capability notice, project-envelope open/save and recovery plus test fixture documents; unbuilt domain tools are not advertised as working. Workspace-specific new-document factories, copy/edit operations and panels are added only with their own phase's GREEN modules. Composition code contains routing and lifecycle disposal only. There is no fake CAD mesh, placeholder media edit or invented blank domain schema.
 
