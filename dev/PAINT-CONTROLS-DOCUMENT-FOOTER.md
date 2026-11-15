@@ -71,3 +71,16 @@ boxes suppress date/title/address/counters; content:none does not. Keep page
 margins intact. Safari/macOS print dialogs are untested here, so show concise
 browser-footer guidance instead of claiming universal suppression.
 Reference: https://developer.chrome.com/blog/print-margins
+
+## Print-layout boundary correction
+
+The structural checker found DOC-CONTENT already exposed seven function declarations
+(including three overload declarations). Mode D moves page sizing/defaults/print CSS
+into **DOC-PAGE CORE**, `document-page.ts`, with existing exact output tests unchanged.
+Its ports are `DEFAULT_PAGE`, `pageInches(PageSetup): [number,number]` and
+`pageCss(PageSetup): string`, with validated setup as the precondition. It has no
+dependencies or side effects. Test all three sizes, both orientations, clean margin
+boxes and optional numbers; a console demo prints the default/numbered CSS.
+DOC-CONTENT retains content/HTML validation and serialization and uses a single
+generic signature instead of repeated overload declarations. No persisted or public
+application behavior changes. DOCUMENT-APP imports the page functions directly.

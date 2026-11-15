@@ -315,3 +315,10 @@ final sampling; CSS previews reuse the original pixels. Tests precede each brick
 [Contract and verification plan](PAINT-CONTROLS-DOCUMENT-FOOTER.md) amends I59, I53,
 S09, DOC-CONTENT and DOCUMENT-APP under the owner’s existing BATCH authorization.
 Status: CONTRACTED for this increment. Existing ports and project formats remain.
+
+DOC-PAGE CORE (`document-page.ts`) extracts defaults, physical page dimensions and
+print margin policy from DOC-CONTENT. Inputs: a validated PageSetup. Outputs:
+DEFAULT_PAGE, pageInches tuple and pageCss string. No I/O, errors or dependencies;
+invalid setup remains DOC-CONTENT's responsibility. Status: CONTRACTED; exact
+existing page/print assertions remain the characterization oracle. See the linked
+increment's boundary correction before implementation.
