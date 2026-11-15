@@ -735,11 +735,11 @@ These are not bricks, do not evade the brick size/dependency rules, and contain 
 - The M1a skill's default private-doc rule is overridden by the user asking to put this specification in the code repo. Its generic state-changing GUI quit/API example is overridden by the user's static-only application backend; shutdown remains supervisor/process lifecycle responsibility. Setup/status orchestration contains no application business logic or document API.
 - Native target smoke coverage cannot be inferred from this Linux host. M1a still requires Windows x64/ARM64, macOS Intel/Apple Silicon and Linux x86_64/ARM64 evidence. No unavailable target or codec check becomes a pass.
 
-### I59 `image/image-navigator.ts` — SHELL — GREEN
+### I59 `image/image-navigator.ts` — SHELL — CONTRACTED
 
 Purpose: Navigate the Image canvas without a wheel (IMAGE-NAV contract).
 IN: DOM root and view callbacks; update(canvas, revision, effective view, viewport) or null.
-OUT: Zoom/center/fit requests; collapsible thumbnail, viewport frame and native controls; idempotent disposal.
+OUT: Zoom/center/fit requests; visible Zoom panel, collapsible thumbnail, viewport frame and native controls; disabled explanatory empty state; idempotent disposal. NAV-05/06 visibility amendment in IMAGE-NAVIGATOR.md.
 RAISES: TypeError for invalid DOM/callback ports. No document or pixel mutation.
 DEPS: none. IMAGE-APP composes S05 separately.
 TEST: `src/image/image-navigator.test.ts`; `src/image/image-navigation.browser.spec.ts`.

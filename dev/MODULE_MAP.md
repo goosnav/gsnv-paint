@@ -298,7 +298,7 @@ workspace integration, then browser acceptance. No new file codecs or domain
 modules. Status: GREEN for this amendment; evidence is in
 [the checkpoint](PAINT-OPEN-NAVIGATION-EVIDENCE.md).
 
-## IMAGE-NAV / I59 image-navigator — SHELL — GREEN
+## IMAGE-NAV / I59 image-navigator — SHELL — CONTRACTED
 
 The owner-requested [Paint navigator contract](IMAGE-NAVIGATOR.md) adds a compact
 view-only corner control and uses the existing original arrow cursor. Dependencies:

@@ -6,6 +6,7 @@
  *            OUT: update/dispose; view requests only. RAISES: invalid port TypeError.
  * GUARANTEES No pixel/document writes; thumbnail drag uses pointer capture and
  *            never bubbles into drawing. One scheduled thumbnail redraw per frame.
+ *            Zoom stays visible without a document; empty controls are disabled.
  * TUNING     Preview 168x88 screen pixels; zoom 1–6400%, +/- factor 1.25.
  * DECISIONS  D1: Native inputs and a collapsible map keep keyboard/touch access.
  *            Alternative: gesture-only navigation; rejected for discoverability.
