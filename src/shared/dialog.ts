@@ -10,6 +10,8 @@
  *            Tab stays inside the modal. Blank numbers are invalid; omitted step=any.
  *            Optional description and confirmLabel are literal text; confirmation defaults to OK.
  *            Color fields use six-digit hex strings and native color controls.
+ *            Select fields may asynchronously load/import choices; pending work blocks commit.
+ *            Errors retain fields; dismissal ignores late results; caller choices stay immutable.
  *            Textarea Enter/Shift+Enter stays native and stops before app shortcuts;
  *            Ctrl/Cmd+Enter confirms. IME composition remains native.
  *            RAISES: TypeError for invalid root, fields, initial values or callbacks.
@@ -30,8 +32,9 @@
 
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 type Values = Record<string, string | number | boolean>;
+type Choice = { value: string; label: string; notice?: string };
 type FieldBase = { key: string; label: string };
-type Field = FieldBase & ({ type: 'text'; placeholder?: string; multiline?: boolean } | { type: 'number'; min?: number; max?: number; step?: number } | { type: 'checkbox' } | { type: 'color' } | { type: 'select'; choices: readonly { value: string; label: string }[] });
+type Field = FieldBase & ({ type: 'text'; placeholder?: string; multiline?: boolean } | { type: 'number'; min?: number; max?: number; step?: number } | { type: 'checkbox' } | { type: 'color' } | { type: 'select'; choices: readonly Choice[]; loadChoices?: () => Promise<{ choices: Choice[]; notice?: string }>; importChoice?: { label: string; run(): Promise<Choice | null> } });
 export type DialogSpec = {
   title: string; description?: string; confirmLabel?: string; fields: readonly Field[]; initial: Values;
   validate(values: Values): { ok: true; value: Json } | { ok: false; error: { code: string; message: string } };
@@ -55,6 +58,8 @@ function validateSpec(root: HTMLElement, spec: DialogSpec): void {
           (field.step !== undefined && field.step <= 0)) throw new TypeError(`Invalid numeric field: ${field.key}.`);
     } else if (field.type === 'select') {
       if (!Array.isArray(field.choices) || !field.choices.length) throw new TypeError('A choice field needs options.');
+      if (field.loadChoices !== undefined && typeof field.loadChoices !== 'function') throw new TypeError('Invalid choice loader.');
+      if (field.importChoice && (typeof field.importChoice.label !== 'string' || !field.importChoice.label.trim() || typeof field.importChoice.run !== 'function')) throw new TypeError('Invalid choice importer.');
       const choices = new Set<string>();
       for (const choice of field.choices) {
         if (!choice || typeof choice.value !== 'string' || typeof choice.label !== 'string' || choices.has(choice.value)) throw new TypeError('Choice values must be distinct strings.');
@@ -79,12 +84,14 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   const body = document.createElement('div'); body.className = 'gc-dialog-body';
   if (spec.description) { const description=document.createElement('p');description.className='gc-dialog-description';description.textContent=spec.description;body.append(description); }
   const controls = new Map<string, HTMLInputElement | HTMLSelectElement>();
+  const allowed = new Map<string, Set<string>>(), imports: HTMLButtonElement[] = [];
   for (const field of spec.fields) {
     const label = document.createElement('label'); label.className = 'gc-dialog-field';
     const caption = document.createElement('span'); caption.textContent = field.label; label.append(caption);
     const control = document.createElement(field.type === 'select' ? 'select' : field.type === 'text' && field.multiline ? 'textarea' : 'input') as HTMLInputElement | HTMLSelectElement; control.name = field.key;
     control.setAttribute('aria-label', field.label);
     if (field.type === 'select') {
+      allowed.set(field.key, new Set(field.choices.map(c => c.value)));
       for (const choice of field.choices) { const option = document.createElement('option'); option.value = choice.value; option.textContent = choice.label; control.append(option); }
       control.value = String(spec.initial[field.key]);
     } else {
@@ -99,13 +106,19 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
       if (field.type === 'text' && field.placeholder !== undefined) input.placeholder = field.placeholder;
     }
     controls.set(field.key, control); label.append(control); body.append(label);
+    if (field.type === 'select' && field.importChoice) {
+      const action = document.createElement('div'); action.className = 'gc-dialog-field-action';
+      const button = document.createElement('button'); button.type = 'button'; button.textContent = field.importChoice.label;
+      button.addEventListener('click', () => { void extend(field, true); }); imports.push(button); action.append(button); body.append(action);
+    }
   }
   const error = document.createElement('p'); error.className = 'gc-dialog-error'; error.setAttribute('role', 'alert');
   const buttons = document.createElement('div'); buttons.className = 'gc-dialog-buttons';
   const ok = document.createElement('button'); ok.type = 'button'; ok.textContent = spec.confirmLabel ?? 'OK'; ok.title = `${ok.textContent} (Enter)`;
   const cancel = document.createElement('button'); cancel.type = 'button'; cancel.textContent = 'Cancel'; cancel.title = 'Cancel (Esc)';
-  buttons.append(ok, cancel); body.append(error, buttons); dialog.append(title, body);
-  let settled = false; let valid = false; let validated: Json = null; let revision = 0;
+  const notice = document.createElement('p'); notice.className = 'gc-dialog-notice'; notice.setAttribute('role', 'status'); notice.hidden = true;
+  buttons.append(ok, cancel); body.append(notice, error, buttons); dialog.append(title, body);
+  let settled = false; let valid = false; let validated: Json = null; let revision = 0; let pending = 0;
   const refresh = () => {
     if (settled) return;
     const currentRevision = ++revision;
@@ -115,12 +128,13 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
       if (field.type === 'checkbox') value = (control as HTMLInputElement).checked;
       if (field.type === 'number') value = (control as HTMLInputElement).valueAsNumber;
       const invalid = !control.validity.valid || (field.type === 'number' && !Number.isFinite(value)) ||
-        (field.type === 'select' && !field.choices.some(choice => choice.value === value));
+        (field.type === 'select' && !allowed.get(field.key)!.has(String(value)));
       control.setAttribute('aria-invalid', String(invalid));
       if (invalid && !message) message = `${field.label}: ${control.validationMessage || 'Enter a valid value.'}`;
       values.push([field.key, value]);
     }
     valid = false; ok.disabled = true;
+    if (pending) return;
     if (message) { error.textContent = message; return; }
     const result = spec.validate(Object.fromEntries(values));
     // Callbacks may edit fields or cancel; only the newest live refresh may finish.
@@ -130,6 +144,29 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
     spec.preview(validated);
     if (settled || currentRevision !== revision) return;
     valid = true; ok.disabled = false;
+  };
+  const extend = async (field: Extract<Field, { type: 'select' }>, importing: boolean) => {
+    if (settled || (importing && pending)) return;
+    pending++; valid = false; ok.disabled = true; imports.forEach(button => { button.disabled = true; });
+    notice.hidden = false; notice.textContent = importing ? 'Loading…' : 'Loading choices…';
+    try {
+      const result = importing ? await field.importChoice!.run() : await field.loadChoices!();
+      if (settled) return;
+      const choices = result ? ('choices' in result ? result.choices : [result]) : [];
+      if (!Array.isArray(choices) || choices.some(c => !c || typeof c.value !== 'string' || typeof c.label !== 'string')) throw new Error('The imported choice is invalid.');
+      const control = controls.get(field.key)!;
+      for (const choice of choices) {
+        if (allowed.get(field.key)!.has(choice.value)) continue;
+        const option = document.createElement('option'); option.value = choice.value; option.textContent = choice.label;
+        control.append(option); allowed.get(field.key)!.add(choice.value);
+      }
+      if (importing && choices.length) control.value = choices[0]!.value;
+      notice.textContent = result?.notice ?? '';
+    } catch (cause) { if (!settled) notice.textContent = cause instanceof Error ? cause.message : 'Could not load this choice.'; }
+    finally {
+      pending--;
+      if (!settled) { imports.forEach(button => { button.disabled = pending > 0; }); notice.hidden = !notice.textContent; refresh(); }
+    }
   };
   const finish = (commit: boolean) => {
     if (settled || (commit && !valid)) return;
@@ -145,9 +182,9 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); dismiss(); }
     // Leave the newline to the browser, but keep the app's confirm shortcut from consuming it.
     else if (event.key === 'Enter' && (event.target as Element).tagName === 'TEXTAREA' && !(event.ctrlKey || event.metaKey)) event.stopPropagation();
-    else if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); event.target === cancel ? dismiss() : commit(); }
+    else if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); event.target === cancel ? dismiss() : imports.includes(event.target as HTMLButtonElement) ? (event.target as HTMLButtonElement).click() : commit(); }
     else if (event.key === 'Tab') {
-      const focusable = [...controls.values(), ok, cancel].filter(control => !control.disabled);
+      const focusable = [...dialog.querySelectorAll<HTMLInputElement | HTMLButtonElement>('input,select,textarea,button')].filter(control => !control.disabled);
       const first = focusable[0]!; const last = focusable.at(-1)!;
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
@@ -163,6 +200,7 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   ok.addEventListener('click', commit); cancel.addEventListener('click', dismiss);
   root.append(dialog);
   try {
+    for (const field of spec.fields) if (field.type === 'select' && field.loadChoices) void extend(field, false);
     refresh();
     if (!settled) { dialog.showModal(); (controls.values().next().value ?? (valid ? ok : cancel)).focus(); }
   }

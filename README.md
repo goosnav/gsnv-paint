@@ -24,6 +24,13 @@ the handles to resize; use **Free transform / Ctrl+T** for rotation and precise
 values. **Enter** applies and **Esc** cancels. Small selections expose handles when
 Free transform is activated, so normal selection gestures stay usable.
 
+In Paint, choose **Text (T)**, click the canvas, then **Import font…** below the
+Font selector to use a local **.ttf** or **.otf** file (up to 32 MiB). Imported fonts
+are remembered in this browser on this device and work offline. If storage is
+unavailable, a notice explains that the font is available for the session only.
+Placed text is saved as pixels, so projects and PNGs keep their appearance on
+other devices without installing the font. [Font verification](dev/PAINT-FONTS.md).
+
 Paint accepts finger and pen drawing without selecting the surrounding interface.
 An extra contact cannot take over a stroke; browser-interrupted freehand strokes
 keep their pixels and can be undone. On phones the tool palette has larger buttons,

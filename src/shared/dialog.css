@@ -17,3 +17,6 @@
 @media (forced-colors:active) { .gc-dialog,.gc-dialog button { border:1px solid ButtonText; } }
 .gc-dialog textarea { width:100%; min-height:54px; resize:vertical; padding:2px 4px; font:inherit; color:var(--xp-text); background:var(--xp-field); border:1px solid var(--xp-field-edge); }
 .gc-dialog-description { margin:0 0 14px; max-width:46ch; line-height:1.5; }
+.gc-dialog-field-action { margin:-4px 0 10px 128px; }
+.gc-dialog-field-action button { width:100%; }
+.gc-dialog-notice { margin:0 0 8px; overflow-wrap:anywhere; }

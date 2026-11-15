@@ -47,3 +47,44 @@ https://developer.mozilla.org/en-US/docs/Web/API/FontFace/load
 
 Physical iPad/iPhone/Apple Pencil remain UNTESTED unless actually exercised.
 Record browser versions and results below; do not promote broader product status.
+
+## Verification report
+
+Implemented: FONT-01 through FONT-06 **PASS**. No failing checks remain in this
+increment. Physical iPhone/iPad Safari, Apple Pencil hardware, and the operating
+system's native File System Access picker remain **UNTESTED**. Browser file-input
+fallback was exercised with real TTF and CFF OTF files in Chromium and WebKit.
+The original geometric test fonts and their fontTools generator are in
+`dev/fixtures/fonts`; they contain no third-party font outlines and are not shipped
+in the static build.
+
+- `npm test`: **1,047 tests, 1,047 pass, 0 fail, 0 skipped**.
+- `npm run build`: **PASS**, TypeScript + Vite; existing large-bundle and PlaneGCS
+  node:module warnings remain. No new dependency.
+- `LD_LIBRARY_PATH=/tmp/paint-webkit-deps/usr/lib/x86_64-linux-gnu node_modules/.bin/playwright test src/image src/shared/dialog.browser.spec.ts src/shared/file-access.browser.spec.ts src/app/app-shell.browser.spec.ts src/app/save-export.browser.spec.ts`:
+  **38 passed (1.5m)**. Chrome 154.0.8037.97 and WebKit 27.2 on Linux x64; includes
+  the 390×700 phone layout, real font decoding, exact raster save/reopen without
+  the font installed, PNG, undo/redo, offline restoration, prior touch fixes,
+  text controls, clipboard, transforms, navigator and shared dialog regressions.
+- `npm run test:spec`: **PASS**; 402 requirements/procedures and 220 mapped contracts.
+  Original product ledger unchanged: **47 PASS, 0 FAIL, 355 UNTESTED**.
+- `node_modules/.bin/playwright test --config dev/static-host.playwright.config.ts`:
+  **1 passed (10.9s)**; complete static build, isolation headers, exact assets offline.
+- Modular checker: **PASS** for `font-library.ts` and `dialog.ts`.
+- `WRANGLER_SEND_METRICS=false node_modules/.bin/wrangler deploy --dry-run --no-autoconfig`:
+  **PASS**, 61 static assets, no bindings; dry-run is not a live deployment.
+
+Test-driven checks caught missing asynchronous dialog handling and name ambiguity
+after stored fonts were returned in a different order. Loaded names now persist;
+identical sources deduplicate while different same-name fonts get numbered labels.
+A corrupt stored font cannot hide healthy ones. Storage failure is visibly
+session-only; font imports never modify the project's history. Cancel ignores
+late dialog updates. Native text rendering is reused rather than shipping a font
+parser. Font bytes stay local and all supplied names use textContent.
+
+The library is loaded on first Text use and released on workspace disposal.
+Browser storage can be evicted; the original font file is the durable source.
+Text still becomes a raster layer on OK. Editable font-based text layers and font
+import for Document/Slides/Video are outside this increment.
+
+Command output is retained in [the check log](evidence/paint-fonts-checks.txt).

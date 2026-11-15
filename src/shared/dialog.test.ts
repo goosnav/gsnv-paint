@@ -199,3 +199,50 @@ test('S11 missing modal support and disconnected roots produce readable errors w
   assert.throws(f.open, /Modal dialogs are unavailable/);
   assert.deepEqual(f.previews, []); assert.equal(f.root.querySelector('dialog'), null);
 });
+
+const tick = () => new Promise<void>(resolve => setTimeout(resolve, 0));
+function importFixture(run: () => Promise<{ value: string; label: string; notice?: string } | null>, loadChoices?: () => Promise<{ choices: { value: string; label: string }[]; notice?: string }>) {
+  const choices = [{ value: 'base', label: 'Built in' }];
+  const f = fixture({ fields: [{ key: 'name', label: 'Name', type: 'text', multiline: true }, { key: 'font', label: 'Font', type: 'select', choices, importChoice: { label: 'Import font…', run }, ...(loadChoices ? { loadChoices } : {}) }], initial: { name: 'First\nSecond', font: 'base' }, validate: value => ({ ok: true, value }) });
+  return { ...f, choices };
+}
+test('FONT-01/04 async select import preserves fields, blocks premature commit, selects and previews only when ready', async () => {
+  let resolve!: (value: { value: string; label: string }) => void;
+  const f = importFixture(() => new Promise(r => { resolve = r; })); f.open();
+  f.button('Import font…').focus(); f.key('Enter');
+  assert.equal(f.button('OK').disabled, true); f.button('OK').click(); assert.equal(f.commits.length, 0);
+  f.input('name', 'Edited\nText'); assert.equal(f.button('OK').disabled, true);
+  resolve({ value: 'custom', label: '<My Font>' }); await tick();
+  assert.equal(f.field('name').value, 'Edited\nText'); assert.equal(f.field('font').value, 'custom');
+  assert.deepEqual(f.previews.at(-1), { name: 'Edited\nText', font: 'custom' });
+  assert.equal(f.root.querySelector('My'), null); assert.equal(f.choices.length, 1);
+  f.button('OK').click(); assert.deepEqual(f.commits.at(-1), f.previews.at(-1)); f.dom.window.close();
+});
+test('FONT-04 canceled picker and failed import retain the existing choice and editable text', async () => {
+  for (const run of [async () => null, async () => { throw new Error('Unreadable font.'); }]) {
+    const f = importFixture(run); f.open(); f.button('Import font…').click(); await tick();
+    assert.equal(f.field('font').value, 'base'); assert.equal(f.field('name').value, 'First\nSecond');
+    assert.equal(f.button('OK').disabled, false);
+    if (run.toString().includes('throw')) assert.match(f.root.textContent!, /Unreadable font/);
+    f.button('Cancel').click(); f.dom.window.close();
+  }
+});
+test('FONT-04 cancel is terminal during restoration or import, including rejected late work', async () => {
+  for (const restore of [false, true]) {
+    let reject!: (error: Error) => void;
+    const waiting = () => new Promise<never>((_, r) => { reject = r; });
+    const f = importFixture(waiting, restore ? waiting : undefined); f.open();
+    if (!restore) f.button('Import font…').click();
+    f.button('Cancel').click(); reject(new Error('Late failure')); await tick();
+    assert.equal(f.root.querySelector('dialog'), null); assert.equal(f.commits.length, 0); f.dom.window.close();
+  }
+});
+test('FONT-02/03 restored choices retain current selection and report a storage warning without blocking built-ins', async () => {
+  const f = importFixture(async () => ({ value: 'custom', label: 'Custom', notice: 'Session only.' }), async () => ({ choices: [{ value: 'old', label: 'Old font' }], notice: 'One font unavailable.' }));
+  f.open(); assert.equal(f.button('OK').disabled, true); await tick();
+  assert.equal(f.field('font').value, 'base'); assert.equal(f.root.querySelectorAll('option').length, 2);
+  assert.match(f.root.textContent!, /One font unavailable/);
+  f.button('Import font…').click(); await tick(); assert.match(f.root.textContent!, /Session only/);
+  f.button('Import font…').click(); await tick(); assert.equal(f.root.querySelectorAll('option').length, 3);
+  f.button('OK').click(); assert.equal(f.commits.length, 1); f.dom.window.close();
+});

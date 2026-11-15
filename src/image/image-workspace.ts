@@ -19,6 +19,7 @@
 import type { WorkspaceAdapter } from '../app/app-shell.ts';
 import { imageSourceAdapter } from '../bridge/image-source-adapter.ts';
 import { viewTransform, type View2D } from '../shared/view-transform.ts';
+import { fontLibrary, MAX_FONT_BYTES } from '../shared/font-library.ts';
 import type { DialogSpec } from '../shared/dialog.ts';
 import { fileAccess, type FilePorts } from '../shared/file-access.ts';
 import { imageContent, type ImageContent, type LayerMeta } from './image-content.ts';
@@ -84,6 +85,8 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
     },
     mount(host) {
       const document = host.root.ownerDocument, window = document.defaultView!;
+      let fontStorage: IDBFactory | undefined; try { fontStorage = window.indexedDB; } catch { /* Session-only fonts still work. */ }
+      const fonts = fontLibrary({ fonts: document.fonts, FontFace: window.FontFace, crypto: window.crypto, storage: fontStorage });
       const make = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string) => { const node = document.createElement(tag); node.className = className; return node; };
       const stage = make('div', 'image-stage'), surface = make('div', 'image-surface'), canvas = make('canvas', 'image-canvas'), float = make('canvas', 'image-floating'), overlay = make('canvas', 'image-overlay');
       const ring = make('div', 'image-brush-ring'), hint = make('div', 'image-tool-hint'), notice = make('div', 'image-empty'), optionsPanel = document.createElement('div'), layersPanel = document.createElement('div');
@@ -392,8 +395,16 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         if (!source) return; const at = { x: Math.floor(point[0]), y: Math.floor(point[1]) };
         const show = (r: Raster | null) => { if (r) { float.width = r.width; float.height = r.height; floatContext?.putImageData(new ImageData(new Uint8ClampedArray(r.data), r.width, r.height), 0, 0); float.style.left = `${at.x}px`; float.style.top = `${at.y}px`; float.hidden = false; } else float.hidden = true; };
         const style = (v: Record<string, unknown>): TextStyle => ({ text: String(v.text), color: String(v.color), size: Number(v.size), font: String(v.font), bold: !!v.bold, italic: !!v.italic, align: v.align as TextStyle['align'], spacing: Number(v.spacing) });
-        host.dialog({ title: 'Text', description: 'Enter starts a new line. Choose OK (or Ctrl+Enter), then drag the handles to resize or rotate.', fields: [{ key: 'text', label: 'Text (Enter for a new line)', type: 'text', multiline: true }, { key: 'color', label: 'Color', type: 'color' }, { key: 'size', label: 'Size (px)', type: 'number', min: 4, max: 400, step: 1 },
-          { key: 'font', label: 'Font', type: 'select', choices: [{ value: 'Tahoma, Verdana, sans-serif', label: 'Tahoma' }, { value: 'Verdana, sans-serif', label: 'Verdana' }, { value: 'Arial, Helvetica, sans-serif', label: 'Arial' }, { value: '"Times New Roman", Times, serif', label: 'Times New Roman' }, { value: 'Georgia, serif', label: 'Georgia' }, { value: '"Courier New", monospace', label: 'Courier New' }, { value: '"Comic Sans MS", cursive', label: 'Comic Sans' }, { value: 'Impact, sans-serif', label: 'Impact' }, { value: '"Pixel Tahoma"', label: 'Pixel Tahoma (11 / 22 px)' }] },
+        const importFont = async () => {
+          const result = await fileAccess({ op: 'pick', accept: { 'font/ttf': ['.ttf'], 'font/otf': ['.otf'] } }, files);
+          if ('cancelled' in result) return null;
+          if (!result.ok) throw new Error(result.error.message);
+          const file = result.value.file;
+          if (file.size > MAX_FONT_BYTES) throw new Error('Choose a font up to 32 MiB.');
+          return fonts.import(file.name, new Uint8Array(await file.arrayBuffer()));
+        };
+        host.dialog({ title: 'Text', description: 'Enter starts a new line. Choose OK (or Ctrl+Enter), then drag the handles to resize or rotate. Import your own TTF or OTF font; it stays on this device.', fields: [{ key: 'text', label: 'Text (Enter for a new line)', type: 'text', multiline: true }, { key: 'color', label: 'Color', type: 'color' }, { key: 'size', label: 'Size (px)', type: 'number', min: 4, max: 400, step: 1 },
+          { key: 'font', label: 'Font', type: 'select', choices: [{ value: 'Tahoma, Verdana, sans-serif', label: 'Tahoma' }, { value: 'Verdana, sans-serif', label: 'Verdana' }, { value: 'Arial, Helvetica, sans-serif', label: 'Arial' }, { value: '"Times New Roman", Times, serif', label: 'Times New Roman' }, { value: 'Georgia, serif', label: 'Georgia' }, { value: '"Courier New", monospace', label: 'Courier New' }, { value: '"Comic Sans MS", cursive', label: 'Comic Sans' }, { value: 'Impact, sans-serif', label: 'Impact' }, { value: '"Pixel Tahoma"', label: 'Pixel Tahoma (11 / 22 px)' }], loadChoices: () => fonts.choices(), importChoice: { label: 'Import font…', run: importFont } },
           { key: 'bold', label: 'Bold', type: 'checkbox' }, { key: 'italic', label: 'Italic', type: 'checkbox' },
           { key: 'align', label: 'Alignment', type: 'select', choices: [{ value: 'left', label: 'Left' }, { value: 'center', label: 'Centre' }, { value: 'right', label: 'Right' }] },
           { key: 'spacing', label: 'Line spacing', type: 'number', min: 0.8, max: 3, step: 0.05 }],
@@ -734,7 +745,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           } catch (cause) { fail(cause); }
           if (gesture.phase !== 'move') host.invalidate();
         },
-        dispose() { if (disposed) return; disposed = true; document.removeEventListener('keydown', pasteKey, true); document.removeEventListener('paste', nativePaste, true); window.clearInterval(antTimer); if (stroke?.timer) window.clearInterval(stroke.timer); observer?.disconnect(); navigator.dispose(); transformView.dispose(); palette.dispose(); layers.dispose(); host.root.replaceChildren(); },
+        dispose() { if (disposed) return; disposed = true; fonts.dispose(); document.removeEventListener('keydown', pasteKey, true); document.removeEventListener('paste', nativePaste, true); window.clearInterval(antTimer); if (stroke?.timer) window.clearInterval(stroke.timer); observer?.disconnect(); navigator.dispose(); transformView.dispose(); palette.dispose(); layers.dispose(); host.root.replaceChildren(); },
       };
     },
   };

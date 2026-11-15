@@ -335,5 +335,5 @@ BATCH authority; acceptance remains with the owner. Physical iOS/Pencil untested
 
 [Paint font contract](PAINT-FONTS.md) adds FONT-LIB SHELL and amends S11 / IMAGE-APP.
 Binary font loading and persistence remain SHELL; Paint raster content stays CORE.
-Status: CONTRACTED under existing BATCH authority. Contract, verification IDs and
-brick order are in the linked increment; acceptance remains with the owner.
+Status: GREEN under existing BATCH authority. Contract, verification IDs and
+evidence are in the linked increment; acceptance remains with the owner.

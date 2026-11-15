@@ -1,0 +1,168 @@
+$ npm test
+✔ V-TIMELINE titles validate and the project round-trips through the native encoding (1.488749ms)
+ℹ tests 1047
+ℹ suites 0
+ℹ pass 1047
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30202.688053
+
+$ npm run build
+
+> gsnv-paint@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+[plugin rolldown:vite-resolve] Module "node:module" has been externalized for browser compatibility, imported by "/home/goosnav/Desktop/code/gsnv-paint/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin rolldown:vite-resolve] Module "node:module" has been externalized for browser compatibility, imported by "/home/goosnav/Desktop/code/gsnv-paint/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin rolldown:vite-resolve] Module "node:module" has been externalized for browser compatibility, imported by "/home/goosnav/Desktop/code/gsnv-paint/node_modules/@salusoft89/planegcs/dist/planegcs_dist/planegcs.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+✓ 167 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                      3.03 kB │ gzip:     1.17 kB
+dist/assets/pixel-tahoma-6h5M2JtG.woff2              7.44 kB
+dist/assets/pixel-tahoma-bold-CcfyHzC-.woff2         7.46 kB
+dist/assets/app-icon-C0NVVvbT.svg                    9.47 kB │ gzip:     0.70 kB
+dist/assets/photo-develop.worker-DAifgXh2.js        14.52 kB
+dist/assets/planegcs-DmlzCoVG.js                    26.12 kB
+dist/assets/replicad_single-DD6apbHo.js             60.48 kB
+dist/assets/libraw-Cm6KFyZe.js                      68.17 kB
+dist/assets/worker-BZtgTZAf.js                      68.61 kB
+dist/assets/cad-step-export.worker-BB8eqq8A.js      93.32 kB
+dist/assets/cad-workspace.worker-Pk07Py8C.js        96.27 kB
+dist/assets/pyodide-lock-y3tUuWGz.json             119.07 kB │ gzip:    25.65 kB
+dist/assets/planegcs-DNpN9qS7.wasm                 484.00 kB │ gzip:   175.89 kB
+dist/assets/libraw-CKnqEbQ6.wasm                 1,417.72 kB │ gzip:   492.23 kB
+dist/assets/python_stdlib-Dms11Th8.zip           2,545.63 kB
+dist/assets/pyodide.asm-DoBEEsqh.wasm            9,598.21 kB │ gzip: 3,613.46 kB
+dist/assets/replicad_single-g5eiaENB.wasm       22,942.32 kB │ gzip: 7,312.94 kB
+dist/assets/index-DsnB-ayx.css                      71.73 kB │ gzip:    14.31 kB
+dist/assets/code-runtime-B_wTvg5T.js             1,282.03 kB │ gzip:   274.53 kB
+dist/assets/index-Bm6DQ-Z5.js                    2,114.41 kB │ gzip:   666.54 kB
+
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.33s
+
+$ Browser regression command (see PAINT-FONTS.md)
+[WebServer] (node:2318944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 38 tests using 1 worker
+
+(node:2319004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+A-SHELL browser: Chrome 154.0.8037.97; runner linux/x64; viewport {"width":1280,"height":720}.
+A-SHELL: actual wheel/Space pan and typed 2D view settings applied through the shared seams; right-click target reached the fixture adapter.
+A-SHELL emitted production capability results: [
+  {
+    state: 'supported',
+    text: 'Native file pickers: Native file pickers are available; access requires your file selection.'
+  },
+  {
+    state: 'supported',
+    text: 'Background workers: Background worker API is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebAssembly: WebAssembly compilation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'WebGL 2: WebGL 2 context creation is available.'
+  },
+  {
+    state: 'supported',
+    text: 'Isolated execution: Cross-origin isolation is active.'
+  },
+  {
+    state: 'supported',
+    text: 'Image clipboard: Image clipboard API is available; access may require permission.'
+  },
+  {
+    state: 'supported',
+    text: 'Pen pressure API: Pressure API is available; pen hardware has not been tested.'
+  }
+]
+A-SHELL: emitted dist via Vite preview exposes one shell with nine real workspace adapters and no fixture tools. Live deployment remains untested.
+A-SHELL: one window; fixture preview/cancel/commit; undo/redo; exact downloaded container reopens; IDB recovery survives page close/reopen. Native picker interaction and product editing remain untested.
+  ✓   1 src/app/app-shell.browser.spec.ts:20:1 › A-SHELL actual window composes fixture editing, history, project files and local recovery (3.5s)
+Save/export Chrome 154.0.8037.97 linux/x64, 1280×720
+  ✓   2 src/app/save-export.browser.spec.ts:16:1 › Save discovery: Image first, clear popup, real PNG/project output, reopen and keyboard submenu (2.6s)
+  ✓   3 src/app/save-export.browser.spec.ts:45:1 › Save discovery: Document and Slides PDF choices reach their real printable output (1.4s)
+  ✓   4 src/image/image-acceptance.browser.spec.ts:11:1 › IMG-103/104 production controls match the exact golden and preserve editable layers and selection on reopen (2.5s)
+  ✓   5 src/image/image-acceptance.browser.spec.ts:93:1 › Image selection-only edits undo, recover, cancel a floating move and clear on another legacy document (1.4s)
+  ✓   6 src/image/image-acceptance.browser.spec.ts:153:1 › Image typed zoom stays centered, previews and cancels, matches Fit and retains wheel anchoring (1.3s)
+  ✓   7 src/image/image-clipboard.browser.spec.ts:24:1 › Paint native paste opens an image and Copy canvas writes the full transparent composite (898ms)
+  ✓   8 src/image/image-clipboard.browser.spec.ts:45:1 › Paint oversized paste exposes a whole-source transform, cancel and undo; text paste stays native (1.5s)
+  ✓   9 src/image/image-clipboard.browser.spec.ts:62:1 › Paint clipboard denial is honest and a late read cannot replace another workspace (1.0s)
+  ✓  10 src/image/image-clipboard.browser.spec.ts:81:1 › Paint ignores non-image clipboard contents and rejects invalid images without changing the canvas (1.8s)
+Font checks: Chrome 154.0.8037.97, linux/x64
+  ✓  11 src/image/image-fonts.browser.spec.ts:31:1 › FONT-01–06 TTF/OTF render, persist offline, reject bad files, and travel as pixels in saved projects (5.4s)
+Font mobile-layout check: WebKit 27.2, linux/x64; physical iOS untested
+  ✓  12 src/image/image-fonts.browser.spec.ts:76:1 › FONT-01/04 local font picker and text preview fit a phone viewport in Linux WebKit (2.5s)
+Paint navigation/transform: Chrome 154.0.8037.97 linux/x64
+  ✓  13 src/image/image-navigation.browser.spec.ts:15:1 › Expanded colours share XP controls and the next stroke uses the exact chosen RGB (1.3s)
+  ✓  14 src/image/image-navigation.browser.spec.ts:35:1 › Paint has an arrow cursor and compact wheel-independent navigator with view-only controls (1.3s)
+  ✓  15 src/image/image-navigation.browser.spec.ts:49:1 › Selection handles resize visually, cancel restores pixels and apply supports one-step undo/redo (2.3s)
+  ✓  16 src/image/image-navigation.browser.spec.ts:60:1 › Ctrl+T exposes on-canvas rotation and moving with synchronized zoom (1.5s)
+  ✓  17 src/image/image-navigation.browser.spec.ts:67:1 › Touch pointer dragging pans the mini map and resizes without painting (1.4s)
+  ✓  18 src/image/image-navigation.browser.spec.ts:74:1 › Save captures the visible graphical transform and a still-focused typed size (1.9s)
+  ✓  19 src/image/image-navigation.browser.spec.ts:85:1 › Visible Zoom panel opens raw images and works on a tablet-sized touch viewport (2.2s)
+  ✓  20 src/image/image-pixel-drawing.browser.spec.ts:24:1 › Paint defaults to binary hard strokes, offers coarse brush pixels and keeps Smooth intentional (1.9s)
+  ✓  21 src/image/image-pixel-drawing.browser.spec.ts:37:1 › Sharp canvas rendering stays binary at fractional zoom; Smooth preview is reversible and view-only (1.5s)
+  ✓  22 src/image/image-pixel-drawing.browser.spec.ts:50:1 › Hard layer strokes and nearest free transform preserve alpha; saved PNG/project match the committed pixels (3.5s)
+  ✓  23 src/image/image-pixel-drawing.browser.spec.ts:64:1 › Hard brush and eraser respect selections with one history entry per stroke (2.4s)
+  ✓  24 src/image/image-text.browser.spec.ts:23:1 › Paint text supports color preview, native newlines, cancel and graphical scaling with undo and reopen (3.9s)
+Touch regression: Chrome 154.0.8037.97, linux/x64
+  ✓  25 src/image/image-touch.browser.spec.ts:23:1 › TOUCH-02 finger loops survive a second contact with identical pixels and one history entry (3.2s)
+  ✓  26 src/image/image-touch.browser.spec.ts:33:99 › TOUCH-03 pointercancel preserves freehand only for interruptions, then undo/redo works (1.7s)
+  ✓  27 src/image/image-touch.browser.spec.ts:33:99 › TOUCH-03 lostpointercapture preserves freehand only for interruptions, then undo/redo works (1.6s)
+  ✓  28 src/image/image-touch.browser.spec.ts:33:99 › TOUCH-03 blur preserves freehand only for interruptions, then undo/redo works (1.7s)
+  ✓  29 src/image/image-touch.browser.spec.ts:33:99 › TOUCH-03 focus preserves freehand only for interruptions, then undo/redo works (1.6s)
+  ✓  30 src/image/image-touch.browser.spec.ts:33:99 › TOUCH-03 Escape preserves freehand only for interruptions, then undo/redo works (1.2s)
+  ✓  31 src/image/image-touch.browser.spec.ts:49:1 › TOUCH-03 interrupted shape preview still cancels (1.1s)
+  ✓  32 src/image/image-touch.browser.spec.ts:54:1 › MOBILE-01 phone controls fit, panels scroll by touch and canvas loops remain visible (2.6s)
+Selection smoke: Linux WebKit 27.2 (not physical iOS)
+  ✓  33 src/image/image-touch.browser.spec.ts:79:1 › TOUCH-01 drawing/chrome reject selection while text fields and Document remain editable (Chromium and WebKit) (4.7s)
+  ✓  34 src/image/image-touch.browser.spec.ts:100:1 › TOUCH-02 emulated pen keeps its stroke when a finger moves and lifts beside it (1.7s)
+  ✓  35 src/image/image-workspace.browser.spec.ts:22:1 › IMAGE-APP production: paint tools, selection move, undo, layered native file, PNG export/open and recovery (8.5s)
+  ✓  36 src/image/image-workspace.browser.spec.ts:75:1 › IMAGE-APP layers, soft brush clipped to a selection, opacity/blend, adjustments, filters, text and geometry (6.2s)
+  ✓  37 src/shared/dialog.browser.spec.ts:3:1 › S11 actual modal previews typed edits, traps focus, rolls back and commits once (492ms)
+S07: 8 binary bytes matched after browser upload, download, and reopen; native picker interaction untested.
+  ✓  38 src/shared/file-access.browser.spec.ts:4:1 › S07 actual browser fallback open/download/reopen preserves exact binary bytes (357ms)
+
+  38 passed (1.5m)
+
+$ Static host browser check
+
+  ✓  1 dev/static-host.browser.spec.ts:16:1 › Cloudflare static host installs the complete build and serves exact isolated assets offline (10.1s)
+
+  1 passed (10.9s)
+
+$ npm run test:spec
+
+> gsnv-paint@0.1.0 test:spec
+> python3 dev/verify-spec.py
+
+TRACE PASS: 402 unique requirements, 402 unique verification procedures, 8 needs; metadata and Markdown closure valid.
+MAP PASS: 220 unique contracts; all required fields; known dependencies; maximum 3 collaborators; no cycles.
+LINK PASS: local document links resolve; all 18 conceptual design owners bound.
+REQUIREMENT STATUS: PASS 47; FAIL 0; UNTESTED 355. Status is recorded evidence; this audit does not execute product behavior.
+ANALYTICAL ORACLE width=100: 56654.424808105 mm3; not a kernel test.
+ANALYTICAL ORACLE width=120: 68654.424808105 mm3; not a kernel test.
+
+$ Wrangler deploy dry-run (no actual deployment)
+
+ ⛅️ wrangler 4.160.1
+────────────────────
+✨ Read 61 files from the assets directory /home/goosnav/Desktop/code/gsnv-paint/dist
+Total Upload: 0.31 KiB / gzip: 0.22 KiB
+No bindings found.
+--dry-run: exiting now.
