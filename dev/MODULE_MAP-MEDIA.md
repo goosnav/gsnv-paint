@@ -778,3 +778,13 @@ DEMO: production Image Brush with Hard pixels and Pixel size controls.
 
 [Pixel drawing amendment](PAINT-PIXEL-DRAWING.md) defines PIX-01–04 and updates
 I50 sampling, I53 tool options, I61 transform sampling and IMAGE-APP wiring.
+
+### I63 `image/raster-transform.ts` — CORE — PLANNED
+Purpose: Resample owned raster transforms with explicit sampling.
+IN: matching RGBA raster; existing TransformOp or finite affine percent scales/angle, optional nearest/bilinear sampler.
+OUT: new raster, input unchanged; exact source RGBA under nearest sampling.
+RAISES: RangeError for invalid input/sampling or output beyond the shared pixel limit.
+DEPS: I50 createRaster, paintRaster, clip and types.
+TEST: `src/image/raster-transform.test.ts` (existing transform goldens retained).
+DEMO: Image Free transform with Pixels/Smooth sampling.
+Mode D extraction keeps I50 within three entry points; no compatibility facade or dependency cycle.

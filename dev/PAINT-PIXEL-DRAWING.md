@@ -39,7 +39,11 @@ c712f09; this is a separate bounded increment.
    canvas plus brush footprint even for distant endpoints. No DOM or pixel colors.
    Dependencies: I50 raster size/types, I56 coverage type only. No imported solver
    or browser library. Implement tests first, then brick and checker.
-2. Amend I50 affineRaster with optional nearest/bilinear sampling; exact source
+2. Carve the already-tested transformRaster/affineRaster operations out of I50
+   into **I63 raster-transform.ts — CORE**, keeping its existing two-entry API
+   and moving the unchanged transform goldens into its sibling testbench. I50
+   retains createRaster, paintRaster and clip. This resolves the existing five
+   entry-point limit without changing drawing behavior. Add optional nearest/bilinear sampling; exact source
    RGBA for nearest, including alpha; invalid sampler rejected. Retain existing
    bilinear goldens. Amend I53 numeric/choice presentation and I61 sampler controls.
 3. IMAGE-APP composes I62 with existing coverage/selection/history application,
@@ -50,7 +54,7 @@ c712f09; this is a separate bounded increment.
 
 I62: explicit pixel goldens, round/square, 1px diagonal continuity, block alignment,
 partial edge blocks, off-canvas bounded traversal, invalid inputs/no mutation.
-I50: nearest source-color preservation under scaling/rotation and default-bilinear
+I63: nearest source-color preservation under scaling/rotation and default-bilinear
 compatibility. I53/I61: labelled controls, typed/clamped values, option visibility,
 callback routing and disposal. Production browser: default opaque black-on-white
 stroke contains only black/white; transparent-layer alpha only 0/255; coarse cells
@@ -60,3 +64,18 @@ edges. Retain existing golden tests and explicitly select Smooth only in tests
 whose stated fixture is the previous soft brush. Run build, focused and full
 regressions, static-host check and deployment dry run; push with green evidence.
 Native macOS/Safari and physical iPad remain untested unless actually exercised.
+
+Owner clarification: pixel rendering is a view preference as well as a brush
+choice. Add Canvas rendering to View → View settings: Sharp pixels (nearest)
+and Smooth (interpolated). Default Sharp pixels. Preview live, Cancel restores
+it, OK retains it for the workspace, and neither mode changes document pixels
+or history. Soft pixels already in an image remain visible as distinct pixels
+in sharp view; no automatic thresholding of existing artwork.
+
+I63 contract: transformRaster returns an owned raster for existing flip, rotate,
+crop, resize, canvas and invert operations; affineRaster returns an owned raster
+scaled in percent and rotated in degrees. Nearest copies source RGBA, bilinear
+remains the API default. Reject invalid raster, nonfinite/nonpositive scales,
+unknown samplers and output exceeding the shared raster limit with RangeError.
+Dependencies: I50 createRaster, paintRaster, clip and types. No I/O. Existing
+transform pixel goldens characterize the extraction; retain their assertions.
