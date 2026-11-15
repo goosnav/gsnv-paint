@@ -75,3 +75,20 @@ No failed requirement IDs in this scoped pass. **Untested:** physical iPhone/iPa
 macOS Safari, Windows, final hosted publication and owner aesthetic acceptance.
 The broader application's readiness ledger is unchanged. Status: **GREEN / ready
 for owner visual acceptance**, not a new claim that every editor is complete.
+
+## Owner revision — stronger classic Paint artwork
+
+The owner rejected the Fugue-first appearance: too muted and thin. PIR-01 is reset
+for a new source/art direction: fuller, recognizable Windows 95/XP-era Paint
+objects, stronger colour, hard pixels, retained familiar pencil. This is an asset
+revision of the same SHELL brick, with unchanged interaction/public API. The
+existing switcher remains out of scope. Do not equate passing tests with approval
+of the artwork.
+
+Use the independently authored ReactOS Paint tool strip (LGPL-2.0-or-later),
+Mark James's Silk common commands (CC BY 2.5), and retained complementary assets
+where no replacement is clearer. Preserve pinned originals, source/license
+availability and transformation recipes. Run the artwork through the app's own
+palette quantizer on a 16px grid; inspect colour, silhouettes and spacing in the
+real UI before committing the implementation. Test existing accessibility and
+workspace isolation plus source hashes, binary coverage and palette membership.
