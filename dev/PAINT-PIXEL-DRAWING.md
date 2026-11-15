@@ -79,3 +79,19 @@ remains the API default. Reject invalid raster, nonfinite/nonpositive scales,
 unknown samplers and output exceeding the shared raster limit with RangeError.
 Dependencies: I50 createRaster, paintRaster, clip and types. No I/O. Existing
 transform pixel goldens characterize the extraction; retain their assertions.
+
+## Verification-discovered offline timing repair
+
+An existing cold-browser eviction test intermittently reported Ready offline after
+asset deletion. S18 shares in-flight audits; S19's explicit fresh status request
+can therefore reuse a snapshot begun before the request. Characterize this with a
+deterministically held digest before any implementation change.
+
+**OFFLINE-FRESH-01:** An explicit Check for updates must inspect a cache snapshot
+started at or after its request. S18 `audit(fresh = false)` retains coalescing by
+default; a fresh request waits for any older audit to settle, then starts or joins
+an audit begun after that barrier. A failed older audit does not prevent the new
+inspection. S19 forwards its validated fresh flag. No extra audit per asset fetch,
+no changed install/cleanup policy, and no retry that silently hides missing data.
+Verification: S18 held-read eviction regression, existing S18/S19/S20 tests,
+existing cold-browser eviction/storage-denial test, and complete offline suite.
