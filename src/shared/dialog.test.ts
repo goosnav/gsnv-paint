@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { JSDOM } from 'jsdom';
 import { showDialog, type DialogSpec } from './dialog.ts';
+import { bindInput } from './input-adapter.ts';
 
 function fixture(patch: Partial<DialogSpec> = {}) {
   const dom = new JSDOM('<!doctype html><main id="app"><button id="opener">Edit</button></main>');
@@ -37,6 +38,35 @@ test('S11 save choice copy is literal text and the named confirmation retains En
 });
 test('S11 rejects malformed optional copy', () => {
   for(const patch of [{description:9},{confirmLabel:false},{confirmLabel:''}]) assert.throws(()=>fixture(patch as never).open(),TypeError);
+});
+
+test('S11 color control previews and commits a selected hex color without changing initial values', () => {
+  const f = fixture({ fields: [{ key: 'color', label: 'Color', type: 'color' }], initial: { color: '#123456' }, validate: values => ({ ok: true, value: values }) });
+  f.open(); assert.equal((f.field('color') as HTMLInputElement).type, 'color');
+  assert.deepEqual(f.previews, [{ color: '#123456' }]); f.input('color', '#df258a');
+  assert.deepEqual(f.previews.at(-1), { color: '#df258a' }); assert.deepEqual(f.spec.initial, { color: '#123456' });
+  f.button('OK').click(); assert.deepEqual(f.commits, [{ color: '#df258a' }]); f.dom.window.close();
+  for (const color of ['red', '#abc', '#12345g', '', 123456]) {
+    const g = fixture({ fields: [{ key: 'color', label: 'Color', type: 'color' }], initial: { color } });
+    assert.throws(g.open, TypeError); assert.equal(g.root.querySelector('dialog'), null); g.dom.window.close();
+  }
+});
+
+test('S11 textarea Enter stays native through the actual global shortcut adapter', () => {
+  const f = fixture({ fields: [{ key: 'text', label: 'Text', type: 'text', multiline: true }], initial: { text: 'First line' }, validate: values => ({ ok: true, value: values }) });
+  Object.assign(f.root, { setPointerCapture() {}, releasePointerCapture() {}, hasPointerCapture() { return false; } });
+  const commands: string[] = [];
+  const unbind = bindInput({ root: f.root, context: () => ({ workspace: 'image', target: 'view', viewRole: 'none', activeTool: 'text', status: '' }), onCommand: id => commands.push(id), onGesture() {} });
+  f.open();
+  for (const shiftKey of [false, true]) {
+    const enter = new f.dom.window.KeyboardEvent('keydown', { key: 'Enter', shiftKey, bubbles: true, cancelable: true });
+    f.field('text').dispatchEvent(enter); assert.equal(enter.defaultPrevented, false); assert.deepEqual(commands, []);
+  }
+  assert.equal(f.commits.length, 0); assert.ok(f.root.querySelector('dialog'));
+  f.input('text', 'First line\nSecond line');
+  f.field('text').dispatchEvent(new f.dom.window.KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true, bubbles: true, cancelable: true }));
+  assert.deepEqual(f.commits, [{ text: 'First line\nSecond line' }]); assert.deepEqual(commands, []);
+  unbind(); f.dom.window.close();
 });
 
 test('S11 golden modal renders typed fields and previews normalized initial values', () => {

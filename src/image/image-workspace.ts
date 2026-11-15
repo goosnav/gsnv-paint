@@ -9,7 +9,7 @@
  *            RAISES: invalid project content from decode; operational failures show in the hint.
  * GUARANTEES Saved files contain committed layers and selection; undo/redo/open/recovery restore both.
  *            Typed zoom uses effective pixel scale at viewport center; Cancel restores the prior view.
- * TUNING     NEW_SIZE, MARGIN, SPRAY_INTERVAL_MS and text defaults below.
+ * TUNING     NEW_SIZE, MARGIN, PASTE_FIT, SPRAY_INTERVAL_MS and text defaults below.
  * DECISIONS  D1: One working raster per layer, mutated during a drag from a per-stroke base copy, committed
  *            as shared tiles. D2: A moved selection floats until placed (click outside, Enter, tool change);
  *            Esc cancels. D3: Paste creates a new layer, as in Photoshop and GIMP.
@@ -38,7 +38,7 @@ type Snapshot = Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
 type Selection = { mask: Uint8Array; bounds: Rect };
 type Floating = { raster: Raster; x: number; y: number; origin: { x: number; y: number }; label: string };
 type Stroke = { base: Uint8ClampedArray; cov: Coverage; carry: number; mode: CoverageMode | 'pencil' | 'smudge'; dirty: Rect | null; timer: number | null; last: [number, number]; seed: number };
-const NEW_SIZE = { width: 800, height: 600 }, MARGIN = 24, SPRAY_INTERVAL_MS = 40;
+const NEW_SIZE = { width: 800, height: 600 }, MARGIN = 24, PASTE_FIT = 0.8, SPRAY_INTERVAL_MS = 40;
 const BLACK: RGBA = [0, 0, 0, 255], WHITE: RGBA = [255, 255, 255, 255];
 const IMAGE_TYPES = { 'image/png': ['.png'], 'image/jpeg': ['.jpg', '.jpeg'], 'image/gif': ['.gif'], 'image/webp': ['.webp'], 'image/bmp': ['.bmp'] };
 const TOOLS: Record<ImageTool, { label: string; icon: string; key: string; hint: string }> = {
@@ -85,7 +85,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       const make = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string) => { const node = document.createElement(tag); node.className = className; return node; };
       const stage = make('div', 'image-stage'), surface = make('div', 'image-surface'), canvas = make('canvas', 'image-canvas'), float = make('canvas', 'image-floating'), overlay = make('canvas', 'image-overlay');
       const ring = make('div', 'image-brush-ring'), hint = make('div', 'image-tool-hint'), notice = make('div', 'image-empty'), optionsPanel = document.createElement('div'), layersPanel = document.createElement('div');
-      stage.tabIndex = -1; canvas.setAttribute('aria-label', 'Image canvas'); notice.textContent = 'Choose New (Ctrl+N) to start an image, or Open (Ctrl+O) an image or a .gsnv-image project.';
+      stage.tabIndex = -1; canvas.setAttribute('aria-label', 'Image canvas'); notice.textContent = 'Choose New (Ctrl+N), Open (Ctrl+O), or Paste (Ctrl+V) an image from your clipboard.';
       surface.append(canvas, float, overlay); stage.append(surface, ring, notice); host.root.append(stage, hint);
       const context = canvas.getContext('2d'), floatContext = float.getContext('2d'), overlayContext = overlay.getContext('2d');
       let current: Snapshot, source: ImageContent | null = null, rasters = new Map<string, Raster>(), display: ImageData | null = null, view: View2D = { zoom: 1, pan: { x: 0, y: 0 } };
@@ -366,35 +366,37 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         ring.hidden = !sized || d < 5;
         if (!ring.hidden) Object.assign(ring.style, { width: `${Math.round(d)}px`, height: `${Math.round(d)}px`, left: `${Math.round(t.x + point[0] * t.z - d / 2)}px`, top: `${Math.round(t.y + point[1] * t.z - d / 2)}px` });
       }
-      type TextStyle = { text: string; size: number; font: string; bold: boolean; italic: boolean; align: 'left' | 'center' | 'right'; spacing: number };
-      function rasterizeText(style: TextStyle, color: RGBA): Raster | null {
+      type TextStyle = { text: string; color: string; size: number; font: string; bold: boolean; italic: boolean; align: 'left' | 'center' | 'right'; spacing: number };
+      function rasterizeText(style: TextStyle): Raster | null {
         const lines = style.text.split('\n'), measure = document.createElement('canvas').getContext('2d'); if (!measure || !style.text.trim()) return null;
         const font = `${style.italic ? 'italic ' : ''}${style.bold ? 'bold ' : ''}${style.size}px ${style.font}`; measure.font = font;
         const widths = lines.map(line => measure.measureText(line).width), width = Math.ceil(Math.max(...widths)) + Math.ceil(style.size * 0.3) + 2, lineHeight = Math.ceil(style.size * style.spacing), height = lineHeight * (lines.length - 1) + Math.ceil(style.size * 1.3);
         if (width * height > MAX_PIXELS) throw new RangeError('The text is too large.');
         const out = document.createElement('canvas'); out.width = width; out.height = height; const ctx = out.getContext('2d')!;
-        ctx.font = font; ctx.textBaseline = 'top'; ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
+        ctx.font = font; ctx.textBaseline = 'top'; ctx.fillStyle = style.color;
         lines.forEach((line, i) => ctx.fillText(line, 1 + (style.align === 'left' ? 0 : (width - 2 - widths[i]!) * (style.align === 'center' ? 0.5 : 1)), i * lineHeight + Math.round(style.size * 0.1)));
         return { width, height, data: ctx.getImageData(0, 0, width, height).data };
       }
       function text(point: [number, number], color: RGBA) {
         if (!source) return; const at = { x: Math.floor(point[0]), y: Math.floor(point[1]) };
         const show = (r: Raster | null) => { if (r) { float.width = r.width; float.height = r.height; floatContext?.putImageData(new ImageData(new Uint8ClampedArray(r.data), r.width, r.height), 0, 0); float.style.left = `${at.x}px`; float.style.top = `${at.y}px`; float.hidden = false; } else float.hidden = true; };
-        const style = (v: Record<string, unknown>): TextStyle => ({ text: String(v.text), size: Number(v.size), font: String(v.font), bold: !!v.bold, italic: !!v.italic, align: v.align as TextStyle['align'], spacing: Number(v.spacing) });
-        host.dialog({ title: 'Text', fields: [{ key: 'text', label: 'Text (Enter for a new line)', type: 'text', multiline: true }, { key: 'size', label: 'Size (px)', type: 'number', min: 4, max: 400, step: 1 },
+        const style = (v: Record<string, unknown>): TextStyle => ({ text: String(v.text), color: String(v.color), size: Number(v.size), font: String(v.font), bold: !!v.bold, italic: !!v.italic, align: v.align as TextStyle['align'], spacing: Number(v.spacing) });
+        host.dialog({ title: 'Text', description: 'Enter starts a new line. Choose OK (or Ctrl+Enter), then drag the handles to resize or rotate.', fields: [{ key: 'text', label: 'Text (Enter for a new line)', type: 'text', multiline: true }, { key: 'color', label: 'Color', type: 'color' }, { key: 'size', label: 'Size (px)', type: 'number', min: 4, max: 400, step: 1 },
           { key: 'font', label: 'Font', type: 'select', choices: [{ value: 'Tahoma, Verdana, sans-serif', label: 'Tahoma' }, { value: 'Verdana, sans-serif', label: 'Verdana' }, { value: 'Arial, Helvetica, sans-serif', label: 'Arial' }, { value: '"Times New Roman", Times, serif', label: 'Times New Roman' }, { value: 'Georgia, serif', label: 'Georgia' }, { value: '"Courier New", monospace', label: 'Courier New' }, { value: '"Comic Sans MS", cursive', label: 'Comic Sans' }, { value: 'Impact, sans-serif', label: 'Impact' }, { value: '"Pixel Tahoma"', label: 'Pixel Tahoma (11 / 22 px)' }] },
           { key: 'bold', label: 'Bold', type: 'checkbox' }, { key: 'italic', label: 'Italic', type: 'checkbox' },
           { key: 'align', label: 'Alignment', type: 'select', choices: [{ value: 'left', label: 'Left' }, { value: 'center', label: 'Centre' }, { value: 'right', label: 'Right' }] },
           { key: 'spacing', label: 'Line spacing', type: 'number', min: 0.8, max: 3, step: 0.05 }],
-          initial: { text: '', size: 24, font: 'Tahoma, Verdana, sans-serif', bold: false, italic: false, align: 'left', spacing: 1.2 },
+          initial: { text: '', color: '#' + color.slice(0, 3).map(channel => channel.toString(16).padStart(2, '0')).join(''), size: 24, font: 'Tahoma, Verdana, sans-serif', bold: false, italic: false, align: 'left', spacing: 1.2 },
           validate(values) { const s = Number(values.size); if (!String(values.text).trim()) return { ok: false, error: { code: 'image.text', message: 'Type some text.' } }; if (!Number.isInteger(s) || s < 4 || s > 400) return { ok: false, error: { code: 'image.text', message: 'Size is a whole number from 4 to 400.' } }; return { ok: true, value: values }; },
-          preview(value) { try { show(rasterizeText(style(value as Record<string, unknown>), color)); } catch { show(null); } },
+          preview(value) { try { show(rasterizeText(style(value as Record<string, unknown>))); } catch { show(null); } },
           commit(value) {
             show(null);
             try {
-              const v = style(value as Record<string, unknown>), r = rasterizeText(v, color); if (!r || !source) return;
-              // Text goes on its own layer and stays selected, so the Move tool can drag it straight away.
+              const v = style(value as Record<string, unknown>), r = rasterizeText(v); if (!r || !source) return;
+              // Expose handles immediately, including for small text whose inactive handles are hidden.
+              const previousLayer = activeId();
               tool = { tool: 'move', drag: null }; addLayer(r, `Text: ${v.text.split('\n')[0]!.slice(0, 24)}`, 'Text', { x: at.x, y: at.y, select: true });
+              if (activeId() !== previousLayer && selection) freeTransform();
             } catch (cause) { fail(cause); }
           },
           cancel() { show(null); },
@@ -462,7 +464,12 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         return out;
       }
       let clipboard: Raster | null = null;
-      async function systemCopy(r: Raster) { const clip = window.navigator.clipboard as Clipboard | undefined, Item = (window as Window & { ClipboardItem?: typeof ClipboardItem }).ClipboardItem; if (!clip?.write || !Item) return; try { await clip.write([new Item({ 'image/png': png(r) })]); } catch { /* The in-app clipboard still holds the pixels. */ } }
+      async function systemCopy(r: Raster, success = `Copied ${r.width} × ${r.height} pixels. Paste into another app.`) {
+        const identity = current?.identity, clip = window.navigator.clipboard, Item = (window as Window & { ClipboardItem?: typeof ClipboardItem }).ClipboardItem;
+        let copied = false;
+        try { if (clip?.write && Item) { await clip.write([new Item({ 'image/png': png(r) })]); copied = true; } } catch { /* Keep the in-app copy, but never claim a system clipboard write succeeded. */ }
+        if (!disposed && current?.identity === identity) { message = copied ? success : 'Copied inside Paint only. Browser clipboard access failed; use Export PNG to use the image in another app.'; refresh(); }
+      }
       function addLayer(raster: Raster, name: string, label: string, placement = { x: 0, y: 0, select: false }) {
         if (!source) return; placeFloating();
         const { x, y } = placement;
@@ -474,16 +481,39 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         const index = source.layers.findIndex(l => l.id === activeId()), stack: { meta: LayerMeta; raster?: Raster }[] = source.layers.map(l => ({ meta: meta(l) }));
         stack.splice(index + 1, 0, { meta: { id, name, visible: true, opacity: 1, blend: 'normal' }, raster: layer }); commitStack(label, stack, id);
       }
-      async function paste() {
+      async function paste(blob?: Blob) {
+        if (pendingImages) { fail('An image is still loading. Try Paste again when it finishes.'); return; }
         const identity = current?.identity; pendingImages++; host.invalidate();
         try {
-        let pasted: Raster | null = null;
-        try { for (const item of (await window.navigator.clipboard?.read?.()) ?? []) { const type = item.types.find(t => t.startsWith('image/')); if (type) { pasted = await decodeImage(await item.getType(type)); break; } } } catch { /* Permission denied or no image. */ }
-        pasted ??= clipboard ? copyRaster(clipboard) : null;
-        if (disposed || !source) return;
-        if (identity !== current?.identity) { fail('The Image changed while reading the clipboard. Paste again into the current project.'); return; }
-        if (!pasted) { message = 'Nothing to paste. Copy a selection or an image first.'; refresh(); return; }
-        const [x, y] = toDocument({ x: 0, y: 0 }); addLayer(pasted, 'Pasted', 'Paste', { x: Math.max(0, Math.ceil(x)), y: Math.max(0, Math.ceil(y)), select: false }); tool = { tool: 'move', drag: null }; host.invalidate();
+          let pasted: Raster | null = null, fallback = false;
+          if (!blob) {
+            try {
+              if (!window.navigator.clipboard?.read) fallback = true;
+              else for (const item of await window.navigator.clipboard.read()) { const type = item.types.find(t => t.startsWith('image/')); if (type) { blob = await item.getType(type); break; } }
+            } catch { fallback = true; }
+          }
+          if (blob) pasted = await decodeImage(blob);
+          else if (fallback && clipboard) pasted = copyRaster(clipboard);
+          if (disposed) return;
+          if (identity !== current?.identity || host.root.hidden) { fail('The Image or workspace changed while reading the clipboard. Paste again into the intended project.'); return; }
+          if (!pasted) { fail(fallback ? 'Clipboard access is unavailable. Copy an image, then use Ctrl+V / Cmd+V over the canvas, or Open an image file.' : 'There is no image on the clipboard. Copy an image first.'); return; }
+          if (!source) {
+            const value = imageContent({ operation: 'layers', previous: null, width: pasted.width, height: pasted.height, layers: [{ meta: { id: 'background', name: 'Background', visible: true, opacity: 1, blend: 'normal' }, raster: pasted }], activeLayerId: 'background' });
+            await host.open({ id: crypto.randomUUID(), title: 'Pasted image', format: 'gsnv-image', version: 1, value }); return;
+          }
+          placeFloating();
+          const fit = pasted.width > source.width || pasted.height > source.height ? Math.min(source.width / pasted.width, source.height / pasted.height) * PASTE_FIT : 1;
+          const fitted = fit === 1 ? pasted : affineRaster(pasted, { scaleX: fit * 100, scaleY: fit * 100, angle: 0 });
+          const x = Math.floor((source.width - fitted.width) / 2), y = Math.floor((source.height - fitted.height) / 2), previousLayer = activeId();
+          addLayer(fitted, 'Pasted image', 'Paste', { x, y, select: true });
+          if (activeId() === previousLayer) return;
+          // The committed layer supports Cancel/Undo. Transform from full clipboard pixels, not its fitted/clipped copy.
+          paintRaster(active(), { kind: 'clear', rect: fullRect(), color: [0, 0, 0, 0] }); composite();
+          floating = { raster: pasted, x, y, origin: { x, y }, label: 'Transform' };
+          transform = { original: copyRaster(pasted), box: { x, y, width: fitted.width, height: fitted.height, angle: 0 } };
+          float.width = pasted.width; float.height = pasted.height; floatContext?.putImageData(new ImageData(new Uint8ClampedArray(pasted.data), pasted.width, pasted.height), 0, 0);
+          tool = { tool: 'move', drag: null }; message = 'Image pasted on a new layer. Drag handles to resize or rotate · Enter applies · Esc keeps its initial placement.'; refresh();
+        } catch (cause) { fail(`The clipboard image could not be pasted: ${cause instanceof Error ? cause.message : String(cause)}`);
         } finally { pendingImages--; host.invalidate(); }
       }
       async function importImage(asLayer: boolean, file?: File) {
@@ -533,12 +563,14 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         }
       }
       function command(id: string) {
+        if (id === 'edit.paste') { void paste(); return; }
         if (!source || !current) return;
         message = '';
         if (id === 'bridge.imageToVideo') { void host.transfer?.({ route: 'image-to-video-bin' }); return; }
         const toolId = id.startsWith('image.') ? id.slice(6) as ImageTool : null;
         if (toolId && (IMAGE_TOOLS as readonly string[]).includes(toolId)) { if (transform) placeFloating(); if (!['select', 'ellipseSelect', 'lasso', 'move'].includes(toolId)) placeFloating(); if (toolId === 'picker' && tool.tool !== 'picker') previousTool = tool.tool; tool = imageToolInput({ state: tool, event: { kind: 'tool', tool: toolId }, inside: () => false, floating: !!floating }).state; refresh(); return; }
         if (id === 'image.transform') { freeTransform(); return; }
+        if (id === 'image.copyCanvas') { finishStroke(); placeFloating(); clipboard = flattened(); void systemCopy(clipboard, 'Canvas copied. Paste into another app.'); return; }
         if (id.startsWith('image.nudge')) {
           if (!floating && selection) lift(); if (!floating) return;
           const d = { nudgeLeft: [-1, 0], nudgeRight: [1, 0], nudgeUp: [0, -1], nudgeDown: [0, 1] }[id.slice(6) as 'nudgeLeft']!; if (transform) { transform.box = { ...transform.box, x: transform.box.x + d[0]!, y: transform.box.y + d[1]! }; refresh(); return; } floating.x += d[0]!; floating.y += d[1]!; floating.origin = { x: floating.x, y: floating.y }; refresh(); return;
@@ -553,13 +585,12 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         if (id === 'image.deselect') { placeFloating(); setSelection(null, 'replace'); refresh(); return; }
         if (id === 'image.invertSelection') { placeFloating(); setSelection(selection ? Uint8Array.from(selection.mask, v => 255 - v) : new Uint8Array(source.width * source.height).fill(255), 'replace', 'Invert selection'); refresh(); return; }
         if (transform && ['edit.copy', 'edit.cut', 'edit.delete'].includes(id)) placeFloating();
-        if (id === 'edit.copy' || id === 'edit.cut') { const pixels = selectedPixels(); if (!pixels) return; clipboard = pixels; void systemCopy(pixels); if (id === 'edit.copy') { message = `Copied ${pixels.width} × ${pixels.height} pixels.`; refresh(); return; } }
+        if (id === 'edit.copy' || id === 'edit.cut') { const pixels = selectedPixels(); if (!pixels) return; clipboard = pixels; void systemCopy(pixels); if (id === 'edit.copy') { refresh(); return; } }
         if (id === 'edit.cut' || id === 'edit.delete') {
           if (floating) { transform = null; floating = null; composite(); commitActive(id === 'edit.cut' ? 'Cut' : 'Delete'); }
           else if (selection) { const raster = active(), base = new Uint8ClampedArray(raster.data); paintRaster(raster, { kind: 'clear', rect: selection.bounds, color: isBottom() ? secondary : [0, 0, 0, 0] }); maskedMerge({ target: raster, base, mask: selection.mask, rect: selection.bounds }); composite(selection.bounds); commitActive(id === 'edit.cut' ? 'Cut' : 'Delete'); }
           refresh(); return;
         }
-        if (id === 'edit.paste') { void paste(); return; }
         if (id === 'image.crop') { placeFloating(); if (selection) transformAll({ kind: 'crop', rect: selection.bounds }, 'Crop'); return; }
         if (id === 'image.flatten') { placeFloating(); commitStack('Flatten image', [{ meta: { id: 'background', name: 'Background', visible: true, opacity: 1, blend: 'normal' }, raster: flattened() }], 'background'); return; }
         const transforms: Record<string, [TransformOp, string]> = { 'image.flipH': [{ kind: 'flip', axis: 'horizontal' }, 'Flip horizontal'], 'image.flipV': [{ kind: 'flip', axis: 'vertical' }, 'Flip vertical'], 'image.rotateRight': [{ kind: 'rotate', turns: 1 }, 'Rotate right'], 'image.rotateLeft': [{ kind: 'rotate', turns: 3 }, 'Rotate left'], 'image.rotate180': [{ kind: 'rotate', turns: 2 }, 'Rotate 180°'] };
@@ -617,6 +648,22 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           refresh();
         }, commit() {}, cancel() { scale = original.scale; offset = original.offset; refresh(); } });
       }
+      // Let the browser deliver clipboard image Files for Ctrl/Cmd+V, including when
+      // Async Clipboard read permission is unavailable. Text fields keep native paste.
+      const acceptsCanvasPaste = (target: EventTarget | null) => !disposed && !host.root.hidden
+        && !document.querySelector('dialog[open]')
+        && !(target instanceof Element && target.closest('input, textarea, select, [contenteditable]'));
+      const pasteKey = (event: KeyboardEvent) => {
+        if (acceptsCanvasPaste(event.target) && !event.isComposing && !event.altKey && !event.shiftKey && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'v') event.stopPropagation();
+      };
+      const nativePaste = (event: ClipboardEvent) => {
+        if (!acceptsCanvasPaste(event.target)) return;
+        const file = Array.from(event.clipboardData?.files ?? []).find(file => file.type.startsWith('image/'));
+        if (!file) return;
+        event.preventDefault(); event.stopPropagation(); void paste(file);
+      };
+      document.addEventListener('keydown', pasteKey, true);
+      document.addEventListener('paste', nativePaste, true);
       const Resize = window.ResizeObserver, observer = Resize ? new Resize(() => layout()) : null; observer?.observe(stage);
       return {
         bridge,
@@ -639,7 +686,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           const index = source?.layers.findIndex(l => l.id === activeId()) ?? -1, count = source?.layers.length ?? 0;
           return {
             menus: [
-              { id: 'select', label: 'Select', items: [item('edit.selectAll', 'Select all', 'select', 'Ctrl+A'), item('image.deselect', 'Deselect', undefined, '', false, has), item('image.invertSelection', 'Invert selection'), item('edit.copy', 'Copy', 'copy', 'Ctrl+C', false, has), item('edit.cut', 'Cut', 'cut', 'Ctrl+X', false, has), item('edit.paste', 'Paste as new layer', 'paste', 'Ctrl+V'), item('edit.delete', 'Delete', 'delete', 'Delete', false, has), item('image.crop', 'Crop to selection', 'crop', '', true, has), item('image.transform', 'Free transform', 'rotate', 'Ctrl+T', true), item('image.nudgeLeft', 'Nudge left', undefined, '←', false, has), item('image.nudgeRight', 'Nudge right', undefined, '→', false, has), item('image.nudgeUp', 'Nudge up', undefined, '↑', false, has), item('image.nudgeDown', 'Nudge down', undefined, '↓', false, has)] },
+              { id: 'select', label: 'Select', items: [item('edit.selectAll', 'Select all', 'select', 'Ctrl+A'), item('image.deselect', 'Deselect', undefined, '', false, has), item('image.invertSelection', 'Invert selection'), item('edit.copy', 'Copy', 'copy', 'Ctrl+C', false, has), item('edit.cut', 'Cut', 'cut', 'Ctrl+X', false, has), item('image.copyCanvas', 'Copy canvas', 'copy', '', true), item('edit.paste', 'Paste', 'paste', 'Ctrl+V', true, !pendingImages), item('edit.delete', 'Delete', 'delete', 'Delete', false, has), item('image.crop', 'Crop to selection', 'crop', '', true, has), item('image.transform', 'Free transform', 'rotate', 'Ctrl+T', true), item('image.nudgeLeft', 'Nudge left', undefined, '←', false, has), item('image.nudgeRight', 'Nudge right', undefined, '→', false, has), item('image.nudgeUp', 'Nudge up', undefined, '↑', false, has), item('image.nudgeDown', 'Nudge down', undefined, '↓', false, has)] },
               { id: 'image', label: 'Image', items: [item('image.import', 'Open image…', 'open'), item('image.importLayer', 'Import as layer…', 'layerAdd'), item('image.exportPNG', 'Export PNG…', 'export', '', true), item('bridge.imageToVideo', 'Send image to Video bin', 'video', '', false, enabled && !!host.transfer && !pendingTransfer()), item('image.resize', 'Resize…', 'fit'), item('image.canvasSize', 'Canvas size…', 'grid'),
                 item('image.rotateRight', 'Rotate right', 'rotate', '', true), item('image.rotateLeft', 'Rotate left', 'rotate'), item('image.rotate180', 'Rotate 180°', 'rotate'), item('image.flipH', 'Flip horizontal', 'flip', '', true), item('image.flipV', 'Flip vertical', 'flip'),
                 item('image.flatten', 'Flatten image', 'layers', '', false, enabled && count > 1), item('view.fit', 'Zoom to fit', 'fit', 'F'), item('image.actualSize', 'Actual pixels', 'zoomIn'), item('image.sizeUp', 'Larger brush', undefined, ']'), item('image.sizeDown', 'Smaller brush', undefined, '['), item('color.swap', 'Swap colours', undefined, 'X'), item('color.reset', 'Default colours', undefined, 'D')] },
@@ -670,7 +717,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           } catch (cause) { fail(cause); }
           if (gesture.phase !== 'move') host.invalidate();
         },
-        dispose() { if (disposed) return; disposed = true; window.clearInterval(antTimer); if (stroke?.timer) window.clearInterval(stroke.timer); observer?.disconnect(); navigator.dispose(); transformView.dispose(); palette.dispose(); layers.dispose(); host.root.replaceChildren(); },
+        dispose() { if (disposed) return; disposed = true; document.removeEventListener('keydown', pasteKey, true); document.removeEventListener('paste', nativePaste, true); window.clearInterval(antTimer); if (stroke?.timer) window.clearInterval(stroke.timer); observer?.disconnect(); navigator.dispose(); transformView.dispose(); palette.dispose(); layers.dispose(); host.root.replaceChildren(); },
       };
     },
   };

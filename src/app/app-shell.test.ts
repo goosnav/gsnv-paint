@@ -684,7 +684,7 @@ for (const failure of ['cancelled picker', 'failed native write'] as const) test
 });
 
 
-test('Open raw media advertises workspace types and Save never writes to the media handle', async () => {
+test('Open raw media accepts workspace types and Save never writes to the media handle', async () => {
   const s = setup({ available: ['image'] }); await s.app.ready;
   const source = nativeHandle(new File(['image fixture'], 'photo.PNG')), destination = nativeHandle(fileFor(packageFor('image')));
   let picks = 0, saves = 0;
@@ -693,6 +693,23 @@ test('Open raw media advertises workspace types and Save never writes to the med
   await s.app.dispatch('file.open'); assert.equal(picks, 1); assert.equal(s.app.snapshot().documents.image!.id, 'raw-file'); assert.equal(s.app.snapshot().dirty.image, true);
   await s.app.dispatch('file.save'); assert.equal(saves, 1); assert.equal(source.writes.length, 0); assert.ok(destination.writes.length > 0);
   await s.app.idle(); s.close();
+});
+test('Open fallback leaves files selectable and cancellation preserves the document', async () => {
+  const s = setup({ available: ['image'] }); await s.app.ready;
+  let input: HTMLInputElement | undefined, cancel = false;
+  s.window.HTMLInputElement.prototype.click = function () {
+    input = this;
+    Object.defineProperty(this, 'files', { value: [new File(['image fixture'], 'photo.PNG')] });
+    this.dispatchEvent(new s.window.Event(cancel ? 'cancel' : 'change'));
+  };
+  try {
+    await s.app.dispatch('file.open');
+    assert.ok(input); assert.equal(input.accept, '', 'No OS type filter may disable an ordinary image or custom project');
+    assert.equal(s.app.snapshot().documents.image!.id, 'raw-file'); assert.equal(input.isConnected, false);
+    const before = s.app.snapshot().documents.image;
+    cancel = true; await s.app.dispatch('file.open');
+    assert.deepEqual(s.app.snapshot().documents.image, before); assert.equal(input.isConnected, false);
+  } finally { await s.app.idle(); s.close(); }
 });
 test('Open raw media keeps replacement consent and rejects changed workspaces or revisions', async () => {
   const s = setup(); await s.app.ready; clickWorkspace(s.root, 'image'); await s.app.dispatch('file.new'); s.fixtures.image.change(15);

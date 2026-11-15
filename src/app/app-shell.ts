@@ -440,9 +440,9 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
     opening = true;
     const initialEpochs = { ...epochs };
     try {
-      const picked = await fileAccess({ op: 'pick', accept: {
-        'application/octet-stream': WORKSPACES.map(workspace => `.gsnv-${workspace}`), ...importer?.accept,
-      } }, files);
+      // Mixed custom project/media filters can disable files in OS choosers.
+      // Open shows all files; the importer or native decoder validates the selection.
+      const picked = await fileAccess({ op: 'pick', accept: {} }, files);
       if (disposed || 'cancelled' in picked) return;
       if (!picked.ok) { status(`${picked.error.code}: ${picked.error.message}`); return; }
       const { file, handle: selected } = picked.value;

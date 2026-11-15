@@ -15,6 +15,8 @@ async function open(page: Page, name: string, buffer: Buffer, route: 'toolbar'|'
   else if (route === 'menu') { await page.getByRole('menuitem', { name: 'File', exact: true }).click(); await page.locator('.gc-menubar [data-command="file.open"]').click(); }
   else { await page.locator('.gc-viewport').focus(); await page.keyboard.press('Control+o'); }
   const chooser = await choosing; const accept = await chooser.element().getAttribute('accept');
+  // setFiles bypasses the OS chooser. Check its filter before assigning anything.
+  expect(accept ?? '').toBe('');
   await chooser.setFiles({ name, mimeType: 'application/octet-stream', buffer }); return accept;
 }
 async function picture(page: Page, mime = 'image/png') {
@@ -27,7 +29,7 @@ async function saved(page: Page) {
 test('Open PNG, JPEG and native Paint project through toolbar, menu and Ctrl+O', async ({page}) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   const png = await picture(page), jpg = await picture(page, 'image/jpeg');
-  const accepted = await open(page, 'sample.PNG', png); expect(accepted).toContain('.png'); expect(accepted).toContain('.jpg'); expect(accepted).toContain('.gsnv-image');
+  await open(page, 'sample.PNG', png);
   await expect(page.locator('.image-canvas')).toHaveAttribute('width', '32'); await expect(page.locator('[data-window-title]')).toContainText('sample');
   const initial = await saved(page); expect(initial.file.suggestedFilename()).toMatch(/\.gsnv-image$/); expect(initial.pkg.project.format).toBe('gsnv-image');
   await open(page, 'camera.jpeg', jpg, 'menu'); await expect(page.locator('[data-window-title]')).toContainText('camera'); await expect(page.locator('.image-canvas')).toHaveAttribute('height', '24');
@@ -45,7 +47,7 @@ for (const [workspace, filename, format] of [
   else if (format === 'audio') { bytes = Buffer.alloc(44 + 960); bytes.write('RIFF'); bytes.writeUInt32LE(bytes.length - 8, 4); bytes.write('WAVEfmt ', 8); bytes.writeUInt32LE(16, 16); bytes.writeUInt16LE(1, 20); bytes.writeUInt16LE(1, 22); bytes.writeUInt32LE(48000, 24); bytes.writeUInt32LE(96000, 28); bytes.writeUInt16LE(2, 32); bytes.writeUInt16LE(16, 34); bytes.write('data', 36); bytes.writeUInt32LE(960, 40); }
   else bytes = Buffer.from(format === 'spreadsheet' ? 'Name,Count\nPens,3\n' : format === 'code' ? 'print("Opened source")\n' : 'Opened document\n');
   await page.getByRole('tab', { name: workspace, exact: true }).click();
-  expect(await open(page, filename, bytes)).toContain(filename.slice(filename.lastIndexOf('.')));
+  await open(page, filename, bytes);
   await expect(page.locator('[data-window-title]')).toContainText(filename.split('.')[0]!);
   if (format === 'photo') { await expect(page.locator('.photo-surface')).toBeVisible(); await open(page, 'broken.png', Buffer.from('bad picture')); await expect(page.locator('.photo-hint')).toContainText('could not be opened'); await expect(page.locator('[data-window-title]')).toContainText('photo'); }
   if (format === 'video') await expect(page.locator('.video-clip')).toHaveCount(1);

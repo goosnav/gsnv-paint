@@ -17,6 +17,9 @@ export async function roundtrip(page: Page, format: string, verify: () => Promis
   if (newDocument) await command(page, 'file.new').click();
   const choosing = page.waitForEvent('filechooser'); await command(page, 'file.open').click();
   await (await choosing).setFiles({ name: file.name, mimeType: 'application/octet-stream', buffer: file.bytes });
+  // A newly created blank document also has only "Current state" in history.
+  // Wait for the opened saved title before checking its pixels or exporting again.
+  await expect(page.locator('[data-window-title]')).toHaveText(before.project.title);
   await expect(page.locator('[data-panel-history] li')).toHaveText(['Current state']);
   await verify(); const again = await download(page, () => page.keyboard.press('Control+s'));
   const after = nativeContainer({ op: 'decode', parts: [again.bytes] }); expect(after.project).toEqual(before.project);

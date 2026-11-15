@@ -1,0 +1,56 @@
+{"directory":"/tmp/gsnv-offline-acceptance-eZ0HXL","buildA":"ee9e7eaf8d29b12ea0abeba1460ac73f1e726625d250821e1ee29e0d12dc89b0","buildB":"707ad67f9d22f69ae29f8bfd6b694cfb2dc2e1c763a4f7c6cca93eedf5986233","files":56,"bytes":41207522}
+
+Running 9 tests using 1 worker
+
+(node:1984819) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/shared/offline-client.browser.spec.ts:8:1 › S20 real client reports failed B while A stays usable, then installs B without disturbing typing (4.3s)
+  ✓  2 src/shared/offline-retain.browser.spec.ts:8:1 › S18 real CacheStorage cleanup preserves A after partial B eviction and C activation (2.8s)
+  ✓  3 src/shared/offline-status.browser.spec.ts:8:1 › S21 XP footer details stay inside 1280×720 and Escape restores summary focus (532ms)
+  ✓  4 src/shared/offline-worker.browser.spec.ts:8:1 › S19 real Chrome installs, reloads offline and defers a complete update until all tabs close (1.8s)
+COLD root ready after complete browser restart, server stopped.
+COLD CAD solver/kernel/native/STEP complete.
+COLD Document/Slides/Spreadsheet edit/native/export complete.
+  ✘  5 src/shared/offline.browser.spec.ts:70:1 › OFFLINE production survives complete Chrome shutdown and first-use editing/export in all nine workspaces with the server stopped (11.5s)
+(node:1985970) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  6 src/shared/offline.browser.spec.ts:101:1 › OFFLINE failed full-build updates preserve A through cold restarts; complete B waits for dirty tabs and native close warnings (28.9s)
+  ✓  7 src/shared/offline.browser.spec.ts:173:1 › OFFLINE eviction and denied storage fail visibly, retry repairs, and foreign messages cannot mutate installation (6.4s)
+  ✓  8 src/shared/offline.browser.spec.ts:199:1 › OFFLINE first installation refuses to claim an unresponsive existing same-origin window (8.5s)
+  ✓  9 src/shared/offline.browser.spec.ts:211:1 › OFFLINE real local launcher retains control headers and its origin opens after the launcher and browser both stop (4.7s)
+
+
+  1) src/shared/offline.browser.spec.ts:70:1 › OFFLINE production survives complete Chrome shutdown and first-use editing/export in all nine workspaces with the server stopped 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 10
+    Received:   0
+
+       at ../../dev/offline-media-journeys.ts:15
+
+      13 |   const bounds = (await canvas.boundingBox())!; await page.mouse.move(bounds.x + 80, bounds.y + 80); await page.mouse.down(); await page.mouse.move(bounds.x + 120, bounds.y + 100, { steps: 4 }); await page.mouse.up();
+      14 |   const pixels = () => canvas.evaluate((element: HTMLCanvasElement) => [...element.getContext('2d')!.getImageData(0, 0, element.width, element.height).data].filter((value, i, all) => i % 4 === 0 && value > 200 && all[i + 1]! < 40).length);
+    > 15 |   expect(await pixels()).toBeGreaterThan(10); await roundtrip(page, 'gsnv-image', async () => { await expect(canvas).toHaveAttribute('width', '800'); expect(await pixels()).toBeGreaterThan(10); });
+         |                                                                                                                                                                              ^
+      16 |   const png = await download(page, () => menu(page, 'Image', 'Export PNG…')); expect([...png.bytes.subarray(0, 8)]).toEqual([137, 80, 78, 71, 13, 10, 26, 10]);
+      17 |   await page.screenshot({ path: `${evidence}/offline-image.png` });
+      18 |
+        at /home/goosnav/Desktop/code/gsnv-paint/dev/offline-media-journeys.ts:15:174
+        at roundtrip (/home/goosnav/Desktop/code/gsnv-paint/dev/offline-journey-helpers.ts:21:3)
+        at mediaJourneys (/home/goosnav/Desktop/code/gsnv-paint/dev/offline-media-journeys.ts:15:47)
+        at /home/goosnav/Desktop/code/gsnv-paint/src/shared/offline.browser.spec.ts:85:5
+
+    Error Context: ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-pr-9bb29-ces-with-the-server-stopped/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-pr-9bb29-ces-with-the-server-stopped/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../../../tmp/gsnv-consumer-qa/offline-browser-results/offline.browser-OFFLINE-pr-9bb29-ces-with-the-server-stopped/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    src/shared/offline.browser.spec.ts:70:1 › OFFLINE production survives complete Chrome shutdown and first-use editing/export in all nine workspaces with the server stopped 
+  8 passed (1.2m)

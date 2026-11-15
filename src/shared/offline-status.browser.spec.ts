@@ -10,7 +10,11 @@ test('S21 XP footer details stay inside 1280×720 and Escape restores summary fo
   await offlineWorkerFixture(directory, 'a'.repeat(64), 'offline-status'); const server = await offlineTestServer(directory);
   try {
     await page.goto(server.url); await page.getByRole('button', { name: 'Show update ready' }).click();
-    const summary = page.locator('.gc-offline > summary'); await summary.click();
+    const summary = page.locator('.gc-offline > summary');
+    await expect(summary).toHaveText('Update ready — reopen');
+    await expect(page.locator('.gc-offline')).not.toHaveAttribute('open');
+    await expect(summary).toHaveAttribute('title', 'Save your work, close all gsnv-paint tabs, and reopen to use the update.');
+    await summary.click();
     const panel = page.getByRole('group', { name: 'Offline setup' }); await expect(panel).toContainText('Save your work, close all gsnv-paint tabs, and reopen.');
     const bounds = await panel.boundingBox(); expect(bounds).toBeTruthy(); expect(bounds!.x).toBeGreaterThanOrEqual(0); expect(bounds!.y).toBeGreaterThanOrEqual(0);
     expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(1280); expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(720);

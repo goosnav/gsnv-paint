@@ -1,0 +1,12 @@
+[WebServer] (node:2010132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:2010189) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/image/image-clipboard.browser.spec.ts:24:1 › Paint native paste opens an image and Copy canvas writes the full transparent composite (2.5s)
+  ✓  2 src/image/image-clipboard.browser.spec.ts:42:1 › Paint oversized paste exposes a whole-source transform, cancel and undo; text paste stays native (4.6s)
+  ✓  3 src/image/image-clipboard.browser.spec.ts:59:1 › Paint clipboard denial is honest and a late read cannot replace another workspace (3.6s)
+
+  3 passed (13.3s)

@@ -1,6 +1,7 @@
 .gc-offline { position:relative; flex:0 0 auto; max-width:240px; font:inherit; color:inherit; }
 .gc-offline > summary { height:17px; box-sizing:content-box; padding:1px 6px; border:1px solid; border-color:#aca899 #fff #fff #aca899; white-space:nowrap; list-style:none; cursor:pointer; }
 .gc-offline > summary::-webkit-details-marker { display:none; }
+.gc-offline[data-update-ready="true"] > summary { color:#123a75; background:#fff0bd; font-weight:bold; }
 .gc-offline > summary:focus-visible { outline:2px solid #185cbd; outline-offset:-2px; }
 .gc-offline-panel { box-sizing:border-box; position:absolute; bottom:calc(100% + 5px); right:0; z-index:100; width:340px; max-width:calc(100vw - 16px); padding:10px; background:#ece9d8; color:#111; border:1px solid #7f9db9; box-shadow:2px 3px 6px #0005; font:12px/1.4 Tahoma,sans-serif; }
 .gc-offline-panel p { margin:0 0 8px; white-space:normal; overflow-wrap:anywhere; }

@@ -31,7 +31,7 @@
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 type Values = Record<string, string | number | boolean>;
 type FieldBase = { key: string; label: string };
-type Field = FieldBase & ({ type: 'text'; placeholder?: string; multiline?: boolean } | { type: 'number'; min?: number; max?: number; step?: number } | { type: 'checkbox' } | { type: 'select'; choices: readonly { value: string; label: string }[] });
+type Field = FieldBase & ({ type: 'text'; placeholder?: string; multiline?: boolean } | { type: 'number'; min?: number; max?: number; step?: number } | { type: 'checkbox' } | { type: 'color' } | { type: 'select'; choices: readonly { value: string; label: string }[] });
 export type DialogSpec = {
   title: string; description?: string; confirmLabel?: string; fields: readonly Field[]; initial: Values;
   validate(values: Values): { ok: true; value: Json } | { ok: false; error: { code: string; message: string } };
@@ -63,6 +63,8 @@ function validateSpec(root: HTMLElement, spec: DialogSpec): void {
       if (typeof initial !== 'string' || !choices.has(initial)) throw new TypeError('Initial choice is not an option.');
     } else if (field.type === 'checkbox') {
       if (typeof initial !== 'boolean') throw new TypeError('Checkbox values must be boolean.');
+    } else if (field.type === 'color') {
+      if (typeof initial !== 'string' || !/^#[0-9a-f]{6}$/i.test(initial)) throw new TypeError('Color values must be six-digit hex strings.');
     } else if (field.type !== 'text' || typeof initial !== 'string' || (field.placeholder !== undefined && typeof field.placeholder !== 'string')) throw new TypeError('Invalid text field.');
   }
   if (Object.keys(spec.initial).length !== keys.size) throw new TypeError('Initial values must match the fields.');
@@ -141,7 +143,8 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   const keydown = (event: KeyboardEvent) => {
     if (event.defaultPrevented || event.isComposing) return;
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); dismiss(); }
-    else if (event.key === 'Enter' && (event.target as Element).tagName === 'TEXTAREA' && !(event.ctrlKey || event.metaKey)) return; // New line; Ctrl+Enter confirms.
+    // Leave the newline to the browser, but keep the app's confirm shortcut from consuming it.
+    else if (event.key === 'Enter' && (event.target as Element).tagName === 'TEXTAREA' && !(event.ctrlKey || event.metaKey)) event.stopPropagation();
     else if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); event.target === cancel ? dismiss() : commit(); }
     else if (event.key === 'Tab') {
       const focusable = [...controls.values(), ok, cancel].filter(control => !control.disabled);

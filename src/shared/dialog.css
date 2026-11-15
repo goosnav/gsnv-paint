@@ -8,6 +8,7 @@
 .gc-dialog-field { display:grid; grid-template-columns:120px minmax(0,1fr); gap:8px; align-items:center; margin-bottom:8px; }
 .gc-dialog-field span { overflow-wrap:anywhere; }
 .gc-dialog input[type=checkbox] { width:13px; min-height:13px; margin:3px 0; accent-color:var(--xp-ok); }
+.gc-dialog input[type=color] { width:100%; height:28px; padding:2px; cursor:pointer; }
 .gc-dialog [aria-invalid=true] { border-color:var(--xp-error) !important; }
 .gc-dialog-error { margin:0 0 8px; min-height:16px; color:var(--xp-error); overflow-wrap:anywhere; }
 .gc-dialog-buttons { display:flex; justify-content:flex-end; gap:6px; }

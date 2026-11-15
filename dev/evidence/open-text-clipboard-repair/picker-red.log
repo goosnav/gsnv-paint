@@ -1,0 +1,30 @@
+✖ Open fallback leaves files selectable and cancellation preserves the document (187.692666ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1122.97451
+
+✖ failing tests:
+
+test at src/app/app-shell.test.ts:1:51771
+✖ Open fallback leaves files selectable and cancellation preserves the document (187.692666ms)
+  AssertionError [ERR_ASSERTION]: No OS type filter may disable an ordinary image or custom project
+  + actual - expected
+  
+  + '.gsnv-image,.gsnv-cad,.gsnv-photo,.gsnv-video,.gsnv-document,.gsnv-slides,.gsnv-audio,.gsnv-spreadsheet,.gsnv-code,.png'
+  - ''
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/app/app-shell.test.ts:707:30)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '.gsnv-image,.gsnv-cad,.gsnv-photo,.gsnv-video,.gsnv-document,.gsnv-slides,.gsnv-audio,.gsnv-spreadsheet,.gsnv-code,.png',
+    expected: '',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

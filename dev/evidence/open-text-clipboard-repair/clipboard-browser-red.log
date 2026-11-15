@@ -1,0 +1,93 @@
+[WebServer] (node:2005737) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:2005775) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/image/image-clipboard.browser.spec.ts:24:1 › Paint native paste opens an image and Copy canvas writes the full transparent composite (5.6s)
+(node:2006047) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 src/image/image-clipboard.browser.spec.ts:42:1 › Paint oversized paste exposes a whole-source transform, cancel and undo; text paste stays native (30.1s)
+(node:2006579) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 src/image/image-clipboard.browser.spec.ts:59:1 › Paint clipboard denial is honest and a late read cannot replace another workspace (30.1s)
+
+
+  1) src/image/image-clipboard.browser.spec.ts:24:1 › Paint native paste opens an image and Copy canvas writes the full transparent composite 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  locator('.image-canvas')
+    Expected: "32"
+    Received: ""
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveAttribute" locator('.image-canvas') with timeout 5000ms
+      - waiting for locator('.image-canvas')
+        14 × locator resolved to <canvas class="image-canvas" aria-label="Image canvas"></canvas>
+           - unexpected value "null"
+
+
+      25 |   await expect(page.locator('.image-canvas')).toBeHidden(); await seed(page, 32, 24, true);
+      26 |   await page.locator('.gc-viewport').focus(); await page.keyboard.press('Control+v');
+    > 27 |   await expect(page.locator('.image-canvas')).toHaveAttribute('width', '32'); await expect(page.locator('.image-canvas')).toHaveAttribute('height', '24');
+         |                                               ^
+      28 |   await expect(page.locator('.image-layer')).toHaveCount(1);
+      29 |   await seed(page, 16, 8); await page.locator('.gc-standard [data-command="edit.paste"]').click();
+      30 |   await expect(page.locator('.image-layer')).toHaveCount(2); await expect(page.getByRole('form', { name: 'Free transform' })).toBeVisible();
+        at /home/goosnav/Desktop/code/gsnv-paint/src/image/image-clipboard.browser.spec.ts:27:47
+
+    Error Context: test-results/image-image-clipboard.brow-20116--full-transparent-composite/error-context.md
+
+    Error Context: test-results/image-image-clipboard.brow-20116--full-transparent-composite/error-context.md
+
+  2) src/image/image-clipboard.browser.spec.ts:42:1 › Paint oversized paste exposes a whole-source transform, cancel and undo; text paste stays native 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.gc-standard [data-command="edit.paste"]')
+
+
+      42 | test('Paint oversized paste exposes a whole-source transform, cancel and undo; text paste stays native', async ({ page }) => {
+      43 |   await page.locator('.gc-standard [data-command="file.new"]').click(); await seed(page, 1600, 400);
+    > 44 |   const before = await history(page); await page.locator('.gc-standard [data-command="edit.paste"]').click();
+         |                                                                                                      ^
+      45 |   await expect(page.locator('.image-layer')).toHaveCount(2); await expect(page.getByRole('form', { name: 'Free transform' })).toBeVisible();
+      46 |   await expect(page.locator('.image-floating')).toHaveAttribute('width', '1600');
+      47 |   await expect(page.getByRole('spinbutton', { name: 'Transform width', exact: true })).toHaveValue('640');
+        at /home/goosnav/Desktop/code/gsnv-paint/src/image/image-clipboard.browser.spec.ts:44:102
+
+    Error Context: test-results/image-image-clipboard.brow-ecf54-ndo-text-paste-stays-native/error-context.md
+
+    Error Context: test-results/image-image-clipboard.brow-ecf54-ndo-text-paste-stays-native/error-context.md
+
+  3) src/image/image-clipboard.browser.spec.ts:59:1 › Paint clipboard denial is honest and a late read cannot replace another workspace 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.gc-standard [data-command="image.copyCanvas"]')
+
+
+      60 |   await page.locator('.gc-standard [data-command="file.new"]').click(); const before = await history(page);
+      61 |   await page.evaluate(() => { Object.defineProperty(navigator.clipboard, 'write', { configurable: true, value: async () => { throw new DOMException('denied', 'NotAllowedError'); } }); });
+    > 62 |   await page.locator('.gc-standard [data-command="image.copyCanvas"]').click();
+         |                                                                        ^
+      63 |   await expect(page.locator('.image-tool-hint')).toContainText('Export PNG'); expect(await history(page)).toEqual(before);
+      64 |   await page.evaluate(() => {
+      65 |     Object.defineProperty(navigator.clipboard, 'read', { configurable: true, value: () => new Promise(resolve => {
+        at /home/goosnav/Desktop/code/gsnv-paint/src/image/image-clipboard.browser.spec.ts:62:72
+
+    Error Context: test-results/image-image-clipboard.brow-f08b6-t-replace-another-workspace/error-context.md
+
+    Error Context: test-results/image-image-clipboard.brow-f08b6-t-replace-another-workspace/error-context.md
+
+  3 failed
+    src/image/image-clipboard.browser.spec.ts:24:1 › Paint native paste opens an image and Copy canvas writes the full transparent composite 
+    src/image/image-clipboard.browser.spec.ts:42:1 › Paint oversized paste exposes a whole-source transform, cancel and undo; text paste stays native 
+    src/image/image-clipboard.browser.spec.ts:59:1 › Paint clipboard denial is honest and a late read cannot replace another workspace 

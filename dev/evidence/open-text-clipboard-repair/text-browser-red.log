@@ -1,0 +1,45 @@
+[WebServer] (node:1989653) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:1989694) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 src/image/image-text.browser.spec.ts:23:1 › Paint text supports color preview, native newlines, cancel and graphical scaling with undo and reopen (6.0s)
+
+
+  1) src/image/image-text.browser.spec.ts:23:1 › Paint text supports color preview, native newlines, cancel and graphical scaling with undo and reopen 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator: getByRole('dialog', { name: 'Text', exact: true }).getByRole('textbox', { name: 'Text (Enter for a new line)' })
+    Timeout: 5000ms
+    - Expected  - 2
+    + Received  + 1
+
+    - Hello
+    - World
+    + HelloWorld
+
+    Call log:
+      - Expect "toHaveValue" getByRole('dialog', { name: 'Text', exact: true }).getByRole('textbox', { name: 'Text (Enter for a new line)' }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Text', exact: true }).getByRole('textbox', { name: 'Text (Enter for a new line)' })
+        14 × locator resolved to <textarea rows="3" name="text" aria-invalid="false" aria-label="Text (Enter for a new line)"></textarea>
+           - unexpected value "HelloWorld"
+
+
+      32 |   const input = dialog.getByRole('textbox', { name: 'Text (Enter for a new line)' });
+      33 |   await input.fill('Hello'); await input.press('Enter'); await input.pressSequentially('World');
+    > 34 |   await expect(input).toHaveValue('Hello\nWorld'); await expect(dialog).toBeVisible();
+         |                       ^
+      35 |   const color = dialog.getByLabel('Color', { exact: true }); await expect(color).toHaveValue('#000000'); await color.fill('#df258a');
+      36 |   await expect.poll(async () => (await pinkPixels(page, '.image-floating')).pixels).toBeGreaterThan(30);
+      37 |   expect(await history(page)).toEqual(before);
+        at /home/goosnav/Desktop/code/gsnv-paint/src/image/image-text.browser.spec.ts:34:23
+
+    Error Context: test-results/image-image-text.browser-P-88084-caling-with-undo-and-reopen/error-context.md
+
+    Error Context: test-results/image-image-text.browser-P-88084-caling-with-undo-and-reopen/error-context.md
+
+  1 failed
+    src/image/image-text.browser.spec.ts:23:1 › Paint text supports color preview, native newlines, cancel and graphical scaling with undo and reopen 

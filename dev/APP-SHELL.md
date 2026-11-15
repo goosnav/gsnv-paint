@@ -26,6 +26,9 @@ import. Importers stage their content and call the existing replacement or commi
 ports. Only a successful native project open retains the selected native handle;
 raw input never becomes a project write target. Native filters that cannot
 represent a long project extension use All files, preserving actual filenames.
+The main Open command now always uses All files on both picker paths (OPEN-07),
+so an OS format filter cannot disable ordinary images or custom native projects.
+Importer/native-container validation remains authoritative after selection.
 
 ## Document and file lifecycle
 

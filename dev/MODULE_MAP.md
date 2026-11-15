@@ -254,6 +254,8 @@ gate evidence is in [PAINT-OPEN-TEXT-REPAIR-EVIDENCE.md](PAINT-OPEN-TEXT-REPAIR-
 IMAGE-APP clipboard amendment: [PAINT-CLIPBOARD-USABILITY.md](PAINT-CLIPBOARD-USABILITY.md)
 contracts explicit system Copy canvas and blank/existing-document Paste with
 graphical transforms, native paste-event support and late-result guards.
+GREEN browser seams and release evidence are recorded in
+[the repair checkpoint](PAINT-OPEN-TEXT-REPAIR-EVIDENCE.md).
 
 Wire S02, S04, S06, S10–S14 and existing built workspace adapters. S01/S03/S05/S07/S08/S09 are reached through their declared consumers. Phase 1 provides the window, capability notice, project-envelope open/save and recovery plus test fixture documents; unbuilt domain tools are not advertised as working. Workspace-specific new-document factories, copy/edit operations and panels are added only with their own phase's GREEN modules. Composition code contains routing and lifecycle disposal only. There is no fake CAD mesh, placeholder media edit or invented blank domain schema.
 

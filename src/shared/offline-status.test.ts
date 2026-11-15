@@ -34,6 +34,20 @@ test('S21 reports candidate failure separately and renders error strings as text
   assert.equal(retry.hidden, true); assert.equal(f.root.querySelectorAll('button').length, 2); f.status.dispose(); f.dom.window.close();
 });
 
+test('S21 makes waiting updates discoverable while details are closed without taking focus', () => {
+  const f = fixture(), editor = f.document.querySelector('textarea')!; editor.focus(); editor.value = 'Unsaved drawing notes';
+  f.status.update({ ...initial, phase: 'ready', update: 'ready' });
+  const details = f.root.querySelector('details')!, summary = f.root.querySelector('summary')!;
+  assert.equal(summary.textContent, 'Update ready — reopen');
+  assert.equal(summary.title, 'Save your work, close all gsnv-paint tabs, and reopen to use the update.');
+  assert.equal(details.dataset.updateReady, 'true'); assert.equal(details.open, false);
+  assert.equal(f.document.activeElement, editor); assert.equal(editor.value, 'Unsaved drawing notes');
+  f.status.update({ ...initial, phase: 'ready', update: 'none' });
+  assert.equal(summary.textContent, 'Ready offline'); assert.equal(summary.title, 'Offline setup and updates');
+  assert.equal(details.dataset.updateReady, 'false'); assert.equal(details.open, false);
+  f.status.dispose(); f.dom.window.close();
+});
+
 test('S21 bounds progress announcements and disables repeated installation actions', t => {
   const f = fixture(); let time = 1000; t.mock.method(Date, 'now', () => time);
   f.status.update({ ...initial, phase: 'installing', completedBytes: 1, totalBytes: 100 });

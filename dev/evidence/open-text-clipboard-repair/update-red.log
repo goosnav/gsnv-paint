@@ -1,0 +1,39 @@
+✔ S21 uses stable accessible details and does not disturb typing focus (128.017794ms)
+✔ S21 reports candidate failure separately and renders error strings as text (17.08331ms)
+✖ S21 makes waiting updates discoverable while details are closed without taking focus (10.823056ms)
+✔ S21 bounds progress announcements and disables repeated installation actions (12.661928ms)
+✔ S21 rejects missing ports and disposal leaves no active controls (9.375141ms)
+✔ S21 makes an action failure visible and announces the recovery instruction (10.465853ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 5
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1077.723843
+
+✖ failing tests:
+
+test at src/shared/offline-status.test.ts:1:2824
+✖ S21 makes waiting updates discoverable while details are closed without taking focus (10.823056ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'Ready offline'
+  - 'Update ready — reopen'
+  
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/offline-status.test.ts:41:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Ready offline',
+    expected: 'Update ready — reopen',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

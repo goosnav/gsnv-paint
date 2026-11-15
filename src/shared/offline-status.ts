@@ -45,8 +45,11 @@ export function mountOfflineStatus({ root, onRetry, onCheck }: { root: HTMLEleme
   retry.addEventListener('click', retryAction); check.addEventListener('click', checkAction); details.addEventListener('keydown', escape);
   function update(state: OfflineState) {
     if (disposed) return;
-    const label = state.phase === 'ready' ? 'Ready offline' : state.phase === 'reopen-required' ? 'Reopen to enable offline' : ['checking', 'installing'].includes(state.phase) ? 'Preparing offline…' : 'Offline unavailable';
+    const updateReady = state.update === 'ready';
+    const label = updateReady ? 'Update ready — reopen' : state.phase === 'ready' ? 'Ready offline' : state.phase === 'reopen-required' ? 'Reopen to enable offline' : ['checking', 'installing'].includes(state.phase) ? 'Preparing offline…' : 'Offline unavailable';
     text(summary, label);
+    summary.title = updateReady ? 'Save your work, close all gsnv-paint tabs, and reopen to use the update.' : 'Offline setup and updates';
+    details.dataset.updateReady = String(updateReady);
     const busy = ['checking', 'installing'].includes(state.phase) || ['checking', 'installing'].includes(state.update);
     const available = state.phase !== 'unavailable'; retry.disabled = check.disabled = busy || !available;
     retry.hidden = !available || (state.phase !== 'error' && state.update !== 'error');

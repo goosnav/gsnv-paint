@@ -41,8 +41,8 @@ async function launch(profile: string, offline = false) {
   }); return context;
 }
 const summary = (page: Page) => page.locator('.gc-offline > summary');
-async function ready(page: Page, build: string) {
-  await expect(summary(page)).toHaveText('Ready offline', { timeout: 90_000 });
+async function ready(page: Page, build: string, updateReady = false) {
+  await expect(summary(page)).toHaveText(updateReady ? 'Update ready — reopen' : 'Ready offline', { timeout: 90_000 });
   expect(await page.evaluate(() => document.querySelector<HTMLMetaElement>('meta[name="gsnv-build-id"]')?.content)).toBe(build);
   expect(await page.evaluate(() => !!navigator.serviceWorker.controller && crossOriginIsolated)).toBe(true);
 }
@@ -120,7 +120,7 @@ test('OFFLINE failed full-build updates preserve A through cold restarts; comple
     server.setFault(); const candidate = context.waitForEvent('serviceworker'); await action(page, 'Check for updates'); const waiting = await candidate;
     await document.click(); await page.keyboard.press('Control+End'); await page.keyboard.insertText(' during update');
     await expect(page.getByRole('group', { name: 'Offline setup' })).toContainText('Update ready.', { timeout: 90_000 }); await expect(document).toBeFocused();
-    await expect(document).toHaveText('pending document 7391 during update'); await expect(code).toHaveText('// pending code 7391'); await ready(page, a.build); await ready(other, a.build);
+    await expect(document).toHaveText('pending document 7391 during update'); await expect(code).toHaveText('// pending code 7391'); await ready(page, a.build, true); await ready(other, a.build, true);
     expect(await page.evaluate(async () => (await navigator.serviceWorker.getRegistration())?.waiting?.state)).toBe('installed');
     await page.evaluate(() => {
       const original = IDBDatabase.prototype.transaction; (window as unknown as { offlineTransaction: typeof original }).offlineTransaction = original;
@@ -149,7 +149,7 @@ test('OFFLINE failed full-build updates preserve A through cold restarts; comple
     };
     await page.screenshot({ path: join(evidence, 'update-waiting.png') });
     await closeSaved(page, 'Document');
-    await ready(other, a.build); await expect(code).toHaveText('// pending code 7391');
+    await ready(other, a.build, true); await expect(code).toHaveText('// pending code 7391');
     storageEvidence.afterDocumentTabClose = await documentStorage(other);
     await closeSaved(other, 'Code');
     await expect.poll(() => waiting.evaluate(() => !(self as unknown as { registration: ServiceWorkerRegistration }).registration.waiting)).toBe(true);
