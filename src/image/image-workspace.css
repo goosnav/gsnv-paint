@@ -1,4 +1,4 @@
-.image-stage { position:absolute; inset:0; overflow:hidden; background:var(--xp-workspace); outline:none; }
+.image-stage { position:absolute; inset:0; overflow:hidden; background:var(--xp-workspace); outline:none; touch-action:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
 .image-stage { cursor:var(--cursor-arrow); }
 .image-stage[data-tool="text"] { cursor:var(--cursor-text); }
 .image-stage[data-panning="true"] { cursor:var(--cursor-grabbing); }
@@ -75,6 +75,7 @@
 .navigator-values button { margin-left:auto;min-height:28px;min-width:46px; }
 .image-tool-hint { max-width:calc(100% - 220px);font-size:11px; }
 @media(pointer:coarse) { .navigator-controls button { min-width:38px;min-height:38px; } .navigator-values input,.navigator-values button { min-height:36px; } }
+@media(max-width:500px) { .image-navigator { right:6px;bottom:6px; } .image-tool-hint { display:none; } .image-navigator summary { min-height:24px; } }
 
 /* Screen-size transform controls stay outside the raster and its zoom transform. */
 .image-transform-box { position:absolute;pointer-events:none;border:1px solid #1c5798;box-shadow:0 0 0 1px #fff9;z-index:2;transform-origin:center; }

@@ -12,8 +12,10 @@
  *            Wheel emits local cursor and finite positive factor; context target is
  *            nearest in-root data-target-id or null. Escape, focus departure, blur,
  *            lost capture and disposal cancel active pointers exactly once. Keyup
- *            clears Space even outside root. Native touch gestures are disabled on
- *            root for this lifetime; its previous touch-action is restored on dispose.
+ *            clears Space even outside root. Browser interruption carries reason:
+ *            interrupted; Escape/disposal remain deliberate cancellations. Optional
+ *            singlePointer latches one contact and guards native drawing gestures.
+ *            Key-only roots preserve touch-action; view roots restore it on dispose.
  *            RAISES: TypeError for invalid ports/context or missing capture support.
  * GUARANTEES No domain decisions, document edits or invented pan-release command.
  *            Pan never emits a drawing stroke; native text editing remains native.
@@ -33,10 +35,10 @@
  */
 
 import { keymap, type CommandEvent } from './keymap.ts';
-export type CommandContext = Pick<CommandEvent, 'workspace' | 'target' | 'viewRole'> & { activeTool: string; status: string };
+export type CommandContext = Pick<CommandEvent, 'workspace' | 'target' | 'viewRole'> & { activeTool: string; status: string; singlePointer?: boolean };
 type Point = { x: number; y: number };
 export type Gesture =
-  | { type: 'pointer'; phase: 'down' | 'move' | 'up' | 'cancel'; id: number; point: Point; button: 0 | 1 | 2; ctrl: boolean; shift: boolean; pressure: number }
+  | { type: 'pointer'; phase: 'down' | 'move' | 'up' | 'cancel'; id: number; point: Point; button: 0 | 1 | 2; ctrl: boolean; shift: boolean; pressure: number; reason?: 'interrupted' }
   | { type: 'wheel'; cursor: Point; factor: number }
   | { type: 'pan'; delta: Point }
   | { type: 'context'; point: Point; targetId: string | null };
@@ -46,7 +48,7 @@ const LINE_PIXELS = 16;
 const MAX_EXPONENT = 4;
 const TWO_DIMENSIONAL = new Set(['preview2d', 'canvas2d', 'sketch2d']);
 const REPEATABLE = new Set(['edit.undo', 'edit.redo', 'edit.delete', 'video.stepBack', 'video.stepForward', 'image.sizeDown', 'image.sizeUp', 'image.nudgeLeft', 'image.nudgeRight', 'image.nudgeUp', 'image.nudgeDown']);
-type PointerState = { id: number; button: 0 | 1 | 2; point: Point; ctrl: boolean; shift: boolean; pan: boolean };
+type PointerState = { id: number; button: 0 | 1 | 2; point: Point; ctrl: boolean; shift: boolean; pan: boolean; pointerType: string };
 
 export function bindInput({ root, context, onCommand, onGesture }: InputRequest): () => void {
   if (!root?.ownerDocument?.defaultView || root.nodeType !== 1 || !root.isConnected ||
@@ -58,9 +60,9 @@ export function bindInput({ root, context, onCommand, onGesture }: InputRequest)
     keymap({ ...value, key: 'Unidentified', ctrl: false, meta: false, shift: false, alt: false });
     return value;
   };
-  getContext();
-  const originalTouchAction = root.style.touchAction; root.style.touchAction = 'none';
-  const active = new Map<number, PointerState>(); let space = false; let disposed = false;
+  const initialContext = getContext();
+  const originalTouchAction = root.style.touchAction; if (initialContext.viewRole !== 'none') root.style.touchAction = 'none';
+  const active = new Map<number, PointerState>(), ignored = new Set<number>(); let space = false; let disposed = false;
   const element = (target: EventTarget | null): Element | null => {
     const node = target as Node | null; return node?.nodeType === 1 ? node as Element : node?.parentElement ?? null;
   };
@@ -79,19 +81,19 @@ export function bindInput({ root, context, onCommand, onGesture }: InputRequest)
     try { root.releasePointerCapture(id); }
     catch (cause) { if (root.hasPointerCapture(id)) throw cause; }
   };
-  const emit = (state: PointerState, phase: 'down' | 'move' | 'up' | 'cancel', pressure = 0) => {
-    if (!state.pan) onGesture({ type: 'pointer', phase, id: state.id, point: { ...state.point }, button: state.button, ctrl: state.ctrl, shift: state.shift, pressure });
+  const emit = (state: PointerState, phase: 'down' | 'move' | 'up' | 'cancel', pressure = 0, reason?: 'interrupted') => {
+    if (!state.pan) onGesture({ type: 'pointer', phase, id: state.id, point: { ...state.point }, button: state.button, ctrl: state.ctrl, shift: state.shift, pressure, ...(reason ? { reason } : {}) });
   };
-  const end = (id: number, phase: 'up' | 'cancel') => {
+  const end = (id: number, phase: 'up' | 'cancel', reason?: 'interrupted') => {
     const state = active.get(id); if (!state) return;
-    active.delete(id); release(id); emit(state, phase);
+    active.delete(id); release(id); emit(state, phase, 0, reason);
   };
-  const cancelAll = () => {
-    space = false;
+  const cancelAll = (reason?: 'interrupted') => {
+    space = false; ignored.clear();
     const states = [...active.values()]; active.clear();
     let failed = false; let failure: unknown;
     for (const state of states) {
-      try { release(state.id); emit(state, 'cancel'); }
+      try { release(state.id); emit(state, 'cancel', 0, reason); }
       catch (cause) { if (!failed) { failed = true; failure = cause; } }
     }
     if (failed) throw failure;
@@ -106,11 +108,12 @@ export function bindInput({ root, context, onCommand, onGesture }: InputRequest)
     if (disposed || event.defaultPrevented || ![0, 1, 2].includes(event.button)) return;
     const value = getContext(); if (!inputView(event, value)) return;
     const point = position(event); if (!finite(point)) return;
+    if (value.singlePointer && (ignored.has(event.pointerId) || (active.size && !active.has(event.pointerId)))) { ignored.add(event.pointerId); event.preventDefault(); return; }
     end(event.pointerId, 'cancel');
     if (disposed) return;
     root.focus({ preventScroll: true });
     if (disposed) return;
-    const state: PointerState = { id: event.pointerId, button: event.button as 0 | 1 | 2, point, ctrl: event.ctrlKey || event.metaKey, shift: event.shiftKey, pan: space && event.button === 0 && TWO_DIMENSIONAL.has(value.viewRole) };
+    const state: PointerState = { id: event.pointerId, button: event.button as 0 | 1 | 2, point, ctrl: event.ctrlKey || event.metaKey, shift: event.shiftKey, pan: space && event.button === 0 && TWO_DIMENSIONAL.has(value.viewRole), pointerType: event.pointerType || 'mouse' };
     root.setPointerCapture(event.pointerId);
     // Native focus/capture events can dispose this adapter while setup is running.
     if (disposed) { release(event.pointerId); return; }
@@ -122,8 +125,9 @@ export function bindInput({ root, context, onCommand, onGesture }: InputRequest)
     const point = position(event); if (!finite(point)) return;
     const state = active.get(event.pointerId);
     if (!state) {
-      if (!inputView(event, getContext())) return;
-      event.preventDefault(); emit({ id: event.pointerId, button: 0, point, ctrl: event.ctrlKey || event.metaKey, shift: event.shiftKey, pan: false }, 'move'); return;
+      const value = getContext(); if (!inputView(event, value)) return;
+      if (ignored.has(event.pointerId) || (value.singlePointer && active.size)) { event.preventDefault(); return; }
+      event.preventDefault(); emit({ id: event.pointerId, button: 0, point, ctrl: event.ctrlKey || event.metaKey, shift: event.shiftKey, pan: false, pointerType: event.pointerType || 'mouse' }, 'move'); return;
     }
     const delta = { x: point.x - state.point.x, y: point.y - state.point.y };
     state.point = point; state.ctrl = event.ctrlKey || event.metaKey; state.shift = event.shiftKey; event.preventDefault();
@@ -131,12 +135,16 @@ export function bindInput({ root, context, onCommand, onGesture }: InputRequest)
     else emit(state, 'move', pressure(event));
   };
   const ended = (event: PointerEvent) => {
+    ignored.delete(event.pointerId);
     const state = active.get(event.pointerId); if (disposed || !state) return;
     const point = position(event); if (finite(point)) state.point = point;
     state.ctrl = event.ctrlKey || event.metaKey; state.shift = event.shiftKey;
-    event.preventDefault(); end(event.pointerId, event.type === 'pointerup' ? 'up' : 'cancel');
+    event.preventDefault(); end(event.pointerId, event.type === 'pointerup' ? 'up' : 'cancel', event.type === 'pointercancel' ? 'interrupted' : undefined);
   };
-  const lost = (event: PointerEvent) => { if (!disposed) end(event.pointerId, 'cancel'); };
+  const lost = (event: PointerEvent) => { if (!disposed) end(event.pointerId, 'cancel', 'interrupted'); };
+  const forgetContact = (event: PointerEvent) => { ignored.delete(event.pointerId); };
+  const interrupted = () => cancelAll('interrupted');
+  const nativeGesture = (event: Event) => { const value = getContext(); if (value.singlePointer && inputView(event, value)) event.preventDefault(); };
   const keyed = (event: KeyboardEvent) => {
     if (disposed || event.defaultPrevented || event.isComposing) return;
     const value = getContext(); const target = element(event.target);
@@ -154,7 +162,7 @@ export function bindInput({ root, context, onCommand, onGesture }: InputRequest)
   const keyup = (event: KeyboardEvent) => { if (event.key === ' ') space = false; };
   const focusChanged = (event: FocusEvent) => {
     const target = element(event.target);
-    if (!target || !root.contains(target) || inDialog(target) || interactive(target)) cancelAll();
+    if (!target || !root.contains(target) || inDialog(target) || interactive(target)) interrupted();
   };
   const wheel = (event: WheelEvent) => {
     if (disposed || event.defaultPrevented || !Number.isFinite(event.deltaY) || event.deltaY === 0 || ![0, 1, 2].includes(event.deltaMode)) return;
@@ -166,6 +174,7 @@ export function bindInput({ root, context, onCommand, onGesture }: InputRequest)
   };
   const contextMenu = (event: MouseEvent) => {
     if (disposed || event.defaultPrevented || !inputView(event, getContext())) return;
+    if (getContext().singlePointer && [...active.values()].some(p => p.pointerType !== 'mouse' && p.button === 0)) { event.preventDefault(); return; }
     const point = position(event); if (!finite(point)) return;
     // Pointer capture retargets right-click events; hit-test the item under the cursor.
     const hit = typeof document.elementFromPoint === 'function' ? document.elementFromPoint(event.clientX, event.clientY) : element(event.target);
@@ -176,13 +185,17 @@ export function bindInput({ root, context, onCommand, onGesture }: InputRequest)
   root.addEventListener('keydown', keyed); root.addEventListener('pointerdown', down);
   root.addEventListener('pointermove', moved); root.addEventListener('pointerup', ended); root.addEventListener('pointercancel', ended);
   root.addEventListener('lostpointercapture', lost); root.addEventListener('wheel', wheel, { passive: false }); root.addEventListener('contextmenu', contextMenu);
-  document.addEventListener('keyup', keyup); document.addEventListener('focusin', focusChanged); window.addEventListener('blur', cancelAll);
+  root.addEventListener('touchstart', nativeGesture, { passive: false }); root.addEventListener('selectstart', nativeGesture); root.addEventListener('dragstart', nativeGesture);
+  document.addEventListener('pointerup', forgetContact); document.addEventListener('pointercancel', forgetContact);
+  document.addEventListener('keyup', keyup); document.addEventListener('focusin', focusChanged); window.addEventListener('blur', interrupted);
   return () => {
     if (disposed) return; disposed = true;
     root.removeEventListener('keydown', keyed); root.removeEventListener('pointerdown', down);
     root.removeEventListener('pointermove', moved); root.removeEventListener('pointerup', ended); root.removeEventListener('pointercancel', ended);
     root.removeEventListener('lostpointercapture', lost); root.removeEventListener('wheel', wheel); root.removeEventListener('contextmenu', contextMenu);
-    document.removeEventListener('keyup', keyup); document.removeEventListener('focusin', focusChanged); window.removeEventListener('blur', cancelAll);
+    root.removeEventListener('touchstart', nativeGesture); root.removeEventListener('selectstart', nativeGesture); root.removeEventListener('dragstart', nativeGesture);
+    document.removeEventListener('pointerup', forgetContact); document.removeEventListener('pointercancel', forgetContact);
+    document.removeEventListener('keyup', keyup); document.removeEventListener('focusin', focusChanged); window.removeEventListener('blur', interrupted);
     root.style.touchAction = originalTouchAction; cancelAll();
   };
 }

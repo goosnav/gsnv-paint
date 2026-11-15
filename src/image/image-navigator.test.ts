@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
 import { imageNavigator } from './image-navigator.ts';
-function setup() {
+function setup(phone = false) {
  const dom = new JSDOM('<div id="root"></div>', { pretendToBeVisual: true });
+ Object.defineProperty(dom.window,'matchMedia',{value:()=>({matches:phone})});
  const {document} = dom.window; Object.assign(dom.window.HTMLCanvasElement.prototype, { getContext: () => ({clearRect(){}, drawImage(){}}) });
  const root = document.querySelector<HTMLElement>('#root')!, zoom: number[] = [], centers: {x:number;y:number}[] = []; let fit = 0;
  const nav = imageNavigator({root, onZoom: value => zoom.push(value), onCenter: value => centers.push(value), onFit: () => fit++});
@@ -58,4 +59,11 @@ test('navigator shares the Layers trackbar, fields and button styles', () => {
  assert.ok(s.root.querySelector('[aria-label="Zoom percent"]')!.classList.contains('xp-field'));
  for(const name of ['Zoom in','Zoom out','Fit image'])assert.ok(s.root.querySelector(`[aria-label="${name}"]`)!.classList.contains('xp-button'));
  s.close();
+});
+
+test('MOBILE-01 phone map starts collapsed but zoom controls stay available', () => {
+ const s=setup(true);s.nav.update(s.state);
+ assert.equal(s.root.querySelector('details')!.open,false);
+ for(const control of s.root.querySelectorAll<HTMLButtonElement|HTMLInputElement>('.navigator-controls button,.navigator-controls input,.navigator-values input,.navigator-values button'))assert.equal(control.disabled,false);
+ s.root.querySelector('details')!.open=true;s.nav.update(s.state);assert.equal(s.root.querySelector('details')!.open,true);s.close();
 });

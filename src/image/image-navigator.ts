@@ -7,6 +7,7 @@
  * GUARANTEES No pixel/document writes; thumbnail drag uses pointer capture and
  *            never bubbles into drawing. One scheduled thumbnail redraw per frame.
  *            Zoom stays visible without a document; empty controls are disabled.
+ *            Map starts collapsed on phones; the user's subsequent choice is kept.
  * TUNING     Preview 168x88 screen pixels; zoom 1–6400%, +/- factor 1.25.
  * DECISIONS  D1: Native inputs and a collapsible map keep keyboard/touch access.
  *            Alternative: gesture-only navigation; rejected for discoverability.
@@ -22,7 +23,7 @@ export function imageNavigator(ports: Ports) {
   if (!ports.root || [ports.onZoom,ports.onCenter,ports.onFit].some(v => typeof v !== 'function')) throw new TypeError('Navigator requires DOM and view callbacks.');
   const doc = ports.root.ownerDocument, win = doc.defaultView!, cleanups: (()=>void)[] = [];
   const root = doc.createElement('section'); root.className = 'image-navigator'; root.setAttribute('aria-label','Canvas zoom and navigation');
-  const details = doc.createElement('details'), summary = doc.createElement('summary'); details.open = true; summary.textContent = 'Zoom'; summary.title = 'Show or collapse the canvas map'; details.append(summary);
+  const details = doc.createElement('details'), summary = doc.createElement('summary'); details.open = !win.matchMedia?.('(max-width: 500px)').matches; summary.textContent = 'Zoom'; summary.title = 'Show or collapse the canvas map'; details.append(summary);
   const map = doc.createElement('button'); map.type = 'button'; map.className = 'navigator-map'; map.setAttribute('aria-label','Pan canvas preview'); map.title = 'Drag to position the view · Arrow keys pan';
   const thumbnail = doc.createElement('canvas'), frame = doc.createElement('span'); thumbnail.width = 168; thumbnail.height = 88; frame.className = 'navigator-frame'; frame.setAttribute('aria-hidden','true'); const empty = doc.createElement('span'); empty.className = 'navigator-empty'; empty.textContent = 'Open or create an image';
   const hint = doc.createElement('p'); hint.className = 'navigator-hint'; hint.textContent = 'Drag map to move view';

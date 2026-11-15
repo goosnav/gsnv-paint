@@ -24,6 +24,13 @@ the handles to resize; use **Free transform / Ctrl+T** for rotation and precise
 values. **Enter** applies and **Esc** cancels. Small selections expose handles when
 Free transform is activated, so normal selection gestures stay usable.
 
+Paint accepts finger and pen drawing without selecting the surrounding interface.
+An extra contact cannot take over a stroke; browser-interrupted freehand strokes
+keep their pixels and can be undone. On phones the tool palette has larger buttons,
+panels below the canvas swipe horizontally, and the Zoom map starts collapsed.
+Tap **Zoom** to open the map; the buttons, slider and **Fit** remain available.
+[Touch verification and device limits](dev/PAINT-TOUCH.md).
+
 In Image, expand **More colours** below the swatches for foreground/background
 RGB sliders, exact channel values and hex entry. The navigator uses the same XP
 trackbar as Layers. In Document, **Document → PDF footer…** controls optional
@@ -60,6 +67,11 @@ Run `npm ci` and `npm run dev` to open the current application shell with live r
 The Document PDF browser regression also needs Poppler's `pdftotext` on PATH. It
 checks the text of real two-page PDFs with browser headers/footers enabled; a
 missing extractor is a failed prerequisite, not a skipped pass.
+
+The Paint touch regression also launches Playwright WebKit (`npx playwright
+install webkit`, plus its Linux system dependencies). It checks selection and
+editing in Linux WebKit; Chromium checks use touch/pen emulation. These checks do
+not substitute for a physical iPhone/iPad and Apple Pencil acceptance test.
 
 `npm run build` creates the static output in `dist/`, an integrity manifest and the offline worker. It rejects any individual asset at or above the configured 25 MiB limit. `npm test` runs unit and assembly seams; `npm run test:browser` builds first, then runs the default Chrome component and assembly checks. The default suite uses installed system Chrome, currently 154.0.8037.97 on the verification host. `npm run test:offline-build` checks manifest generation; `npm run test:offline` builds fresh disposable candidates and checks complete-browser restarts, all nine offline workflows and update recovery. `npm run test:static-host` builds and checks local Wrangler hosting, including exact cached bytes and an offline reload. Run build-owning commands sequentially, including `npm run test:launcher`: its real source-launcher smoke may rebuild shared `dist`. Keep the output frozen throughout browser and static-host verification.
 

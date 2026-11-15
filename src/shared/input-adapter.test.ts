@@ -229,5 +229,46 @@ test('S12 native summary activation, scrolling and focus preserve details contro
   assert.equal(f.wheel(-100, 0, summary).defaultPrevented, false);
   assert.deepEqual(f.gestures, []); assert.deepEqual(f.commands, []);
   f.pointer('pointerdown'); summary.focus();
-  assert.deepEqual(f.gestures, [point('down'), point('cancel')]);
+  assert.deepEqual(f.gestures, [point('down'), point('cancel', { reason: 'interrupted' })]);
+});
+
+test('TOUCH-02 single-pointer mode ignores a palm, foreign hover and late endings', () => {
+  const f=fixture(); f.context={...f.context,singlePointer:true}; bindInput(f.args);
+  f.pointer('pointerdown',{pointerType:'pen'});
+  f.pointer('pointerdown',{pointerId:2,pointerType:'touch'});
+  f.pointer('pointermove',{pointerId:2,pointerType:'touch',clientX:350});
+  f.pointer('pointermove',{pointerId:9,pointerType:'mouse',clientX:380});
+  f.pointer('pointermove',{pointerType:'pen',clientX:140});
+  f.pointer('pointerup',{pointerType:'pen'});
+  f.pointer('pointermove',{pointerId:2,pointerType:'touch'});
+  f.pointer('pointercancel',{pointerId:2,pointerType:'touch'});
+  f.pointer('pointerdown',{pointerId:3,pointerType:'touch'});f.pointer('pointerup',{pointerId:3,pointerType:'touch'});
+  assert.deepEqual(f.gestures.map(g=>g.type==='pointer'&&[g.phase,g.id]),[['down',1],['move',1],['up',1],['down',3],['up',3]]);
+  assert.deepEqual(f.releases,[1,3]);
+});
+
+for(const action of ['pointercancel','lostpointercapture','blur','focus','escape','dispose'] as const)test(`TOUCH-03 ${action} distinguishes interruption from deliberate cancellation`,()=>{
+  const f=fixture();f.context={...f.context,singlePointer:true};const dispose=bindInput(f.args);f.pointer('pointerdown');
+  if(action==='blur')f.dom.window.dispatchEvent(new f.dom.window.Event('blur'));
+  else if(action==='focus')f.element('outside').focus();
+  else if(action==='escape')f.key('Escape');
+  else if(action==='dispose')dispose();
+  else f.pointer(action);
+  f.pointer('pointerup');dispose();
+  const last=f.gestures.at(-1);assert.equal(last?.type,'pointer');
+  assert.equal(last?.type==='pointer'&&last.reason,['escape','dispose'].includes(action)?undefined:'interrupted');
+  assert.equal(f.gestures.length,2);
+});
+
+test('TOUCH-01 touch selection guards preserve native fields, buttons, scrolling and cleanup',()=>{
+  const f=fixture();f.root.style.touchAction='pan-y';f.context={...f.context,viewRole:'none'};const global=bindInput(f.args);
+  assert.equal(f.root.style.touchAction,'pan-y');global();
+  f.context={...f.context,viewRole:'canvas2d',singlePointer:true};const dispose=bindInput(f.args);
+  for(const type of ['touchstart','selectstart','dragstart']){
+    assert.equal(f.pointer(type,{},f.element('child')).defaultPrevented,true);
+    for(const id of ['text','select','editable','button'])assert.equal(f.pointer(type,{},f.element(id)).defaultPrevented,false);
+  }
+  f.pointer('pointerdown',{pointerType:'pen'});f.pointer('contextmenu',{pointerType:'pen'});
+  assert.equal(f.gestures.filter(g=>g.type==='context').length,0);
+  dispose();assert.equal(f.pointer('touchstart').defaultPrevented,false);assert.equal(f.root.style.touchAction,'pan-y');
 });

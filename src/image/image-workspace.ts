@@ -711,7 +711,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           };
         },
         viewSettings,
-        context: () => ({ viewRole: 'canvas2d', activeTool: tool.tool, status: hint.textContent ?? '' }),
+        context: () => ({ viewRole: 'canvas2d', activeTool: tool.tool, status: hint.textContent ?? '', singlePointer: true }),
         command(id) { try { command(id); } catch (cause) { fail(cause); } host.invalidate(); },
         gesture(gesture) {
           if (!source || gesture.type !== 'pointer') return;
@@ -724,7 +724,12 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           if (transform) { if (gesture.phase === 'down') { placeFloating(); refresh(); host.invalidate(); } return; }
           try {
             const point = toDocument(gesture.point); cursor = point;
-            if (gesture.phase === 'cancel') { pointer({ kind: 'cancel' }); ring.hidden = true; }
+            if (gesture.phase === 'cancel') {
+              // Browser gesture/palm rejection must not erase the pixels already drawn.
+              // Commit before clearing the drag; explicit Escape still restores its base.
+              if (gesture.reason === 'interrupted') finishStroke();
+              pointer({ kind: 'cancel' }); ring.hidden = true;
+            }
             else pointer({ kind: gesture.phase, point, button: gesture.button, shift: gesture.shift, ctrl: gesture.ctrl });
           } catch (cause) { fail(cause); }
           if (gesture.phase !== 'move') host.invalidate();

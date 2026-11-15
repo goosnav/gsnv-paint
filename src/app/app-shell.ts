@@ -52,7 +52,7 @@ export type AppDocument = Omit<Snapshot, 'identity'>;
 type EditorView = {
   render(document: Snapshot | undefined, view: View2D): void;
   model(): Pick<ChromeModel, 'menus' | 'tools' | 'panels'>;
-  context(): Pick<CommandContext, 'viewRole' | 'activeTool' | 'status'>;
+  context(): Pick<CommandContext, 'viewRole' | 'activeTool' | 'status' | 'singlePointer'>;
   openFile?: { accept: Record<string, string[]>; open(file: File): Promise<void> };
   command(id: string): void;
   gesture(gesture: Gesture): void;

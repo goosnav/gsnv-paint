@@ -1,0 +1,219 @@
+✔ S12 golden command and gesture transcript uses local coordinates and stable button identity (139.375787ms)
+✔ S12 held Space pans 2D only and latches mode until release (20.483293ms)
+✔ S12 accessible view geometry still receives pointer, wheel and pan while ordinary buttons do not (14.580336ms)
+✔ S12 preview/sketch Space pans while timeline Space plays once and CAD3D does not pan (45.993171ms)
+✔ S12 key repeats preserve undo/redo/delete/frame stepping and suppress repeated file/playback actions (11.690223ms)
+✔ S12 native text, select, editable and button events preserve editing and activation (27.427101ms)
+✔ S12 dialog ancestry blocks stale workspace shortcuts and consumed/IME events are ignored (12.327898ms)
+✔ S12 pressure and modifiers remain normalized; hover uses zero pressure (62.902402ms)
+✔ S12 capture loss cancels once and separate pointers do not cross-release (11.112017ms)
+✔ S12 blur cancels active tools and resets Space without duplicate endings (9.596599ms)
+✔ S12 focus cancels active tools and resets Space without duplicate endings (10.247ms)
+✔ S12 escape cancels active tools and resets Space without duplicate endings (9.48019ms)
+✔ S12 dispose cancels active tools and resets Space without duplicate endings (8.959484ms)
+✔ S12 wheel units, clamp and native scroll exceptions preserve finite factors (9.58892ms)
+✔ S12 context target never escapes root; pointer position can be outside captured view (18.670899ms)
+✔ S12 dispose removes listeners, restores touch-action and supports callback disposal (9.275294ms)
+✔ S12 viewRole none accepts commands without drawing gestures; stale text focus does not swallow view click (9.102668ms)
+✔ S12 invalid ports/context/capture support raise TypeError before installing listeners (7.004297ms)
+✔ S12 held Space resets after blur so the next drag is a tool stroke (8.350518ms)
+✔ S12 held Space resets after focus so the next drag is a tool stroke (8.64046ms)
+✔ S12 held Space resets after escape so the next drag is a tool stroke (8.56549ms)
+✔ S12 failed native capture surfaces the error and retains no pointer lifetime (10.816691ms)
+✔ S12 disposal during replacement cannot start a new pointer after cleanup (8.912969ms)
+✔ S12 disposal during focus cannot start a new pointer after cleanup (7.881789ms)
+✔ S12 context target uses hit testing when pointer capture retargets the native event (11.064768ms)
+✔ S12 focused buttons preserve activation while routing document shortcuts (10.178922ms)
+✔ S12 captured right-click over a native control or outside the view remains native (8.550508ms)
+✔ S12 native summary activation, scrolling and focus preserve details controls (10.884328ms)
+✖ TOUCH-02 single-pointer mode ignores a palm, foreign hover and late endings (12.409972ms)
+✖ TOUCH-03 pointercancel distinguishes interruption from deliberate cancellation (9.373402ms)
+✖ TOUCH-03 lostpointercapture distinguishes interruption from deliberate cancellation (9.329391ms)
+✖ TOUCH-03 blur distinguishes interruption from deliberate cancellation (9.29431ms)
+✖ TOUCH-03 focus distinguishes interruption from deliberate cancellation (10.498191ms)
+✔ TOUCH-03 escape distinguishes interruption from deliberate cancellation (10.719088ms)
+✔ TOUCH-03 dispose distinguishes interruption from deliberate cancellation (10.964646ms)
+✖ TOUCH-01 touch selection guards preserve native fields, buttons, scrolling and cleanup (14.347621ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 30
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1547.190748
+
+✖ failing tests:
+
+test at src/shared/input-adapter.test.ts:1:15757
+✖ TOUCH-02 single-pointer mode ignores a palm, foreign hover and late endings (12.409972ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    [
+      [
+        'down',
+        1
+      ],
+      [
+  +     'down',
+  +     2
+  +   ],
+  +   [
+        'move',
+  +     2
+  +   ],
+  +   [
+  +     'move',
+  +     9
+  +   ],
+  +   [
+  +     'move',
+        1
+      ],
+      [
+        'up',
+        1
+      ],
+      [
+  +     'move',
+  +     2
+  +   ],
+  +   [
+  +     'cancel',
+  +     2
+  +   ],
+  +   [
+        'down',
+        3
+      ],
+      [
+        'up',
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.test.ts:246:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ [ 'down', 1 ], [ 'down', 2 ], [ 'move', 2 ], [ 'move', 9 ], [ 'move', 1 ], [ 'up', 1 ], [ 'move', 2 ], [ 'cancel', 2 ], [ 'down', 3 ], [ 'up', 3 ] ],
+    expected: [ [ 'down', 1 ], [ 'move', 1 ], [ 'up', 1 ], [ 'down', 3 ], [ 'up', 3 ] ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/input-adapter.test.ts:1:16761
+✖ TOUCH-03 pointercancel distinguishes interruption from deliberate cancellation (9.373402ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'interrupted'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.test.ts:259:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'interrupted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/input-adapter.test.ts:1:16761
+✖ TOUCH-03 lostpointercapture distinguishes interruption from deliberate cancellation (9.329391ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'interrupted'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.test.ts:259:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'interrupted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/input-adapter.test.ts:1:16761
+✖ TOUCH-03 blur distinguishes interruption from deliberate cancellation (9.29431ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'interrupted'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.test.ts:259:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'interrupted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/input-adapter.test.ts:1:16761
+✖ TOUCH-03 focus distinguishes interruption from deliberate cancellation (10.498191ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + undefined
+  - 'interrupted'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.test.ts:259:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'interrupted',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at src/shared/input-adapter.test.ts:1:17443
+✖ TOUCH-01 touch selection guards preserve native fields, buttons, scrolling and cleanup (14.347621ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  'none' !== 'pan-y'
+
+      at TestContext.<anonymous> (/home/goosnav/Desktop/code/gsnv-paint/src/shared/input-adapter.test.ts:265:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'none',
+    expected: 'pan-y',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

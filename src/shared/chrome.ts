@@ -138,6 +138,10 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
   const openMenu = (index: number, focus = false, last = false) => {
     closeMenu(); const item = menuNodes[index]; if (!item) return;
     activeMenu = index; item.popup.hidden = false; item.button.setAttribute('aria-expanded', 'true');
+    // Keep rightmost menus reachable on phones, including after a viewport resize.
+    item.popup.style.left = '0px';
+    const bounds = item.popup.getBoundingClientRect();
+    item.popup.style.left = `${Math.min(0, document.documentElement.clientWidth - bounds.right - 4)}px`;
     const items = choices(item.popup);
     if (focus) (last ? items.at(-1) : items[0])?.focus();
   };
