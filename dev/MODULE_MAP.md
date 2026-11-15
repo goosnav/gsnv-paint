@@ -330,3 +330,10 @@ reason; S12 remains domain-free. I59 and S10/shared chrome retain native control
 while adapting the phone layout and keeping menus within the viewport. Contracts,
 tests and scope are in [PAINT-TOUCH.md](PAINT-TOUCH.md). Status: GREEN under existing
 BATCH authority; acceptance remains with the owner. Physical iOS/Pencil untested.
+
+## Paint local font library amendment
+
+[Paint font contract](PAINT-FONTS.md) adds FONT-LIB SHELL and amends S11 / IMAGE-APP.
+Binary font loading and persistence remain SHELL; Paint raster content stays CORE.
+Status: CONTRACTED under existing BATCH authority. Contract, verification IDs and
+brick order are in the linked increment; acceptance remains with the owner.
