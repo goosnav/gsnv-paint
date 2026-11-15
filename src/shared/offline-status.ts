@@ -2,7 +2,8 @@
  * PURPOSE    Present offline readiness in a keyboard-accessible XP status control.
  * KIND       SHELL
  * CONTRACT   IN: owned root element and Retry/Check callbacks; update accepts OfflineState.
- *            OUT: stable details, progress and actionable text; dispose removes listeners.
+ *            OUT: stable details, progress and actionable text; a waiting update is
+ *            visible in the collapsed summary and title; dispose removes listeners.
  *            RAISES: TypeError for missing DOM or callback ports.
  * GUARANTEES Text-only rendering; no automatic focus/open/reload or session changes;
  *            Escape closes open details and returns focus to its summary.

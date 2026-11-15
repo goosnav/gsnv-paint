@@ -63,3 +63,31 @@ suggested project filename and omits an incompatible filter, including A-SHELL's
 early destination acquisition. This is explicit filter adaptation, not fallback
 after a permission failure. Test both paths and preserve original formats.
 Source: [File System Access specification](https://wicg.github.io/file-system-access/#api-filepickeroptions).
+
+## Disabled-image picker repair (2026-11-14)
+
+The owner reports images greyed out in the macOS fallback chooser. The screenshot
+also lacks the new Free transform toolbar action. Its exact deployed build is not
+yet verified. Independently, S21 reproducibly labels a waiting update “Ready
+offline” and hides its reopen instruction in collapsed details.
+
+- **OPEN-07 / A-SHELL:** the main Open command uses All files on both native and
+  HTML picker paths (`accept: {}`). It must not apply an OS type filter combining
+  custom project suffixes and media formats. The active importer still determines
+  supported ordinary extensions; codecs/native-container validate content before
+  replacement. Preserve cancellation, wrong-workspace guards, recovery and save
+  handle safety. Dedicated import commands keep their existing format hints.
+- **OPEN-08 / S21:** a verified waiting update is visible as “Update ready — reopen”
+  in the collapsed footer, with a distinct style and a title explaining save,
+  close all app tabs, reopen. Details retain the full instruction. It must not
+  take focus, open itself, reload, skipWaiting or clear data. Without an update,
+  normal readiness labels remain unchanged.
+
+Existing BATCH authorization covers this bounded repair. Sequence: A-SHELL Open
+seam test and repair, then S21 unit/browser regression and repair. Prove empty
+filters before assigning test files (automation assignment bypasses OS filters),
+PNG/JPEG/native round trips, cancellation/corrupt-file retention, and waiting
+update visibility. Run unit suite, browser Open/offline checks, build and spec
+verification. Native macOS picker selection remains untested on this Linux host.
+This supersedes OPEN-03's combined main-picker filter and the main-Open part of
+OPEN-06; formats and dedicated import filters are unchanged.

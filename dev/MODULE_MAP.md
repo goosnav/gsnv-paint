@@ -229,9 +229,12 @@ RAISES: Browser/registration/protocol failures become visible state; `ready` set
 DEPS: S19 protocol, without a production runtime import.
 TEST: `src/shared/offline-client.test.ts`, six state/protocol/disposal/retry tests; real Chrome failed-B/offline-A/retry/waiting-B fixture. No session, navigation or local project mutation occurs here.
 
-## S21 offline-status — SHELL — GREEN
+## S21 offline-status — SHELL — CONTRACTED (OPEN-08 repair)
 
 Purpose: Present readiness without interrupting editing.
+Repair contract: [OPEN-07/08](OPEN-FILES-UX.md#disabled-image-picker-repair-2026-11-14)
+requires waiting-update visibility in the collapsed summary, without reload or
+focus changes; A-SHELL Open uses an unrestricted picker before existing validation.
 IN: `mountOfflineStatus({root:HTMLElement,onRetry:()=>void|Promise<void>,onCheck:()=>void|Promise<void>})`; `update` receives S20 state.
 OUT: `{update(state):void,dispose():void}`; stable native details/summary, progress, text-only errors and Retry/Check buttons. Summary says Preparing offline, Ready offline, Reopen to enable offline, or Offline unavailable. Update instructions require saving and closing all app tabs. Escape closes details and focuses its summary; progress announcements are throttled to one second, state/error changes immediate.
 RAISES: `TypeError` for invalid DOM/callback ports; unexpected action rejection is visible and politely announced.
