@@ -6,13 +6,12 @@ MIT, copyright 2020–2026 Paweł Kuna. It comes from the official repository at
 records each original path, SHA-256 and application-name mapping. `LICENSE` is the
 complete upstream license; an identical copy ships under `public/licenses/`.
 
-Paint's palette and common toolbar actions use the same 24-unit outline family,
-with the original two-unit round strokes. Existing muted toolbar colours and
-compact dimensions supply the XP influence. We do not rasterize these strokes or
-force coarse aliasing. Other workspace-specific original glyphs remain available.
-Generic and Paint aliases intentionally share artwork. `square-half` represents
-tonal/gradient fill; `circle-dashed` represents ellipse selection, `droplet` blur,
-and `hand-finger` smudge. Tooltips retain the exact operation names.
+Other workspaces' common toolbar actions retain this 24-unit outline family,
+with the original two-unit round strokes. Paint now uses the native bitmap theme
+in `../paint-icons/` (D36), including five thin raster derivatives from these
+sources. Its old aliases remain in this catalog for provenance/history, but the
+renderer overrides their presentation. Workspace-specific original glyphs remain
+unchanged. Tooltips retain the exact operation names.
 
 `generate.mjs` validates the local hashes and allows only SVG path data with the
 shared stroke attributes. It joins those paths in source order into the generated

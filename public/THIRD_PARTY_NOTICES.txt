@@ -61,3 +61,14 @@ Full license: licenses/tabler-3.52.0.LICENSE.txt
 Unmodified SVG sources, application mapping, generator and SHA-256 provenance are
 retained in vendor/tabler. Paths retain the original 24-unit geometry and round
 strokes; the app supplies toolbar colours. All assets are bundled locally.
+
+Fugue Icons 3.5.6 — selected Paint colour icons
+Copyright (C) 2013 Yusuke Kamiyamane. All rights reserved.
+Source: https://p.yusukekamiyamane.com/
+License: Creative Commons Attribution 3.0, https://creativecommons.org/licenses/by/3.0/
+Unmodified shadowless 16x16 PNG subset. No logo or separately licensed exception icons.
+Upstream notice: licenses/fugue-3.5.6.README.txt
+Visible attribution: icon-credits.html (also linked from Help).
+Five companion selection/shape icons are raster derivatives of the Tabler subset
+above: thinner strokes, 16x16 resolution and binary coverage. Their MIT license
+and original sources remain distributed; see vendor/paint-icons for provenance.

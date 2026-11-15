@@ -409,3 +409,20 @@ ArrayBuffers. Reads accept old Blob records as well as byte segments; DB version
 prevents a failed recovery save from blocking replacement with a New document.
 It does not change the rule that a real storage failure must preserve current
 work. Revisit if browser-tested streaming storage avoids whole-segment copies.
+
+## D36 — native Paint bitmap icons with slender proportions (2026-11-15)
+
+The owner clarified that D34's round SVG outlines look too wide/rotund. Paint now
+uses native 16px **Fugue 3.5.6** shadowless colour PNGs (Yusuke Kamiyamane,
+CC BY 3.0; commercial redistribution permitted with attribution). Unmodified
+source PNGs, the original notice, archive/file hashes and mappings are retained
+in `vendor/paint-icons/`. Attribution is available from Help and ships in notices.
+Five Tabler selection/shape masks are rasterized with thin strokes and hard
+coverage; their MIT originals/license remain. The pinned generators are offline.
+
+This supersedes the Paint-specific presentation choice in D34. Native pixels
+provide slim physical objects and controlled colour without stretching rounded
+SVG outlines. Existing 32px/40px targets, labels, shortcuts and editing behaviour
+stay intact. Shared command artwork is themed only in Paint. The approved top
+workspace icons and every other workspace's artwork stay unchanged. Revisit
+only after an actual-size recognition review; owner visual acceptance remains open.

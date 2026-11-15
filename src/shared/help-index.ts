@@ -25,6 +25,11 @@ export type HelpResult = {
 type Article = Omit<HelpResult, 'kind' | 'available' | 'commandId'> & { target?: string };
 const WORKSPACES = new Set(['image', 'cad', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code']);
 const ARTICLES: readonly Article[] = [
+  { id: 'help.icon-credits', title: 'Icon credits', workspace: 'shared', section: 'faq', keywords: ['icons', 'artwork', 'Fugue', 'Tabler', 'license', 'credits'], steps: [
+    'Choose Icon credits at the bottom of Help for source and license links.',
+    'Paint uses unmodified Fugue 3.5.6 colour icons by Yusuke Kamiyamane (Creative Commons Attribution 3.0), plus five raster derivatives of Tabler 3.52.0 symbols by Paweł Kuna (MIT).',
+    'The workspace icons retain their existing artwork. All icons are bundled locally and work offline.',
+  ] },
   { id: 'help.paint', title: 'Begin drawing in Paint', workspace: 'image', section: 'getting-started', keywords: ['canvas', 'new', 'draw', 'brush', 'pencil', 'size'], target: 'image.pencil', steps: [
     'Choose Image, then use the canvas. File → New starts another image; save any work you want to keep.',
     'Choose Pencil for hard pixels or Brush for brush options. Select a foreground colour in Colours and tool options, then drag on the canvas.',

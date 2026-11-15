@@ -38,3 +38,40 @@ Help gains searchable icon credits. Pixel/image/geometry/timeline CORE is unchan
 
 Status: contract/map ready; implementation authorized by the owner's current request
 and standing BATCH authorization. Final visual acceptance remains with the owner.
+
+## Completed verification
+
+PIR-01, PIR-02, PIR-03 and PIR-04: **PASS** within the checks below. Implemented
+32 unmodified Fugue sources and five thin Tabler raster masks, mapped to 19 tools,
+a separate Free Transform symbol and Paint's common commands (56 mappings).
+Existing workspace glyphs are unchanged. Icon credits are searchable in Help;
+the Help footer links to the locally shipped attribution page.
+
+- `npm test`: **1,215 passed, 0 failed, 0 skipped** (41.3s).
+- `npm run build`: **PASS**; TypeScript and production Vite build completed.
+  Existing large-chunk advisory remains; no build errors.
+- `npx playwright test src/shared/paint-icons.browser.spec.ts
+  src/shared/icons.browser.spec.ts src/shared/chrome.browser.spec.ts
+  src/image/image-upgrade-visual.browser.spec.ts`: **5 passed** (15.7s).
+  Local installed Chrome on Linux; actual-size desktop DPR1/DPR2 and 390px touch
+  emulation. Verified all 19 images decode at 16×16, all toolbar sizes, selection,
+  labels/shortcuts, menu layering, workspace round trip and visible attribution.
+  The production preview also received the existing visual smoke check.
+- `node vendor/paint-icons/rasterize.mjs --check`: **PASS** — 5 pinned masks
+  reproduced exactly with binary coverage.
+- `node vendor/paint-icons/generate.mjs --check`: **PASS** — 32 Fugue hashes,
+  37 native bitmaps and 56 mappings verified, using only local files.
+- Module header check: icons, chrome, Help dialog and Help index **PASS**.
+  Existing chrome soft-cap advisory: 245 implementation lines versus 200.
+- `cmp /tmp/workspaces-before.png /tmp/workspaces-after.png`: **identical**
+  screenshots of the workspace switcher before/after this change at 1280×720.
+- `git diff --check`: **PASS**.
+
+Reviewed screenshots: [desktop](evidence/paint-icon-refinement/desktop.png),
+[desktop DPR2](evidence/paint-icon-refinement/desktop-dpr2.png),
+[touch emulation](evidence/paint-icon-refinement/touch.png).
+
+No failed requirement IDs in this scoped pass. **Untested:** physical iPhone/iPad,
+macOS Safari, Windows, final hosted publication and owner aesthetic acceptance.
+The broader application's readiness ledger is unchanged. Status: **GREEN / ready
+for owner visual acceptance**, not a new claim that every editor is complete.

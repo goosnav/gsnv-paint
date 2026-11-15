@@ -44,6 +44,8 @@ test('PU-03 all adopted glyphs exactly preserve upstream path geometry and strok
       assert.deepEqual(path.getAttributeNames(), ['d'], source);
       return path.getAttribute('d');
     }).join(' ');
+    assert.equal(tablerPaths[name], paths, name);
+    if (name.startsWith('paint')) continue; // PIR-01 deliberately overrides only Paint presentation.
     assert.equal(rendered.querySelector('path')!.getAttribute('d'), paths, name);
     for (const key of ['viewBox', 'fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin'])
       assert.equal(rendered.getAttribute(key), svg.getAttribute(key), `${name}: ${key}`);
@@ -62,4 +64,33 @@ test('PU-03 complete MIT license ships with the application and identifies Table
 test('PU-03 checked-in glyph data is reproducible from the vendored subset without network access', () => {
   const output = execFileSync(process.execPath, ['vendor/tabler/generate.mjs', '--check'], { cwd: fileURLToPath(root), encoding: 'utf8' });
   assert.match(output, /47 source hashes and 65 catalog mappings verified/);
+});
+
+test('PIR-04 native Paint source PNGs, licenses and generated data stay pinned and offline', () => {
+  const directory = new URL('vendor/paint-icons/', root);
+  const manifest = JSON.parse(readFileSync(new URL('provenance.json', directory), 'utf8')) as {
+    license: string; version: string; archiveSha256: string;
+    fugueFiles: { file: string; upstreamPath: string; sha256: string }[];
+    derived: Record<string, { source: string; sourceSha256: string; license: string }>;
+  };
+  assert.equal(manifest.license, 'CC-BY-3.0'); assert.equal(manifest.version, '3.5.6');
+  assert.equal(manifest.archiveSha256, '59d54804343b9add8c96ea03bfb2fa3ff48f692459cf426c920a5612e771c37a');
+  assert.equal(manifest.fugueFiles.length, 32);
+  for (const source of manifest.fugueFiles) {
+    const bytes = readFileSync(new URL(source.file, directory));
+    assert.equal(source.upstreamPath, source.file.replace('fugue/', 'icons-shadowless/'));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), source.sha256);
+    assert.equal(bytes.readUInt32BE(16), 16); assert.equal(bytes.readUInt32BE(20), 16);
+  }
+  assert.equal(Object.keys(manifest.derived).length, 5);
+  for (const source of Object.values(manifest.derived)) {
+    assert.equal(source.license, 'MIT');
+    assert.equal(createHash('sha256').update(readFileSync(new URL(source.source, directory))).digest('hex'), source.sourceSha256);
+  }
+  assert.equal(readFileSync(new URL('public/licenses/fugue-3.5.6.README.txt', root), 'utf8'), readFileSync(new URL('FUGUE-README.txt', directory), 'utf8'));
+  const credits = readFileSync(new URL('public/icon-credits.html', root), 'utf8');
+  assert.match(credits, /Yusuke Kamiyamane/); assert.match(credits, /https:\/\/creativecommons.org\/licenses\/by\/3.0\//);
+  assert.match(credits, /raster derivatives/);
+  const output = execFileSync(process.execPath, ['vendor/paint-icons/generate.mjs', '--check'], { cwd: fileURLToPath(root), encoding: 'utf8' });
+  assert.match(output, /32 Fugue hashes, 37 native bitmaps and 56 mappings verified/);
 });

@@ -1,0 +1,265 @@
+{
+  "source": "https://p.yusukekamiyamane.com/",
+  "version": "3.5.6",
+  "archive": "https://p.yusukekamiyamane.com/icon/downloads/fugue-icons-3.5.6.zip",
+  "archiveSha256": "59d54804343b9add8c96ea03bfb2fa3ff48f692459cf426c920a5612e771c37a",
+  "author": "Yusuke Kamiyamane",
+  "license": "CC-BY-3.0",
+  "fugueFiles": [
+    {
+      "file": "fugue/arrow-circle.png",
+      "upstreamPath": "icons-shadowless/arrow-circle.png",
+      "sha256": "182c145ce15d7856724492b3e3961a2072714034907a7c83b1b10888b0785016"
+    },
+    {
+      "file": "fugue/arrow-move.png",
+      "upstreamPath": "icons-shadowless/arrow-move.png",
+      "sha256": "d3321af478705a18b0f056c794531f3a77c52d8d8ee6c155214e8fbe67bb51f7"
+    },
+    {
+      "file": "fugue/arrow-return.png",
+      "upstreamPath": "icons-shadowless/arrow-return.png",
+      "sha256": "adf4925f44d05355e71f7166bbbccb2ad171e2d9954496f2eeb248eb6289a46e"
+    },
+    {
+      "file": "fugue/arrow-return-180-left.png",
+      "upstreamPath": "icons-shadowless/arrow-return-180-left.png",
+      "sha256": "bf365e1ee4892066c30d612ef2ea5e7f7e51b382bc349791dab7f60cb67dc037"
+    },
+    {
+      "file": "fugue/clipboard.png",
+      "upstreamPath": "icons-shadowless/clipboard.png",
+      "sha256": "c63c476794b5a762573e5f0d8120c2a5ae9858a86e896e7185af77a5022229c7"
+    },
+    {
+      "file": "fugue/disk.png",
+      "upstreamPath": "icons-shadowless/disk.png",
+      "sha256": "5aef56baa574a153a099666528ed37b25dd42a45d46973d16544c09fee2a88c5"
+    },
+    {
+      "file": "fugue/document.png",
+      "upstreamPath": "icons-shadowless/document.png",
+      "sha256": "5ea04a3778fc5c22ab402f7753bf1a78209ce83464fbf9cf7523a3cb47b9f4af"
+    },
+    {
+      "file": "fugue/document-export.png",
+      "upstreamPath": "icons-shadowless/document-export.png",
+      "sha256": "8dd8bc763aa507a812be0f8a45f3b36c6d07ec06e2cfbf3e00043c0b256814c1"
+    },
+    {
+      "file": "fugue/documents.png",
+      "upstreamPath": "icons-shadowless/documents.png",
+      "sha256": "b675c0d4f4cea4d3e19d06cdaa744c769024ddda32940daea6ef3ac38906d475"
+    },
+    {
+      "file": "fugue/edit.png",
+      "upstreamPath": "icons-shadowless/edit.png",
+      "sha256": "8b871d6c5d7dbcf41405e6bc2af93fd2a10842e86b59a56a9668eac27028dbac"
+    },
+    {
+      "file": "fugue/eraser.png",
+      "upstreamPath": "icons-shadowless/eraser.png",
+      "sha256": "2c5596f8c88c3f200fa79ffcb2559314e08ef59f6d17cd3f98efeb140fd2178e"
+    },
+    {
+      "file": "fugue/folder-open.png",
+      "upstreamPath": "icons-shadowless/folder-open.png",
+      "sha256": "4de0703dd7ec4e1c6bc62557f8185a433d6462e763a74b5a70e7330a4eeb0e6b"
+    },
+    {
+      "file": "fugue/gradient.png",
+      "upstreamPath": "icons-shadowless/gradient.png",
+      "sha256": "e2889845c7e700b68483bcf5324739a8f26d3b5606949fda9b2d06f93b038098"
+    },
+    {
+      "file": "fugue/hand.png",
+      "upstreamPath": "icons-shadowless/hand.png",
+      "sha256": "58c2286279ad2bc0d7a0ddca1c78bbf1940c22080adf0980aa2ce4838936215c"
+    },
+    {
+      "file": "fugue/hand-finger.png",
+      "upstreamPath": "icons-shadowless/hand-finger.png",
+      "sha256": "86b12abd262b5edfef01f50507d8fb4bbce9e66f227048dbfc3d5b1640ac5a80"
+    },
+    {
+      "file": "fugue/layer--plus.png",
+      "upstreamPath": "icons-shadowless/layer--plus.png",
+      "sha256": "d9cf79e04605fe573a866f18058dfe3679b5f5cc2c656b18d05a38902e56b9ba"
+    },
+    {
+      "file": "fugue/layer-flip.png",
+      "upstreamPath": "icons-shadowless/layer-flip.png",
+      "sha256": "9db709471755f27d370b2a6a6b60ec467b506e1591d845aa51973e792e6734ff"
+    },
+    {
+      "file": "fugue/magnifier-zoom-fit.png",
+      "upstreamPath": "icons-shadowless/magnifier-zoom-fit.png",
+      "sha256": "2705799b08dc789a03ce6f6b486760a2c59d2d71e4098319abc1a4d6e4694377"
+    },
+    {
+      "file": "fugue/magnifier-zoom-in.png",
+      "upstreamPath": "icons-shadowless/magnifier-zoom-in.png",
+      "sha256": "e8c4876fe819854326e35697bbeefa8dc228ed435335b52a83214782ff8c00cf"
+    },
+    {
+      "file": "fugue/magnifier-zoom-out.png",
+      "upstreamPath": "icons-shadowless/magnifier-zoom-out.png",
+      "sha256": "c072de09577ffef2df3ebf8c5ea8980393ce66d4c26f0ab481ef7ec2007dadc7"
+    },
+    {
+      "file": "fugue/paint-brush.png",
+      "upstreamPath": "icons-shadowless/paint-brush.png",
+      "sha256": "884470c803e9f6e72a26061523ccaa7976757e69338b44384bf5014fe922bfb7"
+    },
+    {
+      "file": "fugue/paint-can.png",
+      "upstreamPath": "icons-shadowless/paint-can.png",
+      "sha256": "0b592c31d60a5137015558f41e0abfdf81b02d66be050bd84163d0bef9409307"
+    },
+    {
+      "file": "fugue/pencil.png",
+      "upstreamPath": "icons-shadowless/pencil.png",
+      "sha256": "22b9ca9f6507778eb32c7288bb11de559629b50a389614376a25b3bf777abaa8"
+    },
+    {
+      "file": "fugue/pipette.png",
+      "upstreamPath": "icons-shadowless/pipette.png",
+      "sha256": "86c1799ed032e25bf02f4d9fc41a379e47b2208d180a32981b1f523d9d56ee90"
+    },
+    {
+      "file": "fugue/ruler-crop.png",
+      "upstreamPath": "icons-shadowless/ruler-crop.png",
+      "sha256": "33268327c3ffcfb541da98cfc880049fd5239dc2807b9228071d0d2fc23b6d55"
+    },
+    {
+      "file": "fugue/scissors.png",
+      "upstreamPath": "icons-shadowless/scissors.png",
+      "sha256": "e3f8af84786c5eac325bab331c17134156f9c2c2773c30ccd97edf8c2f52252c"
+    },
+    {
+      "file": "fugue/selection.png",
+      "upstreamPath": "icons-shadowless/selection.png",
+      "sha256": "0cf41bdf2b8dd8edf09243f8696b31c022b39d8203109bb9ff65628348505f26"
+    },
+    {
+      "file": "fugue/spray.png",
+      "upstreamPath": "icons-shadowless/spray.png",
+      "sha256": "d5c515e1602d160452875839a33b1c76b5a5bac805dcf02b17af6a10cc07f7fc"
+    },
+    {
+      "file": "fugue/stamp.png",
+      "upstreamPath": "icons-shadowless/stamp.png",
+      "sha256": "eb277623d6ede24ae163cbfc403ec96710613b24f869d0f50cbb76e807687da4"
+    },
+    {
+      "file": "fugue/wand.png",
+      "upstreamPath": "icons-shadowless/wand.png",
+      "sha256": "7975a455ce1eb7e0318c3db847f42a82852035e34056f4373e3f4f76b61ed654"
+    },
+    {
+      "file": "fugue/water.png",
+      "upstreamPath": "icons-shadowless/water.png",
+      "sha256": "d95e8134cc53fcb24838ed92a5196ddc31872d0b8106eb02895f95a49cbb6601"
+    },
+    {
+      "file": "fugue/selection-resize.png",
+      "upstreamPath": "icons-shadowless/selection-resize.png",
+      "sha256": "5c625bafe669addfebd9e2cdff960292d2f5630f01ead28c41ec10489c940da6"
+    }
+  ],
+  "derived": {
+    "paintLasso": {
+      "file": "derived/paintLasso.png",
+      "source": "../tabler/lasso.svg",
+      "sourceSha256": "5e8b6eec3ee2f8758e84e50615e7743a4598c9216da5436c9a8744eb5ee80532",
+      "license": "MIT",
+      "changes": "Rasterized at 16x16, 1.5-unit stroke, alpha threshold 96; dark ink."
+    },
+    "paintEllipseSelect": {
+      "file": "derived/paintEllipseSelect.png",
+      "source": "../tabler/circle-dashed.svg",
+      "sourceSha256": "7df7f2cf05d1283c7443382168b4dfa5c1d91cab1d709d48117df4d567e7ed54",
+      "license": "MIT",
+      "changes": "Rasterized at 16x16, 1.5-unit stroke, alpha threshold 96; dark ink."
+    },
+    "paintLine": {
+      "file": "derived/paintLine.png",
+      "source": "../tabler/line.svg",
+      "sourceSha256": "560073b9b34b30f6c831d47ec0fde54f78550e3ab2ce5949638600e9aca9b26b",
+      "license": "MIT",
+      "changes": "Rasterized at 16x16, 1.5-unit stroke, alpha threshold 96; dark ink."
+    },
+    "paintRectangle": {
+      "file": "derived/paintRectangle.png",
+      "source": "../tabler/rectangle.svg",
+      "sourceSha256": "718463a9c2e832fecb673fc7ab3cb6dc99efad9b27ac1f1c7af46353ff92a151",
+      "license": "MIT",
+      "changes": "Rasterized at 16x16, 1.5-unit stroke, alpha threshold 96; dark ink."
+    },
+    "paintEllipse": {
+      "file": "derived/paintEllipse.png",
+      "source": "../tabler/oval-vertical.svg",
+      "sourceSha256": "ece33c8d36f3fbb6ab554c180b588530f4a21ba590f0faad91e22b1d4c1073ec",
+      "license": "MIT",
+      "changes": "Rasterized at 16x16, 1.5-unit stroke, alpha threshold 96; dark ink."
+    }
+  },
+  "glyphs": {
+    "paintMove": "fugue/arrow-move.png",
+    "paintSelect": "fugue/selection.png",
+    "paintWand": "fugue/wand.png",
+    "paintPencil": "fugue/pencil.png",
+    "paintBrush": "fugue/paint-brush.png",
+    "paintAirbrush": "fugue/spray.png",
+    "paintEraser": "fugue/eraser.png",
+    "paintSmudge": "fugue/hand-finger.png",
+    "paintClone": "fugue/stamp.png",
+    "paintBlur": "fugue/water.png",
+    "paintFill": "fugue/paint-can.png",
+    "paintGradient": "fugue/gradient.png",
+    "paintPicker": "fugue/pipette.png",
+    "paintText": "fugue/edit.png",
+    "new": "fugue/document.png",
+    "open": "fugue/folder-open.png",
+    "save": "fugue/disk.png",
+    "export": "fugue/document-export.png",
+    "undo": "fugue/arrow-return-180-left.png",
+    "redo": "fugue/arrow-return.png",
+    "copy": "fugue/documents.png",
+    "paste": "fugue/clipboard.png",
+    "cut": "fugue/scissors.png",
+    "crop": "fugue/ruler-crop.png",
+    "rotate": "fugue/arrow-circle.png",
+    "flip": "fugue/layer-flip.png",
+    "layerAdd": "fugue/layer--plus.png",
+    "hand": "fugue/hand.png",
+    "zoomIn": "fugue/magnifier-zoom-in.png",
+    "zoomOut": "fugue/magnifier-zoom-out.png",
+    "fit": "fugue/magnifier-zoom-fit.png",
+    "paintLasso": "derived/paintLasso.png",
+    "paintEllipseSelect": "derived/paintEllipseSelect.png",
+    "paintLine": "derived/paintLine.png",
+    "paintRectangle": "derived/paintRectangle.png",
+    "paintEllipse": "derived/paintEllipse.png",
+    "move": "fugue/arrow-move.png",
+    "select": "fugue/selection.png",
+    "wand": "fugue/wand.png",
+    "pencil": "fugue/pencil.png",
+    "brush": "fugue/paint-brush.png",
+    "airbrush": "fugue/spray.png",
+    "eraser": "fugue/eraser.png",
+    "smudge": "fugue/hand-finger.png",
+    "clone": "fugue/stamp.png",
+    "blur": "fugue/water.png",
+    "fill": "fugue/paint-can.png",
+    "gradient": "fugue/gradient.png",
+    "picker": "fugue/pipette.png",
+    "text": "fugue/edit.png",
+    "lasso": "derived/paintLasso.png",
+    "ellipseSelect": "derived/paintEllipseSelect.png",
+    "line": "derived/paintLine.png",
+    "rectangle": "derived/paintRectangle.png",
+    "ellipse": "derived/paintEllipse.png",
+    "paintTransform": "fugue/selection-resize.png"
+  }
+}

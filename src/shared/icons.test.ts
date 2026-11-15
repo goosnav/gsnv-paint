@@ -24,40 +24,53 @@ test('S09/PU-03 golden accessible Tabler close glyph', () => {
   });
 });
 
-test('S09 every catalog name renders local path data and an accessible name', () => {
+test('S09 every catalog name renders local artwork and an accessible name', () => {
   assert.equal(new Set(iconCatalog).size, iconCatalog.length);
   for (const name of iconCatalog) {
     const svg = fake(renderIcon({ document, name, label: name, size: 24 }));
     assert.equal(svg.attributes['aria-label'], name);
-    assert.equal(svg.attributes.viewBox, '0 0 24 24');
-    assert.deepEqual(svg.children.map(child => child.tag), ['title', 'path']);
-    const path = svg.children[1]!.attributes.d!;
-    assert.match(path, /^M/);
-    assert.ok(!JSON.stringify(svg).match(/(?:href|<script|data:|https:)/));
+    if (name.startsWith('paint')) {
+      assert.equal(svg.attributes.viewBox, '0 0 16 16');
+      assert.deepEqual(svg.children.map(child => child.tag), ['title', 'image']);
+      assert.match(svg.children[1]!.attributes.href!, /^data:image\/png;base64,[A-Za-z0-9+/=]+$/);
+    } else {
+      assert.equal(svg.attributes.viewBox, '0 0 24 24');
+      assert.deepEqual(svg.children.map(child => child.tag), ['title', 'path']);
+      assert.match(svg.children[1]!.attributes.d!, /^M/);
+      assert.ok(!JSON.stringify(svg).match(/(?:href|<script|data:|https:)/));
+    }
   }
 });
 
-test('PU-03 Paint tools use recognizable distinct outline symbols without coarse pixel edges', () => {
-  const paths = new Set<string>();
+test('PIR-01 Paint tools use distinct native 16px bitmaps, not enlarged round outlines', () => {
+  const images = new Set<string>();
   for (const name of iconCatalog.filter(name => name.startsWith('paint'))) {
-    const svg = fake(renderIcon({ document, name, label: name, size: 24 }));
-    assert.equal(svg.attributes.fill, 'none', name);
-    assert.equal(svg.attributes.stroke, 'currentColor', name);
-    assert.equal(svg.attributes['stroke-width'], '2', name);
-    assert.equal(svg.attributes['stroke-linecap'], 'round', name);
-    assert.equal(svg.attributes['stroke-linejoin'], 'round', name);
-    assert.equal(svg.attributes['shape-rendering'], 'auto', name);
-    const path = svg.children[1]!.attributes.d!;
-    assert.ok(!paths.has(path), `${name} needs a distinct tool silhouette`);
-    paths.add(path);
+    const svg = fake(renderIcon({ document, name, label: name, size: 16 }));
+    assert.equal(svg.attributes.viewBox, '0 0 16 16', name);
+    assert.equal(svg.attributes['data-icon-style'], 'paint-bitmap');
+    assert.equal(svg.children[1]!.tag, 'image');
+    assert.match(svg.children[1]!.attributes.style!, /image-rendering:pixelated/);
+    const uri = svg.children[1]!.attributes.href!;
+    assert.ok(!images.has(uri), `${name} needs a distinct silhouette`);
+    const bytes = Buffer.from(uri.split(',')[1]!, 'base64');
+    assert.equal(bytes.readUInt32BE(16), 16); assert.equal(bytes.readUInt32BE(20), 16);
+    images.add(uri);
   }
+  assert.equal(images.size, 20); // 19 tools plus the separate free-transform command.
 });
 
-test('PU-03 equivalent Paint and shared actions use the same symbol', () => {
-  for (const name of ['move', 'lasso', 'wand', 'pencil', 'brush', 'airbrush', 'eraser', 'clone', 'blur', 'smudge', 'fill', 'gradient', 'picker', 'text', 'line', 'rectangle', 'ellipse', 'ellipseSelect']) {
+test('PIR-02 Paint aliases and themed commands match; default shared and workspace art stays vector', () => {
+  for (const name of ['move', 'select', 'lasso', 'wand', 'pencil', 'brush', 'airbrush', 'eraser', 'clone', 'blur', 'smudge', 'fill', 'gradient', 'picker', 'text', 'line', 'rectangle', 'ellipse', 'ellipseSelect']) {
     const paint = `paint${name[0]!.toUpperCase()}${name.slice(1)}`;
-    const path = (name: string) => fake(renderIcon({ document, name, label: name, size: 24 })).children[1]!.attributes.d;
-    assert.equal(path(name), path(paint), name);
+    const themed = fake(renderIcon({ document, name, label: name, size: 16, theme: 'paint' }));
+    const alias = fake(renderIcon({ document, name: paint, label: name, size: 16 }));
+    assert.equal(themed.children[1]!.attributes.href, alias.children[1]!.attributes.href);
+    assert.equal(fake(renderIcon({ document, name, label: name, size: 16 })).children[1]!.tag, 'path');
+  }
+  for (const name of ['app', 'image', 'cad', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code']) {
+    const original = fake(renderIcon({ document, name, label: name, size: 18 }));
+    assert.deepEqual(fake(renderIcon({ document, name, label: name, size: 18, theme: 'paint' })), original);
+    assert.equal(original.children[1]!.tag, 'path');
   }
 });
 

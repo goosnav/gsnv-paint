@@ -4,13 +4,15 @@ import { iconCatalog } from './icons.ts';
 test('S09 local glyph sheet renders local accessible SVG at desktop size', async ({ page }, testInfo) => {
   const remote: string[] = [];
   const errors: string[] = [];
-  page.on('request', request => { if (!request.url().startsWith('http://127.0.0.1:4173')) remote.push(request.url()); });
+  page.on('request', request => { if (!request.url().startsWith('http://127.0.0.1:4173') && !request.url().startsWith('data:image/png;base64,')) remote.push(request.url()); });
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/dev/fixtures/icons.html');
   await expect(page.locator('#sheet section')).toHaveCount(iconCatalog.length);
   for (const name of iconCatalog) await expect(page.getByRole('img', { name, exact: true })).toHaveCount(3);
   expect(await page.locator('#sheet svg').evaluateAll(elements => elements.every(element => element.getBoundingClientRect().width > 0))).toBe(true);
-  expect(await page.locator('#sheet image, #sheet use, #sheet script').count()).toBe(0);
+  expect(await page.locator('#sheet use, #sheet script').count()).toBe(0);
+  await expect(page.locator('#sheet image')).toHaveCount(20 * 3);
+  expect(await page.locator('#sheet image').evaluateAll(images => images.every(image => /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(image.getAttribute('href') ?? '')))).toBe(true);
   expect(remote).toEqual([]);
   expect(errors).toEqual([]);
   await page.screenshot({ path: 'dev/evidence/S09-glyph-sheet.png', fullPage: true });

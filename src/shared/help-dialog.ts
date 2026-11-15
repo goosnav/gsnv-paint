@@ -44,7 +44,8 @@ export function showHelp({ document, root, workspace, commands, section, onComma
   const count = make('p', 'gc-help-count'); count.setAttribute('role', 'status'); count.setAttribute('aria-live', 'polite');
   const columns = make('div', 'gc-help-columns'), list = make('ul', 'gc-help-results'), detail = make('article', 'gc-help-detail');
   list.setAttribute('aria-label', 'Help results'); detail.setAttribute('aria-label', 'Help instructions'); columns.append(list, detail);
-  const footer = make('div', 'gc-dialog-buttons'); const closeButton = make('button', 'xp-button', 'Close'); closeButton.type = 'button'; closeButton.title = 'Close Help (Esc)'; footer.append(closeButton);
+  const footer = make('div', 'gc-dialog-buttons'); const closeButton = make('button', 'xp-button', 'Close'); closeButton.type = 'button'; closeButton.title = 'Close Help (Esc)'; const credits = make('a', '', 'Icon credits'); credits.href = './icon-credits.html'; credits.target = '_blank'; credits.rel = 'noopener';
+  footer.append(credits, closeButton);
   body.append(label, nav, count, columns, footer); modal.append(title, body);
   let settled = false, selected: HelpResult | undefined, currentSection = section;
   let resolveClosed!: () => void; const closed = new Promise<void>(resolve => { resolveClosed = resolve; });
@@ -95,7 +96,7 @@ export function showHelp({ document, root, workspace, commands, section, onComma
     if (event.isComposing || settled) return;
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); close(); return; }
     if (event.key === 'Tab') {
-      const controls = [...modal.querySelectorAll<HTMLElement>('input,button:not(:disabled)')], index = controls.indexOf(document.activeElement as HTMLElement);
+      const controls = [...modal.querySelectorAll<HTMLElement>('input,button:not(:disabled),a[href]')], index = controls.indexOf(document.activeElement as HTMLElement);
       if (event.shiftKey ? index <= 0 : index === controls.length - 1 || index < 0) {
         event.preventDefault(); event.stopPropagation(); (event.shiftKey ? controls.at(-1) : controls[0])?.focus();
       }

@@ -64,6 +64,8 @@ All use shared save/open, undo/redo, stored projects and local recovery. Failed 
 
 The [Open/navigation/transform checkpoint](dev/PAINT-OPEN-NAVIGATION-EVIDENCE.md) records this update, its regression checks and platform limits.
 
+The [Paint icon refinement](dev/PAINT-ICON-REFINEMENT.md) replaces Paint’s enlarged outlines with slender native colour bitmaps, preserves the workspace switcher, and records licensing and actual-size checks.
+
 The preceding [Save/export UI checkpoint](dev/SAVE-EXPORT-UX.md) passes 993 unit tests and 93 combined browser checks, plus local Cloudflare hosting and a cold offline workflow through all nine editors. It adds the Save choices, Image-first startup and locally bundled pixel Paint icons. This UI work does not change the broader readiness ledger.
 
 The [connected revolve checkpoint](dev/CAD-REVOLVE-EVIDENCE.md) passes 978 unit tests, 91 combined browser checks, nine offline checks, local Cloudflare hosting, the Linux source launcher and deployment dry-run. It adds editable native revolves and strengthens native-kernel fault handling while preserving the original plate golden. The ledger records 47 PASS, 0 FAIL and 355 UNTESTED requirements; full consumer and packaged-release acceptance remain open. Earlier [modeling/offline](dev/MODELING-OFFLINE-CHECKPOINT.md) and [profile-face](dev/CAD-PROFILE-FACE-EVIDENCE.md) results are historical. CAD Open timeouts and the test chooser-interception correction remain in the [diagnosis](dev/CAD-REOPEN-DIAGNOSIS.md); that correction changed test setup, not application behavior.

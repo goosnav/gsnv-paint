@@ -157,10 +157,10 @@ export function createChrome({ root, model, onCommand, onWorkspace }: ChromeRequ
     else {delete button.dataset.submenuTrigger;button.removeAttribute('aria-haspopup');button.removeAttribute('aria-expanded');}
     if ('status' in item) button.dataset.status = item.status;
     if ('active' in item && item.active !== undefined) button.setAttribute('aria-pressed', String(item.active)); else button.removeAttribute('aria-pressed');
-    const signature = JSON.stringify([item.icon, item.label, item.shortcut, surface]);
+    const signature = JSON.stringify([item.icon, item.label, item.shortcut, surface, current.workspace]);
     if (presentation.get(button) !== signature) {
       button.replaceChildren();
-      if (item.icon) button.append(renderIcon({ document, name: item.icon, label: item.label, size: surface==='tool'&&item.icon.startsWith('paint')?24:18 }));
+      if (item.icon) button.append(renderIcon({ document, name: item.icon, label: item.label, size: current.workspace === 'image' ? 16 : 18, ...(current.workspace === 'image' ? { theme: 'paint' as const } : {}) }));
       if (surface === 'toolbar') button.append(make('span', 'gc-command-label', item.label));
       if (isMenu) { button.setAttribute('role', 'menuitem'); button.append(make('span', 'gc-menu-label', item.label), make('span', 'gc-key', item.shortcut)); }
       presentation.set(button, signature);

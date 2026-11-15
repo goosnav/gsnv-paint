@@ -1,15 +1,16 @@
 /**
- * PURPOSE    Render local interface glyphs as accessible SVG elements.
+ * PURPOSE    Render local interface artwork inside accessible SVG elements.
  * KIND       SHELL
- * CONTRACT   IN: IconRequest; document, catalog name, text label, size 12–64 CSS px.
- *            OUT: SVGSVGElement with 24-unit viewBox, accessible label and local paths.
+ * CONTRACT   IN: IconRequest; document, catalog name, text label, size 12–64 CSS px, optional Paint theme.
+ *            OUT: SVGSVGElement, accessible label; local paths or embedded 16px Paint PNG.
  *            RAISES: RangeError for unknown glyph or nonfinite/out-of-range size.
  * GUARANTEES No fetched imagery, Microsoft assets, markup injection or shared DOM nodes.
- * TUNING     Tabler outlines retain their 2-unit round strokes; original glyphs use 1.5 units.
- *            Muted XP colours come from chrome.css; stroked icons use normal antialiasing.
- * DECISIONS  D1: Use the MIT Tabler 3.52.0 subset for Paint/common commands.
+ * TUNING     Paint bitmaps display at native 16px in chrome; nearest-neighbour scaling.
+ *            Other glyphs retain Tabler 2-unit or original 1.5-unit SVG strokes.
+ * DECISIONS  D1: Paint uses Fugue colour PNGs and five thin Tabler raster derivatives.
  *            Alternative: runtime package/CDN; pinned local paths keep offline behavior.
- *            Upstream originals, mapping, hashes and license live in vendor/tabler.
+ *            Upstream originals, mapping, hashes and licenses live in vendor/paint-icons
+ *            and vendor/tabler; other workspaces retain existing vector artwork.
  *            Existing workspace-specific original paths remain local.
  *            D2: Use aria-label plus a text title, avoiding generated title IDs and their
  *            collision risk. Alternative: aria-labelledby; Revisit if: a proven AT gap emerges.
@@ -18,14 +19,15 @@
  */
 
 import { tablerPaths } from './tabler-paths.ts';
+import { paintBitmaps } from './paint-bitmaps.ts';
 
-export type IconRequest = { document: Document; name: string; label: string; size: number };
+export type IconRequest = { document: Document; name: string; label: string; size: number; theme?: 'paint' };
 export const iconCatalog: readonly string[] = Object.freeze([
   'app', 'cad', 'image', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code', 'play', 'pause', 'split', 'bold', 'italic', 'underline', 'listBullet', 'listNumber', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'indent', 'outdent', 'link', 'strike', 'table', 'pageBreak', 'pdf', 'new', 'open', 'save', 'undo', 'redo', 'cut', 'copy', 'paste',
   'delete', 'select', 'hand', 'zoomIn', 'zoomOut', 'fit', 'history', 'properties', 'layers',
   'grid', 'ruler', 'line', 'rectangle', 'extrude', 'revolve',
   'pencil', 'brush', 'eraser', 'fill', 'picker', 'ellipse', 'text', 'crop', 'rotate', 'flip',
-  'paintMove', 'paintSelect', 'paintLasso', 'paintWand', 'paintPencil', 'paintBrush', 'paintAirbrush', 'paintEraser', 'paintSmudge', 'paintRectangle', 'paintEllipse', 'paintEllipseSelect', 'paintClone', 'paintBlur', 'paintFill', 'paintGradient', 'paintPicker', 'paintText', 'paintLine',
+  'paintTransform', 'paintMove', 'paintSelect', 'paintLasso', 'paintWand', 'paintPencil', 'paintBrush', 'paintAirbrush', 'paintEraser', 'paintSmudge', 'paintRectangle', 'paintEllipse', 'paintEllipseSelect', 'paintClone', 'paintBlur', 'paintFill', 'paintGradient', 'paintPicker', 'paintText', 'paintLine',
   'move', 'ellipseSelect', 'lasso', 'wand', 'airbrush', 'clone', 'blur', 'gradient', 'layerAdd', 'smudge', 'export', 'close', 'help', 'chevronRight', 'chevronDown',
 ]);
 
@@ -65,10 +67,20 @@ const PATHS: Readonly<Record<string, string>> = {
 const STROKE_WIDTH = 1.5;
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
-export function renderIcon({ document, name, label, size }: IconRequest): SVGSVGElement {
-  if (!Object.hasOwn(PATHS, name) && !Object.hasOwn(tablerPaths, name)) throw new RangeError(`Unknown glyph: ${name}.`);
+export function renderIcon({ document, name, label, size, theme }: IconRequest): SVGSVGElement {
+  if (!iconCatalog.includes(name)) throw new RangeError(`Unknown glyph: ${name}.`);
   if (!Number.isFinite(size) || size < 12 || size > 64) throw new RangeError('Glyph size must be between 12 and 64 CSS pixels.');
   const svg = document.createElementNS(SVG_NAMESPACE, 'svg');
+  const bitmap = (name.startsWith('paint') || theme === 'paint') && Object.hasOwn(paintBitmaps, name) ? paintBitmaps[name] : undefined;
+  if (bitmap) {
+    for (const [key, value] of Object.entries({ viewBox: '0 0 16 16', width: String(size), height: String(size),
+      role: 'img', 'aria-label': label, focusable: 'false', 'data-icon': name, 'data-icon-style': 'paint-bitmap' })) svg.setAttribute(key, value);
+    const title = document.createElementNS(SVG_NAMESPACE, 'title'); title.textContent = label;
+    const image = document.createElementNS(SVG_NAMESPACE, 'image');
+    for (const [key, value] of Object.entries({ href: bitmap, width: '16', height: '16',
+      style: 'image-rendering:crisp-edges;image-rendering:pixelated' })) image.setAttribute(key, value);
+    svg.append(title, image); return svg;
+  }
   const tabler = Object.hasOwn(tablerPaths, name);
   const attributes = { viewBox: '0 0 24 24', width: String(size), height: String(size), role: 'img',
     'aria-label': label, focusable: 'false', fill: 'none', stroke: 'currentColor',
