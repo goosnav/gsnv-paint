@@ -766,3 +766,15 @@ TEST: `src/image/image-transform-view.test.ts`; `src/image/image-navigation.brow
 DEMO: `/src/image/image-transform-view.demo.html` through the dev server.
 
 Evidence for I59–I61 and their composition: [Open/navigation/transform checkpoint](PAINT-OPEN-NAVIGATION-EVIDENCE.md). GREEN is provisional; acceptance belongs to the owner.
+
+### I62 `image/pixel-stroke.ts` — CORE — PLANNED
+Purpose: Accumulate hard, grid-aligned stroke coverage without antialiasing.
+IN: `{cov,points,size,pixelSize,tip}`; matching coverage buffer; finite points; whole size 1–500, pixel size 1–32, round/square tip.
+OUT: mutated caller-owned binary coverage and clipped dirty bounds or null; bounded traversal.
+RAISES: RangeError for malformed buffers, coordinates, dimensions or options, before writes.
+DEPS: I50 raster limits/types; I56 coverage type only.
+TEST: `src/image/pixel-stroke.test.ts`; production `image-pixel-drawing.browser.spec.ts`.
+DEMO: production Image Brush with Hard pixels and Pixel size controls.
+
+[Pixel drawing amendment](PAINT-PIXEL-DRAWING.md) defines PIX-01–04 and updates
+I50 sampling, I53 tool options, I61 transform sampling and IMAGE-APP wiring.
