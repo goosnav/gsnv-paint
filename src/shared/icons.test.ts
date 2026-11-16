@@ -30,7 +30,7 @@ test('S09 every catalog name renders local artwork and an accessible name', () =
     const svg = fake(renderIcon({ document, name, label: name, size: 24 }));
     assert.equal(svg.attributes['aria-label'], name);
     if (name.startsWith('paint')) {
-      assert.equal(svg.attributes.viewBox, '0 0 16 16');
+      assert.equal(svg.attributes.viewBox, name === 'paintTransform' ? '0 0 16 16' : '0 0 24 24');
       assert.deepEqual(svg.children.map(child => child.tag), ['title', 'image']);
       assert.match(svg.children[1]!.attributes.href!, /^data:image\/png;base64,[A-Za-z0-9+/=]+$/);
     } else {
@@ -42,18 +42,21 @@ test('S09 every catalog name renders local artwork and an accessible name', () =
   }
 });
 
-test('PIR-01 Paint tools use distinct native 16px bitmaps, not enlarged round outlines', () => {
+test('PIR-01 Paint tools use distinct native 24px artwork while transform remains a 16px command', () => {
   const images = new Set<string>();
   for (const name of iconCatalog.filter(name => name.startsWith('paint'))) {
-    const svg = fake(renderIcon({ document, name, label: name, size: 16 }));
-    assert.equal(svg.attributes.viewBox, '0 0 16 16', name);
+    const nativeSize = name === 'paintTransform' ? 16 : 24;
+    const svg = fake(renderIcon({ document, name, label: name, size: nativeSize }));
+    assert.equal(svg.attributes.viewBox, `0 0 ${nativeSize} ${nativeSize}`, name);
     assert.equal(svg.attributes['data-icon-style'], 'paint-bitmap');
     assert.equal(svg.children[1]!.tag, 'image');
     assert.match(svg.children[1]!.attributes.style!, /image-rendering:pixelated/);
     const uri = svg.children[1]!.attributes.href!;
     assert.ok(!images.has(uri), `${name} needs a distinct silhouette`);
     const bytes = Buffer.from(uri.split(',')[1]!, 'base64');
-    assert.equal(bytes.readUInt32BE(16), 16); assert.equal(bytes.readUInt32BE(20), 16);
+    assert.equal(bytes.readUInt32BE(16), nativeSize); assert.equal(bytes.readUInt32BE(20), nativeSize);
+    assert.equal(svg.children[1]!.attributes.width, String(nativeSize));
+    assert.equal(svg.children[1]!.attributes.height, String(nativeSize));
     images.add(uri);
   }
   assert.equal(images.size, 20); // 19 tools plus the separate free-transform command.

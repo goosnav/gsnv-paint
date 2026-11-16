@@ -36,7 +36,7 @@ const ARTICLES: readonly Article[] = [
   ] },
   { id: 'help.icon-credits', title: 'Icon credits', workspace: 'shared', section: 'faq', keywords: ['icons', 'artwork', 'Fugue', 'Tabler', 'license', 'credits'], steps: [
     'Choose Icon credits at the bottom of Help for source and license links.',
-    'Paint uses classic-palette artwork derived from ReactOS Paint (LGPL), Silk by Mark James (CC BY 2.5), Fugue by Yusuke Kamiyamane (CC BY 3.0) and Tabler by Paweł Kuna (MIT). The credits include editable source artwork.',
+    'Paint tools use illustrated artwork from GIMP, KolourPaint and Font Awesome. Commands retain Silk by Mark James and Fugue by Yusuke Kamiyamane; other interface symbols use Tabler by Paweł Kuna. The credits include each artist, license and editable source artwork.',
     'The workspace icons retain their existing artwork. All icons are bundled locally and work offline.',
   ] },
   { id: 'help.paint', title: 'Begin drawing in Paint', workspace: 'image', section: 'getting-started', keywords: ['canvas', 'new', 'draw', 'brush', 'pencil', 'size'], target: 'image.pencil', steps: [

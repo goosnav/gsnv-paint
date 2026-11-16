@@ -1,0 +1,324 @@
+{
+  "revision": "illustrated-tools-2026-11-15",
+  "size": 24,
+  "padding": 1,
+  "sources": [
+    {
+      "file": "illustrated-sources/gimp/gimp-tool-move.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-tool-move.svg",
+      "author": "GIMP team; Barak Itkin",
+      "license": "CC-BY-SA-4.0",
+      "sha256": "52b1be42a053e1ae4978bd8752ef525728bf6eda27eaebf0be05d1cf1b59e9f4"
+    },
+    {
+      "file": "illustrated-sources/gimp/gimp-tool-rect-select.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-tool-rect-select.svg",
+      "author": "GIMP team; Jakub Steiner",
+      "license": "CC-BY-SA-2.0",
+      "sha256": "65d8e738792931e3fc881afba75da4b224fcb5f25c554acf19627d181c42ca29"
+    },
+    {
+      "file": "illustrated-sources/gimp/gimp-tool-ellipse-select.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-tool-ellipse-select.svg",
+      "author": "GIMP team; Jakub Steiner",
+      "license": "CC-BY-SA-2.0",
+      "sha256": "7046e0ce4cce5d36eee6d16a1430b4e277b364c927a5e6dc8fb2499f6e4125ba"
+    },
+    {
+      "file": "illustrated-sources/gimp/gimp-tool-free-select.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-tool-free-select.svg",
+      "author": "GIMP team; Jakub Steiner",
+      "license": "CC-BY-SA-2.0",
+      "sha256": "5d00fc9ce61dbb5cc6bac919265710ae1f80db8fd29f65d170ba8769ccd84880"
+    },
+    {
+      "file": "illustrated-sources/gimp/gimp-tool-pencil.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-tool-pencil.svg",
+      "author": "GIMP team; Klaus Staedtler",
+      "license": "CC-BY-SA-4.0",
+      "sha256": "e544fac8125b3bcb3bc52bf7ca5dace36667eafa7789175b3ab1d1877f0660eb"
+    },
+    {
+      "file": "illustrated-sources/gimp/gimp-tool-paintbrush.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-tool-paintbrush.svg",
+      "author": "GIMP team; Jakub Steiner",
+      "license": "CC-BY-SA-2.0",
+      "sha256": "418906dabacd27dc37d4ada0c1d2ca25f971eeb16e0d2899b138f13aad74437d"
+    },
+    {
+      "file": "illustrated-sources/gimp/gimp-tool-clone.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-tool-clone.svg",
+      "author": "GIMP team",
+      "license": "CC-BY-SA-4.0",
+      "sha256": "a2b1c4d5a2875116335fb340f9db9eadc55f791124905ffdce69e5c9bebe8ed2"
+    },
+    {
+      "file": "illustrated-sources/gimp/gimp-tool-blur.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-tool-blur.svg",
+      "author": "GIMP team",
+      "license": "CC-BY-SA-2.0",
+      "sha256": "1f982540c9a5b84e32579fd47e5a379c7eacd9d26625ab2d720e4c1bedc79169"
+    },
+    {
+      "file": "illustrated-sources/gimp/gimp-tool-smudge.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-tool-smudge.svg",
+      "author": "GIMP team; Jakub Steiner",
+      "license": "CC-BY-SA-2.0",
+      "sha256": "89b42eadc42f60e9f7f43b0eacc970707abd05b4766c63536311262b3a067bd1"
+    },
+    {
+      "file": "illustrated-sources/gimp/gimp-tool-bucket-fill.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-tool-bucket-fill.svg",
+      "author": "GIMP team; Andreas Nilsson",
+      "license": "GPL-2.0-only",
+      "sha256": "b4e7cbc7518a36325f13d78f856277a9a5601800a24fdbc8d7e5a6b6140f1570"
+    },
+    {
+      "file": "illustrated-sources/gimp/gimp-gradient-linear.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-gradient-linear.svg",
+      "author": "GIMP team; Klaus Staedtler",
+      "license": "CC-BY-SA-4.0",
+      "sha256": "6d60dd993e5995dc91fa04a28e3035f51f9345e4b389879f087ce9dc87baa663"
+    },
+    {
+      "file": "illustrated-sources/gimp/gimp-tool-text.svg",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/scalable/gimp-tool-text.svg",
+      "author": "GIMP team; Jakub Steiner",
+      "license": "CC-BY-SA-2.0",
+      "sha256": "9ccea88d244e6875337bc2d11deddf8de5841a79f8bf6c39ad60f41cbdb8d01f"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/22-actions-tool_spraycan.png",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/22-actions-tool_spraycan.png",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "f8dd124c38074372cf4d373aa9efe366a360bf3f6f48f6ac4a45b4d04ae9aef0"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/sc-actions-tool_spraycan.svgz",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/sc-actions-tool_spraycan.svgz",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "649d2f8308e467d3155f66375e4677d3903b526b27c7b11810c306b635cd1431"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/22-actions-tool_eraser.png",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/22-actions-tool_eraser.png",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "6e7475d7ac287e9999601a828b591fef86a719125752a4cbe586132b63d9dad8"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/sc-actions-tool_eraser.svgz",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/sc-actions-tool_eraser.svgz",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "16c590d912f92d191f9741aa8182902c23c6d74ac7d063c77b3d7a6bcc84a63d"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/22-actions-tool_color_picker.png",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/22-actions-tool_color_picker.png",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "5daf9ae9717feb3fc0b810517838e5d02198743e91fbf7bc2b85224e555a3215"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/sc-actions-tool_color_picker.svgz",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/sc-actions-tool_color_picker.svgz",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "430a87f9f4cc24b8bb8b77822e5ba31e07cfcbd9d40a9beb14f8bf85db4681e9"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/22-actions-tool_line.png",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/22-actions-tool_line.png",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "7bd22e92d01634da9a48062fb71a99b4d24ae0d134b0674ae326f8b878238e09"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/sc-actions-tool_line.svgz",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/sc-actions-tool_line.svgz",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "1bde23729f54ddd2fbf081b61277fabdeb91e2e8f055ff5a39700fdec241d70e"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/22-actions-tool_rectangle.png",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/22-actions-tool_rectangle.png",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "eee69aa9db919ab349e0eae30df89ffb2569bb64ead772e16a3493fb9724d744"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/sc-actions-tool_rectangle.svgz",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/sc-actions-tool_rectangle.svgz",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "7a521b98782b908fe2fd8065cc42797adaff9413bba01421a41d9be071973af0"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/22-actions-tool_ellipse.png",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/22-actions-tool_ellipse.png",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "d60d57aa508b7a8b582c9c168aa06cfad49259fa76e5d02c7b8294e0474f5885"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/sc-actions-tool_ellipse.svgz",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/pics/action/sc-actions-tool_ellipse.svgz",
+      "author": "Nuno Pinheiro, Danny Allen, Clarence Dang, Kristof Borrey",
+      "license": "BSD-2-Clause",
+      "sha256": "958a4f3f196807b145f7206ab94772fb7579e10e5d107bf45cf0ca202dc803af"
+    },
+    {
+      "file": "illustrated-sources/fontawesome/wand-magic-sparkles.svg",
+      "url": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/af620534bfc3c2d4cbefcfeec29603bbe7809e64/svgs/solid/wand-magic-sparkles.svg",
+      "author": "Fonticons, Inc.",
+      "license": "CC-BY-4.0",
+      "sha256": "ce3eb5166b70675a20f76e27bc592a44014e87314595bee786b9cc015017655b"
+    },
+    {
+      "file": "illustrated-sources/gimp/COPYING",
+      "url": "https://gitlab.gnome.org/GNOME/gimp-data/-/raw/bb251717687ec37a622763c4fa003a3c28461796/icons/Default/COPYING",
+      "author": "GIMP team",
+      "license": "License notice",
+      "sha256": "5e264f3164ace002b12f6a32343e52ca5d44f22d7930010e6452ee75b5a395bf"
+    },
+    {
+      "file": "illustrated-sources/kolourpaint/COPYING",
+      "url": "https://raw.githubusercontent.com/KDE/kolourpaint/0f527d5d105cd082427b3ca92ef42298edb29457/COPYING",
+      "author": "KolourPaint contributors",
+      "license": "License notice",
+      "sha256": "6f4305e3d9eaa8853c999faa19525d8e70aaf78d64b84103dc7383cf274ee7c6"
+    },
+    {
+      "file": "illustrated-sources/fontawesome/LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/af620534bfc3c2d4cbefcfeec29603bbe7809e64/LICENSE.txt",
+      "author": "Fonticons, Inc.",
+      "license": "License notice",
+      "sha256": "9b914eae88817d63b576eab5aafde7068c7a1abae125d7cdfb034f1da43a9afc"
+    }
+  ],
+  "recipes": {
+    "paintMove": {
+      "source": "illustrated-sources/gimp/gimp-tool-move.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112
+    },
+    "paintSelect": {
+      "source": "illustrated-sources/gimp/gimp-tool-rect-select.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112
+    },
+    "paintEllipseSelect": {
+      "source": "illustrated-sources/gimp/gimp-tool-ellipse-select.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112
+    },
+    "paintLasso": {
+      "source": "illustrated-sources/gimp/gimp-tool-free-select.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112,
+      "tint": [
+        "#50300c",
+        "#ffe3a1"
+      ]
+    },
+    "paintPencil": {
+      "source": "illustrated-sources/gimp/gimp-tool-pencil.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112
+    },
+    "paintBrush": {
+      "source": "illustrated-sources/gimp/gimp-tool-paintbrush.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112
+    },
+    "paintClone": {
+      "source": "illustrated-sources/gimp/gimp-tool-clone.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112
+    },
+    "paintBlur": {
+      "source": "illustrated-sources/gimp/gimp-tool-blur.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112
+    },
+    "paintSmudge": {
+      "source": "illustrated-sources/gimp/gimp-tool-smudge.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112
+    },
+    "paintFill": {
+      "source": "illustrated-sources/gimp/gimp-tool-bucket-fill.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112
+    },
+    "paintGradient": {
+      "source": "illustrated-sources/gimp/gimp-gradient-linear.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112
+    },
+    "paintText": {
+      "source": "illustrated-sources/gimp/gimp-tool-text.svg",
+      "saturation": 1.2,
+      "contrast": 1.06,
+      "alphaCutoff": 112
+    },
+    "paintAirbrush": {
+      "source": "illustrated-sources/kolourpaint/22-actions-tool_spraycan.png",
+      "saturation": 1.25,
+      "contrast": 1.05,
+      "alphaCutoff": 112
+    },
+    "paintEraser": {
+      "source": "illustrated-sources/kolourpaint/22-actions-tool_eraser.png",
+      "saturation": 1.25,
+      "contrast": 1.05,
+      "alphaCutoff": 112
+    },
+    "paintPicker": {
+      "source": "illustrated-sources/kolourpaint/22-actions-tool_color_picker.png",
+      "saturation": 1.25,
+      "contrast": 1.05,
+      "alphaCutoff": 112
+    },
+    "paintLine": {
+      "source": "illustrated-sources/kolourpaint/22-actions-tool_line.png",
+      "saturation": 1.25,
+      "contrast": 1.05,
+      "alphaCutoff": 112
+    },
+    "paintRectangle": {
+      "source": "illustrated-sources/kolourpaint/22-actions-tool_rectangle.png",
+      "saturation": 1.25,
+      "contrast": 1.05,
+      "alphaCutoff": 112
+    },
+    "paintEllipse": {
+      "source": "illustrated-sources/kolourpaint/22-actions-tool_ellipse.png",
+      "saturation": 1.25,
+      "contrast": 1.05,
+      "alphaCutoff": 112
+    },
+    "paintWand": {
+      "source": "illustrated-sources/fontawesome/wand-magic-sparkles.svg",
+      "saturation": 1,
+      "contrast": 1,
+      "alphaCutoff": 112,
+      "wandColours": true
+    }
+  }
+}

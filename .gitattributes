@@ -14,3 +14,8 @@ public/licenses/silk.README.txt -text whitespace=blank-at-eol,blank-at-eof,space
 public/licenses/reactos-paint.LICENSE.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # Preserve the upstream MP3 encoder notice, including its Markdown line-break spaces.
 public/licenses/lamejs-NOTICE.txt -text whitespace=-blank-at-eol
+# Keep artist originals and full license notices byte-identical, including their final blank lines.
+vendor/paint-icons/illustrated-sources/** -text whitespace=-blank-at-eof
+public/licenses/cc-by-4.0.txt -text whitespace=-blank-at-eof
+public/licenses/cc-by-sa-4.0.txt -text whitespace=-blank-at-eof
+public/licenses/kolourpaint-COPYING.txt -text whitespace=-blank-at-eof

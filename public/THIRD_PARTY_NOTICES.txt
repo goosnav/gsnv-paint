@@ -62,7 +62,7 @@ Unmodified SVG sources, application mapping, generator and SHA-256 provenance ar
 retained in vendor/tabler. Paths retain the original 24-unit geometry and round
 strokes; the app supplies toolbar colours. All assets are bundled locally.
 
-Classic Paint icon revision (2026-11-15)
+Archived Paint artwork and retained command icons (2026-11-15)
 ReactOS Paint tool strip: copyright 2009 Benedikt Freisen and ReactOS contributors.
 Source: https://github.com/katahiromz/RPaint/tree/825ab84c3f23400c084f310e8b492b654ab064f6
 License: LGPL-2.0-or-later, full text in licenses/reactos-paint.LICENSE.txt.
@@ -87,6 +87,37 @@ Changes made by gsnv-paint on November 15, 2026.
 Visible attribution and download link: icon-credits.html (linked from Help).
 Editable PNGs, original source artwork, licenses and exact recipes:
 licenses/classic-paint-artwork.zip. Source artwork is independently replaceable.
+
+Illustrated Paint tools (2026-11-15)
+GIMP team; source authors include Jakub Steiner, Klaus Staedtler, Andreas Nilsson
+and Barak Itkin. Source: https://www.gimp.org/
+Pinned gimp-data commit: bb251717687ec37a622763c4fa003a3c28461796
+Theme notice: licenses/gimp-icons-COPYING.txt
+Original SVG metadata is retained and takes precedence over the collection notice:
+- selections, lasso, paintbrush, blur, smudge and text: CC BY-SA 2.0
+  https://creativecommons.org/licenses/by-sa/2.0/ (licenses/cc-by-sa-2.0.txt)
+- move, pencil, clone and gradient: CC BY-SA 4.0
+  https://creativecommons.org/licenses/by-sa/4.0/ (licenses/cc-by-sa-4.0.txt)
+- bucket: GPL 2.0 (licenses/gpl-2.0.txt).
+Modified artwork retains those respective licenses.
+
+KolourPaint: Nuno Pinheiro, Danny Allen, Clarence Dang and Kristof Borrey.
+Source: https://apps.kde.org/kolourpaint/
+Pinned commit: 0f527d5d105cd082427b3ca92ef42298edb29457
+BSD redistribution terms, icon copyright and project notice:
+licenses/kolourpaint-COPYING.txt. Original PNGs and editable SVGZs are retained.
+
+Font Awesome Free 6.7.2: copyright 2024 Fonticons, Inc.
+Source: https://fontawesome.com/
+Pinned commit: af620534bfc3c2d4cbefcfeec29603bbe7809e64
+Wand icon license: CC BY 4.0, https://creativecommons.org/licenses/by/4.0/
+Full text: licenses/cc-by-4.0.txt; original: licenses/fontawesome-6.7.2-LICENSE.txt.
+
+Changes by gsnv-paint: 24px rasterization, binary coverage, modest colour contrast,
+gold lasso and gold wand stars. No application code from these projects is used.
+Original sources, exact per-file licenses/hashes, modified editable PNGs and
+build scripts ship in licenses/classic-paint-artwork.zip. Attribution is available
+from Help at icon-credits.html. Artwork can be replaced independently.
 
 Audio MP3 encoder: @breezystack/lamejs 1.2.7, a JavaScript port of LAME
 Copyright the LAME project and Alex Zhukov; maintained fork by shijinyu.

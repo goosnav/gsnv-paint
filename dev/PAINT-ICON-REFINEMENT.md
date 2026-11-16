@@ -166,3 +166,62 @@ inspect actual toolbox screenshots. Physical Apple devices remain untested.
 
 Status: CONTRACTED; implementation covered by the current owner request and
 standing BATCH authorization. Previous artwork is owner-rejected.
+
+### Illustrated-tool verification
+
+The 19 toolbox tools now use native 24px, individually reviewed raster artwork:
+GIMP tool illustrations, KolourPaint's spray can / eraser / eyedropper / shapes,
+and a Font Awesome star-tipped wand. The gold lasso, dotted selection boundaries,
+black text A and shaded physical objects have distinct silhouettes. Stronger
+colour and hard coverage retain internal shading. All 16px common commands,
+Free Transform, button sizes, tool behavior and workspace icons are preserved.
+
+| ID | Result | Evidence |
+| --- | --- | --- |
+| PIR-01 | PASS: technical; owner visual acceptance pending | 19 distinct native 24px images; no partially transparent edge pixels or clipped outer margin; actual-size desktop and touch review |
+| PIR-02 | PASS | Original non-Paint catalog tests; Photo/Image round trip; workspace strip RGB pixels identical to previous desktop capture |
+| PIR-03 | PASS | All 19 tools activated at DPR1, DPR2 and 390px touch emulation; labels/shortcuts, pressed states and 32px/40px targets retained |
+| PIR-04 | PASS | Pinned source hashes, exact generator output, offline license/source archive, local credits and no external requests in glyph browser check |
+
+No failed IDs in this scoped revision. **Untested:** physical iPhone/iPad,
+macOS Safari, Windows, live hosted rollout and owner aesthetic acceptance.
+The broad application ledger remains 47 PASS / 0 FAIL / 355 UNTESTED; this icon
+revision does not establish full-suite consumer readiness.
+
+Commands and observed output (all final commands exit 0):
+
+- `node --import tsx --test src/shared/icons.test.ts src/shared/icons.vendor.test.ts`:
+  **23 passed, 0 failed, 0 skipped**. Before implementation the revised native-size
+  contract had two expected failures (16px instead of 24px).
+- `npm test`: **1,249 passed, 0 failed, 0 skipped** (42.6s).
+- `npm run build`: TypeScript and production build **PASS** (Vite 4.45s).
+  Existing large-chunk advisory remains; no errors.
+- `npx playwright test src/shared/paint-icons.browser.spec.ts src/shared/icons.browser.spec.ts src/shared/chrome.browser.spec.ts src/image/image-upgrade-visual.browser.spec.ts`:
+  **6 passed** (14.4s), installed desktop Chrome on Linux. Menu layering and
+  toolbar interaction regressions also pass.
+- Production Chrome smoke via Vite preview: **PASS** — all 19 native 24px images
+  decode, Brush activates, local credits load, no page errors.
+- `node vendor/paint-icons/build-illustrated.mjs --check`: **19 illustrated tools
+  verified: native 24px, hard coverage, preserved source shading.**
+- `node --import tsx vendor/paint-icons/build-classic.mjs --check`: **37 classic
+  icons verified**; retained command/archived artwork is unchanged.
+- `node vendor/paint-icons/generate.mjs --check`: **32 Fugue + 22 classic + 28
+  illustrated source hashes, 37 native bitmaps and 56 mappings verified.**
+- `python3 vendor/paint-icons/package-sources.py --check`: **Artwork source
+  archive verified: current and archived sources, licenses, recipes and builders.**
+- `npm run test:offline-build`: **4 passed, 0 failed, 0 skipped**.
+- `npm run test:spec`: **TRACE PASS / MAP PASS / LINK PASS**.
+- `npx wrangler deploy --dry-run --no-autoconfig`: **81 assets read; no bindings;
+  dry run exited successfully**. No actual deployment is claimed.
+- Module checker: **PASS: src/shared/icons.ts**.
+- Workspace strip comparison: no differing RGB pixels in `(528,3)-(1245,29)`
+  against the previous `paint-icon-classic/desktop.png` at 1280×720.
+
+Reviewed evidence: [desktop](evidence/paint-icon-illustrated/desktop-dpr1.png),
+[DPR2](evidence/paint-icon-illustrated/desktop-dpr2.png),
+[touch emulation](evidence/paint-icon-illustrated/touch-dpr2.png), and
+[production](evidence/paint-icon-illustrated/production.png).
+
+Tuning is confined to `vendor/paint-icons/illustrated.json` and its pinned source
+artwork; regenerate PNGs, catalog and source ZIP after changes. Runtime/public API
+and drawing logic are unchanged. Status: **GREEN / CANDIDATE_FOR_ACCEPTANCE**.

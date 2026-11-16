@@ -1,6 +1,47 @@
-# Classic Paint artwork — owner revision, 2026-11-15
+# Paint artwork — recognizable illustrated tools, 2026-11-15
 
-The owner rejected the previous thin, muted Fugue-first set. Paint now uses fuller
+The current toolbox replaces the owner-rejected 16px set with **19 native 24px
+illustrations**. GIMP supplies most tools; KolourPaint supplies the spray can,
+red block eraser, green eyedropper and geometric shapes; Font Awesome supplies
+the star-tipped wand. The lasso is gold to distinguish it from dotted selections.
+Common commands remain 16px, the Free Transform icon is unchanged, and all other
+workspaces retain their artwork. Button geometry and tool behavior are unchanged.
+
+`illustrated.json` pins each original source URL, commit, author, hash, per-file
+license and colour recipe. All originals are in `illustrated-sources/`, including
+KolourPaint's editable SVGZ files. The GIMP collection notice supplies CC BY-SA
+4.0 for otherwise unspecified Color artwork; **explicit per-file CC BY-SA 2.0
+and GPL 2.0 metadata takes precedence** and is retained for those derivatives.
+Full notices and texts ship locally. KolourPaint's project COPYING supplies BSD
+redistribution terms and the icon authors; Font Awesome icons use CC BY 4.0.
+No software implementation from these projects is used.
+
+```sh
+node vendor/paint-icons/build-illustrated.mjs
+node vendor/paint-icons/build-illustrated.mjs --check
+node vendor/paint-icons/generate.mjs
+node vendor/paint-icons/generate.mjs --check
+python3 vendor/paint-icons/package-sources.py
+python3 vendor/paint-icons/package-sources.py --check
+```
+
+The offline builder rasterizes vectors at 22px inside a one-pixel transparent
+margin, or centers native 22px PNGs without scaling them. Alpha below 112 becomes
+transparent; the rest becomes opaque. It applies each explicit colour recipe
+but **does not reduce the artist's shading to a shared palette**. Source shapes
+remain intact. Native 24px output is shown at 24 CSS pixels, avoiding the old
+uneven 1.5× stretch. Font Awesome's three existing star regions receive gold;
+the original wand geometry remains unchanged. The lasso receives a brown/gold
+luminance ramp. These are documented artwork modifications, not new authorship.
+
+`classic-paint-artwork.zip` contains current and archived artwork, editable
+sources, license notices, all recipes and generation scripts. PNGs can also be
+edited directly. `generate.mjs` records each image's native size for the shared
+accessible SVG wrapper. It needs no network or extra package at runtime.
+
+## Archived 16px revision
+
+The owner rejected the previous thin, muted Fugue-first set. That revision used fuller
 source silhouettes, a stronger 32-colour palette and binary coverage. Toolbox
 images have 16×16 source pixels displayed at 24 CSS pixels with nearest-neighbour
 sampling inside unchanged 32px desktop / 40px touch buttons. Common toolbar/menu

@@ -449,6 +449,32 @@ The header/workspace icons remain unchanged. Rejecting this artwork again calls
 for another concrete source/proportion review, not an assertion that tests prove
 it looks right. See the icon refinement checkpoint for screenshots and test scope.
 
+## D37a — illustrated tools with legible native pixels (2026-11-15)
+
+The owner rejected D37's artwork as incomprehensible. Replace only the 19 Paint
+tool images with 24px raster illustrations derived from GIMP's Color collection,
+KolourPaint and Font Awesome. Preserve tool behavior, button geometry, all common
+16px command artwork, Free Transform and the workspace switcher. The icon SHELL
+reads each generated bitmap's native dimension rather than assuming 16px.
+
+GIMP's collection notice specifies CC BY-SA 4.0, but several original SVGs retain
+CC BY-SA 2.0 or GPL 2.0 metadata; those explicit original licenses are preserved
+per file and for derivatives. KolourPaint's project COPYING provides BSD
+redistribution terms and the icon authors. Font Awesome artwork is CC BY 4.0.
+These licenses permit commercial distribution subject to their notice/source/
+share-alike terms. All preferred editable sources, modified PNGs, notices, full
+license texts, pinned commits, SHA-256s and recipes ship in the local artwork ZIP.
+The icon credits link each source and retain earlier asset attribution. The
+artwork is independently replaceable; no editor implementation code was imported.
+
+Rasterize at 24px with a transparent one-pixel margin and binary edge coverage,
+retaining artist shading and applying modest saturation/contrast. Tint the lasso
+gold and colour the wand's existing stars. Alternative: reuse the shared 32-colour
+palette and enlarge 16px art; rejected because it destroyed useful detail and
+made edges uneven at 1.5× on DPR1. Each source pixel now occupies one CSS pixel
+in the toolbox. Revisit a particular source if owner review finds it unclear;
+automated tests establish behavior/licensing integrity, not artistic acceptance.
+
 ## D38 — Audio processing and portable MP3 (2026-11-15)
 
 Ship a configurable Retro computer chain (low-pass, gentle linked compression,

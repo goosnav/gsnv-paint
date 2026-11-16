@@ -102,12 +102,12 @@ TEST: fake crash between writes, old generation, corruption/quota plus real brow
 
 ## S09 icons — SHELL — GREEN
 
-Purpose: Render local interface glyphs (original plus the owner-authorized MIT Paint subset, D30).
-IN: `{document:Document,name:string,label:string,size:number}`; name belongs to the supplied local glyph catalog, size 12–64 CSS px.
-OUT: `SVGElement` with correct viewbox, accessible labeling and local path data; no fetched imagery or Microsoft assets.
+Purpose: Render local interface glyphs and licensed illustrated Paint tools (D37a).
+IN: `{document:Document,name:string,label:string,size:number,theme?:'paint'}`; name belongs to the supplied local glyph catalog, size 12–64 CSS px.
+OUT: `SVGSVGElement` with correct native viewbox, accessible labeling and local paths or embedded PNG data (24px Paint tools, 16px common commands); no fetched imagery or Microsoft assets.
 RAISES: `RangeError` for unknown glyph/size.
 DEPS: none.
-TEST: catalog coverage, unique paths/accessibility, inspected original SVG sheet in Chromium. Requirement group AppShell.
+TEST: catalog/native-size coverage, unique artwork/accessibility, pinned sources/licenses, inspected glyph sheet and all 19 tools in Chromium DPR1/2 and touch emulation. Requirement group AppShell; PIR-01–04 evidence in PAINT-ICON-REFINEMENT.md. GREEN is technical status; owner visual acceptance remains pending.
 
 ## S10 chrome — SHELL — GREEN
 

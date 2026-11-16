@@ -2,14 +2,14 @@
  * PURPOSE    Render local interface artwork inside accessible SVG elements.
  * KIND       SHELL
  * CONTRACT   IN: IconRequest; document, catalog name, text label, size 12–64 CSS px, optional Paint theme.
- *            OUT: SVGSVGElement, accessible label; local paths or embedded 16px Paint PNG.
+ *            OUT: SVGSVGElement, accessible label; local paths or embedded native-size Paint PNG.
  *            RAISES: RangeError for unknown glyph or nonfinite/out-of-range size.
  * GUARANTEES No fetched imagery, Microsoft assets, markup injection or shared DOM nodes.
- * TUNING     Paint bitmaps: 16px source, 24px toolbox / 16px commands, nearest-neighbour.
+ * TUNING     Paint bitmaps: native 24px tools / 16px commands, nearest-neighbour.
  *            Other glyphs retain Tabler 2-unit or original 1.5-unit SVG strokes.
- * DECISIONS  D1: Paint uses classic-palette derivatives of ReactOS, Silk and complementary
- *            Fugue/Tabler artwork. Fuller source silhouettes replace the rejected thin set.
- *            Alternative: runtime package/CDN; pinned local paths keep offline behavior.
+ * DECISIONS  D1: Paint tools use illustrated GIMP/KolourPaint/Font Awesome derivatives,
+ *            preserving shading on a 24px grid. Alternative: 16px quantization; rejected
+ *            because it obscured objects. Revisit if: owner finds a tool unclear.
  *            Upstream originals, mapping, hashes and licenses live in vendor/paint-icons
  *            and vendor/tabler; other workspaces retain existing vector artwork.
  *            Existing workspace-specific original paths remain local.
@@ -20,7 +20,7 @@
  */
 
 import { tablerPaths } from './tabler-paths.ts';
-import { paintBitmaps } from './paint-bitmaps.ts';
+import { paintBitmaps, paintBitmapSizes } from './paint-bitmaps.ts';
 
 export type IconRequest = { document: Document; name: string; label: string; size: number; theme?: 'paint' };
 export const iconCatalog: readonly string[] = Object.freeze([
@@ -74,11 +74,12 @@ export function renderIcon({ document, name, label, size, theme }: IconRequest):
   const svg = document.createElementNS(SVG_NAMESPACE, 'svg');
   const bitmap = (name.startsWith('paint') || theme === 'paint') && Object.hasOwn(paintBitmaps, name) ? paintBitmaps[name] : undefined;
   if (bitmap) {
-    for (const [key, value] of Object.entries({ viewBox: '0 0 16 16', width: String(size), height: String(size),
+    const nativeSize = paintBitmapSizes[name]!;
+    for (const [key, value] of Object.entries({ viewBox: `0 0 ${nativeSize} ${nativeSize}`, width: String(size), height: String(size),
       role: 'img', 'aria-label': label, focusable: 'false', 'data-icon': name, 'data-icon-style': 'paint-bitmap' })) svg.setAttribute(key, value);
     const title = document.createElementNS(SVG_NAMESPACE, 'title'); title.textContent = label;
     const image = document.createElementNS(SVG_NAMESPACE, 'image');
-    for (const [key, value] of Object.entries({ href: bitmap, width: '16', height: '16',
+    for (const [key, value] of Object.entries({ href: bitmap, width: String(nativeSize), height: String(nativeSize),
       style: 'image-rendering:crisp-edges;image-rendering:pixelated' })) image.setAttribute(key, value);
     svg.append(title, image); return svg;
   }
