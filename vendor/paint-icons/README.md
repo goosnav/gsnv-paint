@@ -5,7 +5,12 @@
 Paint uses **19 native 24px tool icons and 18 native 16px command icons**, drawn
 as one original pixel-art set by Goosnav LLC. Familiar pencil, brush, bucket,
 selection and geometric symbols fit the application's Windows XP-style controls.
-Extended tools use the same line weight and restrained colour treatment.
+Extended tools use the same line weight and saturated colour accents.
+
+The colour revision increases saturation and brightness in the blue, yellow,
+orange, pink and green ramps. Neutral outlines and highlights retain their
+contrast. The Fill icon uses a simpler metal pail with one open rim, a visible
+handle and a connected blue paint stream and puddle.
 
 The artwork uses a shared 15-colour palette on an integer pixel grid, with binary
 alpha and a transparent outer margin. There is no antialiasing, drop shadow or

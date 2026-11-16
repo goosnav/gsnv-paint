@@ -349,3 +349,18 @@ images, and the source ZIP includes current and historical artwork.
 The evidence image is an artwork contact sheet, not a live application capture.
 The existing renderer/control implementation is unchanged. Final owner aesthetic
 acceptance and physical-device review remain separate from these checks.
+
+## Owner refinement — colour and Fill bucket (2026-11-16)
+
+The owner approved the overall style and requested more saturated colours and a
+clearer Fill bucket. The shared colour ramps now give 22 icons brighter blues,
+golden yellows, coral pinks and greens. Neutral outlines retain their contrast.
+Fill now shows one tapered metal pail, an open rim, a wire handle and a continuous
+blue pour into a puddle. The other 36 icons retain identical alpha masks.
+
+The native PNGs, embedded catalog, editable source ZIP and
+[review sheet](evidence/paint-icon-xp/contact-sheet.png) were regenerated.
+All **25 icon/source tests passed**, including palette, margins, native sizes,
+accessibility and reproducibility; **TypeScript and the production build passed**.
+Native-size and enlarged artwork review completed. Live-browser verification
+remains blocked by the previously recorded Chromium launch restriction.

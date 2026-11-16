@@ -1,5 +1,5 @@
 // Original Windows XP-style Paint toolbox: native 24px, fine pixel outlines,
-// transparent geometric tools and a restrained shared colour palette.
+// transparent geometric tools and saturated shared colour accents.
 // Copyright (c) 2026 Goosnav LLC. MIT; see XP-LICENSE.txt.
 import { C } from './xp-pixels.mjs';
 
@@ -72,13 +72,19 @@ export const toolIcons = {
     p.line(6,15,9,18,C.white); p.line(10,20,15,20,C.brown);
   },
   paintFill(p) {
-    // Tilted metal pail, open rim and a small blue spill.
-    p.poly([[4,8],[10,3],[18,11],[12,17],[8,17]],C.light,C.ink);
-    p.line(6,8,10,5,C.white); p.line(6,10,11,15,C.white);
-    p.line(12,4,15,3,C.ink); p.line(15,3,18,6,C.ink); p.line(18,6,17,10,C.ink);
-    p.poly([[12,10],[16,8],[19,11],[15,15]],C.white,C.ink);
-    p.line(16,11,19,13,C.blue); p.rect(18,14,2,4,C.blue);
-    p.poly([[18,17],[20,18],[21,21],[15,21],[16,19]],C.blue,C.ink); p.pixel(18,19,C.sky);
+    // Single tapered metal pail, with its wire handle behind the body.
+    p.poly([[5,10],[2,7],[2,4],[4,2],[7,2],[10,4]],undefined,C.ink);
+    p.line(4,3,7,3,C.light);
+    p.poly([[10,4],[18,11],[11,18],[8,17],[3,12],[3,10]],C.light,C.ink);
+    p.line(5,10,5,12,C.white); p.line(5,12,10,17,C.white);
+    p.line(7,14,10,17,C.gray);
+    // One narrow oval rim, viewed diagonally, with blue paint inside.
+    p.poly([[10,3],[12,3],[16,6],[19,10],[18,12],[16,11],[12,7],[10,5]],C.blue,C.ink);
+    p.line(11,4,15,7,C.sky); p.line(11,6,16,11,C.white);
+    // The pour connects the low lip directly to a rounded puddle.
+    p.poly([[18,10],[19,10],[21,13],[21,18],[22,20],[21,21],[15,21],[14,20],[16,19],[18,19],[19,16],[19,13],[17,12]],C.blue,C.ink);
+    p.line(19,12,20,14,C.sky); p.line(20,14,20,17,C.sky);
+    p.line(16,20,18,20,C.sky); p.pixel(18,11,C.blue);
   },
   paintGradient(p) {
     p.rect(3,5,18,14,C.ink); p.rect(4,6,4,12,C.ink); p.rect(8,6,4,12,C.gray);
