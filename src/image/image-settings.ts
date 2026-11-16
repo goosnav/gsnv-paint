@@ -2,7 +2,8 @@
  * PURPOSE    Describe transactional image settings dialogs.
  * KIND       SHELL
  * CONTRACT   imageNewDialog accepts DOM/foreground/Create callback; returns typed fields
- *            and a bounded miniature, initially white 800×600 Pixel art/full colour.
+ *            named presets, orientation swap and a bounded miniature, initially
+ *            white US Letter at 300 ppi (2550×3300), Pixel art/full colour.
  *            imagePolicyDialog accepts immutable policy/raster plus preview/commit/cancel
  *            callbacks; returns Rendering, colour-limit, dither, source and custom-swatch fields.
  *            Validated values are JSON; callbacks receive owned frozen PixelPolicy values.
@@ -25,6 +26,7 @@ import type { DialogSpec } from '../shared/dialog.ts';
 import { MAX_PIXELS, type Raster, type RGBA } from './raster-ops.ts';
 import { pixelPolicy, type PixelPolicy, type RGB } from './image-pixel-policy.ts';
 import { generatePalette, presetPalette } from './image-palette-core.ts';
+import { NEW_IMAGE_PRESETS, matchingNewImagePreset, newImagePresetValues } from './image-new-presets.ts';
 
 export type NewImageSettings = { width: number; height: number; fill: RGBA; policy: PixelPolicy };
 type Values = DialogSpec['initial'];
@@ -63,12 +65,26 @@ export function imageNewDialog({ document, colour, onCreate }: { document: Docum
   Object.assign(miniature.content.style, { height: '108px', display: 'grid', placeItems: 'center', background: 'var(--xp-workspace)', border: '1px solid var(--xp-shadow)' });
   Object.assign(canvas.style, { border: '1px solid var(--xp-dark)', background: 'repeating-conic-gradient(#fff 0 25%,#ddd 0 50%) 0 0 / 8px 8px' });
   const fill = document.createElement('div'); fill.style.width = '100%'; fill.style.height = '100%'; canvas.append(fill); miniature.content.append(canvas);
-  return { title: 'New image', confirmLabel: 'Create', description: 'Pixel art makes new text and shape edges hard. Smooth artwork keeps antialiasing. A colour limit restricts the final image; dithering applies only with a limit.', previewElement: miniature.root,
-    fields: [{ key: 'width', label: 'Width (px)', type: 'number', min: 1, max: MAX_PIXELS, step: 1 }, { key: 'height', label: 'Height (px)', type: 'number', min: 1, max: MAX_PIXELS, step: 1 },
+  return { title: 'New image', confirmLabel: 'Create', description: 'Choose a preset, then adjust the size and style. Pixel art keeps hard edges; Smooth keeps antialiasing. Colour limits and dithering affect the final image.', previewElement: miniature.root,
+    fields: [{ key: 'preset', label: 'Preset', type: 'select', layout: 'stacked', choices: [...NEW_IMAGE_PRESETS.map(preset => ({ value: preset.id, label: preset.label })), { value: 'custom', label: 'Custom settings' }] },
+      { key: 'width', label: 'Width (px)', type: 'number', min: 1, max: MAX_PIXELS, step: 1 },
+      { key: 'height', label: 'Height (px)', type: 'number', min: 1, max: MAX_PIXELS, step: 1, action: { label: 'Swap width and height', update(values) {
+        if (typeof values.width !== 'number' || typeof values.height !== 'number' || !Number.isFinite(values.width) || !Number.isFinite(values.height)) return {};
+        const swapped = { ...values, width: values.height!, height: values.width! };
+        return { width: swapped.width, height: swapped.height, preset: matchingNewImagePreset(swapped)?.id ?? 'custom' };
+      } } },
       { key: 'background', label: 'Background', type: 'select', choices: [{ value: 'white', label: 'White' }, { value: 'transparent', label: 'Transparent' }, { value: 'foreground', label: 'Foreground colour' }] }, ...fields()],
-    initial: { width: 800, height: 600, background: 'white', mode: 'pixel-art', colours: 'full', dither: 'none' },
+    initial: newImagePresetValues(NEW_IMAGE_PRESETS[0]!),
+    onChange(key, values) {
+      if (key === 'preset') {
+        const preset = NEW_IMAGE_PRESETS.find(preset => preset.id === values.preset);
+        return preset ? newImagePresetValues(preset) : {};
+      }
+      return { preset: matchingNewImagePreset(values)?.id ?? 'custom' };
+    },
     validate(values) {
       const { width, height } = values;
+      if (values.preset !== 'custom' && !NEW_IMAGE_PRESETS.some(preset => preset.id === values.preset)) return failure('Choose a listed preset or Custom settings.');
       if (typeof width !== 'number' || typeof height !== 'number' || !Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > MAX_PIXELS) return failure(`Use whole-pixel dimensions of at least 1; at most ${MAX_PIXELS.toLocaleString()} pixels in total.`);
       if (!['white', 'transparent', 'foreground'].includes(String(values.background))) return failure('Choose a canvas background.');
       try {
@@ -81,7 +97,10 @@ export function imageNewDialog({ document, colour, onCreate }: { document: Docum
       const settings = value as unknown as NewImageSettings, scale = Math.min(180 / settings.width, 88 / settings.height);
       canvas.style.width = `${Math.max(1, settings.width * scale)}px`; canvas.style.height = `${Math.max(1, settings.height * scale)}px`;
       fill.style.background = `rgba(${settings.fill[0]},${settings.fill[1]},${settings.fill[2]},${settings.fill[3] / 255})`;
-      miniature.caption.textContent = `${settings.width} × ${settings.height} px · ${settings.policy.mode === 'pixel-art' ? 'Pixel art' : 'Smooth artwork'} · ${settings.policy.palette ? `${settings.policy.palette.colours.length} colours + transparency` : 'Full colour'}`;
+      const preset = matchingNewImagePreset({ width: settings.width, height: settings.height, background: settings.fill[3] === 0 ? 'transparent' : settings.fill.every(channel => channel === 255) ? 'white' : 'foreground', mode: settings.policy.mode, colours: settings.policy.palette ? String(settings.policy.palette.colours.length) : 'full', dither: settings.policy.palette?.dither ?? 'none' });
+      const details = preset?.ppi ? `Print sizing: ${(settings.width / preset.ppi).toFixed(2).replace(/\.?0+$/, '')} × ${(settings.height / preset.ppi).toFixed(2).replace(/\.?0+$/, '')} in at ${preset.ppi} ppi.` : preset?.id === 'square-max' ? 'Maximum square within the canvas pixel limit.' : '';
+      miniature.caption.textContent = `${settings.width} × ${settings.height} px · ${settings.policy.mode === 'pixel-art' ? 'Pixel art' : 'Smooth artwork'} · ${settings.policy.palette ? `${settings.policy.palette.colours.length} colours + transparency` : 'Full colour'}${details ? `\n${details}` : ''}`;
+      miniature.caption.style.whiteSpace = 'pre-line';
     },
     commit(value) { const settings = value as unknown as NewImageSettings; onCreate({ width: settings.width, height: settings.height, fill: [...settings.fill], policy: pixelPolicy(settings.policy) }); }, cancel() {},
   };

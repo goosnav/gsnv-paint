@@ -69,6 +69,18 @@ test('S11 textarea Enter stays native through the actual global shortcut adapter
   unbind(); f.dom.window.close();
 });
 
+test('S11 select Enter stays native without creating a document; Ctrl+Enter confirms', () => {
+  const f = fixture(); f.open(); let bubbled = 0;
+  f.root.addEventListener('keydown', () => { bubbled++; });
+  const select = f.field('mode'); select.focus();
+  const enter = new f.dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+  select.dispatchEvent(enter);
+  assert.equal(enter.defaultPrevented, false); assert.equal(bubbled, 0);
+  assert.equal(f.commits.length, 0); assert.ok(f.root.querySelector('dialog'));
+  select.dispatchEvent(new f.dom.window.KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true, bubbles: true, cancelable: true }));
+  assert.equal(f.commits.length, 1); assert.equal(f.root.querySelector('dialog'), null); f.dom.window.close();
+});
+
 test('S11 golden modal renders typed fields and previews normalized initial values', () => {
   const f = fixture(); f.open();
   assert.deepEqual({ title: f.root.querySelector('dialog')?.getAttribute('aria-label'),
@@ -88,6 +100,68 @@ test('S11 valid edits preview typed normalized values without mutating the initi
   assert.deepEqual(f.previews.at(-1), { name: 'Changed', width: .25, visible: false, mode: 'stroke' });
   assert.deepEqual(f.spec.initial, { name: '  Plate  ', width: 40, visible: true, mode: 'fill' });
   const preview = f.previews.at(-1); f.button('OK').click(); assert.equal(f.commits[0], preview);
+});
+
+function linkedFixture() {
+  return fixture({
+    fields: [
+      { key: 'preset', label: 'Preset', type: 'select', layout: 'stacked', choices: [{ value: 'paper', label: 'Paper' }, { value: 'wide', label: 'Wide' }, { value: 'custom', label: 'Custom' }] },
+      { key: 'width', label: 'Width', type: 'number', min: 1, max: 4000, step: 1 },
+      { key: 'height', label: 'Height', type: 'number', min: 1, max: 4000, step: 1, action: { label: 'Swap width and height', update: values => Number.isFinite(values.width) && Number.isFinite(values.height) ? { width: values.height, height: values.width, preset: 'custom' } : {} } },
+      { key: 'transparent', label: 'Transparent', type: 'checkbox' },
+    ],
+    initial: { preset: 'paper', width: 2550, height: 3300, transparent: false },
+    onChange(key, values) {
+      assert.equal(Object.isFrozen(values), true);
+      if (key !== 'preset') return { preset: 'custom' };
+      return values.preset === 'paper' ? { width: 2550, height: 3300, transparent: false } : values.preset === 'wide' ? { width: 1920, height: 1080, transparent: true } : {};
+    },
+    validate: values => ({ ok: true, value: values }),
+  });
+}
+
+test('S11 linked presets update all fields before a single preview and preserve caller values', () => {
+  const f = linkedFixture(); Object.freeze(f.spec.initial); f.open();
+  assert.ok(f.field('preset').closest('.gc-dialog-field-stacked'));
+  const count = f.previews.length; f.input('preset', 'wide');
+  assert.deepEqual(f.previews.slice(count), [{ preset: 'wide', width: 1920, height: 1080, transparent: true }]);
+  assert.equal(f.field('width').value, '1920'); assert.equal(f.field('height').value, '1080');
+  assert.equal((f.field('transparent') as HTMLInputElement).checked, true);
+  assert.deepEqual(f.spec.initial, { preset: 'paper', width: 2550, height: 3300, transparent: false });
+  assert.equal(f.commits.length, 0); f.input('width', '640');
+  assert.equal(f.field('preset').value, 'custom');
+  f.button('OK').click(); assert.deepEqual(f.commits, [{ preset: 'custom', width: 640, height: 1080, transparent: true }]);
+  f.dom.window.close();
+});
+
+test('S11 choosing a preset repairs incomplete numeric fields before native validation', () => {
+  const f = linkedFixture(); f.open(); const count = f.previews.length;
+  f.input('width', ''); assert.equal(f.button('OK').disabled, true); assert.equal(f.previews.length, count);
+  assert.equal(f.field('preset').value, 'custom'); f.input('preset', 'wide');
+  assert.equal(f.button('OK').disabled, false); assert.equal(f.field('width').getAttribute('aria-invalid'), 'false');
+  assert.deepEqual(f.previews.at(-1), { preset: 'wide', width: 1920, height: 1080, transparent: true });
+  assert.equal(f.previews.length, count + 1); assert.equal(f.commits.length, 0);
+  f.button('Cancel').click(); f.dom.window.close();
+});
+
+test('S11 Enter on a field action changes values without committing, keeps focus and cancels cleanly', () => {
+  const f = linkedFixture(); f.open(); const action = f.button('Swap width and height'); action.focus(); f.key('Enter');
+  assert.deepEqual(f.previews.at(-1), { preset: 'custom', width: 3300, height: 2550, transparent: false });
+  assert.equal(f.commits.length, 0); assert.equal(f.document.activeElement, action); assert.ok(f.root.querySelector('dialog'));
+  f.key('Enter'); assert.deepEqual(f.previews.at(-1), { preset: 'custom', width: 2550, height: 3300, transparent: false });
+  f.key('Escape'); const count = f.previews.length; action.click();
+  assert.equal(f.previews.length, count); assert.equal(f.cancels, 1); assert.equal(f.commits.length, 0); assert.equal(f.document.activeElement, f.opener);
+  f.dom.window.close();
+});
+
+test('S11 invalid linked patches never half-apply or leave an old value committable', () => {
+  const f = linkedFixture(); f.open(); const errors: unknown[] = [];
+  f.dom.window.addEventListener('error', event => { event.preventDefault(); errors.push(event.error); });
+  f.spec.onChange = () => ({ width: 640, missing: 'bad field' });
+  f.input('preset', 'wide'); assert.equal(errors.length, 1); assert.ok(errors[0] instanceof TypeError);
+  assert.equal(f.field('width').value, '2550'); assert.equal(f.field('height').value, '3300');
+  assert.equal(f.button('OK').disabled, true); f.field('width').focus(); f.key('Enter'); assert.equal(f.commits.length, 0);
+  f.button('Cancel').click(); f.dom.window.close();
 });
 
 for (const value of ['', '-1', '101', 'Infinity']) test(`S11 invalid numeric input ${JSON.stringify(value)} blocks preview and commit`, () => {
@@ -152,6 +226,10 @@ test('S11 rejects malformed fields, initial values, bounds and callbacks before 
     { initial: { name: 'A', width: 40, visible: true, mode: 'missing' } },
     { initial: { name: 'A', width: 40, visible: true, mode: 'fill', extra: 3 } },
     { validate: null! }, { preview: null! }, { commit: null! }, { cancel: null! },
+    { onChange: null! },
+    { fields: [{ key: 'name', label: 'Name', type: 'text', layout: 'row' as never }], initial: { name: '' } },
+    { fields: [{ key: 'name', label: 'Name', type: 'text', action: { label: '', update: () => ({}) } }], initial: { name: '' } },
+    { fields: [{ key: 'name', label: 'Name', type: 'text', action: { label: 'Change', update: null! } }], initial: { name: '' } },
   ];
   for (const patch of patches) { const f = fixture(patch); assert.throws(f.open, TypeError); assert.equal(f.root.querySelector('dialog'), null); assert.equal(f.previews.length, 0); }
   const f = fixture(); assert.throws(() => showDialog({ root: null!, spec: f.spec }), TypeError);

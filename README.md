@@ -45,8 +45,10 @@ page numbers (off by default). Print CSS suppresses browser-added headings and
 footers where supported; if a title, date or address still appears, turn off
 **Print headers and footers** in the browser's print options.
 
-Paint now starts with a blank canvas. **New** asks for size, background and
-rendering; **Image → Pixel settings…** switches between hard Pixel art edges
+Paint starts with a blank canvas. **New / Ctrl+N** defaults to US Letter at
+300 ppi and offers named paper, comic, social, thumbnail, poster and maximum-square
+presets, plus **Swap width and height**. Each preset sets size, background and
+rendering; all remain editable. **Image → Pixel settings…** switches between hard Pixel art edges
 and Smooth artwork, with optional fixed palettes and dithering. Original layer
 colours remain editable; the palette constrains the finished image. **Filters →
 Down-pixel…** makes crisp blocks at a chosen resolution. **Automation** records

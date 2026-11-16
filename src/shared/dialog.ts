@@ -12,7 +12,9 @@
  *            Color fields use six-digit hex strings and native color controls.
  *            Select fields may asynchronously load/import choices; pending work blocks commit.
  *            Errors retain fields; dismissal ignores late results; caller choices stay immutable.
- *            Textarea Enter/Shift+Enter stays native and stops before app shortcuts;
+ *            Optional onChange and field actions return atomic typed field patches before
+ *            validation, including recovery from incomplete numbers. Actions never commit.
+ *            Textarea and select Enter stay native and stop before app shortcuts;
  *            Ctrl/Cmd+Enter confirms. IME composition remains native.
  *            RAISES: TypeError for invalid root, fields, initial values or callbacks.
  * GUARANTEES No domain decisions, initial-value mutation or implicit document commit.
@@ -33,10 +35,11 @@
 type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 type Values = Record<string, string | number | boolean>;
 type Choice = { value: string; label: string; notice?: string };
-type FieldBase = { key: string; label: string };
+type FieldBase = { key: string; label: string; layout?: 'stacked'; action?: { label: string; update(values: Readonly<Values>): Partial<Values> } };
 type Field = FieldBase & ({ type: 'text'; placeholder?: string; multiline?: boolean } | { type: 'number'; min?: number; max?: number; step?: number } | { type: 'checkbox' } | { type: 'color' } | { type: 'select'; choices: readonly Choice[]; loadChoices?: () => Promise<{ choices: Choice[]; notice?: string }>; importChoice?: { label: string; run(): Promise<Choice | null> } });
 export type DialogSpec = {
   title: string; previewElement?: HTMLElement; description?: string; confirmLabel?: string; fields: readonly Field[]; initial: Values;
+  onChange?(key: string, values: Readonly<Values>): Partial<Values>;
   validate(values: Values): { ok: true; value: Json } | { ok: false; error: { code: string; message: string } };
   preview(value: Json): void; commit(value: Json): void; cancel(): void;
 };
@@ -44,11 +47,12 @@ export type DialogRequest = { root: HTMLElement; spec: DialogSpec };
 function validateSpec(root: HTMLElement, spec: DialogSpec): void {
   if (!root?.ownerDocument || root.nodeType !== 1 || !root.isConnected || !spec || typeof spec.title !== 'string' ||
       (spec.description !== undefined && typeof spec.description !== 'string') || (spec.confirmLabel !== undefined && (typeof spec.confirmLabel !== 'string' || !spec.confirmLabel.trim())) ||
-      !Array.isArray(spec.fields) || !spec.initial || typeof spec.initial !== 'object' ||
+      !Array.isArray(spec.fields) || !spec.initial || typeof spec.initial !== 'object' || (spec.onChange !== undefined && typeof spec.onChange !== 'function') ||
       ![spec.validate, spec.preview, spec.commit, spec.cancel].every(callback => typeof callback === 'function')) throw new TypeError('A live dialog root, fields, values and callbacks are required.');
   const keys = new Set<string>();
   for (const field of spec.fields) {
     if (!field || typeof field.key !== 'string' || !field.key || keys.has(field.key) || typeof field.label !== 'string') throw new TypeError('Dialog fields need unique nonempty keys and labels.');
+    if ((field.layout !== undefined && field.layout !== 'stacked') || (field.action !== undefined && (!field.action || typeof field.action.label !== 'string' || !field.action.label.trim() || typeof field.action.update !== 'function'))) throw new TypeError('Invalid dialog field layout or action.');
     keys.add(field.key); const initial = spec.initial[field.key];
     if (!Object.hasOwn(spec.initial, field.key)) throw new TypeError(`Missing initial value: ${field.key}.`);
     if (field.type === 'number') {
@@ -85,9 +89,10 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   if (spec.description) { const description=document.createElement('p');description.className='gc-dialog-description';description.textContent=spec.description;body.append(description); }
   if (spec.previewElement) { if (spec.previewElement.ownerDocument !== document) throw new TypeError('Dialog preview must belong to the same document.'); body.append(spec.previewElement); }
   const controls = new Map<string, HTMLInputElement | HTMLSelectElement>();
-  const allowed = new Map<string, Set<string>>(), imports: HTMLButtonElement[] = [];
+  const allowed = new Map<string, Set<string>>(), imports: HTMLButtonElement[] = [], actions: HTMLButtonElement[] = [];
   for (const field of spec.fields) {
     const label = document.createElement('label'); label.className = 'gc-dialog-field';
+    if (field.layout === 'stacked') label.classList.add('gc-dialog-field-stacked');
     const caption = document.createElement('span'); caption.textContent = field.label; label.append(caption);
     const control = document.createElement(field.type === 'select' ? 'select' : field.type === 'text' && field.multiline ? 'textarea' : 'input') as HTMLInputElement | HTMLSelectElement; control.name = field.key;
     control.setAttribute('aria-label', field.label);
@@ -107,6 +112,19 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
       if (field.type === 'text' && field.placeholder !== undefined) input.placeholder = field.placeholder;
     }
     controls.set(field.key, control); label.append(control); body.append(label);
+    if (field.action) {
+      const action = document.createElement('div'); action.className = 'gc-dialog-field-action';
+      if (field.layout === 'stacked') action.classList.add('gc-dialog-field-action-stacked');
+      const button = document.createElement('button'); button.type = 'button'; button.textContent = field.action.label;
+      button.addEventListener('click', () => {
+        if (settled || pending) return;
+        const currentRevision = ++revision; valid = false; ok.disabled = true;
+        const patch = field.action!.update(Object.freeze(readValues()));
+        if (settled || currentRevision !== revision) return;
+        applyPatch(patch); refresh();
+      });
+      actions.push(button); action.append(button); body.append(action);
+    }
     if (field.type === 'select' && field.importChoice) {
       const action = document.createElement('div'); action.className = 'gc-dialog-field-action';
       const button = document.createElement('button'); button.type = 'button'; button.textContent = field.importChoice.label;
@@ -120,9 +138,35 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   const notice = document.createElement('p'); notice.className = 'gc-dialog-notice'; notice.setAttribute('role', 'status'); notice.hidden = true;
   buttons.append(ok, cancel); body.append(notice, error, buttons); dialog.append(title, body);
   let settled = false; let valid = false; let validated: Json = null; let revision = 0; let pending = 0;
-  const refresh = () => {
+  const readValues = (): Values => Object.fromEntries(spec.fields.map(field => {
+    const control = controls.get(field.key)!;
+    return [field.key, field.type === 'checkbox' ? (control as HTMLInputElement).checked : field.type === 'number' ? (control as HTMLInputElement).valueAsNumber : control.value];
+  }));
+  const applyPatch = (patch: Partial<Values>) => {
+    if (!patch || typeof patch !== 'object' || Array.isArray(patch)) throw new TypeError('Dialog updates must return a field patch.');
+    const entries = Object.entries(patch);
+    // Check the complete patch before touching any controls; bad patches cannot half-apply.
+    for (const [key, value] of entries) {
+      const field = spec.fields.find(candidate => candidate.key === key);
+      if (!field || (field.type === 'number' ? typeof value !== 'number' || !Number.isFinite(value) : field.type === 'checkbox' ? typeof value !== 'boolean' : typeof value !== 'string') ||
+          (field.type === 'color' && !/^#[0-9a-f]{6}$/i.test(String(value))) || (field.type === 'select' && !allowed.get(key)!.has(String(value)))) throw new TypeError(`Invalid dialog update: ${key}.`);
+    }
+    for (const [key, value] of entries) {
+      const control = controls.get(key)!;
+      if ((control as HTMLInputElement).type === 'checkbox') (control as HTMLInputElement).checked = value as boolean;
+      else control.value = String(value);
+    }
+  };
+  const refresh = (event?: Event) => {
     if (settled) return;
     const currentRevision = ++revision;
+    valid = false; ok.disabled = true;
+    const changed = spec.fields.find(field => controls.get(field.key) === event?.target);
+    if (changed && spec.onChange) {
+      const patch = spec.onChange(changed.key, Object.freeze(readValues()));
+      if (settled || currentRevision !== revision) return;
+      applyPatch(patch);
+    }
     const values: [string, string | number | boolean][] = []; let message = '';
     for (const field of spec.fields) {
       const control = controls.get(field.key)!; let value: string | number | boolean = control.value;
@@ -134,7 +178,6 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
       if (invalid && !message) message = `${field.label}: ${control.validationMessage || 'Enter a valid value.'}`;
       values.push([field.key, value]);
     }
-    valid = false; ok.disabled = true;
     if (pending) return;
     if (message) { error.textContent = message; return; }
     const result = spec.validate(Object.fromEntries(values));
@@ -148,7 +191,7 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   };
   const extend = async (field: Extract<Field, { type: 'select' }>, importing: boolean) => {
     if (settled || (importing && pending)) return;
-    pending++; valid = false; ok.disabled = true; imports.forEach(button => { button.disabled = true; });
+    pending++; valid = false; ok.disabled = true; [...imports, ...actions].forEach(button => { button.disabled = true; });
     notice.hidden = false; notice.textContent = importing ? 'Loading…' : 'Loading choices…';
     try {
       const result = importing ? await field.importChoice!.run() : await field.loadChoices!();
@@ -166,7 +209,7 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
     } catch (cause) { if (!settled) notice.textContent = cause instanceof Error ? cause.message : 'Could not load this choice.'; }
     finally {
       pending--;
-      if (!settled) { imports.forEach(button => { button.disabled = pending > 0; }); notice.hidden = !notice.textContent; refresh(); }
+      if (!settled) { [...imports, ...actions].forEach(button => { button.disabled = pending > 0; }); notice.hidden = !notice.textContent; refresh(); }
     }
   };
   const finish = (commit: boolean) => {
@@ -181,9 +224,9 @@ export function showDialog({ root, spec }: DialogRequest): { close(): void } {
   const keydown = (event: KeyboardEvent) => {
     if (event.defaultPrevented || event.isComposing) return;
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); dismiss(); }
-    // Leave the newline to the browser, but keep the app's confirm shortcut from consuming it.
-    else if (event.key === 'Enter' && (event.target as Element).tagName === 'TEXTAREA' && !(event.ctrlKey || event.metaKey)) event.stopPropagation();
-    else if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); event.target === cancel ? dismiss() : imports.includes(event.target as HTMLButtonElement) ? (event.target as HTMLButtonElement).click() : commit(); }
+    // Preserve native newlines and dropdown selection without triggering app confirmation.
+    else if (event.key === 'Enter' && ['TEXTAREA', 'SELECT'].includes((event.target as Element).tagName) && !(event.ctrlKey || event.metaKey)) event.stopPropagation();
+    else if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); event.target === cancel ? dismiss() : [...imports, ...actions].includes(event.target as HTMLButtonElement) ? (event.target as HTMLButtonElement).click() : commit(); }
     else if (event.key === 'Tab') {
       const focusable = [...dialog.querySelectorAll<HTMLInputElement | HTMLButtonElement>('input,select,textarea,button')].filter(control => !control.disabled);
       const first = focusable[0]!; const last = focusable.at(-1)!;

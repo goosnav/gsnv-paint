@@ -26,7 +26,7 @@ test('Paint text supports color preview, native newlines, cancel and graphical s
     Object.defineProperty(window, 'showOpenFilePicker', { value: undefined });
     Object.defineProperty(window, 'showSaveFilePicker', { value: undefined });
   });
-  await page.goto(server.resolvedUrls!.local[0]!); await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();
+  await page.goto(server.resolvedUrls!.local[0]!); await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByLabel('Preset',{exact:true}).selectOption('small-canvas'); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();
   const zoom = page.getByRole('spinbutton', { name: 'Zoom percent', exact: true }); await zoom.fill('100'); await zoom.press('Enter');
   const before = await history(page), dialog = await textDialog(page);
   const input = dialog.getByRole('textbox', { name: 'Text (Enter for a new line)' });
@@ -67,7 +67,7 @@ test('Paint text supports color preview, native newlines, cancel and graphical s
   await page.keyboard.press('Control+y'); expect(await pinkPixels(page, '.image-canvas')).toEqual(scaled);
   const downloading = page.waitForEvent('download'); await page.keyboard.press('Control+s'); const saved = await downloading;
   const buffer = await readFile((await saved.path())!); expect(nativeContainer({ op: 'decode', parts: [buffer] }).project.format).toBe('gsnv-image');
-  await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();
+  await page.locator('.gc-standard [data-command="file.new"]').click(); await page.getByRole('dialog',{name:'New image',exact:true}).getByLabel('Preset',{exact:true}).selectOption('small-canvas'); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();
   const choosing = page.waitForEvent('filechooser'); await page.locator('.gc-standard [data-command="file.open"]').click();
   await (await choosing).setFiles({ name: saved.suggestedFilename(), mimeType: 'application/octet-stream', buffer });
   await expect(page.locator('.image-layer')).toHaveCount(2); expect(await pinkPixels(page, '.image-canvas')).toEqual(scaled);

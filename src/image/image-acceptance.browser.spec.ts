@@ -64,7 +64,7 @@ test('IMG-103/104 production controls match the exact golden and preserve editab
       return ((x >= 4 && x <= 20 && y >= 4 && y <= 16) || (x >= 16 && x <= 28 && y >= 12 && y <= 20)) ? 255 : 0;
     });
     expect([...mask]).toEqual(expectedMask);
-    await page.keyboard.press('Control+n'); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click(); await expect(canvas).toHaveAttribute('width', '800');
+    await page.keyboard.press('Control+n'); await page.getByRole('dialog',{name:'New image',exact:true}).getByLabel('Preset',{exact:true}).selectOption('small-canvas'); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click(); await expect(canvas).toHaveAttribute('width', '800');
     await expect(page.locator('.gc-standard button[data-command="file.open"]')).toBeEnabled();
     expect(await page.evaluate(() => ({ inside: document.querySelector('#app')!.contains(document.activeElement), element: document.activeElement?.outerHTML.slice(0, 300) }))).toMatchObject({ inside: true });
     const choosing = page.waitForEvent('filechooser', { timeout: 5000 }); await page.keyboard.press('Control+o');
@@ -190,7 +190,7 @@ test('Image typed zoom stays centered, previews and cancels, matches Fit and ret
     const wheeled = (await canvas.boundingBox())!;
     near((anchor.x - wheeled.x) * 32 / wheeled.width, 8, 0.25); near((anchor.y - wheeled.y) * 24 / wheeled.height, 6, 0.25);
     await page.keyboard.press('f'); near((await canvas.boundingBox())!.width, 32);
-    await page.keyboard.press('Control+n'); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click(); await expect(canvas).toHaveAttribute('width', '800');
+    await page.keyboard.press('Control+n'); await page.getByRole('dialog',{name:'New image',exact:true}).getByLabel('Preset',{exact:true}).selectOption('small-canvas'); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click(); await expect(canvas).toHaveAttribute('width', '800');
     const fitted = (await canvas.boundingBox())!;
     await menu(page, 'View', 'View settings');
     near(Number(await dialog.getByLabel('Zoom (%)', { exact: true }).inputValue()), fitted.width / 8, 0.1);

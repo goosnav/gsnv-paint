@@ -11,9 +11,47 @@ feature now described here. Remaining consumer gaps are tracked separately in
 
 On a fresh start Image supplies an 800 × 600 white canvas in Pixel art mode with
 full colour. Recovery takes priority: an unresolved recoverable document is not
-replaced by a starter. **New / Ctrl+N** opens a previewed dialog for width, height,
-background (white, transparent or foreground colour), rendering, colour limit and
-dithering. Cancel keeps the current document.
+replaced by a starter. **New / Ctrl+N** opens a previewed dialog, defaulting to
+**US Letter at 300 ppi (2550 × 3300 pixels)** with a white background, hard edges
+and full colour. Choose a named preset or edit width, height, background (white,
+transparent or foreground colour), rendering, colour limit and dithering.
+**Swap width and height** switches portrait/landscape without changing the other
+settings. Cancel keeps the current document; changing presets only updates the
+miniature until Create is pressed.
+
+### New image presets
+
+| Preset | Pixels (width × height) | Starting style / print sizing |
+|---|---|---|
+| US Letter (default) | 2550 × 3300 | 8.5 × 11 in at 300 ppi; white, hard edges, full colour |
+| Comic page · 64 colours | 3300 × 2550 | 11 × 8.5 in at 300 ppi; transparent, hard edges, 64 colours, no dithering |
+| Half Letter | 1650 × 2550 | 5.5 × 8.5 in at 300 ppi; white, hard edges, full colour |
+| A4 | 2480 × 3508 | Approximately 210 × 297 mm at 300 ppi; white, hard edges, full colour |
+| Maximum square | 4096 × 4096 | Transparent, hard edges, full colour; existing 16,777,216-pixel limit |
+| Square post | 1080 × 1080 | 1:1; white, smooth edges, full colour |
+| Portrait post | 1080 × 1350 | 4:5; white, smooth edges, full colour |
+| Reels / Stories | 1080 × 1920 | 9:16; white, smooth edges, full colour |
+| YouTube thumbnail · HD | 1280 × 720 | 16:9; white, smooth edges, full colour |
+| YouTube thumbnail · 4K | 3840 × 2160 | 16:9; white, smooth edges, full colour |
+| Poster · 11 × 17 in | 2640 × 4080 | 240 ppi; white, hard edges, full colour |
+| Poster · 18 × 24 in | 2700 × 3600 | 150 ppi; white, hard edges, full colour |
+| Small canvas | 800 × 600 | White, hard edges, full colour |
+
+All presets start with no dithering. Selecting one applies its dimensions and
+drawing style together. Manual edits select **Custom settings** unless they match
+a named preset, including its opposite orientation. Selecting Custom preserves
+the current values. Selecting a different named preset applies its original
+orientation and settings. The preset selector uses a full-width row; controls
+stack on narrow screens, and the dialog scrolls when needed.
+
+Print sizes and ppi describe the intended pixel density. They do not add print
+resolution metadata to PNG exports or change the printer's scaling settings.
+Poster densities keep both sizes within the existing raster limit. No large
+canvas is allocated simply by browsing presets.
+
+The HD thumbnail is a compact working size; the 4K option follows
+[YouTube's current thumbnail resolution guidance](https://support.google.com/youtube/answer/72431)
+(checked 2026-11-16). These presets set canvas dimensions, not upload file sizes.
 
 **Open / Ctrl+O** accepts `.gsnv-image`, PNG, JPEG, WebP, GIF and BMP. Ordinary
 images open as a document; **Image → Import as layer…** adds an image instead.

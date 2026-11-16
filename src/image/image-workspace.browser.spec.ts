@@ -14,7 +14,7 @@ const history = (page: Page) => page.locator('[data-panel-history] li').allTextC
 const menu = async (page: Page, top: string, name: string) => { await page.getByRole('menuitem', { name: top, exact: true }).click(); await page.getByRole('menuitem', { name }).click(); };
 async function start(page: Page) {
   await page.getByRole('tab', { name: 'Image', exact: true }).click();
-  await expect(page.locator('.gc-standard button[data-command="file.new"]')).toBeEnabled(); await page.keyboard.press('Control+n'); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();
+  await expect(page.locator('.gc-standard button[data-command="file.new"]')).toBeEnabled(); await page.keyboard.press('Control+n'); await page.getByRole('dialog',{name:'New image',exact:true}).getByLabel('Preset',{exact:true}).selectOption('small-canvas'); await page.getByRole('dialog',{name:'New image',exact:true}).getByRole('button',{name:'Create',exact:true}).click();
   await expect(page.locator('.image-canvas')).toBeVisible(); const dims = await size(page), box = (await page.locator('.image-canvas').boundingBox())!;
   return { dims, p: (x: number, y: number) => at(box, dims, x, y) };
 }

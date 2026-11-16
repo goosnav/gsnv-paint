@@ -1,12 +1,17 @@
 @import "./theme.css";
 /* XP dialog: Luna title bar, beige body, default button with the heavier focus border. */
-.gc-dialog { box-sizing:border-box; width:380px; max-width:calc(100vw - 32px); max-height:calc(100vh - 32px); padding:0; border:1px solid var(--xp-title-edge); border-radius:7px 7px 0 0; background:var(--xp-face); color:var(--xp-text); box-shadow:4px 4px 0 #00000040; font:var(--text)/1.45 var(--font-ui); }
+.gc-dialog { box-sizing:border-box; width:380px; max-width:calc(100vw - 32px); max-height:calc(100vh - 32px); overflow:auto; padding:0; border:1px solid var(--xp-title-edge); border-radius:7px 7px 0 0; background:var(--xp-face); color:var(--xp-text); box-shadow:4px 4px 0 #00000040; font:var(--text)/1.45 var(--font-ui); }
 .gc-dialog::backdrop { background:transparent; }
 .gc-dialog * { box-sizing:border-box; }
 .gc-dialog-title { margin:0; padding:6px 8px; color:#fff; font-size:var(--text); font-weight:700; text-shadow:1px 1px 0 #0a1f7a; border-radius:6px 6px 0 0; background:linear-gradient(var(--xp-title-2),var(--xp-title-1) 18%,var(--xp-title-1) 72%,var(--xp-title-3)); overflow-wrap:anywhere; }
 .gc-dialog-body { padding:12px 12px 10px; border:3px solid var(--xp-title-1); border-top:0; }
 .gc-dialog-field { display:grid; grid-template-columns:120px minmax(0,1fr); gap:8px; align-items:center; margin-bottom:8px; }
+.gc-dialog-field-stacked { grid-template-columns:minmax(0,1fr); gap:4px; }
 .gc-dialog-field span { overflow-wrap:anywhere; }
+.gc-dialog-field > :is(input:not([type=checkbox]),select,textarea) { width:100%; min-width:0; }
+/* Native select painting clips the first pixel of zero-bearing bitmap glyphs.
+   Keep the native picker/keyboard behavior, with a padded text box and XP arrow. */
+.gc-dialog select { appearance:none; -webkit-appearance:none; min-height:25px; padding:3px 25px 3px 6px; line-height:17px; text-indent:1px; background:var(--xp-field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 7px center; }
 .gc-dialog input[type=checkbox] { width:13px; min-height:13px; margin:3px 0; accent-color:var(--xp-ok); }
 .gc-dialog input[type=color] { width:100%; height:28px; padding:2px; cursor:pointer; }
 .gc-dialog [aria-invalid=true] { border-color:var(--xp-error) !important; }
@@ -14,9 +19,14 @@
 .gc-dialog-buttons { display:flex; justify-content:flex-end; gap:6px; }
 .gc-dialog button { min-width:75px; }
 .gc-dialog-buttons button:first-child { box-shadow:inset 0 0 0 1px #3c7fb1,inset 0 -1px 0 #c9c4b5; }
-@media (forced-colors:active) { .gc-dialog,.gc-dialog button { border:1px solid ButtonText; } }
+@media (forced-colors:active) { .gc-dialog,.gc-dialog button { border:1px solid ButtonText; } .gc-dialog select { appearance:auto; -webkit-appearance:auto; background:Field; padding-right:6px; } }
 .gc-dialog textarea { width:100%; min-height:54px; resize:vertical; padding:2px 4px; font:inherit; color:var(--xp-text); background:var(--xp-field); border:1px solid var(--xp-field-edge); }
 .gc-dialog-description { margin:0 0 14px; max-width:46ch; line-height:1.5; }
 .gc-dialog-field-action { margin:-4px 0 10px 128px; }
+.gc-dialog-field-action-stacked { margin-left:0; }
 .gc-dialog-field-action button { width:100%; }
 .gc-dialog-notice { margin:0 0 8px; overflow-wrap:anywhere; }
+@media (max-width:480px) {
+  .gc-dialog-field { grid-template-columns:minmax(0,1fr); gap:4px; }
+  .gc-dialog-field-action { margin-left:0; }
+}

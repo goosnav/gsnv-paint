@@ -5,6 +5,7 @@ import { imageNewDialog, imagePolicyDialog } from './image-settings.ts';
 import { pixelPolicy, type PixelPolicy } from './image-pixel-policy.ts';
 import { MAX_PIXELS, type Raster } from './raster-ops.ts';
 import { showDialog, type DialogSpec } from '../shared/dialog.ts';
+import { NEW_IMAGE_PRESETS, newImagePresetValues } from './image-new-presets.ts';
 
 const raster = (): Raster => ({ width: 2, height: 1, data: new Uint8ClampedArray([255, 0, 0, 255, 0, 0, 255, 255]) });
 function valid(spec: DialogSpec, values: DialogSpec['initial'] = spec.initial) {
@@ -12,12 +13,26 @@ function valid(spec: DialogSpec, values: DialogSpec['initial'] = spec.initial) {
 }
 function context() { const dom = new JSDOM('<main></main>'); return { dom, document: dom.window.document }; }
 
-test('IMAGE-SETTINGS New defaults to white 800×600 Pixel art with full colour and a live miniature', () => {
+test('IMAGE-SETTINGS New defaults to white US Letter at 300 ppi with full colour and a live miniature', () => {
   const f = context(), created: unknown[] = [], spec = imageNewDialog({ document: f.document, colour: [18, 52, 86, 255], onCreate: value => created.push(value) });
   const value = valid(spec); spec.preview(value);
-  assert.deepEqual(value, { width: 800, height: 600, fill: [255, 255, 255, 255], policy: { mode: 'pixel-art', palette: null } });
-  assert.ok(spec.previewElement); assert.match(spec.previewElement.textContent!, /800 × 600/); assert.equal(created.length, 0);
+  assert.deepEqual(value, { width: 2550, height: 3300, fill: [255, 255, 255, 255], policy: { mode: 'pixel-art', palette: null } });
+  assert.ok(spec.previewElement); assert.match(spec.previewElement.textContent!, /2550 × 3300/); assert.match(spec.previewElement.textContent!, /8.5 × 11 in at 300 ppi/); assert.equal(created.length, 0);
   spec.commit(value); assert.deepEqual(created, [value]); f.dom.window.close();
+});
+
+test('IMAGE-SETTINGS every named preset validates within the pixel budget and the comic preset preserves the requested style', () => {
+  const f = context(), created: unknown[] = [], spec = imageNewDialog({ document: f.document, colour: [12, 34, 56, 255], onCreate: value => created.push(value) });
+  assert.equal(new Set(NEW_IMAGE_PRESETS.map(preset => preset.id)).size, NEW_IMAGE_PRESETS.length);
+  for (const preset of NEW_IMAGE_PRESETS) {
+    assert.ok(preset.width * preset.height <= MAX_PIXELS, preset.id);
+    const value = valid(spec, newImagePresetValues(preset));
+    spec.preview(value); assert.match(spec.previewElement.textContent!, new RegExp(`${preset.width} × ${preset.height}`));
+  }
+  const comic = NEW_IMAGE_PRESETS.find(preset => preset.id === 'comic-64')!;
+  const value = valid(spec, newImagePresetValues(comic)) as unknown as { width: number; height: number; fill: number[]; policy: PixelPolicy };
+  assert.deepEqual([value.width, value.height, value.fill, value.policy.mode, value.policy.palette?.colours.length, value.policy.palette?.dither], [3300, 2550, [0, 0, 0, 0], 'pixel-art', 64, 'none']);
+  assert.deepEqual(created, []); spec.commit(value as never); assert.deepEqual(created, [value]); f.dom.window.close();
 });
 
 test('IMAGE-SETTINGS New transparent/foreground backgrounds and strict palettes are explicit', () => {
@@ -32,7 +47,7 @@ test('IMAGE-SETTINGS New transparent/foreground backgrounds and strict palettes 
 
 test('IMAGE-SETTINGS New invalid sizes/choices never validate and exact pixel budget is accepted', () => {
   const f = context(), spec = imageNewDialog({ document: f.document, colour: [0, 0, 0, 255], onCreate() {} });
-  for (const patch of [{ width: 0 }, { height: -1 }, { width: 1.5 }, { width: Infinity }, { width: '8' }, { width: MAX_PIXELS, height: 2 }, { background: 'unknown' }, { mode: 'gaussian' }, { colours: '3' }, { dither: 'random' }]) {
+  for (const patch of [{ preset: 'unknown' }, { width: 0 }, { height: -1 }, { width: 1.5 }, { width: Infinity }, { width: '8' }, { width: MAX_PIXELS, height: 2 }, { background: 'unknown' }, { mode: 'gaussian' }, { colours: '3' }, { dither: 'random' }]) {
     const result = spec.validate({ ...spec.initial, ...patch }); assert.equal(result.ok, false, JSON.stringify(patch)); if (!result.ok) assert.ok(result.error.message);
   }
   valid(spec, { ...spec.initial, width: 4096, height: 4096 }); f.dom.window.close();
@@ -95,6 +110,37 @@ test('IMAGE-SETTINGS typed dialog mounts miniature, blocks invalid dimensions an
   width.value = '0'; width.dispatchEvent(new f.dom.window.Event('input', { bubbles: true })); assert.equal(create.disabled, true);
   width.value = '32'; width.dispatchEvent(new f.dom.window.Event('input', { bubbles: true })); assert.equal(create.disabled, false);
   const mode = root.querySelector<HTMLSelectElement>('[name=mode]')!; mode.value = 'smooth'; mode.dispatchEvent(new f.dom.window.Event('change', { bubbles: true }));
-  assert.match(spec.previewElement.textContent!, /32 × 600 px · Smooth artwork/); create.click();
-  assert.deepEqual(created, [{ width: 32, height: 600, fill: [255, 255, 255, 255], policy: { mode: 'smooth', palette: null } }]); f.dom.window.close();
+  assert.match(spec.previewElement.textContent!, /32 × 3300 px · Smooth artwork/); create.click();
+  assert.deepEqual(created, [{ width: 32, height: 3300, fill: [255, 255, 255, 255], policy: { mode: 'smooth', palette: null } }]); f.dom.window.close();
+});
+
+test('IMAGE-SETTINGS mounted presets and swap stay transactional, preserve style and repair incomplete sizes', () => {
+  const f = context(), root = f.document.querySelector('main')!;
+  Object.assign(f.dom.window.HTMLDialogElement.prototype, {
+    showModal(this: HTMLDialogElement) { this.setAttribute('open', ''); },
+    close(this: HTMLDialogElement) { this.removeAttribute('open'); this.dispatchEvent(new f.dom.window.Event('close')); },
+  });
+  const created: unknown[] = [], errors: unknown[] = [];
+  f.dom.window.addEventListener('error', event => { errors.push(event.error); });
+  const spec = imageNewDialog({ document: f.document, colour: [0, 0, 0, 255], onCreate: value => created.push(value) });
+  const handle = showDialog({ root, spec });
+  const field = (name: string) => root.querySelector<HTMLInputElement | HTMLSelectElement>(`[name="${name}"]`)!;
+  const change = (name: string, value: string) => {
+    field(name).value = value;
+    for (const type of ['input', 'change']) field(name).dispatchEvent(new f.dom.window.Event(type, { bubbles: true }));
+  };
+  const button = (label: string) => [...root.querySelectorAll('button')].find(button => button.textContent === label)!;
+  change('preset', 'comic-64');
+  assert.deepEqual(['width', 'height', 'background', 'mode', 'colours', 'dither'].map(name => field(name).value), ['3300', '2550', 'transparent', 'pixel-art', '64', 'none']);
+  button('Swap width and height').dispatchEvent(new f.dom.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+  assert.deepEqual(['preset', 'width', 'height', 'colours'].map(name => field(name).value), ['comic-64', '2550', '3300', '64']);
+  assert.deepEqual(created, []);
+  change('width', ''); button('Swap width and height').click();
+  assert.equal(button('Create').disabled, true); assert.equal(field('width').value, '');
+  change('preset', 'reels');
+  assert.deepEqual(['width', 'height', 'mode', 'colours'].map(name => field(name).value), ['1080', '1920', 'smooth', 'full']);
+  assert.equal(button('Create').disabled, false);
+  change('width', '1000'); assert.equal(field('preset').value, 'custom');
+  change('preset', 'custom'); assert.equal(field('width').value, '1000');
+  handle.close(); assert.deepEqual(created, []); assert.deepEqual(errors, []); f.dom.window.close();
 });
