@@ -225,3 +225,24 @@ Reviewed evidence: [desktop](evidence/paint-icon-illustrated/desktop-dpr1.png),
 Tuning is confined to `vendor/paint-icons/illustrated.json` and its pinned source
 artwork; regenerate PNGs, catalog and source ZIP after changes. Runtime/public API
 and drawing logic are unchanged. Status: **GREEN / CANDIDATE_FOR_ACCEPTANCE**.
+
+## Owner revision — black outlines (2026-11-15)
+
+The owner finds the illustrated objects too close to clip art and requests the
+defined black outlines of classic Paint. Previous technical checks are retained
+as historical evidence; they do not establish visual acceptance.
+
+Mode A delta: refine the existing S09 development-only artwork recipes. Keep
+PIR-01's native 24px objects, adding a crisp one-pixel dark contour and stronger
+material separation where useful. Preserve slender tools, readable interior
+colour, dashed selection gaps and the transparent outer margin. Review the
+actual-size toolbox, including desktop DPR1/2 and touch emulation. Do not apply
+an indiscriminate thick border that turns thin tools into solid blobs.
+
+PIR-02/03/04 are unchanged: workspace icons and common commands, interaction,
+accessible labels, pinned sources and offline distribution remain intact.
+The dependency map stays asset recipes -> PNG catalog -> S09 -> Paint chrome.
+No CORE, runtime API, new dependency or drawing change is needed. Existing
+catalog/provenance/browser testbenches cover the refinement, followed by build
+and offline checks. Owner aesthetic acceptance and physical-device smoke tests
+remain separate. Status: CONTRACTED; standing BATCH authorization applies.
