@@ -42,6 +42,24 @@ try {
         // Hard coverage supplies the pixel edge; retain the artist's internal shading.
         raster.data[i + 3] = 255;
       }
+      // Ink inside the original silhouette: a halo would make slender tools
+      // wider and close the gaps between the wand's stars and the lasso loop.
+      const coverage = raster.data.filter((_, i) => i % 4 === 3);
+      for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+        const pixel = y * size + x, i = pixel * 4;
+        if (!coverage[pixel]) continue;
+        const luminance = .2126 * raster.data[i] + .7152 * raster.data[i + 1] + .0722 * raster.data[i + 2];
+        if (recipe.ink === 'dashes' && luminance > 160) {
+          // GIMP's dashed selections alternate dark and white; remove only the
+          // white dashes so the button surface shows through their open gaps.
+          raster.data.fill(0, i, i + 4); continue;
+        }
+        const boundary = x === 0 || y === 0 || x === size - 1 || y === size - 1 ||
+          !coverage[pixel - 1] || !coverage[pixel + 1] || !coverage[pixel - size] || !coverage[pixel + size];
+        if (recipe.ink === 'solid' || recipe.ink === 'dashes' ||
+            recipe.ink === 'contour' && (boundary || luminance < (recipe.detailInkBelow ?? 0)))
+          raster.data.set([16, 16, 16], i);
+      }
       context.putImageData(raster, 0, 0);
       return canvas.toDataURL('image/png').split(',')[1];
     }, { data: `data:image/png;base64,${source.toString('base64')}`,
@@ -53,4 +71,4 @@ try {
     } else writeFileSync(target, bytes);
   }
 } finally { await browser.close(); }
-console.log(`${Object.keys(manifest.recipes).length} illustrated tools verified: native 24px, hard coverage, preserved source shading.`);
+console.log(`${Object.keys(manifest.recipes).length} illustrated tools verified: native 24px, hard coverage, black contours, original silhouettes.`);

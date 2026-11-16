@@ -1,5 +1,5 @@
 {
-  "revision": "illustrated-tools-2026-11-15",
+  "revision": "outlined-tools-2026-11-15",
   "size": 24,
   "padding": 1,
   "sources": [
@@ -205,19 +205,22 @@
       "source": "illustrated-sources/gimp/gimp-tool-move.svg",
       "saturation": 1.2,
       "contrast": 1.06,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour"
     },
     "paintSelect": {
       "source": "illustrated-sources/gimp/gimp-tool-rect-select.svg",
       "saturation": 1.2,
       "contrast": 1.06,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "dashes"
     },
     "paintEllipseSelect": {
       "source": "illustrated-sources/gimp/gimp-tool-ellipse-select.svg",
       "saturation": 1.2,
       "contrast": 1.06,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "dashes"
     },
     "paintLasso": {
       "source": "illustrated-sources/gimp/gimp-tool-free-select.svg",
@@ -227,98 +230,117 @@
       "tint": [
         "#50300c",
         "#ffe3a1"
-      ]
+      ],
+      "ink": "contour"
     },
     "paintPencil": {
       "source": "illustrated-sources/gimp/gimp-tool-pencil.svg",
       "saturation": 1.2,
       "contrast": 1.06,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour"
     },
     "paintBrush": {
       "source": "illustrated-sources/gimp/gimp-tool-paintbrush.svg",
       "saturation": 1.2,
       "contrast": 1.06,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour",
+      "detailInkBelow": 65
     },
     "paintClone": {
       "source": "illustrated-sources/gimp/gimp-tool-clone.svg",
       "saturation": 1.2,
       "contrast": 1.06,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour",
+      "detailInkBelow": 65
     },
     "paintBlur": {
       "source": "illustrated-sources/gimp/gimp-tool-blur.svg",
       "saturation": 1.2,
       "contrast": 1.06,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour"
     },
     "paintSmudge": {
       "source": "illustrated-sources/gimp/gimp-tool-smudge.svg",
       "saturation": 1.2,
       "contrast": 1.06,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour"
     },
     "paintFill": {
       "source": "illustrated-sources/gimp/gimp-tool-bucket-fill.svg",
       "saturation": 1.2,
       "contrast": 1.06,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour",
+      "detailInkBelow": 100
     },
     "paintGradient": {
       "source": "illustrated-sources/gimp/gimp-gradient-linear.svg",
       "saturation": 1.2,
       "contrast": 1.06,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour"
     },
     "paintText": {
       "source": "illustrated-sources/gimp/gimp-tool-text.svg",
       "saturation": 1.2,
       "contrast": 1.06,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour"
     },
     "paintAirbrush": {
       "source": "illustrated-sources/kolourpaint/22-actions-tool_spraycan.png",
       "saturation": 1.25,
       "contrast": 1.05,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour"
     },
     "paintEraser": {
       "source": "illustrated-sources/kolourpaint/22-actions-tool_eraser.png",
       "saturation": 1.25,
       "contrast": 1.05,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour"
     },
     "paintPicker": {
       "source": "illustrated-sources/kolourpaint/22-actions-tool_color_picker.png",
       "saturation": 1.25,
       "contrast": 1.05,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour"
     },
     "paintLine": {
       "source": "illustrated-sources/kolourpaint/22-actions-tool_line.png",
       "saturation": 1.25,
       "contrast": 1.05,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "solid"
     },
     "paintRectangle": {
       "source": "illustrated-sources/kolourpaint/22-actions-tool_rectangle.png",
       "saturation": 1.25,
       "contrast": 1.05,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour"
     },
     "paintEllipse": {
       "source": "illustrated-sources/kolourpaint/22-actions-tool_ellipse.png",
       "saturation": 1.25,
       "contrast": 1.05,
-      "alphaCutoff": 112
+      "alphaCutoff": 112,
+      "ink": "contour"
     },
     "paintWand": {
       "source": "illustrated-sources/fontawesome/wand-magic-sparkles.svg",
       "saturation": 1,
       "contrast": 1,
       "alphaCutoff": 112,
-      "wandColours": true
+      "wandColours": true,
+      "ink": "contour"
     }
   }
 }

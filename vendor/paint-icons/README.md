@@ -1,9 +1,11 @@
-# Paint artwork — recognizable illustrated tools, 2026-11-15
+# Paint artwork — defined black outlines, 2026-11-15
 
 The current toolbox replaces the owner-rejected 16px set with **19 native 24px
 illustrations**. GIMP supplies most tools; KolourPaint supplies the spray can,
 red block eraser, green eyedropper and geometric shapes; Font Awesome supplies
 the star-tipped wand. The lasso is gold to distinguish it from dotted selections.
+Following owner feedback, each object now has a one-pixel near-black contour
+inside its silhouette. This replaces pale edges without widening slender tools.
 Common commands remain 16px, the Free Transform icon is unchanged, and all other
 workspaces retain their artwork. Button geometry and tool behavior are unchanged.
 
@@ -33,6 +35,16 @@ remain intact. Native 24px output is shown at 24 CSS pixels, avoiding the old
 uneven 1.5× stretch. Font Awesome's three existing star regions receive gold;
 the original wand geometry remains unchanged. The lasso receives a brown/gold
 luminance ramp. These are documented artwork modifications, not new authorship.
+
+The final ink pass uses `#101010` on occupied pixels that touch transparency on
+one of their four sides, including interior holes. It does not expand silhouettes
+or add shadows. Selected existing dark detail in the brush, stamp and bucket is
+also inked, using the per-tool luminance threshold in `illustrated.json`. The line
+is solid ink. Selection symbols map dark pixels to ink and remove white dashes
+(luminance above 160), preserving open gaps. Colour and highlights inside the
+physical tools remain; no shared colour quantizer is introduced. Inspect the
+actual-size toolbox after regenerating: a passing contour check cannot judge
+whether an object looks good.
 
 `classic-paint-artwork.zip` contains current and archived artwork, editable
 sources, license notices, all recipes and generation scripts. PNGs can also be

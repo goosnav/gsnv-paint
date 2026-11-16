@@ -46,11 +46,11 @@ test('PIR-01/02/03/04 native Paint icons remain clear, selectable and local at D
   }
 });
 
-test('PIR-01 illustrated Paint artwork keeps hard pixel coverage and a clear margin without clipping', async ({ page }) => {
+test('PIR-01 Paint artwork keeps dark outlines, hard coverage and a clear margin without clipping', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.gc-palette image')).toHaveCount(19);
   const result = await page.locator('.gc-palette image').evaluateAll(async images => {
-    let partialAlpha = 0, clippedPixels = 0; const occupied: number[] = [];
+    let partialAlpha = 0, clippedPixels = 0, paleOutlinePixels = 0; const occupied: number[] = [];
     for (const image of images) {
       const decoded = new Image(); decoded.src = image.getAttribute('href')!; await decoded.decode();
       const canvas = document.createElement('canvas'); canvas.width = canvas.height = 24;
@@ -62,13 +62,17 @@ test('PIR-01 illustrated Paint artwork keeps hard pixel coverage and a clear mar
         pixels++;
         const x = i / 4 % 24, y = Math.floor(i / 4 / 24);
         if (x === 0 || y === 0 || x === 23 || y === 23) clippedPixels++;
+        const hasPixel = (x: number, y: number) => x >= 0 && y >= 0 && x < 24 && y < 24 && data[(y * 24 + x) * 4 + 3]! > 0;
+        const edge = !hasPixel(x - 1, y) || !hasPixel(x + 1, y) || !hasPixel(x, y - 1) || !hasPixel(x, y + 1);
+        if (edge && Math.max(data[i]!, data[i + 1]!, data[i + 2]!) > 32) paleOutlinePixels++;
       }
       occupied.push(pixels);
     }
-    return { partialAlpha, clippedPixels, occupied };
+    return { partialAlpha, clippedPixels, paleOutlinePixels, occupied };
   });
   expect(result.partialAlpha).toBe(0);
   expect(result.clippedPixels).toBe(0);
+  expect(result.paleOutlinePixels).toBe(0);
   expect(result.occupied).toHaveLength(19);
   for (const pixels of result.occupied) expect(pixels).toBeGreaterThan(30);
 });

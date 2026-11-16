@@ -114,7 +114,9 @@ Wand icon license: CC BY 4.0, https://creativecommons.org/licenses/by/4.0/
 Full text: licenses/cc-by-4.0.txt; original: licenses/fontawesome-6.7.2-LICENSE.txt.
 
 Changes by gsnv-paint: 24px rasterization, binary coverage, modest colour contrast,
-gold lasso and gold wand stars. No application code from these projects is used.
+gold lasso and gold wand stars, one-pixel black contours inside the silhouettes,
+reinforced dark details and transparent gaps between selection dashes.
+No application code from these projects is used.
 Original sources, exact per-file licenses/hashes, modified editable PNGs and
 build scripts ship in licenses/classic-paint-artwork.zip. Attribution is available
 from Help at icon-credits.html. Artwork can be replaced independently.

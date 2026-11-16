@@ -246,3 +246,57 @@ No CORE, runtime API, new dependency or drawing change is needed. Existing
 catalog/provenance/browser testbenches cover the refinement, followed by build
 and offline checks. Owner aesthetic acceptance and physical-device smoke tests
 remain separate. Status: CONTRACTED; standing BATCH authorization applies.
+
+### Outline revision verification
+
+The 19 native 24px tools now have crisp near-black edges. Contours stay inside
+their original silhouettes, with stronger existing dark detail on the brush,
+stamp and bucket. Selection dashes retain transparent gaps. Following the
+owner's follow-up, **the text A keeps its original interior gradient and bevel
+detail**; it is not converted to a solid black glyph. Colours and useful shading
+remain inside the outlined objects. No runtime logic or controls changed.
+
+| ID | Result | Evidence |
+| --- | --- | --- |
+| PIR-01 | PASS: technical; final visual acceptance pending | All 19 decoded images have hard coverage, dark boundary pixels and an unclipped margin; native-size inspection at DPR1/2 and touch size; A shading retained |
+| PIR-02 | PASS | Non-Paint renderer/catalog checks; workspace strip RGB-identical to the previous desktop capture; common command artwork unchanged |
+| PIR-03 | PASS | All 19 tools activate with their existing labels, shortcuts, pressed states and 32px/40px targets; menus and Help remain reachable |
+| PIR-04 | PASS | Pinned original hashes, reproducible PNG/catalog/archive, local credits and source distribution |
+
+No failing IDs remain in this scoped revision. **Untested:** physical iPhone /
+iPad, macOS Safari, Windows and live hosted rollout. The application-wide ledger
+is still 47 PASS / 0 FAIL / 355 UNTESTED; it is not a readiness claim for every
+workspace. Full application unit tests were not rerun for this artwork-only
+change; the affected icon tests and shared-chrome/browser checks were executed.
+
+Final commands and output:
+
+- `node --import tsx --test src/shared/icons.test.ts src/shared/icons.vendor.test.ts`:
+  **23 passed, 0 failed, 0 skipped** (3.6s).
+- `npx playwright test src/shared/paint-icons.browser.spec.ts src/shared/icons.browser.spec.ts src/shared/chrome.browser.spec.ts src/image/image-upgrade-visual.browser.spec.ts`:
+  **6 passed** (14.7s), installed Chrome on Linux. The first concurrent run had
+  5 passes and one production-preview HTTP failure while the build replaced
+  `dist`. Re-running against the completed, stable build passed all six; no app
+  code change or skipped test was used to resolve that test-ordering error.
+- `npm run build`: TypeScript and Vite production build **PASS** (Vite 1.79s).
+  Existing kernel `node:module` browser-externalization and large-chunk advisories
+  remain; no build errors.
+- `npm run test:offline-build`: **4 passed, 0 failed, 0 skipped**.
+- `npm run test:spec`: **TRACE PASS / MAP PASS / LINK PASS**.
+- `node vendor/paint-icons/build-illustrated.mjs --check`: **19 illustrated tools
+  verified: native 24px, hard coverage, black contours, original silhouettes.**
+- `node vendor/paint-icons/generate.mjs --check`: **32 Fugue + 22 classic + 28
+  illustrated source hashes, 37 native bitmaps and 56 mappings verified.**
+- `python3 vendor/paint-icons/package-sources.py --check`: **Artwork source
+  archive verified: current and archived sources, licenses, recipes and builders.**
+- `npx wrangler deploy --dry-run --no-autoconfig`: **81 assets read, no bindings,
+  dry run exited successfully**. This is not an actual Cloudflare deployment.
+- Workspace strip comparison: **identical RGB pixels**, `(528,3)-(1245,29)`
+  against `paint-icon-illustrated/desktop-dpr1.png`.
+
+Reviewed evidence: [desktop](evidence/paint-icon-outlines/desktop-dpr1.png),
+[DPR2](evidence/paint-icon-outlines/desktop-dpr2.png),
+[touch emulation](evidence/paint-icon-outlines/touch-dpr2.png),
+[production](evidence/paint-icon-outlines/production.png).
+
+S09 status: **GREEN / CANDIDATE_FOR_ACCEPTANCE**.

@@ -107,7 +107,7 @@ IN: `{document:Document,name:string,label:string,size:number,theme?:'paint'}`; n
 OUT: `SVGSVGElement` with correct native viewbox, accessible labeling and local paths or embedded PNG data (24px Paint tools, 16px common commands); no fetched imagery or Microsoft assets.
 RAISES: `RangeError` for unknown glyph/size.
 DEPS: none.
-TEST: catalog/native-size coverage, unique artwork/accessibility, pinned sources/licenses, inspected glyph sheet and all 19 tools in Chromium DPR1/2 and touch emulation. Requirement group AppShell; PIR-01–04 evidence in PAINT-ICON-REFINEMENT.md. GREEN is technical status; owner visual acceptance remains pending.
+TEST: catalog/native-size coverage, unique artwork/accessibility, dark contours with hard coverage and unclipped margins, pinned sources/licenses, inspected glyph sheet and all 19 tools in Chromium DPR1/2 and touch emulation. Requirement group AppShell; PIR-01–04 evidence in PAINT-ICON-REFINEMENT.md. GREEN is technical status; owner visual acceptance remains pending.
 
 ## S10 chrome — SHELL — GREEN
 

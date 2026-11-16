@@ -475,6 +475,13 @@ made edges uneven at 1.5× on DPR1. Each source pixel now occupies one CSS pixel
 in the toolbox. Revisit a particular source if owner review finds it unclear;
 automated tests establish behavior/licensing integrity, not artistic acceptance.
 
+Owner outline revision: use one-pixel near-black inner contours and selectively
+reinforce existing dark details. An outside halo was rejected during native-size
+comparison because it widened slender tools and closed small gaps. Preserve
+interior colours and the source silhouette; make selection gaps transparent and
+the line solid ink. Runtime APIs, source originals and other icon families stay
+unchanged. The recipe and modified artwork remain in the same source archive.
+
 ## D38 — Audio processing and portable MP3 (2026-11-15)
 
 Ship a configurable Retro computer chain (low-pass, gentle linked compression,
