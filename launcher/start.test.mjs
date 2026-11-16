@@ -7,8 +7,8 @@ import { fileURLToPath } from 'node:url';
 const start = fileURLToPath(new URL('./start.mjs', import.meta.url));
 const port = 24174; // Not the user's port: a copy of the app they left running must not satisfy this test.
 const env = { ...process.env, GSNV_PAINT_PORT: String(port), GSNV_PAINT_NO_OPEN: '1' };
-function launch() {
-  const child = spawn(process.execPath, [start], { env, stdio: ['ignore', 'pipe', 'inherit'] });
+function launch(args = []) {
+  const child = spawn(process.execPath, [start, ...args], { env, stdio: ['ignore', 'pipe', 'inherit'] });
   let output = ''; child.stdout.on('data', chunk => { output += chunk; });
   return { child, output: () => output, exited: new Promise(resolve => child.on('exit', resolve)) };
 }
@@ -41,6 +41,9 @@ try {
   const foreignHost = await new Promise((resolve, reject) => get({ host: '127.0.0.1', port, path: '/', headers: { host: 'example.com' } }, response => { response.resume(); resolve(response.statusCode); }).on('error', reject));
   assert.equal(foreignHost, 403, 'A foreign Host header must be refused.');
 
+  const diagnostic = launch(['--diagnose']);
+  assert.equal(await diagnostic.exited, 0, 'The diagnostic must recognize the live server.');
+  assert.match(diagnostic.output(), /\[DIAGNOSE\].*responds as gsnv-paint: yes/);
   const second = launch();
   assert.equal(await second.exited, 0, 'A second launch exits cleanly.');
   assert.match(second.output(), /already running/);
