@@ -131,3 +131,38 @@ ship in `public/licenses/classic-paint-artwork.zip`, linked from Help credits.
 The ReactOS-derived artwork remains LGPL-2.0-or-later; independent app logic is
 unchanged. Untested: physical iPhone/iPad, macOS Safari, Windows and hosted rollout.
 **GREEN for technical checks; owner visual acceptance remains pending.**
+
+## Owner revision — recognizable tool illustrations
+
+The owner rejected the 16px quantized set as incomprehensible. Its technical
+checks remain historical evidence, not visual acceptance. Direction: classic
+desktop painting tools, illustrated, vivid and immediately recognizable. Avoid
+abstract outlines, oversized rounded silhouettes and decorative pixel noise.
+
+Mode A delta to the existing `shared/icons` SHELL brick (2026-11-15):
+
+- **PIR-01:** Replace the Paint toolbox artwork with individually reviewed tool
+  illustrations on a native 24px grid, displayed at 24px. Retain object details
+  and useful shading instead of crushing every image into the previous shared
+  32-colour palette. Physical tools have distinct familiar silhouettes; shapes
+  remain simple, and selections have dashed boundaries. Review every tool at
+  actual size. Owner aesthetic acceptance is separate from automated checks.
+- **PIR-02:** The 16px common command artwork, workspace switcher and other
+  workspaces remain unchanged. The shared renderer must support native 16px and
+  24px bitmap dimensions without changing its public API.
+- **PIR-03:** Preserve all names, tooltips/shortcuts, command IDs, 32px desktop /
+  40px touch targets, selected state and keyboard behavior. No drawing behavior
+  or image-rendering setting changes.
+- **PIR-04:** Use attributed, pinned open artwork and ship its source, licenses
+  and deterministic generation recipe locally. No runtime asset fetches.
+
+Map: development-only asset recipes -> generated local PNG catalog -> existing
+`shared/icons` -> existing Paint chrome. No new runtime module or dependency.
+The image CORE and workspace feature modules remain unchanged. Existing catalog,
+provenance and browser testbenches will be updated for the native dimensions and
+source contract; retain isolation/accessibility assertions. Verify typecheck,
+build, offline assets, Chrome desktop DPR1/2 and touch emulation, and visually
+inspect actual toolbox screenshots. Physical Apple devices remain untested.
+
+Status: CONTRACTED; implementation covered by the current owner request and
+standing BATCH authorization. Previous artwork is owner-rejected.
