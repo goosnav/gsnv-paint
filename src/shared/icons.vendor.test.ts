@@ -3,10 +3,12 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { inflateSync } from 'node:zlib';
 import test from 'node:test';
 import { JSDOM } from 'jsdom';
 import { iconCatalog, renderIcon } from './icons.ts';
 import { tablerPaths } from './tabler-paths.ts';
+import { paintBitmaps, paintBitmapSizes } from './paint-bitmaps.ts';
 
 const root = new URL('../../', import.meta.url);
 const vendor = new URL('vendor/tabler/', root);
@@ -138,4 +140,80 @@ test('PIR-04 illustrated tools retain pinned artist sources, per-file licenses a
     assert.equal(readFileSync(new URL(`public/licenses/${name}`, root), 'utf8'), readFileSync(new URL(`illustrated-sources/${name}`, directory), 'utf8'));
   const credits = readFileSync(new URL('public/icon-credits.html', root), 'utf8');
   for (const name of ['GIMP', 'KolourPaint', 'Jakub Steiner', 'Font Awesome']) assert.ok(credits.includes(name), name);
+});
+
+test('PIR-04 active XP-style artwork is reproducible with its editable sources and MIT notice shipped locally', () => {
+  const directory = new URL('vendor/paint-icons/', root);
+  const manifest = JSON.parse(readFileSync(new URL('xp.json', directory), 'utf8')) as {
+    license: string; style: string; sources: string[]; nativeSizes: { tools: number; commands: number };
+  };
+  assert.equal(manifest.license, 'MIT');
+  assert.equal(manifest.style, 'Windows XP-style');
+  assert.deepEqual(manifest.nativeSizes, { tools: 24, commands: 16 });
+  const license = readFileSync(new URL('XP-LICENSE.txt', directory), 'utf8');
+  assert.match(license, /^MIT License/);
+  assert.match(license, /The above copyright notice and this permission notice shall be included/);
+  assert.equal(readFileSync(new URL('public/licenses/paint-xp.LICENSE.txt', root), 'utf8'), license);
+  const archive = readFileSync(new URL('public/licenses/classic-paint-artwork.zip', root));
+  for (const source of ['xp-pixels.mjs', 'xp-tools.mjs', 'xp-commands.mjs', 'build-xp.mjs', 'XP-LICENSE.txt']) {
+    assert.ok(manifest.sources.includes(source), source);
+    assert.ok(archive.includes(Buffer.from(`paint-icons/${source}`)), source);
+  }
+  const active = JSON.parse(readFileSync(new URL('provenance.json', directory), 'utf8')) as { glyphs: Record<string, string> };
+  const files = new Set(Object.values(active.glyphs));
+  assert.equal(files.size, 37);
+  for (const file of files) {
+    assert.match(file, /^xp\/[a-zA-Z]+\.png$/);
+    assert.ok(archive.includes(Buffer.from(`paint-icons/${file}`)), file);
+  }
+  const output = execFileSync(process.execPath, ['vendor/paint-icons/build-xp.mjs', '--check'], { cwd: fileURLToPath(root), encoding: 'utf8' });
+  assert.match(output, /37 Windows XP-style icons verified: native pixels, shared palette, transparent margins/);
+  const packaged = execFileSync('python3', ['vendor/paint-icons/package-sources.py', '--check'], { cwd: fileURLToPath(root), encoding: 'utf8' });
+  assert.match(packaged, /Artwork source archive verified/);
+  const credits = readFileSync(new URL('public/icon-credits.html', root), 'utf8');
+  assert.match(credits, /Windows XP/);
+  assert.match(credits, /paint-xp\.LICENSE\.txt/);
+});
+
+test('PIR-01 active XP artwork decodes to distinct native pixels with the shared palette and unclipped margins', () => {
+  const manifest = JSON.parse(readFileSync(new URL('vendor/paint-icons/xp.json', root), 'utf8')) as { palette: Record<string, string> };
+  const palette = new Set(Object.values(manifest.palette).map(hex => hex.toLowerCase()));
+  const unique = new Map<string, string>();
+  for (const [name, uri] of Object.entries(paintBitmaps)) if (!unique.has(uri)) unique.set(uri, name);
+  assert.equal(unique.size, 37, 'Each tool or command needs distinct artwork; aliases may share it.');
+  let tools = 0, commands = 0;
+  for (const [uri, name] of unique) {
+    const png = Buffer.from(uri.split(',')[1]!, 'base64');
+    assert.deepEqual(png.subarray(0, 8), Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), name);
+    const width = png.readUInt32BE(16), height = png.readUInt32BE(20);
+    assert.equal(width, paintBitmapSizes[name], name);
+    assert.equal(height, width, name);
+    assert.ok(width === 16 || width === 24, name);
+    if (width === 24) tools++; else commands++;
+    assert.deepEqual([...png.subarray(24, 29)], [8, 6, 0, 0, 0], `${name}: RGBA8, standard compression, no interlace`);
+    const chunks: Buffer[] = [];
+    for (let offset = 8; offset < png.length;) {
+      const length = png.readUInt32BE(offset);
+      const type = png.toString('ascii', offset + 4, offset + 8);
+      if (type === 'IDAT') chunks.push(png.subarray(offset + 8, offset + 8 + length));
+      offset += length + 12;
+    }
+    const decoded = inflateSync(Buffer.concat(chunks)), stride = width * 4 + 1;
+    assert.equal(decoded.length, height * stride, name);
+    let occupied = 0;
+    for (let y = 0; y < height; y++) {
+      assert.equal(decoded[y * stride], 0, `${name}: source builder uses unfiltered rows`);
+      for (let x = 0; x < width; x++) {
+        const offset = y * stride + 1 + x * 4, alpha = decoded[offset + 3]!;
+        assert.ok(alpha === 0 || alpha === 255, `${name}: no partially covered pixels`);
+        if (alpha === 0) continue;
+        occupied++;
+        assert.ok(x > 0 && y > 0 && x < width - 1 && y < height - 1, `${name}: transparent outer margin`);
+        assert.ok(palette.has(`#${decoded.subarray(offset, offset + 3).toString('hex')}`), `${name}: colour belongs to shared palette`);
+      }
+    }
+    assert.ok(occupied > 8, `${name}: visible artwork`);
+  }
+  assert.equal(tools, 19);
+  assert.equal(commands, 18);
 });

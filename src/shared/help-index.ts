@@ -34,9 +34,10 @@ const ARTICLES: readonly Article[] = [
     'Safari and other browsers without folder writing use a ZIP download (128 MiB maximum). Unzip it into your chosen folder. Stop or Close cancels pending work; completed folder files remain, incomplete ZIPs are discarded.',
     'Apply to open recording changes effects as one undoable edit, without MP3 compression. Use Process songs and download the result to keep the selected file compression. Batch output does not change the open document. Reverb does not add time at the end; MP3 may add codec padding, and source tags/artwork are not copied.',
   ] },
-  { id: 'help.icon-credits', title: 'Icon credits', workspace: 'shared', section: 'faq', keywords: ['icons', 'artwork', 'Fugue', 'Tabler', 'license', 'credits'], steps: [
+  { id: 'help.icon-credits', title: 'Icon credits', workspace: 'shared', section: 'faq', keywords: ['icons', 'artwork', 'Windows XP', 'Fugue', 'Tabler', 'license', 'credits'], steps: [
     'Choose Icon credits at the bottom of Help for source and license links.',
-    'Paint tools use illustrated artwork from GIMP, KolourPaint and Font Awesome. Commands retain Silk by Mark James and Fugue by Yusuke Kamiyamane; other interface symbols use Tabler by Paweł Kuna. The credits include each artist, license and editable source artwork.',
+    'Paint tools and commands use original Windows XP-style pixel artwork by Goosnav LLC under the MIT license. The credits include editable sources and licenses.',
+    'The source archive also preserves earlier artwork from GIMP, KolourPaint, Font Awesome, ReactOS Paint, Silk by Mark James and Fugue by Yusuke Kamiyamane. Other interface symbols use Tabler by Paweł Kuna.',
     'The workspace icons retain their existing artwork. All icons are bundled locally and work offline.',
   ] },
   { id: 'help.paint', title: 'Begin drawing in Paint', workspace: 'image', section: 'getting-started', keywords: ['canvas', 'new', 'draw', 'brush', 'pencil', 'size'], target: 'image.pencil', steps: [

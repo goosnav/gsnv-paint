@@ -48,21 +48,29 @@ The unmodified engine, WebAssembly and Python standard library are separate loca
 Replace the pinned package and rebuild the static application to replace them.
 Complete transitive compiled-library source/notices remain part of the release packaging gate.
 Pixelarticons — MIT License, Copyright (c) 2019 Gerrit Halfmann.
-Selected Paint tool glyphs from https://github.com/halfmage/pixelarticons
+Archived Paint tool glyphs from https://github.com/halfmage/pixelarticons
 Pinned source: c9ecc2da61afde85dbe539025e3d931c6152ad75.
 Full license: licenses/pixelarticons.LICENSE.txt
 Source SVGs and SHA-256 provenance are retained in vendor/pixelarticons.
 
 Tabler Icons 3.52.0 — MIT
 Copyright (c) 2020-2026 Paweł Kuna
-Paint tool and common interface glyphs from https://github.com/tabler/tabler-icons
+Common interface and archived Paint glyphs from https://github.com/tabler/tabler-icons
 Pinned commit: 4581ad20d8d13e24f6c3be75caaea1c4ad6c4b35 (v3.52.0)
 Full license: licenses/tabler-3.52.0.LICENSE.txt
 Unmodified SVG sources, application mapping, generator and SHA-256 provenance are
 retained in vendor/tabler. Paths retain the original 24-unit geometry and round
 strokes; the app supplies toolbar colours. All assets are bundled locally.
 
-Archived Paint artwork and retained command icons (2026-11-15)
+Current Paint artwork (2026-11-16) — original, not third-party
+Windows XP-style pixel icons: copyright (c) 2026 Goosnav LLC, MIT.
+Full license: licenses/paint-xp.LICENSE.txt.
+The current 19 tools and 18 commands are newly drawn original artwork.
+Editable sources, PNGs and builder: licenses/classic-paint-artwork.zip.
+The third-party Paint artwork below is archived; its sources and original
+notices remain distributed with the application. No Microsoft artwork is used.
+
+Archived Paint tool and command icons (2026-11-15)
 ReactOS Paint tool strip: copyright 2009 Benedikt Freisen and ReactOS contributors.
 Source: https://github.com/katahiromz/RPaint/tree/825ab84c3f23400c084f310e8b492b654ab064f6
 License: LGPL-2.0-or-later, full text in licenses/reactos-paint.LICENSE.txt.
@@ -88,7 +96,7 @@ Visible attribution and download link: icon-credits.html (linked from Help).
 Editable PNGs, original source artwork, licenses and exact recipes:
 licenses/classic-paint-artwork.zip. Source artwork is independently replaceable.
 
-Illustrated Paint tools (2026-11-15)
+Archived illustrated Paint tools (2026-11-15)
 GIMP team; source authors include Jakub Steiner, Klaus Staedtler, Andreas Nilsson
 and Barak Itkin. Source: https://www.gimp.org/
 Pinned gimp-data commit: bb251717687ec37a622763c4fa003a3c28461796

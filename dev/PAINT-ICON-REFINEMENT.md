@@ -300,3 +300,52 @@ Reviewed evidence: [desktop](evidence/paint-icon-outlines/desktop-dpr1.png),
 [production](evidence/paint-icon-outlines/production.png).
 
 S09 status: **GREEN / CANDIDATE_FOR_ACCEPTANCE**.
+
+## Owner revision — Windows XP-style artwork (2026-11-16)
+
+The owner requested icons that fit Windows XP MS Paint. The current mixed
+GIMP/KolourPaint/Font Awesome illustrations and forced black contours do not
+establish that style; historical verification above does not establish owner
+acceptance.
+
+This revision replaces the active Paint catalog with one original Goosnav LLC
+pixel-art set: 19 native 24px tools and 18 native 16px commands. Familiar simple
+tool silhouettes, plain geometric symbols and a shared 15-colour palette follow
+the existing XP-style controls. Integer-grid drawing provides hard pixel edges
+and a transparent outer margin without antialiasing, drop shadows or an added
+contour pass. The new set is MIT licensed and contains no extracted Microsoft
+artwork. Earlier licensed assets and notices remain archived.
+
+The existing renderer, accessible SVG labels/titles, command IDs, shortcuts,
+selected states and 32px desktop / 40px touch targets remain unchanged. Paint
+art stays scoped to the Image workspace; other workspaces retain their vectors.
+There are no runtime image requests or new dependencies.
+
+Editable sources are `vendor/paint-icons/xp-tools.mjs` and `xp-commands.mjs`;
+`xp-pixels.mjs` supplies integer drawing and PNG output. `build-xp.mjs` reproduces
+all 37 PNGs offline using the Node standard library. `xp.json` records the source
+files, palette, sizes and MIT license. The standard catalog generator embeds the
+images, and the source ZIP includes current and historical artwork.
+
+### Verification
+
+- **67 focused tests passed**: icon rendering, native PNG decoding, palette and
+  transparent margins, distinct artwork, source/catalog/archive reproducibility,
+  accessibility, workspace isolation, shared chrome interactions and Help.
+- **Production build passed**, including TypeScript. Existing large-chunk and
+  CAD-kernel browser-externalization advisories remain.
+- **4 offline-build checks passed** for asset inventory, build identity and output
+  validation.
+- **Spec trace/map/link audit passed**; this is a documentation consistency check.
+- **Visual artwork review completed** at native size and 3× nearest-neighbour
+  enlargement. The eraser received a visible front face to distinguish it from
+  a flat sheet. Evidence: [current icon sheet](evidence/paint-icon-xp/contact-sheet.png).
+- **Live browser verification is blocked in this environment**: Chromium cannot
+  start because its process singleton socket is denied. No browser test pass or
+  application screenshot is claimed for this revision. The updated browser test
+  retains interaction and target-size checks and removes only the former forced
+  black-edge aesthetic rule.
+
+The evidence image is an artwork contact sheet, not a live application capture.
+The existing renderer/control implementation is unchanged. Final owner aesthetic
+acceptance and physical-device review remain separate from these checks.

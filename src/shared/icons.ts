@@ -7,11 +7,11 @@
  * GUARANTEES No fetched imagery, Microsoft assets, markup injection or shared DOM nodes.
  * TUNING     Paint bitmaps: native 24px tools / 16px commands, nearest-neighbour.
  *            Other glyphs retain Tabler 2-unit or original 1.5-unit SVG strokes.
- * DECISIONS  D1: Paint tools use illustrated GIMP/KolourPaint/Font Awesome derivatives,
- *            preserving shading on a 24px grid. Alternative: 16px quantization; rejected
- *            because it obscured objects. Revisit if: owner finds a tool unclear.
- *            Upstream originals, mapping, hashes and licenses live in vendor/paint-icons
- *            and vendor/tabler; other workspaces retain existing vector artwork.
+ * DECISIONS  D1: Paint uses original Windows XP-style pixel artwork with a shared
+ *            palette: 24px tools and 16px commands, each drawn on its native grid.
+ *            Alternative: mixed illustrated sets; rejected for inconsistent style.
+ *            Editable sources, mapping and licenses live in vendor/paint-icons;
+ *            other workspaces retain existing vector artwork from vendor/tabler.
  *            Existing workspace-specific original paths remain local.
  *            D2: Use aria-label plus a text title, avoiding generated title IDs and their
  *            collision risk. Alternative: aria-labelledby; Revisit if: a proven AT gap emerges.
