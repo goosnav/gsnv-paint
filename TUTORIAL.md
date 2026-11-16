@@ -120,6 +120,19 @@ The launcher prints `gsnv-paint [CODE]: message` when it stops.
 | `BOOT-PERMISSION` / `BOOT-DISK` | The data folder could not be written or unpacked. | Check permissions and free disk space. |
 | `APP-START` | The build failed, the port is used by another program, or something unexpected happened. | Read the message. For a busy port, close the other program, or set `GSNV_PAINT_PORT` to another port; recovery data is kept per port. |
 
+### Browser says "can't connect" even though the launcher reports "running"
+
+Run the following **in the same terminal/environment that started gsnv-paint**:
+
+```sh
+uname -s
+curl -I --max-time 3 http://127.0.0.1:24173/
+```
+
+- **HTTP 200 in the launcher terminal:** the server is working in that environment. If Safari or another browser still cannot connect, first establish whether the browser and launcher are running on the same operating system/network namespace. `127.0.0.1` is local to each computer, VM, container or remote shell. If Safari is on a Mac, clone/open this folder in a **Mac Terminal** and use `./run.command` (or double-click it in Finder). If the server must run on a remote machine accessible via SSH, run `ssh -N -L 24173:127.0.0.1:24173 user@server` on the Mac, then open Safari to the same URL. Do not expose the development server on all interfaces just to make localhost work.
+- **Connection refused/timed out in the launcher terminal:** that server is no longer listening in the environment where it was started. Keep the launcher process open and inspect the error output; `lsof -nP -iTCP:24173 -sTCP:LISTEN` (macOS) or `ss -ltnp` (Linux) can show what is listening.
+- **`run.command: command not found`:** terminal commands in the current directory need `./run.command` rather than `run.command`. The shell launcher is `./run.sh`; on Windows use `run.cmd`.
+
 Other notes:
 
 - **macOS says the file cannot be opened.** This happens to downloaded, unsigned files. Right-click `run.command`, choose Open, then confirm. Nothing is signed or notarized.

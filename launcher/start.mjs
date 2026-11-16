@@ -57,15 +57,32 @@ function openBrowser() {
   if (process.env.GSNV_PAINT_NO_OPEN) return;
   const [command, args] = process.platform === 'darwin' ? ['open', [url]]
     : process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]] : ['xdg-open', [url]];
-  const unopened = () => console.error(`gsnv-paint [LAUNCH-BROWSER]: No browser could be opened. Open ${url} yourself.`);
+  const unopened = () => {
+    const check = process.platform === 'win32' ? `curl.exe -I ${url}` : `curl -I ${url}`;
+    console.error(
+      `gsnv-paint [LAUNCH-BROWSER]: Could not open a browser from this ${process.platform} session.\n` +
+      `Check the server in this terminal: ${check}\n` +
+      `If it responds, open ${url} in a browser running in the SAME network environment.\n` +
+      `If the browser is on another host, VM, container or SSH client, its 127.0.0.1 is different. Run locally there or forward port ${port} via SSH.`
+    );
+  };
   const child = spawn(command, args, { stdio: 'ignore', detached: true });
   child.on('error', unopened); child.on('exit', code => { if (code) unopened(); }); child.unref();
 }
 
-// A second launch reopens the running copy instead of starting a server on another origin.
-const alreadyRunning = await fetch(url, { signal: AbortSignal.timeout(1500) })
-  .then(async response => response.headers.get('cross-origin-opener-policy') === 'same-origin' && (await response.text()).includes('<meta name="application-name" content="gsnv-paint">'))
-  .catch(() => false);
+// A second launch reopens an existing copy on the same origin. Use this same
+// HTTP probe after preview() so "running" means the app actually answered.
+async function isAppServing() {
+  try {
+    const response = await fetch(url, { signal: AbortSignal.timeout(2500) });
+    return response.ok &&
+      response.headers.get('cross-origin-opener-policy') === 'same-origin' &&
+      (await response.text()).includes('<meta name="application-name" content="gsnv-paint">');
+  } catch {
+    return false;
+  }
+}
+const alreadyRunning = await isAppServing();
 if (alreadyRunning) {
   console.log(`gsnv-paint is already running at ${url}`);
   openBrowser();
@@ -76,6 +93,9 @@ if (alreadyRunning) {
   catch (cause) {
     fail('APP-START', `${cause instanceof Error ? cause.message : cause}. Close the program using port ${port}, or set GSNV_PAINT_PORT to another port. Work stored in the browser is kept per port.`);
   }
-  console.log(`\ngsnv-paint is running at ${url}\nKeep this window open while you work. Press Ctrl+C to stop.`);
+  if (!(await isAppServing())) {
+    fail('APP-START', `Vite started, but the expected app did not respond at ${url}. Check proxy settings, loopback networking and the local firewall.`);
+  }
+  console.log(`\ngsnv-paint is running at ${url} (on ${process.platform})\nKeep this window open while you work. Press Ctrl+C to stop.`);
   openBrowser();
 }
