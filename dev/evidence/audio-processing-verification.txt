@@ -1,0 +1,117 @@
+$ npm test
+Exit: 0
+✔ V02 bin-only imports preserve project settings, survive native reopen and place/remove explicitly (1.38407ms)
+✔ V-TIMELINE titles validate and the project round-trips through the native encoding (1.459001ms)
+ℹ tests 1233
+ℹ suites 0
+ℹ pass 1233
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37537.731004
+
+$ node --import tsx --test src/audio/*.test.ts src/image/image-batch-*.test.ts
+Exit: 0
+✔ BATCH-ZIP cancel discards pending bytes and blocks late asynchronous writes (0.979466ms)
+ℹ tests 55
+ℹ suites 0
+ℹ pass 55
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2350.685573
+
+$ npx playwright test -c src/audio/audio-processing.playwright.config.ts
+Exit: 0
+[WebServer] (node:3242438) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3242499) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:3242577) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/audio/audio-processing.browser.spec.ts:6:1 › AUD-FX wizard selects first preview, changes song/effects, exports real ZIP and closes (3.9s)
+  ✓  2 src/audio/audio-processing.browser.spec.ts:18:1 › AUD-FX MP3 preview decodes at chosen quality; applied effects undo exactly (3.7s)
+  ✓  3 src/audio/audio-processing.browser.spec.ts:36:1 › AUD-FX folder batch writes dated child, report and no originals; close cancels preview (3.5s)
+  ✓  4 src/audio/audio-processing.browser.spec.ts:56:1 › AUD-FX wizard remains usable at phone width and has consistent slider controls (1.5s)
+  ✓  5 src/audio/audio-processing.browser.spec.ts:61:1 › AUD-FX real browser directory handles retain originals and write processed copies (3.2s)
+  ✓  6 src/audio/audio-processing.browser.spec.ts:73:1 › AUD-FX installed production build processes first-use audio while offline (4.5s)
+
+  6 passed (23.7s)
+
+$ AUDIO_BROWSER=webkit npx playwright test -c src/audio/audio-processing.playwright.config.ts --grep-invert 'real browser directory handles'
+Exit: 0
+[WebServer] (node:3239462) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:3239475) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:3239523) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/audio/audio-processing.browser.spec.ts:6:1 › AUD-FX wizard selects first preview, changes song/effects, exports real ZIP and closes (4.2s)
+  ✓  2 src/audio/audio-processing.browser.spec.ts:18:1 › AUD-FX MP3 preview decodes at chosen quality; applied effects undo exactly (3.8s)
+  ✓  3 src/audio/audio-processing.browser.spec.ts:35:1 › AUD-FX folder batch writes dated child, report and no originals; close cancels preview (3.7s)
+  ✓  4 src/audio/audio-processing.browser.spec.ts:55:1 › AUD-FX wizard remains usable at phone width and has consistent slider controls (1.9s)
+  ✓  5 src/audio/audio-processing.browser.spec.ts:72:1 › AUD-FX installed production build processes first-use audio while offline (5.1s)
+
+  5 passed (20.5s)
+
+$ AUDIO_PRODUCTION=1 npx playwright test -c src/audio/audio-playwright.config.ts
+Exit: 0
+
+Running 3 tests using 1 worker
+
+(node:3226804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/audio/audio-workspace.browser.spec.ts:48:1 › AUDIO-APP real WAV import, playback, range edits, shared undo, native reopen and recovery (5.1s)
+  ✓  2 src/audio/audio-workspace.browser.spec.ts:70:1 › AUDIO-APP effects export sample-exact PCM WAV and invalid import retains edits (2.6s)
+  ✓  3 src/audio/audio-workspace.browser.spec.ts:90:1 › AUDIO-APP keyboard range selection and missing Web Audio are explicit (2.7s)
+
+  3 passed (11.5s)
+
+$ npx playwright test src/image/image-batch.browser.spec.ts
+Exit: 0
+[WebServer] (node:3231037) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:3231102) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/image/image-batch.browser.spec.ts:6:1 › PU-14/15 browser file fallback previews each size and exports a timestamped ZIP with honest bad-input report (1.8s)
+  ✓  2 src/image/image-batch.browser.spec.ts:13:1 › PU-15 real browser filesystem handles preserve originals and write only a fresh source child (1.8s)
+
+  2 passed (5.2s)
+
+$ npm run build
+Exit: 0
+dist/assets/replicad_single-g5eiaENB.wasm        22,942.32 kB │ gzip: 7,312.94 kB
+dist/assets/index-DRO_mXkV.css                       72.00 kB │ gzip:    13.81 kB
+dist/assets/code-runtime-DCZoXrYL.js                  3.04 kB │ gzip:     1.66 kB
+dist/assets/image-effects.worker-Cxz3F-xM.js          5.72 kB │ gzip:     2.57 kB
+dist/assets/image-replay.worker-D1k7zskQ.js          59.89 kB │ gzip:    20.61 kB
+dist/assets/audio-processing.worker-kvBd72BU.js     172.32 kB │ gzip:    61.21 kB
+dist/assets/index-CX7Y64zF.js                     3,554.80 kB │ gzip:   999.87 kB
+
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.37s
+
+$ npx wrangler deploy --dry-run --no-autoconfig
+Exit: 0
+
+ ⛅️ wrangler 4.160.1 (update available 4.162.0)
+───────────────────────────────────────────────
+✨ Read 74 files from the assets directory /home/goosnav/Desktop/code/gsnv-paint/dist
+Total Upload: 0.31 KiB / gzip: 0.22 KiB
+No bindings found.
+--dry-run: exiting now.

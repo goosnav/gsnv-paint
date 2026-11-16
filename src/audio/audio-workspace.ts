@@ -19,6 +19,9 @@ import { audioEdits, type AudioEditRequest } from './audio-edits.ts';
 import { audioSamples } from './audio-samples.ts';
 import { createAudioPlayback } from './audio-playback.ts';
 import { createAudioWaveform } from './audio-waveform.ts';
+import { audioProcessingDialog } from './audio-processing-dialog.ts';
+import type { BatchFilePorts } from '../image/image-batch-files.ts';
+import type { AudioPcm } from './audio-effects.ts';
 import './audio-workspace.css';
 type Snapshot = Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
 const IMPORT_RATE = 48000, MAX_IMPORT_BYTES = 128 * 1024 * 1024, MAX_PCM_BYTES = 256 * 1024 * 1024;
@@ -39,7 +42,7 @@ export function createAudioWorkspace(files: FilePorts): WorkspaceAdapter {
       transport.setAttribute('role', 'toolbar'); transport.setAttribute('aria-label', 'Audio transport'); edits.setAttribute('role', 'toolbar'); edits.setAttribute('aria-label', 'Audio editing');
       const buttons = new Map<string, HTMLButtonElement>();
       const button = (parent: HTMLElement, id: string, label: string) => { const e = make('button', 'xp-button', label); e.type = 'button'; e.dataset.audioCommand = id; e.onclick = () => run(id); parent.append(e); buttons.set(id, e); return e; };
-      button(transport, 'audio.import', 'Import audio…'); button(transport, 'audio.togglePlayback', 'Play'); button(transport, 'audio.stop', 'Stop');
+      button(transport, 'audio.import', 'Import audio…'); button(transport, 'audio.processing', 'Effects & batch…'); button(transport, 'audio.togglePlayback', 'Play'); button(transport, 'audio.stop', 'Stop');
       const time = make('output', 'audio-time', '0.000 / 0.000 s'); time.setAttribute('aria-label', 'Playback position'); transport.append(time); button(transport, 'audio.export', 'Export WAV…');
       for (const [id, label] of [['edit.cut', 'Cut'], ['edit.copy', 'Copy'], ['edit.paste', 'Paste'], ['edit.delete', 'Delete'], ['audio.trim', 'Trim'], ['audio.fadeIn', 'Fade in'], ['audio.fadeOut', 'Fade out'], ['audio.normalize', 'Normalize…'], ['audio.volume', 'Volume…']]) button(edits, id!, label!);
       const field = (label: string) => { const wrap = make('label', 'audio-field', label), input = make('input', 'xp-field'); input.type = 'number'; input.min = '0'; input.step = '1'; input.value = '0'; input.setAttribute('aria-label', label); input.setAttribute('aria-describedby', notice.id); wrap.append(input); range.append(wrap); return input; };
@@ -48,13 +51,14 @@ export function createAudioWorkspace(files: FilePorts): WorkspaceAdapter {
       buttons.get('audio.zoomIn')!.setAttribute('aria-label', 'Zoom in'); buttons.get('audio.zoomOut')!.setAttribute('aria-label', 'Zoom out');
       stage.append(transport, edits, notice, plot, range, info); host.root.append(stage);
       let current: Snapshot, value: AudioDocument | null = null, clipboard: AudioDocument | null = null, selection = { start: 0, end: 0 }, cursor = 0, message = '', busy = false, disposed = false;
+      let processing: ReturnType<typeof audioProcessingDialog> | null = null;
       const available = typeof window.AudioContext === 'function';
       const wave = createAudioWaveform({ root: plot, selected(next) { player.stop(); selection = next; cursor = next.end; refresh(); }, command: run });
       const player = createAudioPlayback({ context: () => { if (!available) throw new Error('This browser cannot decode or play audio.'); return new window.AudioContext({ sampleRate: IMPORT_RATE }); }, requestFrame: fn => window.requestAnimationFrame(fn), cancelFrame: id => window.cancelAnimationFrame(id), changed(state) { if (!disposed) { cursor = state.frame; refreshPlayback(); } } });
       function show(text: string, error = false) { if (disposed) return; message = text; notice.textContent = text; notice.hidden = !text; notice.setAttribute('role', error ? 'alert' : 'status'); notice.dataset.error = String(error); host.invalidate(); }
       function enabled(id: string) {
         const loaded = !!value?.frames, selected = selection.end > selection.start;
-        if (id === 'audio.import') return available && !busy;
+        if (id === 'audio.import' || id === 'audio.processing' || id === 'audio.batch') return available && !busy;
         if (id === 'audio.stop') return player.state().playing;
         if (id === 'audio.togglePlayback') return available && loaded && !busy;
         if (id === 'edit.paste') return !!value && !!clipboard?.frames && !busy;
@@ -130,6 +134,27 @@ export function createAudioWorkspace(files: FilePorts): WorkspaceAdapter {
       function run(id: string) {
         if (id === 'tool.cancel' || id === 'audio.stop') { player.stop(); refresh(); return; }
         if (busy) return;
+        if (id === 'audio.processing' || id === 'audio.batch') {
+          player.stop(); const captured = current, capturedValue = value;
+          const browser = window as unknown as Partial<BatchFilePorts>;
+          const batchPorts: BatchFilePorts = {
+            document,
+            ...(browser.showDirectoryPicker ? { showDirectoryPicker: browser.showDirectoryPicker.bind(window) } : {}),
+            ...(browser.showOpenFilePicker ? { showOpenFilePicker: browser.showOpenFilePicker.bind(window) } : {}),
+          };
+          const source = captured && capturedValue?.frames ? {
+            name: captured.title,
+            read: () => ({ sampleRate: capturedValue.sampleRate, channels: audioSamples({ operation: 'render', value: capturedValue }) }),
+            apply(pcm: AudioPcm) {
+              if (current?.identity !== captured.identity) return false;
+              const changed = audioDocument({ operation: 'import', id: crypto.randomUUID(), sampleRate: pcm.sampleRate, channels: pcm.channels });
+              // The shared host's runtime returns false when its revision guard rejects a late edit.
+              return (host.commit({ ...captured, value: changed }, 'Audio effects', captured.identity) as unknown) !== false;
+            },
+          } : undefined;
+          processing = audioProcessingDialog({ document, files: batchPorts, ...(source ? { current: source } : {}), onClose: () => { processing = null; } });
+          host.dialog(processing); return;
+        }
         if (id === 'audio.import') { void importAudio(); return; }
         if (id === 'audio.export') { void exportWav(); return; }
         if (!value) return;
@@ -150,10 +175,11 @@ export function createAudioWorkspace(files: FilePorts): WorkspaceAdapter {
         model() { const item = (id: string, label: string, shortcut = '') => ({ id, label, shortcut, enabled: enabled(id) }); return { menus: [
           { id: 'audio', label: 'Audio', items: [item('audio.import', 'Import audio…'), item('audio.export', 'Export WAV…'), item('audio.togglePlayback', 'Play / stop', 'Space'), item('audio.stop', 'Stop', 'Esc')] },
           { id: 'selection', label: 'Selection', items: [item('edit.cut', 'Cut', 'Ctrl+X'), item('edit.copy', 'Copy', 'Ctrl+C'), item('edit.paste', 'Paste', 'Ctrl+V'), item('edit.delete', 'Delete', 'Delete'), item('edit.selectAll', 'Select all', 'Ctrl+A'), item('audio.trim', 'Trim to selection'), item('audio.zoomSelection', 'Zoom to selection'), item('audio.fit', 'Fit recording')] },
-          { id: 'effects', label: 'Effects', items: [item('audio.fadeIn', 'Fade in'), item('audio.fadeOut', 'Fade out'), item('audio.normalize', 'Normalize…'), item('audio.volume', 'Volume…')] },
+          { id: 'automation', label: 'Automation', items: [item('audio.batch', 'Effects & batch…')] },
+          { id: 'effects', label: 'Effects', items: [item('audio.processing', 'Effects & batch…'), item('audio.fadeIn', 'Fade in'), item('audio.fadeOut', 'Fade out'), item('audio.normalize', 'Normalize…'), item('audio.volume', 'Volume…')] },
         ], tools: [], panels: [] }; },
         context: () => ({ viewRole: 'timeline', activeTool: 'audio.selection', status: message || info.textContent || '' }), command: run, gesture() {},
-        dispose() { if (disposed) return; disposed = true; hidden.disconnect(); document.removeEventListener('visibilitychange', visibility); player.dispose(); wave.dispose(); stage.remove(); },
+        dispose() { if (disposed) return; disposed = true; processing?.dispose(); hidden.disconnect(); document.removeEventListener('visibilitychange', visibility); player.dispose(); wave.dispose(); stage.remove(); },
       };
     },
   };

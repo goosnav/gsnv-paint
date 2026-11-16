@@ -25,6 +25,14 @@ export type HelpResult = {
 type Article = Omit<HelpResult, 'kind' | 'available' | 'commandId'> & { target?: string };
 const WORKSPACES = new Set(['image', 'cad', 'photo', 'video', 'document', 'slides', 'audio', 'spreadsheet', 'code']);
 const ARTICLES: readonly Article[] = [
+  { id: 'help.audio-processing', title: 'Retro computer sound, reverb and batch audio', workspace: 'audio', section: 'getting-started', keywords: ['music', 'frutiger aero', 'retro', 'muffled', 'compression', 'reverb', 'MP3', 'WAV', 'songs', 'batch', 'folder', 'preview'], steps: [
+    'Choose Effects & batch… in Audio, or Automation → Effects & batch…. The closable wizard has Songs, Effects and Export steps.',
+    'Choose one or more songs, a folder, or the open recording. The first song is selected for preview automatically; change Preview song or Preview start to try another passage. Press Play on Original or Processed to compare the 15-second excerpt. Update preview after changing settings.',
+    'Retro computer reduces high frequencies and digital resolution with gentle compression. Add Reverb, adjust its wet amount and decay, and move effects up or down. Compressor changes dynamics; MP3 bitrate changes file size and lossy texture.',
+    'Export offers WAV16/24 or MP3, sample rate, mono/stereo and clipping protection. Folders produce a new dated child folder and a processing report. Only direct children are processed; originals stay untouched. Selected files require a destination folder or ZIP.',
+    'Safari and other browsers without folder writing use a ZIP download (128 MiB maximum). Unzip it into your chosen folder. Stop or Close cancels pending work; completed folder files remain, incomplete ZIPs are discarded.',
+    'Apply to open recording is one undoable edit. Batch output does not change the open document. Reverb does not add time at the end; MP3 may add codec padding, and source tags/artwork are not copied.',
+  ] },
   { id: 'help.icon-credits', title: 'Icon credits', workspace: 'shared', section: 'faq', keywords: ['icons', 'artwork', 'Fugue', 'Tabler', 'license', 'credits'], steps: [
     'Choose Icon credits at the bottom of Help for source and license links.',
     'Paint uses classic-palette artwork derived from ReactOS Paint (LGPL), Silk by Mark James (CC BY 2.5), Fugue by Yusuke Kamiyamane (CC BY 3.0) and Tabler by Paweł Kuna (MIT). The credits include editable source artwork.',

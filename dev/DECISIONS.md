@@ -448,3 +448,28 @@ pixels; DPR1 uses the browser's nearest-neighbour sampling at 1.5×.
 The header/workspace icons remain unchanged. Rejecting this artwork again calls
 for another concrete source/proportion review, not an assertion that tests prove
 it looks right. See the icon refinement checkpoint for screenshots and test scope.
+
+## D38 — Audio processing and portable MP3 (2026-11-15)
+
+Ship a configurable Retro computer chain (low-pass, gentle linked compression,
+14-bit/22050Hz digital texture), rather than claiming one universal Frutiger Aero
+filter. Owner can add reverb, change order, bypass or adjust each effect and hear
+Original/Processed previews. Processing and encoding share one deterministic CORE
+engine in a cancellable local worker. Reverb preserves duration; tails end at EOF.
+RBJ biquad formulas follow https://www.w3.org/TR/audio-eq-cookbook/.
+
+Use @breezystack/lamejs 1.2.7 (LGPL-3.0, unmodified) for offline MP3. Commercial
+redistribution is permitted subject to LGPL obligations; ship notices, full license
+texts, exact source/build scripts, and rebuild/relink instructions. No network
+service or runtime CDN. Native AudioEncoder/MediaRecorder cannot guarantee portable
+MP3 and real-time recording would make folder exports too slow. Revisit when native
+encoders provide portable offline MP3. MP3 has encoder delay/padding; gapless tagging
+and source tags/artwork are outside this phase. WAV16/24 and a windowed-sinc sample
+rate converter are included. Lossy MP3 bitrate is a separate choice from dynamics.
+
+Extend the already tested Image batch adapters with an optional Audio profile;
+default Image behavior stays unchanged. Folder selection snapshots only direct
+children, then writes collision-safe copies to a new UTC timestamped child. Source
+files have no write authority. Single selected files ask for an output directory;
+browsers without directory writes explicitly download a bounded ZIP. Abort retains
+completed folder files, discards unfinished ZIPs, and stops before the next write.

@@ -1,11 +1,11 @@
 /**
  * PURPOSE    Isolate user-selected batch files from output destinations.
  * KIND       SHELL
- * CONTRACT   pickBatchInputs({source,ports}) snapshots direct supported inputs; returns
+ * CONTRACT   pickBatchInputs({source,ports,profile?}) snapshots direct supported inputs; returns
  *            null on picker cancellation. createBatchDestination({selection,mode,now,
  *            runId,ports}) returns serial write, finish and cancel or null on cancellation.
  *            RAISES: readable errors for changed sources, permission, unsafe names or I/O.
- * GUARANTEES No picker before caller invokes; no execution, recursive discovery or input
+ * GUARANTEES Image defaults retained; audio profile selects songs. No picker before caller invokes; no execution, recursive discovery or input
  *            write. Only completed snapshots may create an output child. ZIP is explicit.
  * TUNING     At most10000 inputs;100 child-name attempts; ZIP cap128MiB including metadata.
  * DECISIONS  D1: Inject browser handles. Alternative: eagerly buffer every file; rejected
@@ -40,16 +40,20 @@ export type BatchSelection = Readonly<{ kind: 'files' | 'folder'; inputs: readon
 export type BatchResult = { kind: 'directory'; name: string; written: number } | { kind: 'zip'; name: string; written: number; blob: Blob };
 export type BatchDestination = { kind: 'directory' | 'zip'; name: string; write(name: string, blob: Blob): Promise<void>; finish(): Promise<BatchResult>; cancel(): Promise<void> };
 const snapshots = new WeakSet<BatchSelection>();
+const audioSelections = new WeakSet<BatchSelection>();
 const extensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp', '.gsnv-image'];
 const supported = (name: string) => /\.(png|jpe?g|webp|gif|bmp|gsnv-image)$/i.test(name);
 const errorName = (error: unknown) => error && typeof error === 'object' && 'name' in error ? error.name : '';
 
-export async function pickBatchInputs({ source, ports }: { source: 'files' | 'folder'; ports: BatchFilePorts }): Promise<BatchSelection | null> {
+export async function pickBatchInputs({ source, ports, profile = 'image' }: { source: 'files' | 'folder'; ports: BatchFilePorts; profile?: 'image' | 'audio' }): Promise<BatchSelection | null> {
   if (source !== 'files' && source !== 'folder') throw new TypeError('Choose files or a folder for the batch.');
+  if (!['image', 'audio'].includes(profile)) throw new TypeError('Choose an Image or Audio batch profile.');
+  const audio = profile === 'audio', audioExtensions = ['.wav','.mp3','.m4a','.aac','.ogg','.oga','.flac','.webm','.aiff','.aif'];
+  const accepts = (name: string) => audio ? audioExtensions.some(ext => name.toLowerCase().endsWith(ext)) : supported(name);
   const inputs: BatchInput[] = []; let ignored = 0, sourceDirectory: BatchDirectory | undefined;
   const add = async (read: () => Promise<File>, name: string) => {
-    if (!supported(name)) { ignored++; return; }
-    if (inputs.length >= 10000) throw new RangeError('Batch is limited to 10,000 images. Choose a smaller folder.');
+    if (!accepts(name)) { ignored++; return; }
+    if (inputs.length >= 10000) throw new RangeError('Batch is limited to 10,000 files. Choose a smaller folder.');
     const file = await read(), size = file.size, lastModified = file.lastModified;
     inputs.push(Object.freeze({ name, size, lastModified, read: async () => {
       const current = await read();
@@ -64,12 +68,12 @@ export async function pickBatchInputs({ source, ports }: { source: 'files' | 'fo
         if (handle.kind === 'file') await add(() => handle.getFile(), name); else ignored++;
       }
     } else if (source === 'files' && ports.showOpenFilePicker) {
-      const handles = await ports.showOpenFilePicker({ multiple: true, types: [{ description: 'Images and Paint projects', accept: { 'image/png': ['.png'], 'image/jpeg': ['.jpg', '.jpeg'], 'image/webp': ['.webp'], 'image/gif': ['.gif'], 'image/bmp': ['.bmp'], 'application/json': ['.gsnv-image'] } }] });
+      const handles = await ports.showOpenFilePicker({ multiple: true, types: audio ? [{ description: 'Audio files', accept: { 'audio/*': audioExtensions } }] : [{ description: 'Images and Paint projects', accept: { 'image/png': ['.png'], 'image/jpeg': ['.jpg', '.jpeg'], 'image/webp': ['.webp'], 'image/gif': ['.gif'], 'image/bmp': ['.bmp'], 'application/json': ['.gsnv-image'] } }] });
       if (!handles.length) return null;
       for (const handle of handles) await add(() => handle.getFile(), handle.name);
     } else {
       const files = await new Promise<File[] | null>((resolve, reject) => {
-        const input = ports.document.createElement('input'); input.type = 'file'; input.multiple = true; input.accept = extensions.join(','); input.hidden = true;
+        const input = ports.document.createElement('input'); input.type = 'file'; input.multiple = true; input.accept = (audio ? audioExtensions : extensions).join(','); input.hidden = true;
         if (source === 'folder') input.setAttribute('webkitdirectory', '');
         const done = (files: File[] | null) => { input.remove(); resolve(files); };
         input.addEventListener('change', () => done(input.files?.length ? Array.from(input.files) : null), { once: true });
@@ -84,15 +88,16 @@ export async function pickBatchInputs({ source, ports }: { source: 'files' | 'fo
       }
     }
   } catch (error) { if (errorName(error) === 'AbortError') return null; throw error; }
-  if (!inputs.length) throw new Error('No supported images were found. Choose PNG, JPEG, WebP, GIF, BMP or Paint project files directly inside the folder.');
+  if (!inputs.length) throw new Error(audio ? 'No supported songs were found. Choose WAV, MP3, M4A, Ogg, FLAC, AIFF or WebM files directly inside the folder.' : 'No supported images were found. Choose PNG, JPEG, WebP, GIF, BMP or Paint project files directly inside the folder.');
   inputs.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()) || a.name.localeCompare(b.name));
-  const selection: BatchSelection = Object.freeze({ kind: source, inputs: Object.freeze(inputs), ignored, ...(sourceDirectory ? { sourceDirectory } : {}) }); snapshots.add(selection); return selection;
+  const selection: BatchSelection = Object.freeze({ kind: source, inputs: Object.freeze(inputs), ignored, ...(sourceDirectory ? { sourceDirectory } : {}) }); snapshots.add(selection); if (audio) audioSelections.add(selection); return selection;
 }
 
 export async function createBatchDestination({ selection, mode, now, runId, ports }: { selection: BatchSelection; mode: 'source' | 'choose' | 'zip'; now: number; runId: string; ports: BatchFilePorts }): Promise<BatchDestination | null> {
   if (!snapshots.has(selection)) throw new Error('Choose a completed input snapshot before creating a batch destination.');
   if (!['source', 'choose', 'zip'].includes(mode)) throw new Error('Choose a batch destination folder or ZIP.');
-  let name = batchFolderName({ now, runId }), root: BatchDirectory | undefined;
+  const profile = audioSelections.has(selection) ? 'audio' : 'image';
+  let name = batchFolderName({ now, runId, profile }), root: BatchDirectory | undefined;
   if (mode === 'source') {
     if (selection.kind !== 'folder') throw new Error('Choose a separate destination folder for selected files.');
     root = selection.sourceDirectory;
@@ -108,7 +113,7 @@ export async function createBatchDestination({ selection, mode, now, runId, port
   if (permission && permission !== 'granted') throw new Error('Folder write permission was not granted. Choose a writable destination or ZIP.');
   let directory: BatchDirectory | undefined;
   for (let attempt = 0; attempt < 100; attempt++) {
-    name = batchFolderName({ now, runId, attempt });
+    name = batchFolderName({ now, runId, attempt, profile });
     try { await root.getDirectoryHandle(name); continue; } catch (error) { if (errorName(error) === 'TypeMismatchError') continue; if (errorName(error) !== 'NotFoundError') throw error; }
     const child = await root.getDirectoryHandle(name, { create: true }); let occupied = false;
     for await (const _entry of child.entries()) { occupied = true; break; }

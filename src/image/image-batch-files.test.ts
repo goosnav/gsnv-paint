@@ -76,3 +76,12 @@ test('BATCH-FILES unknown selections, unsupported-only inputs and cancelled file
   await assert.rejects(createBatchDestination({ selection: { kind: 'files', inputs: [], ignored: 0 }, mode: 'zip', ports: f.ports, ...stamp }), /snapshot|selection/i);
   f.ports.showOpenFilePicker = async () => { throw new DOMException('Cancelled', 'AbortError'); }; assert.equal(await pickBatchInputs({ source: 'files', ports: f.ports }), null); f.dom.window.close();
 });
+
+test('AUD-FX-05 audio profile snapshots songs, names child folder and leaves image defaults intact', async () => {
+ const source=new Directory('songs');source.add('one.MP3','original');source.add('two.wav','wave');source.add('picture.png','ignore');
+ const f=fixture(source);const selection=(await pickBatchInputs({source:'folder',ports:f.ports,profile:'audio'}))!;
+ assert.deepEqual(selection.inputs.map(i=>i.name),['one.MP3','two.wav']);assert.equal(selection.ignored,1);
+ const destination=(await createBatchDestination({selection,mode:'source',ports:f.ports,...stamp}))!;assert.match(destination.name,/^gsnv-audio-batch-2026-11-15_/);
+ await destination.write('one.wav',new Blob(['processed']));await destination.finish();assert.equal(await(await selection.inputs[0]!.read()).text(),'original');assert.deepEqual(source.writes,[]);
+ const image=(await pickBatchInputs({source:'folder',ports:f.ports}))!;assert.deepEqual(image.inputs.map(i=>i.name),['picture.png']);f.dom.window.close();
+});

@@ -23,14 +23,15 @@ export function validateBatchName(name: string): string {
   return name;
 }
 
-export function batchFolderName({ now, runId, attempt = 0 }: { now: number; runId: string; attempt?: number }): string {
+export function batchFolderName({ now, runId, attempt = 0, profile = 'image' }: { now: number; runId: string; attempt?: number; profile?: 'image' | 'audio' }): string {
   if (!Number.isFinite(now) || now < 0 || now > 253402300799999 || typeof runId !== 'string' || !/^[a-zA-Z0-9_-]{4,64}$/.test(runId) || !Number.isInteger(attempt) || attempt < 0 || attempt > 9999) throw new RangeError('Batch folder needs a valid timestamp, run ID and collision attempt.');
+  if (!['image','audio'].includes(profile)) throw new RangeError('Unknown batch profile.');
   const time = new Date(now).toISOString().slice(0, 19).replace('T', '_').replaceAll(':', '-');
-  return `gsnv-paint-batch-${time}Z-${runId}${attempt ? `-${attempt + 1}` : ''}`;
+  return `gsnv-${profile === 'audio' ? 'audio' : 'paint'}-batch-${time}Z-${runId}${attempt ? `-${attempt + 1}` : ''}`;
 }
 
-export function batchOutputName({ inputName, extension, used }: { inputName: string; extension: 'png' | 'jpg' | 'webp' | 'gsnv-image'; used: readonly string[] }): string {
-  if (typeof inputName !== 'string' || !['png', 'jpg', 'webp', 'gsnv-image'].includes(extension) || !Array.isArray(used)) throw new RangeError('Choose a supported batch output format and source name.');
+export function batchOutputName({ inputName, extension, used }: { inputName: string; extension: 'png' | 'jpg' | 'webp' | 'gsnv-image' | 'wav' | 'mp3'; used: readonly string[] }): string {
+  if (typeof inputName !== 'string' || !['png', 'jpg', 'webp', 'gsnv-image', 'wav', 'mp3'].includes(extension) || !Array.isArray(used)) throw new RangeError('Choose a supported batch output format and source name.');
   const occupied = new Set(used.map(name => normal(validateBatchName(name))));
   let base = (inputName.split(/[/\\]/).at(-1) ?? '').replace(/\.[^.]*$/, '').normalize('NFC').replace(/[\x00-\x1f\x7f<>:"|?*]/g, '_').replace(/^[. ]+|[. ]+$/g, '');
   if (!base) base = 'image'; if (reserved(base)) base = `_${base}`;

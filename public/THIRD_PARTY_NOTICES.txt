@@ -87,3 +87,15 @@ Changes made by gsnv-paint on November 15, 2026.
 Visible attribution and download link: icon-credits.html (linked from Help).
 Editable PNGs, original source artwork, licenses and exact recipes:
 licenses/classic-paint-artwork.zip. Source artwork is independently replaceable.
+
+Audio MP3 encoder: @breezystack/lamejs 1.2.7, a JavaScript port of LAME
+Copyright the LAME project and Alex Zhukov; maintained fork by shijinyu.
+LGPL-3.0; unmodified encoder, bundled locally in the audio processing worker.
+LAME: https://lame.sourceforge.net/
+Fork: https://github.com/gideonstele/lamejs
+Exact npm gitHead: 1fb0ef5fa177413107e2e107d054a9b994e3f79c
+Corresponding source (including build scripts): licenses/lamejs-1.2.7-source.zip
+Full license texts: licenses/lamejs-LGPL-3.0.txt and licenses/lamejs-GPL-3.0.txt
+Original package notice: licenses/lamejs-NOTICE.txt
+The application does not restrict reverse engineering for debugging modifications
+of this library. Replace the dependency and rebuild with npm run build to relink.
