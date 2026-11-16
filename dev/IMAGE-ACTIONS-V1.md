@@ -98,8 +98,8 @@ Names/step labels are nonblank strings up to 256 UTF-16 code units with no
 U+0000–U+001F controls. IDs match `[A-Za-z0-9_-]{1,128}` and cannot be
 `__proto__`, `constructor` or `prototype`. Step IDs are unique within steps;
 asset IDs are unique within assets. References to assets must resolve, including
-inside disabled steps. Dimensions are positive integers with at most 16,777,216
-pixels total. Reference dimensions describe the document **before that step**.
+inside disabled steps. Dimensions are positive integers with at most 67,108,864
+pixels total and 16,384 pixels on either side. Reference dimensions describe the document **before that step**.
 
 ## Operation schema
 
@@ -257,7 +257,7 @@ entries. The final report distinguishes written, errored and unprocessed inputs.
 | Combined stroke samples and polygon-selection vertices | 1,000,000, including disabled steps |
 | Decoded embedded RGBA assets | 128 MiB total |
 | Encoded `.gsnv-actions` file | 192 MiB |
-| Image/asset/reference dimensions | Positive whole pixels, at most 16,777,216 pixels total |
+| Image/asset/reference dimensions | Positive whole pixels, at most 67,108,864 pixels total and 16,384 per side; asset/layer byte caps still apply |
 | Layer stack | 100 layers |
 | Recipe document layer data | 256 MiB at input, intermediate enabled steps and returned output; scratch allocations are not a hard heap quota |
 | Recipe execution | 60 seconds per worker job |
@@ -269,7 +269,7 @@ entries. The final report distinguishes written, errored and unprocessed inputs.
 | ZIP fallback | 128 MiB encoded total including headers; ZIP32, no ZIP64; memory can temporarily exceed encoded size |
 
 These are rejection boundaries, not latency or maximum-memory guarantees. A
-single 4096 × 4096 RGBA layer is already 64 MiB. Prefer writable-folder output
+single maximum-size 8192 × 8192 RGBA layer is 256 MiB; a 4096 × 4096 layer is 64 MiB. Prefer writable-folder output
 and smaller batches for large work.
 
 ## Verification entry points

@@ -22,14 +22,14 @@
  * TESTBENCH  node --import tsx --test src/image/image-policy-drawing.test.ts
  * DEMO       node --import tsx src/image/image-policy-drawing.demo.ts
  */
-import { createRaster, MAX_PIXELS, paintRaster, type Raster, type Rect, type RGBA } from './raster-ops.ts';
+import { createRaster, isRasterSize, paintRaster, type Raster, type Rect, type RGBA } from './raster-ops.ts';
 import { transformRaster } from './raster-transform.ts';
 import type { ImageOperation } from './image-operation-types.ts';
 type Shape = Extract<ImageOperation, { kind: 'shape' }>;
 type Mode = 'pixel-art' | 'smooth';
 const COVERAGE_GRID = 4;
 function modeCheck(mode: Mode) { if (mode !== 'pixel-art' && mode !== 'smooth') throw new RangeError('Unknown image rendering mode.'); }
-function sizeCheck(width: number, height: number) { if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > MAX_PIXELS) throw new RangeError('Image dimensions exceed the pixel limit.'); }
+function sizeCheck(width: number, height: number) { if (!isRasterSize(width, height)) throw new RangeError('Image dimensions exceed the pixel limit.'); }
 function rasterCheck(r: Raster) {
   sizeCheck(r?.width, r?.height);
   if (!(r.data instanceof Uint8ClampedArray) || r.data.length !== r.width * r.height * 4) throw new RangeError('Incomplete image pixels.');

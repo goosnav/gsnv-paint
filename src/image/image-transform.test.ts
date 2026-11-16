@@ -23,3 +23,10 @@ test('rotation snaps and invalid or excessive allocations are rejected',()=>{
  assert.throws(()=>drag('move',NaN,1),/finite/i);
  assert.throws(()=>imageTransform({op:'validate',box:{} as typeof box}),/finite/i);
 });
+
+test('transform output shares the enlarged area and axis bounds',()=>{
+ assert.deepEqual(imageTransform({op:'validate',box:{...box,width:5100,height:6600}}),{...box,width:5100,height:6600});
+ assert.doesNotThrow(()=>imageTransform({op:'validate',box:{...box,width:8192,height:8192}}));
+ for(const size of [{width:8193,height:8192},{width:16385,height:1},{width:1,height:16385}])
+  assert.throws(()=>imageTransform({op:'validate',box:{...box,...size}}),/limit/);
+});

@@ -8,7 +8,8 @@
  *            RAISES: RangeError for invalid sizes, colors, rectangles or nonfinite points.
  * GUARANTEES Deterministic, aliased pixel output identical in browsers and Node; no DOM.
  *            Strokes, outlines and fills clip to the raster.
- * TUNING     MAX_PIXELS bounds a single raster (64 MiB of RGBA). Brush stamps are round
+ * TUNING     MAX_PIXELS bounds a single raster (256 MiB of RGBA); MAX_DIMENSION
+ *            bounds either canvas axis. Brush stamps are round
  *            for 'round' and square for 'square'; outline width grows inward.
  * DECISIONS  D1: Aliased rasterization; alternative antialiasing rejected to match classic paint
  *            tools and keeping flood fill boundaries closed. Revisit if: a smooth brush
@@ -28,10 +29,19 @@ export type PaintOp =
   | { kind: 'blit'; source: Raster; x: number; y: number; mode: 'replace' | 'over' };
 
 
-export const MAX_PIXELS = 4096 * 4096;
+export const MAX_PIXELS = 8192 * 8192;
+export const MAX_DIMENSION = 16_384;
+
+/** Allocation-free size guard shared by raster storage, tools, recipes and UI. */
+export function isRasterSize(width: unknown, height: unknown): boolean {
+  return typeof width === 'number' && typeof height === 'number'
+    && Number.isSafeInteger(width) && Number.isSafeInteger(height)
+    && width >= 1 && height >= 1 && width <= MAX_DIMENSION && height <= MAX_DIMENSION
+    && width * height <= MAX_PIXELS;
+}
 
 export function createRaster(width: number, height: number, fill: RGBA): Raster {
-  if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > MAX_PIXELS) throw new RangeError(`Image size must be whole pixels between 1 and ${MAX_PIXELS} pixels in total.`);
+  if (!isRasterSize(width, height)) throw new RangeError(`Image size must use whole pixels, at most ${MAX_DIMENSION.toLocaleString()} per side and ${MAX_PIXELS.toLocaleString()} pixels in total.`);
   color(fill);
   const data = new Uint8ClampedArray(width * height * 4);
   if (fill.some(v => v !== 0)) for (let i = 0; i < data.length; i += 4) data.set(fill, i);
@@ -43,7 +53,7 @@ function color(value: RGBA): RGBA {
   return value;
 }
 function checkRaster(r: Raster) {
-  if (!r || !Number.isInteger(r.width) || !Number.isInteger(r.height) || r.width < 1 || r.height < 1 || !(r.data instanceof Uint8ClampedArray) || r.data.length !== r.width * r.height * 4) throw new RangeError('Invalid raster.');
+  if (!r || !isRasterSize(r.width, r.height) || !(r.data instanceof Uint8ClampedArray) || r.data.length !== r.width * r.height * 4) throw new RangeError('Invalid raster.');
 }
 function checkPoint(p: Point) { if (!Array.isArray(p) || p.length !== 2 || !p.every(Number.isFinite)) throw new RangeError('Points must be finite.'); }
 function checkSize(size: number) { if (!Number.isInteger(size) || size < 1 || size > 512) throw new RangeError('Tool size must be a whole number from 1 to 512.'); }

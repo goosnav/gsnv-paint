@@ -15,7 +15,7 @@
  * DEMO       node --import tsx src/image/image-operations.demo.ts
  */
 import { imageContent, type ImageContent } from './image-content.ts';
-import { createRaster, paintRaster, MAX_PIXELS, type Raster } from './raster-ops.ts';
+import { createRaster, paintRaster, isRasterSize, type Raster } from './raster-ops.ts';
 import { affineRaster } from './raster-transform.ts';
 import { maskedMerge } from './image-composite.ts';
 import { readLayer, mergedImage, writeLayer } from './image-operations-pixels.ts';
@@ -34,8 +34,23 @@ function selectPixels(image: ImageContent, raster: Raster, x: number, y: number)
   return imageContent({ operation: 'selection', previous: image, mask });
 }
 export function replayTransfer(state: ImageOperationState, op: Transfer, assets: readonly ImageRecipeAsset[]): ImageOperationState {
-  const { image } = state, raster = readLayer(image), bottom = image.activeLayerId === image.layers[0]!.id;
+  const { image } = state;
   let clipboard = state.clipboard;
+  if (op.kind === 'paste') {
+    const source = op.source.kind === 'clipboard' ? clipboard : assets.find(a => a.id === (op.source as { id: string }).id);
+    if (!source) throw new RangeError('The clipboard or requested asset is unavailable.');
+    if (!isRasterSize(source.width, source.height) || !(source.data instanceof Uint8ClampedArray) || source.data.length !== source.width * source.height * 4) throw new RangeError('Invalid image asset pixels.');
+    const placed = op.sampling === 'nearest' && op.box.width === source.width && op.box.height === source.height ? source : affineRaster(source, { scaleX: op.box.width / source.width * 100, scaleY: op.box.height / source.height * 100, angle: 0, sampling: op.sampling });
+    const layer = createRaster(image.width, image.height, [0, 0, 0, 0]), x = Math.round(op.box.x), y = Math.round(op.box.y);
+    paintRaster(layer, { kind: 'blit', source: placed, x, y, mode: 'replace' });
+    let n = 1; while (image.layers.some(l => l.id === `recipe-layer-${n}`)) n++; const id = `recipe-layer-${n}`;
+    const stack = image.layers.map(({ tiles: _tiles, ...meta }) => ({ meta, raster: undefined as Raster | undefined }));
+    stack.splice(image.layers.findIndex(l => l.id === image.activeLayerId) + 1, 0, { meta: { id, name: op.name, visible: true, opacity: 1, blend: 'normal' }, raster: layer });
+    let result = imageContent({ operation: 'layers', previous: image, width: image.width, height: image.height, layers: stack.map(s => s.raster ? { meta: s.meta, raster: s.raster } : { meta: s.meta }), activeLayerId: id });
+    if (op.select) result = selectPixels(result, placed, x, y);
+    return Object.freeze({ image: result, clipboard });
+  }
+  const raster = readLayer(image), bottom = image.activeLayerId === image.layers[0]!.id;
   if (op.kind === 'clipboard') {
     if (op.source === 'selection' && !image.selection) return state;
     clipboard = imageOutput(op.source === 'canvas' ? mergedImage(image) : extract(image, raster), image.policy);
@@ -47,19 +62,6 @@ export function replayTransfer(state: ImageOperationState, op: Transfer, assets:
     paintRaster(raster, { kind: 'clear', rect, color: bottom ? op.background : [0, 0, 0, 0] });
     maskedMerge({ target: raster, base, mask: image.selection.mask, rect });
     return Object.freeze({ image: writeLayer(image, raster), clipboard });
-  }
-  if (op.kind === 'paste') {
-    const source = op.source.kind === 'clipboard' ? clipboard : assets.find(a => a.id === (op.source as { id: string }).id);
-    if (!source) throw new RangeError('The clipboard or requested asset is unavailable.');
-    if (!Number.isInteger(source.width) || !Number.isInteger(source.height) || source.width < 1 || source.height < 1 || source.width * source.height > MAX_PIXELS || !(source.data instanceof Uint8ClampedArray) || source.data.length !== source.width * source.height * 4) throw new RangeError('Invalid image asset pixels.');
-    const placed = affineRaster(source, { scaleX: op.box.width / source.width * 100, scaleY: op.box.height / source.height * 100, angle: 0, sampling: op.sampling }), layer = createRaster(image.width, image.height, [0, 0, 0, 0]), x = Math.round(op.box.x), y = Math.round(op.box.y);
-    paintRaster(layer, { kind: 'blit', source: placed, x, y, mode: 'replace' });
-    let n = 1; while (image.layers.some(l => l.id === `recipe-layer-${n}`)) n++; const id = `recipe-layer-${n}`;
-    const stack = image.layers.map(({ tiles: _tiles, ...meta }) => ({ meta, raster: undefined as Raster | undefined }));
-    stack.splice(image.layers.findIndex(l => l.id === image.activeLayerId) + 1, 0, { meta: { id, name: op.name, visible: true, opacity: 1, blend: 'normal' }, raster: layer });
-    let result = imageContent({ operation: 'layers', previous: image, width: image.width, height: image.height, layers: stack.map(s => s.raster ? { meta: s.meta, raster: s.raster } : { meta: s.meta }), activeLayerId: id });
-    if (op.select) result = selectPixels(result, placed, x, y);
-    return Object.freeze({ image: result, clipboard });
   }
   const selected = op.kind === 'affine' && op.clipboard ? clipboard : op.kind==='affine' && op.asset ? assets.find(a=>a.id===op.asset) : extract(image, raster); if(!selected)throw new RangeError(op.kind === 'affine' && op.clipboard ? 'The original transform clipboard is unavailable.' : 'The original transform asset is unavailable.'); const b = image.selection?.bounds ?? { x: 0, y: 0, width: image.width, height: image.height }, mask = image.selection?.mask;
   for (let y = b.y; y < b.y + b.height; y++) for (let x = b.x; x < b.x + b.width; x++) { const p = y * image.width + x; if (mask && !mask[p]) continue; if (bottom) raster.data.set(op.background, p * 4); else raster.data[p * 4 + 3] = 0; }

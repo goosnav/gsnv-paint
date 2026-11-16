@@ -24,7 +24,8 @@ import type { DialogSpec } from '../shared/dialog.ts';
 import { fileAccess, type FilePorts } from '../shared/file-access.ts';
 import { imageContent, type ImageContent, type LayerMeta } from './image-content.ts';
 import { transformRaster, affineRaster, type TransformOp } from './raster-transform.ts';
-import { paintRaster, clip, createRaster, MAX_PIXELS, type Raster, type RGBA, type Rect } from './raster-ops.ts';
+import { paintRaster, clip, createRaster, MAX_PIXELS, MAX_DIMENSION, isRasterSize, type Raster, type RGBA, type Rect } from './raster-ops.ts';
+import { bindImageFileDrop, IMAGE_FILE_TYPES, imageFileError, importImageFileSequence } from './image-file-drop.ts';
 import { imageToolInput, IMAGE_TOOLS, type ImageTool, type ImageToolState, type SelectMode } from './image-tool-input.ts';
 import { imagePalette, DEFAULT_OPTIONS, type ToolOptions } from './image-palette.ts';
 import { imageLayersPanel, type LayerAction } from './image-layers-panel.ts';
@@ -50,6 +51,7 @@ import type { BatchFilePorts } from './image-batch-files.ts';
 import { imageDownpixelDialog } from './image-downpixel-dialog.ts';
 import { createImageEffects } from './image-effects-client.ts';
 import { pixelStroke } from './pixel-stroke.ts';
+import { createSelectionOutline, type SelectionOutline } from './image-selection-outline.ts';
 import './image-workspace.css';
 
 type Snapshot = Parameters<ReturnType<WorkspaceAdapter['mount']>['render']>[0];
@@ -58,7 +60,7 @@ type Floating = { raster: Raster; x: number; y: number; origin: { x: number; y: 
 type Stroke = { base: Uint8ClampedArray; cov: Coverage; carry: number; mode: CoverageMode | 'pencil' | 'smudge'; dirty: Rect | null; timer: number | null; last: [number, number]; seed: number; operation:Extract<ImageOperation,{kind:'stroke'}>; segments:{points:[number,number][];seed:number}[] };
 const NEW_SIZE = { width: 800, height: 600 }, MARGIN = 24, PASTE_FIT = 0.8, SPRAY_INTERVAL_MS = 40;
 const BLACK: RGBA = [0, 0, 0, 255], WHITE: RGBA = [255, 255, 255, 255];
-const IMAGE_TYPES = { 'image/png': ['.png'], 'image/jpeg': ['.jpg', '.jpeg'], 'image/gif': ['.gif'], 'image/webp': ['.webp'], 'image/bmp': ['.bmp'] };
+const IMAGE_TYPES = IMAGE_FILE_TYPES;
 const TOOLS: Record<ImageTool, { label: string; icon: string; key: string; hint: string }> = {
   move: { label: 'Move', icon: 'paintMove', key: 'V', hint: 'Drag to move the selection, or the whole layer when nothing is selected · Enter places it.' },
   select: { label: 'Rectangle select', icon: 'paintSelect', key: 'S', hint: 'Drag to select · Shift adds, Ctrl subtracts · drag inside to move the pixels.' },
@@ -107,13 +109,13 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       const make = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string) => { const node = document.createElement(tag); node.className = className; return node; };
       const stage = make('div', 'image-stage'), surface = make('div', 'image-surface'), canvas = make('canvas', 'image-canvas'), float = make('canvas', 'image-floating'), overlay = make('canvas', 'image-overlay');
       const ring = make('div', 'image-brush-ring'), hint = make('div', 'image-tool-hint'), notice = make('div', 'image-empty'), optionsPanel = document.createElement('div'), layersPanel = document.createElement('div');
-      stage.tabIndex = -1; canvas.setAttribute('aria-label', 'Image canvas'); notice.textContent = 'Choose New (Ctrl+N), Open (Ctrl+O), or Paste (Ctrl+V) an image from your clipboard.';
+      stage.tabIndex = -1; canvas.setAttribute('aria-label', 'Image canvas'); notice.textContent = 'Drop image files here, choose Open (Ctrl+O), or Paste (Ctrl+V) an image.';
       surface.append(canvas, float, overlay); stage.append(surface, ring, notice); host.root.append(stage, hint);
       const context = canvas.getContext('2d'), floatContext = float.getContext('2d'), overlayContext = overlay.getContext('2d');
       let current: Snapshot, source: ImageContent | null = null, rasters = new Map<string, Raster>(), display: ImageData | null = null, view: View2D = { zoom: 1, pan: { x: 0, y: 0 } };
       let tool: ImageToolState = { tool: 'brush', drag: null }, previousTool: ImageTool = 'brush', primary = BLACK, secondary = WHITE, options: ToolOptions = { ...DEFAULT_OPTIONS };
       let selection: Selection | null = null, floating: Floating | null = null, stroke: Stroke | null = null, shapeBase: Uint8ClampedArray | null = null, shapeDirty: Rect | null = null;
-      let smudge: SmudgeCarry | null = null, cloneSource: [number, number] | null = null, opacityPreview: number | null = null, edges: Int32Array | null = null, phase = 0;
+      let smudge: SmudgeCarry | null = null, cloneSource: [number, number] | null = null, opacityPreview: number | null = null, outline: SelectionOutline | null = null, phase = 0;
       let scale = 1, offset = { x: 0, y: 0 }, panning: { x: number; y: number } | null = null, cursor: [number, number] | null = null, message = '', disposed = false, marquee: { shape: string; points: [number, number][] } | null = null;
       let pendingImages = 0, rasterRevision = 0;
       let policyPreview: PixelPolicy | null = null;
@@ -122,7 +124,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       let floatCache: { original: Raster; key: string; result: Raster } | null = null;
       let canvasRendering: 'pixels' | 'smooth' = 'pixels', sampling: 'nearest' | 'bilinear' = 'nearest';
       const sharpRendering = window.CSS.supports('image-rendering', 'crisp-edges') ? 'crisp-edges' : 'pixelated';
-      let transform: { box: TransformBox; original: Raster } | null = null;
+      let transform: { box: TransformBox; original: Raster; initialBox?: TransformBox; initialSampling?: 'nearest' | 'bilinear' } | null = null;
       const pendingTransfer = () => disposed ? 'closed workspace' : floating ? 'floating selection' : stroke ? 'brush stroke' : shapeBase ? 'shape' : marquee || tool.drag ? 'selection or tool gesture' : opacityPreview !== null ? 'opacity preview' : pendingImages ? 'image import or paste' : '';
       const bridge = imageSourceAdapter({ read: () => current ? { ...current, value: current.value as ImageContent } : undefined, pending: pendingTransfer });
       const palette = imagePalette({ root: optionsPanel, onChange(change) {
@@ -131,7 +133,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         refresh();
       } });
       const layers = imageLayersPanel({ root: layersPanel, onAction: layerAction });
-      const antTimer = window.setInterval(() => { if (edges && !disposed) { phase = (phase + 1) % 8; drawOverlay(); } }, 160);
+      const antTimer = window.setInterval(() => { if (outline && !disposed) { phase = (phase + 1) % 8; drawOverlay(); } }, 160);
 
       const automation=createImageAutomation({root:host.root,files,read:()=>current?.value as ImageContent??null,
         commit(value,label){commitOperation(value,label,null);},preview(value){resync(value??undefined);refresh();},dialog:host.dialog,notice(text){message=text;refresh();},invalidate:host.invalidate,
@@ -204,7 +206,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         finally{effectBusy=false;if(effectQueued)void renderPalette();}
       }
       function resync(preview?: ImageContent) {
-        transform = null;
+        transform = null; floatCache = null;
         if (!current) return; const next = preview ?? current.value as ImageContent;
         if (!source || source.policy.mode !== next.policy.mode) { canvasRendering = next.policy.mode === 'pixel-art' ? 'pixels' : 'smooth'; sampling = next.policy.mode === 'pixel-art' ? 'nearest' : 'bilinear'; }
         source = next;
@@ -214,25 +216,22 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         display = new ImageData(source.width, source.height); composite(); selectionChanged();
       }
       function selectionChanged() {
-        edges = null;
+        outline = null;
         if (selection && source) {
           const { mask } = selection, w = source.width, h = source.height, list: number[] = [], b = selection.bounds;
           for (let y = b.y; y < b.y + b.height; y++) for (let x = b.x; x < b.x + b.width; x++) {
             const p = y * w + x; if (!mask[p]) continue;
             if (x === 0 || y === 0 || x === w - 1 || y === h - 1 || !mask[p - 1] || !mask[p + 1] || !mask[p - w] || !mask[p + w]) list.push(p);
           }
-          edges = Int32Array.from(list);
+          if (list.length) outline = createSelectionOutline({ width: w, height: h, edges: Int32Array.from(list) });
         }
         drawOverlay();
       }
       function drawOverlay() {
         if (!overlayContext || !source) return;
         overlayContext.clearRect(0, 0, overlay.width, overlay.height);
-        if (edges && edges.length) {
-          const data = overlayContext.createImageData(source.width, source.height), w = source.width;
-          for (const p of edges) { const x = p % w, y = (p - x) / w, on = ((x + y + phase) >> 2) & 1, i = p * 4; data.data[i] = data.data[i + 1] = data.data[i + 2] = on ? 255 : 0; data.data[i + 3] = 255; }
-          overlayContext.putImageData(data, 0, 0);
-        }
+        if (outline) for (const tile of outline.update(phase))
+          overlayContext.putImageData(new ImageData(tile.data, tile.width, tile.height), tile.x, tile.y);
         if (marquee && marquee.points.length) {
           const unit = 1 / Math.max(1, scale * view.zoom);
           overlayContext.save(); overlayContext.lineWidth = unit; overlayContext.setLineDash([4 * unit]); overlayContext.strokeStyle = '#000'; overlayContext.beginPath();
@@ -252,9 +251,21 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         float.style.imageRendering = transform ? (sampling === 'nearest' ? sharpRendering : 'auto') : '';
         if (floating) {
           float.hidden = false;
-          if (transform) { const b = transform.box, original = transform.original, key=JSON.stringify([b.width,b.height,b.angle,sampling,source?.policy]); if(!floatCache||floatCache.original!==original||floatCache.key!==key)floatCache={original,key,result:imageOutput(affineRaster(original,{scaleX:b.width/original.width*100,scaleY:b.height/original.height*100,angle:b.angle,sampling}),source!.policy)}; const r=floatCache.result; float.width=r.width;float.height=r.height;floatContext?.putImageData(new ImageData(new Uint8ClampedArray(r.data),r.width,r.height),0,0);float.style.left=`${Math.round(b.x+b.width/2-r.width/2)}px`;float.style.top=`${Math.round(b.y+b.height/2-r.height/2)}px`;float.style.transform=''; }
+          if (transform) {
+            const b = transform.box, original = transform.original, key = JSON.stringify([b.width, b.height, b.angle, sampling, source?.policy]);
+            if (!floatCache || floatCache.original !== original || floatCache.key !== key) {
+              floatCache = { original, key, result: imageOutput(affineRaster(original, { scaleX: b.width / original.width * 100, scaleY: b.height / original.height * 100, angle: b.angle, sampling }), source!.policy) };
+              const r = floatCache.result;
+              float.width = r.width; float.height = r.height;
+              floatContext?.putImageData(new ImageData(new Uint8ClampedArray(r.data), r.width, r.height), 0, 0);
+            }
+            // Moving a placed image changes CSS coordinates, not its bitmap pixels.
+            const r = floatCache.result;
+            float.style.left = `${Math.round(b.x + b.width / 2 - r.width / 2)}px`;
+            float.style.top = `${Math.round(b.y + b.height / 2 - r.height / 2)}px`; float.style.transform = '';
+          }
           else { float.style.left = `${floating.x}px`; float.style.top = `${floating.y}px`; float.style.transform = ''; }
-        } else { float.style.transform = ''; if (!document.querySelector('dialog[open]')) float.hidden = true; }
+        } else { float.style.transform = ''; if (!document.querySelector('dialog[open]')) { float.hidden = true; floatCache = null; if (float.width || float.height) { float.width = 0; float.height = 0; } } }
       }
       const thumbnailsByLayer=new Map<string,{tiles:ImageContent['layers'][number]['tiles'];width:number;height:number;canvas:HTMLCanvasElement}>();
       function thumbnails() {
@@ -264,7 +275,12 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           const cached=thumbnailsByLayer.get(l.id);if(cached&&cached.width===source.width&&cached.height===source.height&&cached.tiles.length===l.tiles.length&&cached.tiles.every((tile,i)=>tile===l.tiles[i])){map.set(l.id,cached.canvas);continue;}
           const t = document.createElement('canvas'); t.className = 'image-layer-thumb'; t.width = 32; t.height = Math.max(8, Math.min(32, Math.round(32 * source.height / source.width)));
           const raster = rasters.get(l.id), ctx = t.getContext('2d');
-          if (raster && ctx) { const tmp = document.createElement('canvas'); tmp.width = raster.width; tmp.height = raster.height; tmp.getContext('2d')?.putImageData(new ImageData(new Uint8ClampedArray(raster.data), raster.width, raster.height), 0, 0); ctx.drawImage(tmp, 0, 0, t.width, t.height); }
+          if (raster && ctx) {
+            // Sample straight into the small preview; a full-size temporary canvas
+            // would duplicate hundreds of MiB for every changed high-resolution layer.
+            const preview = affineRaster(raster, { scaleX: t.width / raster.width * 100, scaleY: t.height / raster.height * 100, angle: 0, sampling: 'bilinear' });
+            ctx.putImageData(new ImageData(new Uint8ClampedArray(preview.data), preview.width, preview.height), 0, 0);
+          }
           map.set(l.id, t);thumbnailsByLayer.set(l.id,{tiles:l.tiles,width:source.width,height:source.height,canvas:t});
         }
         return map;
@@ -284,6 +300,10 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       function placeFloating() {
         if(!floating||!source)return;const f=floating,b=transform?.box,original=source.selection?.bounds??fullRect();
+        if (b && transform?.initialBox && sampling === transform.initialSampling && (['x', 'y', 'width', 'height', 'angle'] as const).every(key => b[key] === transform!.initialBox![key])) {
+          // An untouched imported placement is already committed: do not add a second Undo step.
+          transform = null; floating = null; rasters.set(activeId(), imageContent({ operation: 'raster', value: source, layerId: activeId() })); composite(); return;
+        }
         const operation:ImageOperation=b?{kind:'affine',box:{...b},sampling,background:secondary,...(f.fromClipboard?{clipboard:true as const}:f.asset?{asset:f.asset.id}:{})}:{kind:'move',dx:f.x-original.x,dy:f.y-original.y,background:secondary};
         transform=null;floating=null;perform(operation,b?'Transform':f.label,f.asset?[f.asset]:[]);
       }
@@ -420,7 +440,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         const lines = style.text.split('\n'), measure = document.createElement('canvas').getContext('2d'); if (!measure || !style.text.trim()) return null;
         const font = `${style.italic ? 'italic ' : ''}${style.bold ? 'bold ' : ''}${style.size}px ${style.font}`; measure.font = font;
         const widths = lines.map(line => measure.measureText(line).width), width = Math.ceil(Math.max(...widths)) + Math.ceil(style.size * 0.3) + 2, lineHeight = Math.ceil(style.size * style.spacing), height = lineHeight * (lines.length - 1) + Math.ceil(style.size * 1.3);
-        if (width * height > MAX_PIXELS) throw new RangeError('The text is too large.');
+        if (!isRasterSize(width, height)) throw new RangeError('The text exceeds the canvas dimension or pixel limit.');
         const out = document.createElement('canvas'); out.width = width; out.height = height; const ctx = out.getContext('2d')!;
         ctx.font = font; ctx.textBaseline = 'top'; ctx.fillStyle = style.color;
         lines.forEach((line, i) => ctx.fillText(line, 1 + (style.align === 'left' ? 0 : (width - 2 - widths[i]!) * (style.align === 'center' ? 0.5 : 1)), i * lineHeight + Math.round(style.size * 0.1)));
@@ -472,11 +492,11 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       function transformAll(op:TransformOp,label:string){if(!source)return;placeFloating();perform({kind:'transform',transform:op},label);}
       function sizeDialog(kind: 'resize' | 'canvas') {
         if (!source) return; placeFloating(); const w0 = source.width, h0 = source.height;
-        host.dialog({ title: kind === 'resize' ? 'Resize image' : 'Canvas size', fields: [{ key: 'width', label: 'Width (px)', type: 'number', min: 1, max: 4096, step: 1 }, { key: 'height', label: 'Height (px)', type: 'number', min: 1, max: 4096, step: 1 }, ...(kind === 'resize' ? [{ key: 'keep', label: 'Keep aspect ratio', type: 'checkbox' as const }] : [])],
+        host.dialog({ title: kind === 'resize' ? 'Resize image' : 'Canvas size', fields: [{ key: 'width', label: 'Width (px)', type: 'number', min: 1, max: MAX_DIMENSION, step: 1 }, { key: 'height', label: 'Height (px)', type: 'number', min: 1, max: MAX_DIMENSION, step: 1 }, ...(kind === 'resize' ? [{ key: 'keep', label: 'Keep aspect ratio', type: 'checkbox' as const }] : [])],
           initial: { width: w0, height: h0, ...(kind === 'resize' ? { keep: true } : {}) },
           validate(values) {
             const width = Number(values.width), height = values.keep ? Math.max(1, Math.round(Number(values.width) * h0 / w0)) : Number(values.height);
-            if (![width, height].every(v => Number.isInteger(v) && v >= 1) || width * height > MAX_PIXELS) return { ok: false, error: { code: 'image.size', message: `Use whole pixels; at most ${MAX_PIXELS.toLocaleString()} pixels in total.` } };
+            if (![width, height].every(v => Number.isInteger(v) && v >= 1 && v <= MAX_DIMENSION) || width * height > MAX_PIXELS) return { ok: false, error: { code: 'image.size', message: `Use whole pixels; at most ${MAX_DIMENSION.toLocaleString()} per side and ${MAX_PIXELS.toLocaleString()} pixels in total.` } };
             return { ok: true, value: { width, height } };
           }, preview() {},
           commit(value) { const v = value as { width: number; height: number }; transformAll(kind === 'resize' ? { kind: 'resize', ...v } : { kind: 'canvas', ...v, fill: secondary }, kind === 'resize' ? 'Resize image' : 'Canvas size'); },
@@ -503,11 +523,20 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       async function decodeImage(blob: Blob): Promise<Raster> {
         const bitmap = await createImageBitmap(blob);
+        let out: HTMLCanvasElement | null = null;
         try {
-          if (bitmap.width * bitmap.height > MAX_PIXELS) throw new RangeError(`Images up to ${MAX_PIXELS.toLocaleString()} pixels can be opened.`);
-          const out = document.createElement('canvas'); out.width = bitmap.width; out.height = bitmap.height; const ctx = out.getContext('2d')!; ctx.drawImage(bitmap, 0, 0);
-          return { width: bitmap.width, height: bitmap.height, data: ctx.getImageData(0, 0, bitmap.width, bitmap.height).data };
-        } finally { bitmap.close(); }
+          if (bitmap.width > MAX_DIMENSION || bitmap.height > MAX_DIMENSION || bitmap.width * bitmap.height > MAX_PIXELS)
+            throw new RangeError(`This image is ${bitmap.width.toLocaleString()} × ${bitmap.height.toLocaleString()} pixels. Paint supports up to ${MAX_PIXELS.toLocaleString()} pixels in total and ${MAX_DIMENSION.toLocaleString()} per side.`);
+          out = document.createElement('canvas'); out.width = bitmap.width; out.height = bitmap.height;
+          const ctx = out.getContext('2d', { willReadFrequently: true });
+          if (!ctx) throw new Error('The browser could not allocate a canvas for this image. Close other large images or use a smaller copy.');
+          try {
+            ctx.drawImage(bitmap, 0, 0);
+            return { width: bitmap.width, height: bitmap.height, data: ctx.getImageData(0, 0, bitmap.width, bitmap.height).data };
+          } catch (cause) {
+            throw new Error(`The browser could not read this ${bitmap.width.toLocaleString()} × ${bitmap.height.toLocaleString()} image. It may exceed available canvas memory. ${cause instanceof Error ? cause.message : String(cause)}`);
+          }
+        } finally { bitmap.close(); if (out) { out.width = 0; out.height = 0; } }
       }
       function rawComposite(): Raster { const out = createRaster(source!.width, source!.height, [0, 0, 0, 0]); compositeLayers({ width: out.width, height: out.height, layers: source!.layers.map(l => ({ raster: rasters.get(l.id)!, visible: l.visible, opacity: l.opacity, blend: l.blend })), rect: fullRect(), out: out.data }); return out; }
       function flattened(): Raster { return imageOutput(rawComposite(),policyPreview??source!.policy); }
@@ -522,8 +551,33 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         if(!source)return;placeFloating();const asset:ImageRecipeAsset={id:`asset-${crypto.randomUUID()}`,width:raster.width,height:raster.height,data:new Uint8ClampedArray(raster.data)};
         perform({kind:'paste',source:{kind:'asset',id:asset.id},name,box:{x:placement.x,y:placement.y,width:raster.width,height:raster.height},sampling:'nearest',select:placement.select},label,[asset]);
       }
+      /** Place owned imported pixels once; the live transform retains their full resolution. */
+      function placeImageLayer(pasted: Raster, name: string, label: string, fromClipboard = false): boolean {
+        if (!source) return false; placeFloating();
+        const fit = pasted.width > source.width || pasted.height > source.height ? Math.min(source.width / pasted.width, source.height / pasted.height) * PASTE_FIT : 1;
+        const width = Math.max(1, Math.round(pasted.width * fit)), height = Math.max(1, Math.round(pasted.height * fit));
+        const x = Math.floor((source.width - width) / 2), y = Math.floor((source.height - height) / 2), previousLayer = activeId();
+        const asset: ImageRecipeAsset = { id: `asset-${crypto.randomUUID()}`, width: pasted.width, height: pasted.height, data: pasted.data };
+        perform({ kind: 'paste', source: fromClipboard ? { kind: 'clipboard' } : { kind: 'asset', id: asset.id }, name,
+          box: { x, y, width, height }, sampling, select: true }, label, fromClipboard ? [] : [asset]);
+        if (activeId() === previousLayer) return false;
+        // Cancel restores the committed initial placement; Apply samples the full owned source.
+        paintRaster(active(), { kind: 'clear', rect: fullRect(), color: [0, 0, 0, 0] }); composite();
+        floating = { raster: pasted, x, y, origin: { x, y }, label: 'Transform', ...(fromClipboard ? { fromClipboard: true } : { asset }) };
+        transform = { original: pasted, box: { x, y, width, height, angle: 0 }, initialBox: { x, y, width, height, angle: 0 }, initialSampling: sampling };
+        tool = { tool: 'move', drag: null };
+        message = `${name} added on a new layer${fit < 1 ? ' and fitted inside the canvas' : ''}. Drag handles to resize or move · Enter applies · Esc keeps its initial placement.`;
+        refresh(); return true;
+      }
+      function imageInputBlocked(): string | null {
+        if (disposed || host.root.hidden) return 'Switch to Paint before importing an image.';
+        if (pendingImages) return 'An image is still loading. Wait for it to finish, then try again.';
+        if (document.querySelector('dialog[open]')) return 'Close the current dialog before importing an image.';
+        return null;
+      }
       async function paste(blob?: Blob) {
-        if (pendingImages) { fail('An image is still loading. Try Paste again when it finishes.'); return; }
+        const blocked = imageInputBlocked(); if (blocked) { fail(blocked); return; }
+        finishStroke(); placeFloating();
         const identity = current?.identity; pendingImages++; host.invalidate();
         try {
           let pasted: Raster | null = null, fallback = false;
@@ -536,44 +590,66 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           if (blob) pasted = await decodeImage(blob);
           else if (fallback && clipboard) pasted = copyRaster(clipboard);
           if (disposed) return;
-          if (identity !== current?.identity || host.root.hidden) { fail('The Image or workspace changed while reading the clipboard. Paste again into the intended project.'); return; }
+          if (identity !== current?.identity || host.root.hidden || document.querySelector('dialog[open]')) { fail('The Image or workspace changed while reading the clipboard. Paste again into the intended project.'); return; }
           if (!pasted) { fail(fallback ? 'Clipboard access is unavailable. Copy an image, then use Ctrl+V / Cmd+V over the canvas, or Open an image file.' : 'There is no image on the clipboard. Copy an image first.'); return; }
           if (!source || source===starterValue) {
             const value = imageContent({ operation: 'layers', previous: null, width: pasted.width, height: pasted.height, layers: [{ meta: { id: 'background', name: 'Background', visible: true, opacity: 1, blend: 'normal' }, raster: pasted }], activeLayerId: 'background' });
             await host.open({ id: crypto.randomUUID(), title: 'Pasted image', format: 'gsnv-image', version: 1, value }); return;
           }
-          placeFloating();
-          const fit = pasted.width > source.width || pasted.height > source.height ? Math.min(source.width / pasted.width, source.height / pasted.height) * PASTE_FIT : 1;
-          const fitted = fit === 1 ? pasted : affineRaster(pasted, { scaleX: fit * 100, scaleY: fit * 100, angle: 0, sampling });
-          const x = Math.floor((source.width - fitted.width) / 2), y = Math.floor((source.height - fitted.height) / 2), previousLayer = activeId();
           const fromClipboard=automation.canReplayClipboard()&&!!clipboard&&pasted.width===clipboard.width&&pasted.height===clipboard.height&&pasted.data.every((byte,i)=>byte===clipboard!.data[i]);
-          if(fromClipboard)perform({kind:'paste',source:{kind:'clipboard'},name:'Pasted image',box:{x,y,width:fitted.width,height:fitted.height},sampling,select:true},'Paste');
-          else addLayer(fitted, 'Pasted image', 'Paste', { x, y, select: true });
-          if (activeId() === previousLayer) return;
-          // The committed layer supports Cancel/Undo. Transform from full clipboard pixels, not its fitted/clipped copy.
-          paintRaster(active(), { kind: 'clear', rect: fullRect(), color: [0, 0, 0, 0] }); composite();
-          floating = { raster: pasted, x, y, origin: { x, y }, label: 'Transform',...(fromClipboard?{fromClipboard:true}:{asset:{id:`asset-${crypto.randomUUID()}`,width:pasted.width,height:pasted.height,data:new Uint8ClampedArray(pasted.data)}}) };
-          transform = { original: copyRaster(pasted), box: { x, y, width: fitted.width, height: fitted.height, angle: 0 } };
-          float.width = pasted.width; float.height = pasted.height; floatContext?.putImageData(new ImageData(new Uint8ClampedArray(pasted.data), pasted.width, pasted.height), 0, 0);
-          tool = { tool: 'move', drag: null }; message = 'Image pasted on a new layer. Drag handles to resize or rotate · Enter applies · Esc keeps its initial placement.'; refresh();
-        } catch (cause) { fail(`The clipboard image could not be pasted: ${cause instanceof Error ? cause.message : String(cause)}`);
-        } finally { pendingImages--; host.invalidate(); }
+          placeImageLayer(pasted, 'Pasted image', 'Paste', fromClipboard);
+        } catch (cause) { if (!disposed) fail(`The clipboard image could not be pasted: ${cause instanceof Error ? cause.message : String(cause)}`);
+        } finally { pendingImages--; if (!disposed) host.invalidate(); }
       }
       async function importImage(asLayer: boolean, file?: File) {
+        const blocked = imageInputBlocked(); if (blocked) { fail(blocked); return; }
+        finishStroke(); placeFloating();
         const identity = current?.identity; pendingImages++; host.invalidate();
         try {
-        const result = await fileAccess({ op: 'open', accept: IMAGE_TYPES, file }, files);
-        if (disposed || 'cancelled' in result) return;
-        if (!result.ok) { fail(`${result.error.code}: ${result.error.message}`); return; }
-        try {
-          const next = await decodeImage(new Blob(result.value.bytes.map(b => b.slice())));
+          // Decode the browser's File directly; avoid holding extra copies of a large scan.
+          if (!file) {
+            const picked = await fileAccess({ op: 'pick', accept: IMAGE_TYPES }, files);
+            if (disposed || 'cancelled' in picked) return;
+            if (!picked.ok) { fail(`${picked.error.code}: ${picked.error.message}`); return; }
+            file = picked.value.file;
+          }
           if (disposed) return;
-          if (identity !== current?.identity) { fail('The Image changed while importing. Open the image again into the current project.'); return; }
-          if (asLayer && source) { addLayer(next, basename(result.value.name), 'Import as layer'); return; }
-          const value = imageContent({ operation: 'layers', previous: null, width: next.width, height: next.height, layers: [{ meta: { id: 'background', name: 'Background', visible: true, opacity: 1, blend: 'normal' }, raster: next }], activeLayerId: 'background' });
-          await host.open({ id: crypto.randomUUID(), title: basename(result.value.name), format: 'gsnv-image', version: 1, value });
-        } catch (cause) { fail(`This image could not be opened: ${cause instanceof Error ? cause.message : String(cause)}`); }
-        } finally { pendingImages--; host.invalidate(); }
+          if (identity !== current?.identity || host.root.hidden || document.querySelector('dialog[open]')) { fail('The Image or workspace changed while choosing the file. Open it again into the intended project.'); return; }
+          const unsupported = imageFileError(file); if (unsupported) { fail(unsupported); return; }
+          const next = await decodeImage(file);
+          if (disposed) return;
+          if (identity !== current?.identity || host.root.hidden || document.querySelector('dialog[open]')) { fail('The Image or workspace changed while importing. Open the image again into the intended project.'); return; }
+          if (asLayer && source && source !== starterValue) { placeImageLayer(next, basename(file.name), 'Import as layer'); return; }
+          const value = imageContent({ operation: 'layers', previous: null, width: next.width, height: next.height, layers: [{ meta: { id: 'background', name: asLayer ? basename(file.name) : 'Background', visible: true, opacity: 1, blend: 'normal' }, raster: next }], activeLayerId: 'background' });
+          await host.open({ id: crypto.randomUUID(), title: basename(file.name), format: 'gsnv-image', version: 1, value });
+        } catch (cause) { if (!disposed) fail(`This image could not be opened: ${cause instanceof Error ? cause.message : String(cause)}`); }
+        finally { pendingImages--; if (!disposed) host.invalidate(); }
+      }
+      async function dropImages(dropped: readonly File[]) {
+        const blocked = imageInputBlocked(); if (blocked) { fail(blocked); return; }
+        finishStroke(); placeFloating(); let identity = current?.identity, placementError = '';
+        pendingImages++; message = `Importing ${dropped.length === 1 ? dropped[0]!.name : `${dropped.length} images`}…`; refresh(); host.invalidate();
+        try {
+          const result = await importImageFileSequence({ files: dropped,
+            current: () => !disposed && !host.root.hidden && !document.querySelector('dialog[open]') && current?.identity === identity,
+            decode: decodeImage,
+            async place(raster, file) {
+              let placed: boolean;
+              if (!source || source === starterValue) {
+                const value = imageContent({ operation: 'layers', previous: null, width: raster.width, height: raster.height,
+                  layers: [{ meta: { id: 'background', name: basename(file.name), visible: true, opacity: 1, blend: 'normal' }, raster }], activeLayerId: 'background' });
+                placed = await host.open({ id: crypto.randomUUID(), title: basename(file.name), format: 'gsnv-image', version: 1, value });
+                if (!placed) placementError = 'The image was not opened. The current project was kept.';
+              } else { placed = placeImageLayer(raster, basename(file.name), 'Drop image'); if (!placed) placementError = message; }
+              identity = current?.identity; return placed;
+            },
+          });
+          if (disposed || host.root.hidden) return;
+          if (result.cancelled) fail(placementError || 'Import stopped because the Image, workspace or dialog changed. Drop the remaining files into the intended project.');
+          else if (result.errors.length) fail(`${result.imported ? `${result.imported} image${result.imported === 1 ? '' : 's'} imported. ` : ''}${result.errors.join(' ')}`);
+          else { message = `${result.imported} image${result.imported === 1 ? '' : 's'} added ${result.imported === 1 ? 'on its own layer' : 'on separate layers'}.${transform ? ' Drag handles to adjust the last image · Enter applies.' : ''}`; refresh(); if (!document.querySelector('dialog[open]')) stage.focus(); }
+        } catch (cause) { if (!disposed) fail(cause); }
+        finally { pendingImages--; if (!disposed) host.invalidate(); }
       }
       async function exportPNG() {
         if (!source || !current) return; placeFloating();
@@ -729,6 +805,8 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       };
       document.addEventListener('keydown', pasteKey, true);
       document.addEventListener('paste', nativePaste, true);
+      const fileDrop = bindImageFileDrop({ root: stage, active: () => !disposed && !host.root.hidden,
+        blocked: imageInputBlocked, onFiles: dropImages, onError: fail });
       const Resize = window.ResizeObserver, observer = Resize ? new Resize(() => layout()) : null; observer?.observe(stage);
       return {
         bridge,
@@ -736,10 +814,11 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         newDocument() { host.dialog(imageNewDialog({document,colour:primary,onCreate(settings){void host.open({id:crypto.randomUUID(),title:'Untitled image',format:'gsnv-image',version:1,value:imageContent({operation:'new',...settings})});}})); },
         openFile: { accept: IMAGE_TYPES, open: file => importImage(false, file) },
         render(snapshot, nextView) {
+          fileDrop.clear();
           if(snapshot?.value)automation.navigate(snapshot.value as ImageContent);
           const changed = snapshot?.identity !== current?.identity, opened = snapshot?.id !== current?.id; current = snapshot; view = nextView;
           if (changed) { shapeBase = null; shapeDirty = null; marquee = null; tool = { ...tool, drag: null }; if (stroke?.timer) window.clearInterval(stroke.timer); stroke = null; opacityPreview = null; }
-          if (!snapshot) { source = null; rasters.clear(); floating = null; selection = null; edges = null; }
+          if (!snapshot) { source = null; rasters.clear(); floating = null; selection = null; outline = null; }
           // Undo, redo, open and rejected commits all arrive as a value this view did not produce.
           else if (snapshot.value !== source) {
             floating = null; resync();
@@ -789,7 +868,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           } catch (cause) { fail(cause); }
           if (gesture.phase !== 'move') host.invalidate();
         },
-        dispose() { if (disposed) return; disposed = true; automation.dispose(); effects.dispose(); fonts.dispose(); document.removeEventListener('keydown', pasteKey, true); document.removeEventListener('paste', nativePaste, true); window.clearInterval(antTimer); if (stroke?.timer) window.clearInterval(stroke.timer); observer?.disconnect(); navigator.dispose(); transformView.dispose(); palette.dispose(); layers.dispose(); host.root.replaceChildren(); },
+        dispose() { if (disposed) return; disposed = true; fileDrop.dispose(); automation.dispose(); effects.dispose(); fonts.dispose(); document.removeEventListener('keydown', pasteKey, true); document.removeEventListener('paste', nativePaste, true); window.clearInterval(antTimer); if (stroke?.timer) window.clearInterval(stroke.timer); observer?.disconnect(); navigator.dispose(); transformView.dispose(); palette.dispose(); layers.dispose(); host.root.replaceChildren(); },
       };
     },
   };

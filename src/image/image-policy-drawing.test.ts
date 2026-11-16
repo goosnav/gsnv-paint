@@ -88,7 +88,7 @@ test('invalid policy, geometry, colours and raster sizes reject before writes', 
     assert.throws(() => paintPolicyShape(raster, op as Shape, 'smooth'), RangeError); assert.ok(raster.data.every(n => n === 0));
   }
   assert.throws(() => paintPolicyShape(raster, shape('ellipse'), 'unknown' as 'smooth'), RangeError);
-  for (const [w, h] of [[0, 1], [1.5, 2], [4097, 4097], [NaN, 2]]) assert.throws(() => resizePolicyRaster(raster, w!, h!, 'smooth'), RangeError);
+  for (const [w, h] of [[0, 1], [1.5, 2], [8193, 8192], [NaN, 2]]) assert.throws(() => resizePolicyRaster(raster, w!, h!, 'smooth'), RangeError);
   assert.throws(() => resizePolicyRaster({ ...raster, data: new Uint8ClampedArray(1) }, 2, 2, 'smooth'), RangeError);
 });
 

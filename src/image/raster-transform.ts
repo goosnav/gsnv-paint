@@ -15,7 +15,7 @@
  * LIMITS     In-memory rasters only; no skew, perspective or layer management.
  * TESTBENCH  src/image/raster-transform.test.ts -- run with: node --import tsx --test src/image/raster-transform.test.ts
  */
-import { createRaster, paintRaster, clip, type Raster, type Rect, type RGBA } from './raster-ops.ts';
+import { createRaster, paintRaster, clip, isRasterSize, type Raster, type Rect, type RGBA } from './raster-ops.ts';
 export type TransformOp =
   | { kind: 'flip'; axis: 'horizontal' | 'vertical' }
   | { kind: 'rotate'; turns: 1 | 2 | 3 }
@@ -25,7 +25,7 @@ export type TransformOp =
   | { kind: 'canvas'; width: number; height: number; fill: RGBA };
 
 function checkRaster(r: Raster) {
-  if (!r || !Number.isInteger(r.width) || !Number.isInteger(r.height) || r.width < 1 || r.height < 1 || !(r.data instanceof Uint8ClampedArray) || r.data.length !== r.width * r.height * 4) throw new RangeError('Invalid raster.');
+  if (!r || !isRasterSize(r.width, r.height) || !(r.data instanceof Uint8ClampedArray) || r.data.length !== r.width * r.height * 4) throw new RangeError('Invalid raster.');
 }
 
 export function transformRaster(raster: Raster, op: TransformOp): Raster {

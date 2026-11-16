@@ -18,7 +18,7 @@
  *            node --import tsx --test src/image/image-pixel-policy.test.ts
  * DEMO       node --import tsx src/image/image-pixel-policy.demo.ts
  */
-import { MAX_PIXELS, type Raster } from './raster-ops.ts';
+import { isRasterSize, type Raster } from './raster-ops.ts';
 
 export type RGB = readonly [number, number, number];
 export type PixelPolicy = {
@@ -43,7 +43,7 @@ export function pixelPolicy(value: unknown = { mode: 'pixel-art', palette: null 
 
 export function pixelCoverage(raster: Raster, mode: PixelPolicy['mode']): Raster {
   if (!['pixel-art', 'smooth'].includes(mode)) throw new RangeError('Unknown coverage mode.');
-  if (!raster || !Number.isInteger(raster.width) || !Number.isInteger(raster.height) || raster.width < 1 || raster.height < 1 || raster.width * raster.height > MAX_PIXELS || !(raster.data instanceof Uint8ClampedArray) || raster.data.length !== raster.width * raster.height * 4) throw new RangeError('Invalid coverage raster.');
+  if (!raster || !isRasterSize(raster.width, raster.height) || !(raster.data instanceof Uint8ClampedArray) || raster.data.length !== raster.width * raster.height * 4) throw new RangeError('Invalid coverage raster.');
   const data = new Uint8ClampedArray(raster.data);
   if (mode === 'pixel-art') for (let i = 0; i < data.length; i += 4) {
     if (data[i + 3]! < 128) data.fill(0, i, i + 4);

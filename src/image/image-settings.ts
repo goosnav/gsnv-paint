@@ -23,7 +23,7 @@
  * DEMO       npm run dev -- --host 127.0.0.1; open /src/image/image-settings.demo.html.
  */
 import type { DialogSpec } from '../shared/dialog.ts';
-import { MAX_PIXELS, type Raster, type RGBA } from './raster-ops.ts';
+import { MAX_PIXELS, MAX_DIMENSION, isRasterSize, type Raster, type RGBA } from './raster-ops.ts';
 import { pixelPolicy, type PixelPolicy, type RGB } from './image-pixel-policy.ts';
 import { generatePalette, presetPalette } from './image-palette-core.ts';
 import { NEW_IMAGE_PRESETS, matchingNewImagePreset, newImagePresetValues } from './image-new-presets.ts';
@@ -67,8 +67,8 @@ export function imageNewDialog({ document, colour, onCreate }: { document: Docum
   const fill = document.createElement('div'); fill.style.width = '100%'; fill.style.height = '100%'; canvas.append(fill); miniature.content.append(canvas);
   return { title: 'New image', confirmLabel: 'Create', description: 'Choose a preset, then adjust the size and style. Pixel art keeps hard edges; Smooth keeps antialiasing. Colour limits and dithering affect the final image.', previewElement: miniature.root,
     fields: [{ key: 'preset', label: 'Preset', type: 'select', layout: 'stacked', choices: [...NEW_IMAGE_PRESETS.map(preset => ({ value: preset.id, label: preset.label })), { value: 'custom', label: 'Custom settings' }] },
-      { key: 'width', label: 'Width (px)', type: 'number', min: 1, max: MAX_PIXELS, step: 1 },
-      { key: 'height', label: 'Height (px)', type: 'number', min: 1, max: MAX_PIXELS, step: 1, action: { label: 'Swap width and height', update(values) {
+      { key: 'width', label: 'Width (px)', type: 'number', min: 1, max: MAX_DIMENSION, step: 1 },
+      { key: 'height', label: 'Height (px)', type: 'number', min: 1, max: MAX_DIMENSION, step: 1, action: { label: 'Swap width and height', update(values) {
         if (typeof values.width !== 'number' || typeof values.height !== 'number' || !Number.isFinite(values.width) || !Number.isFinite(values.height)) return {};
         const swapped = { ...values, width: values.height!, height: values.width! };
         return { width: swapped.width, height: swapped.height, preset: matchingNewImagePreset(swapped)?.id ?? 'custom' };
@@ -85,7 +85,7 @@ export function imageNewDialog({ document, colour, onCreate }: { document: Docum
     validate(values) {
       const { width, height } = values;
       if (values.preset !== 'custom' && !NEW_IMAGE_PRESETS.some(preset => preset.id === values.preset)) return failure('Choose a listed preset or Custom settings.');
-      if (typeof width !== 'number' || typeof height !== 'number' || !Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > MAX_PIXELS) return failure(`Use whole-pixel dimensions of at least 1; at most ${MAX_PIXELS.toLocaleString()} pixels in total.`);
+      if (typeof width !== 'number' || typeof height !== 'number' || !isRasterSize(width, height)) return failure(`Use whole-pixel dimensions of at least 1; at most ${MAX_DIMENSION.toLocaleString()} per side and ${MAX_PIXELS.toLocaleString()} pixels in total.`);
       if (!['white', 'transparent', 'foreground'].includes(String(values.background))) return failure('Choose a canvas background.');
       try {
         const { mode, count, dither } = options(values), background = values.background === 'white' ? [255, 255, 255, 255] : values.background === 'transparent' ? [0, 0, 0, 0] : [...foreground];
@@ -110,7 +110,7 @@ export function imagePolicyDialog({ document, policy, raster, onPreview, onCommi
   document: Document; policy: PixelPolicy; raster: Raster; onPreview(value: PixelPolicy): void; onCommit(value: PixelPolicy): void; onCancel(): void;
 }): DialogSpec & { previewElement: HTMLElement } {
   const original = pixelPolicy(policy), count = original.palette?.colours.length ?? 0;
-  if (![onPreview, onCommit, onCancel].every(callback => typeof callback === 'function') || !raster || !Number.isInteger(raster.width) || !Number.isInteger(raster.height) || raster.width < 1 || raster.height < 1 || raster.width * raster.height > MAX_PIXELS || !(raster.data instanceof Uint8ClampedArray) || raster.data.length !== raster.width * raster.height * 4) throw new TypeError('Pixel settings need a valid immutable raster and preview/commit/cancel callbacks.');
+  if (![onPreview, onCommit, onCancel].every(callback => typeof callback === 'function') || !raster || !isRasterSize(raster.width, raster.height) || !(raster.data instanceof Uint8ClampedArray) || raster.data.length !== raster.width * raster.height * 4) throw new TypeError('Pixel settings need a valid immutable raster and preview/commit/cancel callbacks.');
   const miniature = previewBox(document), generated = new Map<number, readonly RGB[]>();
   miniature.root.setAttribute('aria-label', 'Palette preview');
   Object.assign(miniature.content.style, { display: 'grid', gridTemplateColumns: 'repeat(16,minmax(0,1fr))', gap: '1px', maxHeight: '100px', overflow: 'auto' });

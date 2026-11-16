@@ -18,12 +18,12 @@
  *            outside the stroke. No pressure, softness, flow or pixel colors.
  * TESTBENCH  src/image/pixel-stroke.test.ts — node --import tsx --test src/image/pixel-stroke.test.ts
  */
-import { MAX_PIXELS, type Rect } from './raster-ops.ts';
+import { isRasterSize, type Rect } from './raster-ops.ts';
 import type { Coverage } from './image-brush.ts';
 type Point = readonly [number, number];
 const MAX_SIZE = 500, MAX_PIXEL_SIZE = 32, MAX_COORD = 1e9;
 export function pixelStroke({ cov, points, size, pixelSize, tip }: { cov: Coverage; points: readonly Point[]; size: number; pixelSize: number; tip: 'round' | 'square' }): Rect | null {
-  if (!cov || !Number.isInteger(cov.width) || !Number.isInteger(cov.height) || cov.width < 1 || cov.height < 1 || cov.width * cov.height > MAX_PIXELS || !(cov.data instanceof Float32Array) || cov.data.length !== cov.width * cov.height
+  if (!cov || !isRasterSize(cov.width, cov.height) || !(cov.data instanceof Float32Array) || cov.data.length !== cov.width * cov.height
     || !Number.isInteger(size) || size < 1 || size > MAX_SIZE || !Number.isInteger(pixelSize) || pixelSize < 1 || pixelSize > MAX_PIXEL_SIZE || !['round', 'square'].includes(tip)
     || !Array.isArray(points) || !points.length || !points.every(p => Array.isArray(p) && p.length === 2 && p.every(v => Number.isFinite(v) && Math.abs(v) <= MAX_COORD))) throw new RangeError('Invalid hard-pixel stroke.');
   const n = Math.max(1, Math.round(size / pixelSize)), start = -Math.floor((n - 1) / 2), center = (n - 1) / 2, radius2 = (n / 2) ** 2;

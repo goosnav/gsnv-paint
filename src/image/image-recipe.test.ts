@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { imageContent } from './image-content.ts';
 import { imageRecipe } from './image-recipe.ts';
+import { recipeSize } from './image-recipe-data.ts';
 import { applyImageOperation } from './image-operations.ts';
 import { createRaster } from './raster-ops.ts';
 import type { ImageRecipe, ImageOperationState, ImageOperation } from './image-operation-types.ts';
@@ -9,6 +10,17 @@ import type { ImageRecipe, ImageOperationState, ImageOperation } from './image-o
 const state = (size = 8): ImageOperationState => ({ image: imageContent({ operation: 'new', width: size, height: size, fill: [255, 255, 255, 255] }), clipboard: null });
 const recipe = (operations: ImageOperation[]): ImageRecipe => ({ format: 'gsnv-actions', version: 1, name: 'Test action', output: 'png', assets: [], steps: operations.map((operation, i) => ({ id: `s${i}`, label: `Step ${i}`, enabled: true, reference: { width: 8, height: 8 }, operation })) });
 const shape: ImageOperation = { kind: 'shape', shape: 'rectangle', a: [1, 1], b: [2, 2], size: 1, stroke: null, fill: [255, 0, 0, 255] };
+
+test('PU-12 recipe dimensions accept high-resolution scans while enforcing both raster bounds', () => {
+  assert.deepEqual(recipeSize(5100, 6600), { width: 5100, height: 6600 });
+  assert.deepEqual(recipeSize(8192, 8192), { width: 8192, height: 8192 });
+  for (const [width, height] of [[8192, 8193], [16385, 1], [1, 16385]])
+    assert.throws(() => recipeSize(width, height), /limit/);
+  const base = recipe([{ kind: 'transform', transform: { kind: 'resize', width: 5100, height: 6600 } }]);
+  const large = { ...base, steps: base.steps.map(step => ({ ...step, reference: { width: 5100, height: 6600 } })) };
+  const reopened = imageRecipe({ operation: 'decode', bytes: imageRecipe({ operation: 'encode', value: large }) });
+  assert.deepEqual(reopened, large);
+});
 
 test('PU-10/12 complete recipe roundtrip preserves assets including RGB below transparent alpha', () => {
   const asset = createRaster(2, 2, [10, 20, 30, 0]); asset.data.set([45, 67, 89, 255], 4);

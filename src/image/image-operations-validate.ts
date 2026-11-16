@@ -16,7 +16,7 @@
  */
 import { adjustRaster } from './image-adjust.ts';
 import { pixelPolicy } from './image-pixel-policy.ts';
-import { MAX_PIXELS } from './raster-ops.ts';
+import { MAX_PIXELS, MAX_DIMENSION, isRasterSize } from './raster-ops.ts';
 import type { ImageOperation } from './image-operation-types.ts';
 type Validator = (v: unknown) => unknown;
 const bad = (message = 'Malformed image operation.'): never => { throw new RangeError(message); };
@@ -36,11 +36,11 @@ function record(value: unknown, schema: Record<string, Validator>): Record<strin
 }
 const list = (check: Validator, min = 1, max = 1e6): Validator => v => Array.isArray(v) && v.length >= min && v.length <= max ? v.map(check) : bad('Too many or too few operation samples.');
 function dimensions(value: unknown): unknown {
-  const r = record(value, { width: number(1, MAX_PIXELS, true), height: number(1, MAX_PIXELS, true) });
-  if ((r.width as number) * (r.height as number) > MAX_PIXELS) bad('Image operation exceeds the pixel limit.');
+  const r = record(value, { width: number(1, MAX_DIMENSION, true), height: number(1, MAX_DIMENSION, true) });
+  if (!isRasterSize(r.width, r.height)) bad('Image operation exceeds the dimension or pixel limit.');
   return r;
 }
-const rect: Validator = value => { const r = record(value, { x: coord, y: coord, width: number(1, MAX_PIXELS), height: number(1, MAX_PIXELS) }); if ((r.width as number) * (r.height as number) > MAX_PIXELS) bad('Transform exceeds the pixel limit.'); return r; };
+const rect: Validator = value => { const r = record(value, { x: coord, y: coord, width: number(1, MAX_DIMENSION), height: number(1, MAX_DIMENSION) }); if ((r.width as number) * (r.height as number) > MAX_PIXELS) bad('Transform exceeds the pixel limit.'); return r; };
 const maskShape: Validator = value => {
   const v = value as Record<string, unknown>;
   return v?.kind === 'polygon' ? record(value, { kind: choice('polygon'), points: list(point, 3) }) : record(value, { kind: choice('rectangle', 'ellipse'), a: point, b: point });
@@ -51,7 +51,7 @@ const transform: Validator = value => {
   if (kind === 'rotate') return record(value, { kind: choice(kind), turns: choice(1, 2, 3) });
   if (kind === 'invert') return record(value, { kind: choice(kind) });
   if (kind === 'crop') return record(value, { kind: choice(kind), rect: b => { const r = rect(b) as Record<string, number>; if (!Object.values(r).every(Number.isInteger)) bad('Crop uses whole pixels.'); return r; } });
-  const r = record(value, { kind: choice(kind as string), width: number(1, MAX_PIXELS, true), height: number(1, MAX_PIXELS, true), ...(kind === 'canvas' ? { fill: color } : {}) });
+  const r = record(value, { kind: choice(kind as string), width: number(1, MAX_DIMENSION, true), height: number(1, MAX_DIMENSION, true), ...(kind === 'canvas' ? { fill: color } : {}) });
   dimensions({ width: r.width, height: r.height }); return r;
 };
 const adjustment: Validator = value => {
@@ -89,11 +89,11 @@ export function validateImageOperation(value: unknown): ImageOperation {
   else if (kind === 'delete') schema = { background: color };
   else if (kind === 'paste') schema = { source: s => { const k = (s as { kind?: unknown })?.kind; return record(s, { kind: choice('clipboard', 'asset'), ...(k === 'asset' ? { id } : {}) }); }, name: text, box: rect, sampling: choice('nearest', 'bilinear'), select: bool };
   else if (kind === 'move') schema = { dx: coord, dy: coord, background: color };
-  else if (kind === 'affine') schema = { ...('asset' in v ? {asset:id} : {}), ...('clipboard' in v ? { clipboard: flag => flag === true ? true : bad('Clipboard transform must use true.') } : {}), box: box => { const b = record(box, { x: coord, y: coord, width: number(1, MAX_PIXELS), height: number(1, MAX_PIXELS), angle: number(-36000, 36000) }); const t = (b.angle as number) * Math.PI / 180, w = b.width as number, h = b.height as number, c = Math.abs(Math.cos(t)), s = Math.abs(Math.sin(t)); if (Math.max(1, Math.round(w * c + h * s)) * Math.max(1, Math.round(w * s + h * c)) > MAX_PIXELS) bad('Rotated output exceeds the pixel limit.'); return b; }, sampling: choice('nearest', 'bilinear'), background: color };
+  else if (kind === 'affine') schema = { ...('asset' in v ? {asset:id} : {}), ...('clipboard' in v ? { clipboard: flag => flag === true ? true : bad('Clipboard transform must use true.') } : {}), box: box => { const b = record(box, { x: coord, y: coord, width: number(1, MAX_DIMENSION), height: number(1, MAX_DIMENSION), angle: number(-36000, 36000) }); const t = (b.angle as number) * Math.PI / 180, w = b.width as number, h = b.height as number, c = Math.abs(Math.cos(t)), s = Math.abs(Math.sin(t)); if (!isRasterSize(Math.max(1, Math.round(w * c + h * s)), Math.max(1, Math.round(w * s + h * c)))) bad('Rotated output exceeds the pixel limit.'); return b; }, sampling: choice('nearest', 'bilinear'), background: color };
   else if (kind === 'adjust') schema = { adjustment };
   else if (kind === 'transform') schema = { transform };
   else if (kind === 'policy') schema = { policy: pixelPolicy };
-  else if (kind === 'downpixel') schema = { width: number(1, MAX_PIXELS, true), height: number(1, MAX_PIXELS, true), resize: bool };
+  else if (kind === 'downpixel') schema = { width: number(1, MAX_DIMENSION, true), height: number(1, MAX_DIMENSION, true), resize: bool };
   else return bad('Unknown image operation.');
   const result = record(value, { kind: choice(kind as string), ...schema }) as unknown as ImageOperation;
   if (result.kind === 'stroke') { if (result.segments.reduce((n, s) => n + s.points.length, 0) > 1e6) bad('A stroke exceeds one million samples.'); if (result.tool === 'clone' && result.cloneOffset === null) bad('Clone needs a source offset.'); }

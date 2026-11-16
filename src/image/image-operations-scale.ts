@@ -12,11 +12,11 @@
  * TESTBENCH  src/image/image-operations.test.ts
  * DEMO       node --import tsx src/image/image-operations.demo.ts
  */
-import { MAX_PIXELS } from './raster-ops.ts';
+import { isRasterSize } from './raster-ops.ts';
 import { validateImageOperation } from './image-operations-validate.ts';
 import type { ImageOperation, ImagePoint, ImageReference } from './image-operation-types.ts';
 export function scaleImageOperation(operation: ImageOperation, reference: ImageReference, target: ImageReference): ImageOperation {
-  for (const r of [reference, target]) if (!r || !Number.isInteger(r.width) || !Number.isInteger(r.height) || r.width < 1 || r.height < 1 || r.width * r.height > MAX_PIXELS) throw new RangeError('Invalid recipe reference size.');
+  for (const r of [reference, target]) if (!r || !isRasterSize(r.width, r.height)) throw new RangeError('Invalid recipe reference size.');
   const op = validateImageOperation(operation), x = target.width / reference.width, y = target.height / reference.height, scalar = Math.min(x, y);
   const point = (p: ImagePoint): ImagePoint => [p[0] * x, p[1] * y], size = (s: number) => Math.max(1, Math.round(s * scalar));
   const box = <T extends { x: number; y: number; width: number; height: number }>(b: T): T => ({ ...b, x: b.x * x, y: b.y * y, width: Math.max(1, b.width * x), height: Math.max(1, b.height * y) });

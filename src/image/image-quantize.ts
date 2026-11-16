@@ -26,7 +26,7 @@
  * TESTBENCH  node --import tsx --test src/image/image-quantize.test.ts
  * DEMO       node --import tsx src/image/image-quantize.demo.ts
  */
-import { MAX_PIXELS, type Raster } from './raster-ops.ts';
+import { isRasterSize, type Raster } from './raster-ops.ts';
 import { pixelPolicy, type PixelPolicy } from './image-pixel-policy.ts';
 
 type Palette = NonNullable<PixelPolicy['palette']>;
@@ -74,7 +74,7 @@ function matcher(flat: Uint8Array, two: boolean, cacheable: boolean) {
 export function quantizeImage(raster: Raster, palette: Palette): Raster {
   if (!palette) throw new RangeError('Quantization needs a palette.');
   const { colours, dither } = pixelPolicy({ mode: 'pixel-art', palette }).palette!;
-  if (!raster || !Number.isInteger(raster.width) || !Number.isInteger(raster.height) || raster.width < 1 || raster.height < 1 || raster.width * raster.height > MAX_PIXELS || !(raster.data instanceof Uint8ClampedArray) || raster.data.length !== raster.width * raster.height * 4) throw new RangeError('Invalid quantization source raster.');
+  if (!raster || !isRasterSize(raster.width, raster.height) || !(raster.data instanceof Uint8ClampedArray) || raster.data.length !== raster.width * raster.height * 4) throw new RangeError('Invalid quantization source raster.');
   const { width, height, data: source } = raster, data = new Uint8ClampedArray(source.length), flat = Uint8Array.from(colours.flat()), nearest = matcher(flat, dither === 'bayer', dither !== 'floyd-steinberg');
   const put = (offset: number, id: number) => { const i = id * 3; data[offset] = flat[i]!; data[offset + 1] = flat[i + 1]!; data[offset + 2] = flat[i + 2]!; data[offset + 3] = 255; };
   if (dither === 'floyd-steinberg') {

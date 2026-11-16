@@ -27,7 +27,7 @@ miniature until Create is pressed.
 | Comic page · 64 colours | 3300 × 2550 | 11 × 8.5 in at 300 ppi; transparent, hard edges, 64 colours, no dithering |
 | Half Letter | 1650 × 2550 | 5.5 × 8.5 in at 300 ppi; white, hard edges, full colour |
 | A4 | 2480 × 3508 | Approximately 210 × 297 mm at 300 ppi; white, hard edges, full colour |
-| Maximum square | 4096 × 4096 | Transparent, hard edges, full colour; existing 16,777,216-pixel limit |
+| Maximum square | 8192 × 8192 | Transparent, hard edges, full colour; 67,108,864-pixel limit |
 | Square post | 1080 × 1080 | 1:1; white, smooth edges, full colour |
 | Portrait post | 1080 × 1350 | 4:5; white, smooth edges, full colour |
 | Reels / Stories | 1080 × 1920 | 9:16; white, smooth edges, full colour |
@@ -54,7 +54,18 @@ The HD thumbnail is a compact working size; the 4K option follows
 (checked 2026-11-16). These presets set canvas dimensions, not upload file sizes.
 
 **Open / Ctrl+O** accepts `.gsnv-image`, PNG, JPEG, WebP, GIF and BMP. Ordinary
-images open as a document; **Image → Import as layer…** adds an image instead.
+images open as a document. **Drag one or more image files onto the Paint canvas**
+to add them on separate layers, named from their files, in drop order. Dropping
+the first image into the untouched starter adopts its original dimensions.
+Existing drawings keep their canvas size: oversized incoming images are fitted
+inside it and get move/resize handles, retaining the original source while the
+transform is active. Enter applies; Esc keeps the initial placement. Each added
+layer can be undone. **Image → Import as layer…** uses the same placement.
+
+A blue drop outline shows the target. Native `.gsnv-image` projects still use
+File → Open; unsupported files receive a clear message. Wait for the current
+import to finish before dropping more files. Changing projects or leaving Paint
+stops pending placement. No remote image links are fetched.
 Animated files are opened as a still image through the browser decoder.
 **Copy canvas** places the flattened result on the system clipboard where browser
 permission permits. Paste into the untouched starter adopts the image dimensions;
@@ -171,10 +182,32 @@ separately from the image project; an unsaved recording is session state.
 No layer masks, groups, layer/alpha locking or editable text layers. Selections
 have no feather/grow/shrink controls. There is no skew handle, rounded-rectangle
 or polygon drawing tool, bicubic resize, anchored canvas resize, or Image JPEG/
-WebP exporter. Pen pressure is not used. Images allow at most 16,777,216 pixels
-total (4096 × 4096 is one possible size) and 100 layers; UI fields can impose
-smaller per-axis limits. These limits are not performance guarantees for maximum
-size documents. Automation has additional memory and time caps.
+WebP exporter. Pen pressure is not used. Images allow at most **67,108,864 pixels**
+total, **16,384 pixels per side**, and 100 layers. The maximum square is 8192 × 8192;
+a 600 ppi US Letter scan (5100 × 6600) fits at its original resolution. New, Open,
+drop, resize, selection and native project decoding use the same dimension checks.
+
+The former 16,777,216-pixel cap bounded one RGBA buffer to 64 MiB. The new cap
+allows 256 MiB per buffer; layers, undo snapshots, canvas storage and filters need
+additional memory. Browser/device memory can still limit very large work. Layer
+thumbnails now allocate only small previews, selection outlines reuse edge tiles,
+and decoded temporary canvases are released. Automation retains its separate
+256 MiB layer-data and 128 MiB embedded-asset budgets. Transfers between workspaces
+retain a separate 16,777,216-pixel limit; this does not limit regular file imports
+or PNG exports in Paint.
+
+### Large image and file-drop verification — 2026-11-16
+
+- All 1,273 Node tests passed with test concurrency set to 2, including a
+  4097 × 4096 native save/reopen with exact edge bytes, shared size boundaries,
+  ordered file drops, stale-target cancellation and cached outline pixels.
+- `npm run build` (TypeScript and production bundle), `npm run test:spec` and
+  `git diff --check` passed.
+- Five browser regressions cover native-size opening, named ordered layers,
+  single-step Undo, oversized placement, unsupported files, concurrent/stale
+  imports and a 4200 × 4000 image. These were authored but not executed here:
+  the available Chromium cannot launch because the environment denies its
+  process-singleton socket. This checkpoint does not claim live-browser acceptance.
 
 Linux Chromium/WebKit checks and touch emulation do not establish physical
 iPhone/iPad, Apple Pencil, Safari/macOS or Windows acceptance. Refer to each dated

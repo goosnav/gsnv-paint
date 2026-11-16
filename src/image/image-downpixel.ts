@@ -15,7 +15,7 @@
  * TESTBENCH  node --import tsx --test src/image/image-downpixel.test.ts
  * DEMO       node --import tsx src/image/image-downpixel.demo.ts
  */
-import { MAX_PIXELS, type Raster } from './raster-ops.ts';
+import { isRasterSize, type Raster } from './raster-ops.ts';
 
 function sample(source: Raster, width: number, height: number): Raster {
   const data = new Uint8ClampedArray(width * height * 4);
@@ -26,7 +26,7 @@ function sample(source: Raster, width: number, height: number): Raster {
   return { width, height, data };
 }
 export function downpixelImage(raster: Raster, options: { width: number; height: number; resize: boolean }): Raster {
-  if (!raster || !Number.isInteger(raster.width) || !Number.isInteger(raster.height) || raster.width < 1 || raster.height < 1 || raster.width * raster.height > MAX_PIXELS || !(raster.data instanceof Uint8ClampedArray) || raster.data.length !== raster.width * raster.height * 4) throw new RangeError('Invalid down-pixel source raster.');
+  if (!raster || !isRasterSize(raster.width, raster.height) || !(raster.data instanceof Uint8ClampedArray) || raster.data.length !== raster.width * raster.height * 4) throw new RangeError('Invalid down-pixel source raster.');
   if (!options || !Number.isInteger(options.width) || !Number.isInteger(options.height) || options.width < 1 || options.height < 1 || options.width > raster.width || options.height > raster.height || typeof options.resize !== 'boolean') throw new RangeError('Logical pixel dimensions must be whole numbers within the source image.');
   const reduced = sample(raster, options.width, options.height);
   return options.resize ? reduced : sample(reduced, raster.width, raster.height);

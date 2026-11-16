@@ -1,5 +1,5 @@
 import { test } from 'node:test'; import assert from 'node:assert/strict';
-import { createRaster, paintRaster, clip, type Raster, type RGBA } from './raster-ops.ts';
+import { createRaster, paintRaster, clip, MAX_PIXELS, MAX_DIMENSION, isRasterSize, type Raster, type RGBA } from './raster-ops.ts';
 
 const K: RGBA = [0, 0, 0, 255], W: RGBA = [255, 255, 255, 255], R: RGBA = [255, 0, 0, 255];
 /** Renders one channel as a picture: '#' for black, '.' for white, 'r' for red, '?' otherwise. */
@@ -10,8 +10,20 @@ const picture = (r: Raster) => Array.from({ length: r.height }, (_, y) => Array.
 
 test('I-RASTER new rasters are filled and bounded', () => {
   const r = createRaster(3, 2, W); assert.deepEqual(picture(r), ['...', '...']);
-  assert.throws(() => createRaster(0, 2, W), RangeError); assert.throws(() => createRaster(5000, 5000, W), RangeError);
+  assert.throws(() => createRaster(0, 2, W), RangeError); assert.throws(() => createRaster(8193, 8192, W), RangeError);
   assert.throws(() => createRaster(2, 2, [256, 0, 0, 0]), RangeError);
+});
+
+test('I-RASTER accepts high-resolution scans and rejects area or axis overflow before allocation', () => {
+  assert.equal(MAX_PIXELS, 67_108_864);
+  assert.equal(MAX_DIMENSION, 16_384);
+  for (const size of [[5100, 6600], [8192, 8192], [16384, 4096], [4096, 16384]])
+    assert.equal(isRasterSize(size[0], size[1]), true, String(size));
+  for (const [width, height] of [[8193, 8192], [16385, 1], [1, 16385], [0, 1], [1.5, 2], [Infinity, 1], [Number.MAX_SAFE_INTEGER, 1]]) {
+    assert.equal(isRasterSize(width, height), false);
+    assert.throws(() => createRaster(width!, height!, [0, 0, 0, 0]), RangeError);
+  }
+  for (const width of [undefined, null, '5100', 5100n]) assert.equal(isRasterSize(width, 6600), false);
 });
 
 test('I-RASTER pencil stroke is a connected aliased line and reports its dirty rectangle', () => {

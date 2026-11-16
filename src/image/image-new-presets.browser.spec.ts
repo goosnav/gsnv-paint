@@ -62,12 +62,12 @@ test('New image presets update all fields, swap without committing, and recover 
 test('Maximum square respects the pixel budget and every named preset creates valid settings', async ({ page }) => {
   const dialog = await demo(page);
   await field(page, 'Preset').selectOption('square-max');
-  await expect(field(page, 'Width (px)')).toHaveValue('4096');
-  await expect(field(page, 'Height (px)')).toHaveValue('4096');
+  await expect(field(page, 'Width (px)')).toHaveValue('8192');
+  await expect(field(page, 'Height (px)')).toHaveValue('8192');
   await expect(dialog.getByRole('button', { name: 'Create', exact: true })).toBeEnabled();
-  await field(page, 'Width (px)').fill('4097');
+  await field(page, 'Width (px)').fill('8193');
   await expect(dialog.getByRole('button', { name: 'Create', exact: true })).toBeDisabled();
-  await expect(dialog.getByRole('alert')).toContainText('16,777,216');
+  await expect(dialog.getByRole('alert')).toContainText('67,108,864');
 
   const presets = await field(page, 'Preset').locator('option').evaluateAll(options => options.map(option => (option as HTMLOptionElement).value).filter(value => value !== 'custom'));
   expect(presets).toContain('youtube-thumbnail');
@@ -76,7 +76,7 @@ test('Maximum square respects the pixel budget and every named preset creates va
     await field(page, 'Preset').selectOption(preset);
     const width = Number(await field(page, 'Width (px)').inputValue());
     const height = Number(await field(page, 'Height (px)').inputValue());
-    expect(width * height, preset).toBeLessThanOrEqual(4096 * 4096);
+    expect(width * height, preset).toBeLessThanOrEqual(8192 * 8192);
     expect(Number.isInteger(width) && Number.isInteger(height) && width > 0 && height > 0, preset).toBe(true);
     await expect(dialog.getByRole('button', { name: 'Create', exact: true })).toBeEnabled();
   }

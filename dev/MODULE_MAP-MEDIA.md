@@ -271,13 +271,13 @@ D20 delivers a usable paint-style Image workspace before the full I01–I37 laye
 ### I50 `image/raster-ops.ts` — CORE — GREEN
 Purpose: Draw straight-alpha RGBA rasters for the Image workspace.
 IN: `Raster{width,height,data:Uint8ClampedArray}` plus `PaintOp` (stroke, rectangle, ellipse, fill, clear, blit); colours are byte RGBA, points are document pixels.
-OUT: `paintRaster` mutates the caller-owned working raster and returns the changed rectangle or null. I63 owns resampling. Aliased deterministic pixels; flood fill is iterative scanline with 4-connectivity.
-RAISES: `RangeError` for invalid sizes (over 4096² pixels), colours, rectangles, tool sizes or nonfinite points.
+OUT: `paintRaster` mutates the caller-owned working raster and returns the changed rectangle or null. `isRasterSize` checks the shared area/axis limits without allocation. I63 owns resampling. Aliased deterministic pixels; flood fill is iterative scanline with 4-connectivity.
+RAISES: `RangeError` for invalid sizes (over 8192² pixels or 16,384 on one side), colours, rectangles, tool sizes or nonfinite points.
 DEPS: none.
 
 ### I51 `image/image-content.ts` — CORE — GREEN
 Purpose: Represent immutable layered Image documents with exact native serialization.
-IN: `new{width,height,fill}`, `raster{value,layerId}`, `update{previous,layerId,raster}`, `layers{previous,width,height,layers,activeLayerId}`, `selection{previous,mask}`, `encode{value}` or `decode{content,assets}`; pixels at most 4096², 1–100 layers.
+IN: `new{width,height,fill}`, `raster{value,layerId}`, `update{previous,layerId,raster}`, `layers{previous,width,height,layers,activeLayerId}`, `selection{previous,mask}`, `encode{value}` or `decode{content,assets}`; pixels at most 8192² with each side at most 16,384, 1–100 layers.
 OUT: `ImageContent{width,height,layers,activeLayerId,selection}` with shared 256-pixel tiles; unchanged selection coverage returns the same snapshot. Native `rgba8-layers-v2` records carry layer parameters/raw RGBA assets and optional gray8 selection coverage. Both earlier layouts migrate with null selection. Updated pixels and same-size layers retain selection; resized layers clear it. Encode owns every output byte.
 RAISES: `RangeError` for invalid documents/rasters; `ImageContentError` for malformed, duplicate/missing or unknown-layout native content. Bounds are derived from coverage, never trusted.
 DEPS: I50, I54, I58.
@@ -326,10 +326,10 @@ DEPS: I54.
 
 ### I58 `image/image-selection-state.ts` — CORE — GREEN
 Purpose: Produce an owned canonical selection snapshot.
-IN: `{width,height,mask:Uint8Array|null}` with positive integer sizes, at most 16,777,216 pixels and exact ordinary-buffer coverage length.
+IN: `{width,height,mask:Uint8Array|null}` with shared I50 limits (67,108,864 pixels total; 16,384 per side) and exact ordinary-buffer coverage length.
 OUT: frozen `ImageSelection{mask,bounds}` with owned byte copy and minimal nonzero bounds, or null for empty coverage. Partial byte coverage is preserved.
 RAISES: `RangeError` for invalid sizes, mask type/length or detached/shared memory.
-DEPS: none.
+DEPS: I50.
 
 I51 is now layered (each layer's tiles shared between snapshots; layer stack edits reuse tiles; both prior layouts still decode). The selection persistence and typed-view corrections pass the explicit gates in [IMAGE-ACCEPTANCE.md](IMAGE-ACCEPTANCE.md). I52 supports 18 tools with Shift/Ctrl selection modes and a Ctrl-click clone source. I53 shows per-tool options, each numeric option as an XP trackbar plus a typed number box.
 
@@ -791,3 +791,20 @@ Mode D extraction keeps I50 within three entry points; no compatibility facade o
 
 I62/I63 and amended I50/I53/I61 are GREEN, not human-ACCEPTED.
 Evidence: [pixel rendering checkpoint](PAINT-PIXEL-DRAWING-EVIDENCE.md).
+
+
+### I64 `image/image-selection-outline.ts` — CORE — GREEN
+Purpose: Cache small RGBA edge tiles for selection-outline animation on large images.
+IN: I50-valid dimensions, Int32 edge indices; integer animation phase 0–7.
+OUT: Stable positioned tiles at most 64 × 64 pixels; exact black/white phase pixels and transparent non-edges.
+RAISES: RangeError for invalid dimensions, edge buffers/indices or phase.
+DEPS: I50.
+TEST: `src/image/image-selection-outline.test.ts`; no full-frame allocation for sparse outlines.
+
+### I65 `image/image-file-drop.ts` — SHELL — GREEN
+Purpose: Capture local image files during native drop events and import them sequentially.
+IN: DOM target, active/busy callbacks, decode/place ports and captured Files.
+OUT: Copy/hover feedback, disposable listeners, per-file failures and ordered layer placements; no URL fetching.
+RAISES: Decode/place failures become named errors; stale targets cancel remaining placements.
+DEPS: none.
+TEST: `src/image/image-file-drop.test.ts`; integrated browser regressions in `src/image/image-drop.browser.spec.ts`.

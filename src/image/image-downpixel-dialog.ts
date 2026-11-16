@@ -14,9 +14,10 @@
  * DEMO       node --import tsx src/image/image-downpixel-dialog.demo.ts
  */
 import type { DialogSpec } from '../shared/dialog.ts';
+import { isRasterSize } from './raster-ops.ts';
 type Settings={width:number;height:number;resize:boolean};
 export function imageDownpixelDialog(ports:SettingsPorts):DialogSpec{
- const {width,height}=ports;if(!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1)throw new RangeError('Invalid source dimensions.');
+ const {width,height}=ports;if(!isRasterSize(width,height))throw new RangeError('Invalid source dimensions.');
  return {title:'Down-pixel',description:'Sample larger, sharply defined pixels. Keep canvas size makes blocks; Resize canvas creates a smaller image. With linked dimensions, width controls height.',
  fields:[{key:'method',label:'Set resolution by',type:'select',choices:[{value:'block',label:'Pixel block size'},{value:'dimensions',label:'Logical dimensions'}]},
  {key:'block',label:'Pixel block size',type:'number',min:1,max:Math.max(width,height),step:1},

@@ -12,18 +12,18 @@ test('I58 literal partial-coverage snapshot, minimal bounds and owned immutable 
   assert.deepEqual(again, result); assert.notEqual(again!.mask, result!.mask);
 });
 
-test('I58 empty, single pixel, all edges and maximum coverage dimensions', () => {
+test('I58 empty, single pixel, all edges and coverage above the former pixel limit', () => {
   assert.equal(imageSelectionState({ width: 1, height: 1, mask: null }), null);
   assert.equal(imageSelectionState({ width: 2, height: 3, mask: new Uint8Array(6) }), null);
   assert.deepEqual(imageSelectionState({ width: 1, height: 1, mask: new Uint8Array([255]) }), { mask: new Uint8Array([255]), bounds: { x: 0, y: 0, width: 1, height: 1 } });
   const edges = new Uint8Array([1, 0, 0, 0, 0, 1]);
   assert.deepEqual(imageSelectionState({ width: 3, height: 2, mask: edges })!.bounds, { x: 0, y: 0, width: 3, height: 2 });
-  const max = new Uint8Array(16777216); max[max.length - 1] = 2;
-  assert.deepEqual(imageSelectionState({ width: 4096, height: 4096, mask: max })!.bounds, { x: 4095, y: 4095, width: 1, height: 1 });
+  const max = new Uint8Array(4097 * 4096); max[max.length - 1] = 2;
+  assert.deepEqual(imageSelectionState({ width: 4097, height: 4096, mask: max })!.bounds, { x: 4096, y: 4095, width: 1, height: 1 });
 });
 
 test('I58 rejects invalid dimensions, mismatched/detached/shared coverage and owns sliced views', () => {
-  for (const [width, height] of [[0, 1], [1, 0], [-1, 2], [1.5, 2], [NaN, 1], [Infinity, 1], [4096, 4097], [Number.MAX_SAFE_INTEGER, 2]])
+  for (const [width, height] of [[0, 1], [1, 0], [-1, 2], [1.5, 2], [NaN, 1], [Infinity, 1], [8192, 8193], [16385, 1], [1, 16385], [Number.MAX_SAFE_INTEGER, 2]])
     assert.throws(() => imageSelectionState({ width: width!, height: height!, mask: null }), RangeError);
   const detached = new Uint8Array(1); structuredClone(detached.buffer, { transfer: [detached.buffer] });
   for (const mask of [[], new Uint8ClampedArray(1), new Uint8Array(2), detached, new Uint8Array(new SharedArrayBuffer(1))])
@@ -32,4 +32,9 @@ test('I58 rejects invalid dimensions, mismatched/detached/shared coverage and ow
   const result = imageSelectionState({ width: 3, height: 1, mask: buffer.subarray(1, 4) });
   assert.deepEqual([...result!.mask], [3, 0, 1]); assert.equal(result!.mask.buffer.byteLength, 3);
   assert.deepEqual([...buffer], [99, 3, 0, 1, 88]);
+});
+
+test('I58 shares the expanded document limits without allocating an absent selection', () => {
+  for (const [width, height] of [[5100, 6600], [8192, 8192], [16384, 4096]])
+    assert.equal(imageSelectionState({ width: width!, height: height!, mask: null }), null);
 });

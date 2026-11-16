@@ -62,9 +62,10 @@ const ARTICLES: readonly Article[] = [
     'Choose Select → Free transform or press Ctrl+T. Drag a corner to scale, drag inside to move, or use the rotation handle.',
     'Use the transform fields for exact values. Enter places the result; Escape cancels the pending transform.',
   ] },
-  { id: 'help.clipboard', title: 'Copy the canvas or paste a picture', workspace: 'image', section: 'getting-started', keywords: ['clipboard', 'copy', 'paste', 'Ctrl+C', 'Ctrl+V', 'layer'], steps: [
+  { id: 'help.clipboard', title: 'Copy the canvas or paste a picture', workspace: 'image', section: 'getting-started', keywords: ['clipboard', 'copy', 'paste', 'Ctrl+C', 'Ctrl+V', 'layer', 'drop', 'import'], steps: [
     'Choose Copy canvas to copy the visible image for pasting into another app.',
     'Use Paste or Ctrl+V to bring a picture from the clipboard. A blank untouched canvas can adopt the picture; an existing drawing receives a new layer with transform handles.',
+    'Drag PNG, JPEG, WebP, GIF or BMP files onto the Paint canvas to add each image on its own layer. Large images fit inside existing work with resize handles; the first drop into the untouched starter uses its original dimensions.',
     'Allow clipboard access if the browser asks. If access is unavailable, save/open a PNG instead.',
   ] },
   { id: 'help.zoom', title: 'Zoom without a mouse wheel', workspace: 'image', section: 'getting-started', keywords: ['zoom', 'navigator', 'map', 'magnify', 'slider', 'plus', 'minus', 'pan'], target: 'view.fit', steps: [

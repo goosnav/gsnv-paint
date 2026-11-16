@@ -11,7 +11,7 @@
  * TESTBENCH  src/image/image-recipe.test.ts
  * DEMO       node --import tsx src/image/image-recipe.demo.ts
  */
-import { MAX_PIXELS } from './raster-ops.ts';
+import { isRasterSize } from './raster-ops.ts';
 import { validateImageOperation } from './image-operations-validate.ts';
 import type { ImageRecipe, ImageRecipeAsset, ImageRecipeStep } from './image-operation-types.ts';
 export const RECIPE_LIMITS = Object.freeze({ steps: 1000, samples: 1000000, assetBytes: 128 * 1024 * 1024, fileBytes: 192 * 1024 * 1024 });
@@ -23,7 +23,7 @@ const exact = (value: unknown, keys: string): Record<string, unknown> => {
 const identifier = (value: unknown): string => typeof value === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(value) && !['__proto__', 'constructor', 'prototype'].includes(value) ? value : fail('Invalid recipe identifier.');
 const name = (value: unknown): string => typeof value === 'string' && value.trim().length > 0 && value.length <= 256 && !/[\u0000-\u001f]/.test(value) ? value : fail('Recipe names need 1–256 printable characters.');
 export function recipeSize(width: unknown, height: unknown): { width: number; height: number } {
-  if (typeof width !== 'number' || typeof height !== 'number' || !Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > MAX_PIXELS) fail('Recipe image dimensions exceed the pixel limit.');
+  if (typeof width !== 'number' || typeof height !== 'number' || !isRasterSize(width, height)) fail('Recipe image dimensions exceed the pixel limit.');
   return { width: width as number, height: height as number };
 }
 export function validateRecipeData(value: unknown): ImageRecipe {

@@ -15,7 +15,7 @@
  * LIMITS     No skew, reflection or perspective; crossing an anchor clamps at 1px.
  * TESTBENCH  src/image/image-transform.test.ts — node --import tsx --test src/image/image-transform.test.ts
  */
-import { MAX_PIXELS } from './raster-ops.ts';
+import { MAX_PIXELS, MAX_DIMENSION, isRasterSize } from './raster-ops.ts';
 export type TransformBox = {x:number;y:number;width:number;height:number;angle:number};
 type Point = {x:number;y:number};
 type Request = {op:'validate';box:TransformBox}|{op:'drag';box:TransformBox;handle:string;start:Point;end:Point;shift?:boolean;keep?:boolean};
@@ -24,7 +24,7 @@ function validate(b:TransformBox):TransformBox {
   if(!b||![b.x,b.y,b.width,b.height,b.angle].every(Number.isFinite))throw new RangeError('Transform coordinates must be finite.');
   if(b.width<1||b.height<1)throw new RangeError('Transform dimensions must be positive pixels.');
   const angle=((b.angle+180)%360+360)%360-180,t=angle*Math.PI/180,c=Math.abs(Math.cos(t)),s=Math.abs(Math.sin(t));
-  if(Math.max(1,Math.round(b.width*c+b.height*s))*Math.max(1,Math.round(b.width*s+b.height*c))>MAX_PIXELS)throw new RangeError(`Transform exceeds the ${MAX_PIXELS.toLocaleString()} pixel limit.`);
+  if(!isRasterSize(Math.max(1,Math.round(b.width*c+b.height*s)),Math.max(1,Math.round(b.width*s+b.height*c))))throw new RangeError(`Transform exceeds the image limit: ${MAX_DIMENSION.toLocaleString()} pixels per side or ${MAX_PIXELS.toLocaleString()} pixels in total.`);
   return {...b,angle};
 }
 export function imageTransform(request:Request):TransformBox {

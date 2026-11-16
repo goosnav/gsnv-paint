@@ -1,8 +1,32 @@
 import { test } from 'node:test'; import assert from 'node:assert/strict';
 import { imageContent, ImageContentError, TILE, type LayerMeta } from './image-content.ts';
 import { createRaster, paintRaster } from './raster-ops.ts';
+import { nativeContainer } from '../shared/native-container.ts';
 
 const meta = (id: string, extra: Partial<LayerMeta> = {}): LayerMeta => ({ id, name: id, visible: true, opacity: 1, blend: 'normal', ...extra });
+
+test('I-CONTENT imports and reopens a native project above the former 16M limit with exact edge pixels', () => {
+  const width = 4097, height = 4096, raster = createRaster(width, height, [0, 0, 0, 0]);
+  raster.data.set([12, 34, 56, 255]);
+  raster.data.set([78, 90, 123, 0], raster.data.length - 4);
+  const original = imageContent({ operation: 'layers', previous: null, width, height,
+    layers: [{ meta: meta('scan'), raster }], activeLayerId: 'scan' });
+  const encoded = imageContent({ operation: 'encode', value: original });
+  const saved = nativeContainer({ op: 'encode', package: {
+    project: { id: 'large-scan', title: 'Large scan', format: 'gsnv-image', version: 1, content: encoded.content },
+    assets: encoded.assets.map(asset => ({ ...asset, mime: 'application/octet-stream' })),
+  } });
+  const opened = nativeContainer({ op: 'decode', parts: saved.parts });
+  const decoded = imageContent({ operation: 'decode', content: opened.project.content, assets: opened.assets });
+  assert.deepEqual([decoded.width, decoded.height, decoded.activeLayerId], [width, height, 'scan']);
+  const first = decoded.layers[0]!.tiles[0]!, last = decoded.layers[0]!.tiles.at(-1)!;
+  assert.deepEqual([...first.subarray(0, 4)], [12, 34, 56, 255]);
+  assert.deepEqual([...last.subarray(last.length - 4)], [78, 90, 123, 0]);
+  for (const [w, h] of [[8193, 8192], [16385, 1]]) {
+    assert.throws(() => imageContent({ operation: 'new', width: w!, height: h!, fill: [0, 0, 0, 0] }), RangeError);
+    assert.throws(() => imageContent({ operation: 'decode', content: { ...encoded.content, width: w, height: h }, assets: [] }), ImageContentError);
+  }
+});
 
 test('I-CONTENT new documents have one opaque Background layer with clipped edge tiles', () => {
   const doc = imageContent({ operation: 'new', width: TILE + 10, height: 3, fill: [255, 255, 255, 255] });

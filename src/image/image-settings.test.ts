@@ -3,7 +3,7 @@ import test from 'node:test';
 import { JSDOM } from 'jsdom';
 import { imageNewDialog, imagePolicyDialog } from './image-settings.ts';
 import { pixelPolicy, type PixelPolicy } from './image-pixel-policy.ts';
-import { MAX_PIXELS, type Raster } from './raster-ops.ts';
+import { MAX_PIXELS, MAX_DIMENSION, isRasterSize, type Raster } from './raster-ops.ts';
 import { showDialog, type DialogSpec } from '../shared/dialog.ts';
 import { NEW_IMAGE_PRESETS, newImagePresetValues } from './image-new-presets.ts';
 
@@ -25,7 +25,7 @@ test('IMAGE-SETTINGS every named preset validates within the pixel budget and th
   const f = context(), created: unknown[] = [], spec = imageNewDialog({ document: f.document, colour: [12, 34, 56, 255], onCreate: value => created.push(value) });
   assert.equal(new Set(NEW_IMAGE_PRESETS.map(preset => preset.id)).size, NEW_IMAGE_PRESETS.length);
   for (const preset of NEW_IMAGE_PRESETS) {
-    assert.ok(preset.width * preset.height <= MAX_PIXELS, preset.id);
+    assert.ok(isRasterSize(preset.width, preset.height), preset.id);
     const value = valid(spec, newImagePresetValues(preset));
     spec.preview(value); assert.match(spec.previewElement.textContent!, new RegExp(`${preset.width} × ${preset.height}`));
   }
@@ -47,10 +47,18 @@ test('IMAGE-SETTINGS New transparent/foreground backgrounds and strict palettes 
 
 test('IMAGE-SETTINGS New invalid sizes/choices never validate and exact pixel budget is accepted', () => {
   const f = context(), spec = imageNewDialog({ document: f.document, colour: [0, 0, 0, 255], onCreate() {} });
-  for (const patch of [{ preset: 'unknown' }, { width: 0 }, { height: -1 }, { width: 1.5 }, { width: Infinity }, { width: '8' }, { width: MAX_PIXELS, height: 2 }, { background: 'unknown' }, { mode: 'gaussian' }, { colours: '3' }, { dither: 'random' }]) {
+  for (const patch of [{ preset: 'unknown' }, { width: 0 }, { height: -1 }, { width: 1.5 }, { width: Infinity }, { width: '8' }, { width: MAX_PIXELS, height: 2 }, { width: MAX_DIMENSION + 1, height: 1 }, { width: 8193, height: 8192 }, { background: 'unknown' }, { mode: 'gaussian' }, { colours: '3' }, { dither: 'random' }]) {
     const result = spec.validate({ ...spec.initial, ...patch }); assert.equal(result.ok, false, JSON.stringify(patch)); if (!result.ok) assert.ok(result.error.message);
   }
-  valid(spec, { ...spec.initial, width: 4096, height: 4096 }); f.dom.window.close();
+  valid(spec, { ...spec.initial, width: 8192, height: 8192 });
+  valid(spec, { ...spec.initial, width: 5100, height: 6600 });
+  valid(spec, { ...spec.initial, width: MAX_DIMENSION, height: 4096 });
+  for (const key of ['width', 'height']) {
+    const field = spec.fields.find(field => field.key === key)!;
+    assert.equal(field.type, 'number');
+    if (field.type === 'number') assert.equal(field.max, MAX_DIMENSION);
+  }
+  f.dom.window.close();
 });
 
 test('IMAGE-SETTINGS New cancellation never creates a canvas and validates supplied ports', () => {

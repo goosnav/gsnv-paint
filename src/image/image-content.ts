@@ -26,7 +26,7 @@
  * TESTBENCH  src/image/image-content.test.ts -- run with: node --import tsx --test src/image/image-content.test.ts
  */
 import { pixelPolicy, type PixelPolicy } from './image-pixel-policy.ts';
-import { createRaster, MAX_PIXELS, type Raster, type RGBA } from './raster-ops.ts';
+import { createRaster, isRasterSize, type Raster, type RGBA } from './raster-ops.ts';
 import { BLEND_MODES, type BlendMode } from './image-composite.ts';
 import { imageSelectionState, type ImageSelection } from './image-selection-state.ts';
 
@@ -53,7 +53,7 @@ function layout(width: number, height: number) {
   const columns = Math.ceil(width / TILE), rows = Math.ceil(height / TILE);
   return { count: columns * rows, tile: (index: number) => { const tx = index % columns, ty = Math.floor(index / columns); return { x: tx * TILE, y: ty * TILE, w: Math.min(TILE, width - tx * TILE), h: Math.min(TILE, height - ty * TILE) }; } };
 }
-function checkSize(width: number, height: number) { if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > MAX_PIXELS) throw new RangeError('Invalid image size.'); }
+function checkSize(width: number, height: number) { if (!isRasterSize(width, height)) throw new RangeError('Invalid image size.'); }
 function checkRaster(r: Raster, width: number, height: number) { if (!r || r.width !== width || r.height !== height || !(r.data instanceof Uint8ClampedArray) || r.data.length !== width * height * 4) throw new RangeError('Layer rasters must match the image size.'); }
 function checkMeta(m: LayerMeta) {
   if (!m || typeof m.id !== 'string' || !m.id || typeof m.name !== 'string' || typeof m.visible !== 'boolean' || typeof m.opacity !== 'number' || !(m.opacity >= 0 && m.opacity <= 1) || !BLEND_MODES.includes(m.blend)) throw new RangeError('Invalid layer properties.');
@@ -118,7 +118,7 @@ function applyContent(request: Request): ImageContent | Raster | Encoded {
     const c = r.content as Record<string, unknown> | null, bad = (message: string): never => { throw new ImageContentError(message); };
     if (!c || typeof c !== 'object' || Array.isArray(c)) bad('This image project uses an unsupported layout.');
     const width = c!.width as number, height = c!.height as number;
-    if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > MAX_PIXELS) bad('The image size in this project is invalid.');
+    if (!isRasterSize(width, height)) bad('The image size in this project is invalid.');
     if (!Array.isArray(r.assets) || r.assets.some(a => !a || typeof a.id !== 'string' || !a.id) || new Set(r.assets.map(a => a.id)).size !== r.assets.length) bad('Image assets must have unique identifiers.');
     const bytes = (id: unknown) => { const asset = r.assets.find(a => a.id === id); if (!asset || !(asset.bytes instanceof Uint8Array) || asset.bytes.length !== width * height * 4) bad('The image pixel data is incomplete.'); return { width, height, data: new Uint8ClampedArray(asset!.bytes) }; };
     // Original single-layer layout (before layers existed).

@@ -23,7 +23,7 @@
  * TESTBENCH  node --import tsx --test src/image/image-effects-client.test.ts
  * DEMO       npm run dev; /src/image/image-effects-client.demo.html
  */
-import { MAX_PIXELS, type Raster } from './raster-ops.ts';
+import { isRasterSize, type Raster } from './raster-ops.ts';
 import { pixelPolicy, type PixelPolicy } from './image-pixel-policy.ts';
 
 export type ImageEffectsRequest =
@@ -38,7 +38,7 @@ const reason = (cause: unknown) => (cause instanceof Error ? cause.message : Str
 function checkRaster(value: unknown): Raster {
   if (!isRecord(value) || !keys(value, 'data,height,width')) throw new RangeError('Invalid image raster.');
   const r = value as unknown as Raster;
-  if (!Number.isInteger(r.width) || !Number.isInteger(r.height) || r.width < 1 || r.height < 1 || r.width * r.height > MAX_PIXELS || !(r.data instanceof Uint8ClampedArray) || r.data.length !== r.width * r.height * 4) throw new RangeError('Invalid image dimensions or pixel data.');
+  if (!isRasterSize(r.width, r.height) || !(r.data instanceof Uint8ClampedArray) || r.data.length !== r.width * r.height * 4) throw new RangeError('Invalid image dimensions or pixel data.');
   return r;
 }
 function prepare(request: ImageEffectsRequest): ImageEffectsRequest {

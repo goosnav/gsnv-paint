@@ -8,7 +8,7 @@
  * GUARANTEES No I/O/input mutation; transparent RGB is ignored. Few source colours
  *            remain exact. Input order cannot affect output or tie resolution.
  * TUNING     At most 32,768 histogram bins (5 bits/channel), weighted by alpha.
- * DECISIONS  D1: Fixed bins bound memory even for photographic 4096² inputs.
+ * DECISIONS  D1: Fixed bins bound memory even for large photographic inputs.
  *            Split greatest channel range, then greatest population, then first
  *            box; channels tie R/G/B. Split at weighted median, nonempty sides.
  *            Centroids round half up. Missing slots use distinct preset colours.
@@ -19,7 +19,7 @@
  * TESTBENCH  node --import tsx --test src/image/image-palette-core.test.ts
  * DEMO       node --import tsx src/image/image-palette-core.demo.ts
  */
-import { MAX_PIXELS, type Raster } from './raster-ops.ts';
+import { isRasterSize, type Raster } from './raster-ops.ts';
 import type { RGB } from './image-pixel-policy.ts';
 
 const COUNTS = [2, 4, 8, 16, 32, 64, 128, 256];
@@ -54,7 +54,7 @@ function complete(colours: readonly RGB[], count: number): readonly RGB[] {
 }
 export function generatePalette(raster: Raster, count: number): readonly RGB[] {
   countOK(count);
-  if (!raster || !Number.isInteger(raster.width) || !Number.isInteger(raster.height) || raster.width < 1 || raster.height < 1 || raster.width * raster.height > MAX_PIXELS || !(raster.data instanceof Uint8ClampedArray) || raster.data.length !== raster.width * raster.height * 4) throw new RangeError('Invalid palette source raster.');
+  if (!raster || !isRasterSize(raster.width, raster.height) || !(raster.data instanceof Uint8ClampedArray) || raster.data.length !== raster.width * raster.height * 4) throw new RangeError('Invalid palette source raster.');
   const weights = new Float64Array(32768), sums = [new Float64Array(32768), new Float64Array(32768), new Float64Array(32768)], d = raster.data;
   let exact: Map<number, RGB> | null = new Map();
   for (let i = 0; i < d.length; i += 4) {
