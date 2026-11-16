@@ -8,6 +8,12 @@ test('AX01 preset copies, exact defaults and export validation', () => {
   assert.equal(audioSettings.preset('retro')[0]!.values.cutoff, 9000);
   assert.deepEqual(audioSettings.chain(audioSettings.preset('dreamy')), audioSettings.preset('dreamy'));
 });
+test('AX01 guided modulation definitions validate bounded values and expose all help',()=>{
+ for(const kind of ['flanger','phaser'] as const){const e=audioSettings.effect(kind);assert.deepEqual(audioSettings.chain([e]),[e]);for(const mix of [-1,101,NaN])assert.throws(()=>audioSettings.chain([{...e,values:{...e.values,mix}}]),RangeError);}
+ for(const d of audioSettings.catalog()){assert.ok(d.help.what);for(const p of d.parameters)assert.ok(p.help.start);}
+ assert.deepEqual(audioSettings.preset('ambient').map(e=>e.kind),['lowpass','reverb']);
+ assert.deepEqual(audioSettings.preset('swirl').map(e=>e.kind),['phaser','reverb']);
+});
 test('AX01 rejects unknown keys, invalid values, excess effects and export settings', () => {
   for (const value of [null, {}, [{kind:'nope',enabled:true,values:{}}], Array(13).fill(audioSettings.effect('gain'))]) assert.throws(() => audioSettings.chain(value), RangeError);
   for (const amount of [NaN, Infinity, -1, 25000]) assert.throws(() => audioSettings.chain([{kind:'lowpass',enabled:true,values:{cutoff:amount}}]), RangeError);

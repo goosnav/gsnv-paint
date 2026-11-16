@@ -2,7 +2,8 @@
  * PURPOSE    Encode processed PCM into a portable audio file.
  * KIND       CORE
  * CONTRACT   IN AX02 PCM + AX01 output settings; OUT owned bytes, extension, MIME,
- *            sampleRate and frames. RAISES RangeError for invalid inputs/output >128MiB.
+ *            sampleRate and frames. RAISES RangeError for invalid inputs/output >128MiB
+ *            or a bitstream that disagrees with requested MP3 rate/bitrate/channels.
  * GUARANTEES Pure, no source mutation; stereo downmix averages channels; resampling preserves
  *            duration within one output sample. Optional peak protection only reduces gain.
  * TUNING     32-tap windowed sinc scaled for downsampling, 1024 phases; MP3 blocks 1152 samples.
@@ -46,6 +47,10 @@ export function encodeAudio(pcm: AudioPcm, raw: AudioExport): AudioEncoded {
     const collect=(part:Uint8Array)=>{ const owned=Uint8Array.from(part); total+=owned.length; if(total>128*1024*1024) throw new RangeError('Encoded audio exceeds 128 MiB.'); parts.push(owned); };
     for(let at=0;at<frames;at+=1152) { const block=channels.map(c=>Int16Array.from(c.subarray(at,at+1152),x=>integer(x,16))); collect(encoder.encodeBuffer(block[0]!,block[1])); }
     collect(encoder.flush()); bytes=new Uint8Array(total); let offset=0; for(const part of parts) { bytes.set(part,offset); offset+=part.length; }
+    // LAME can silently resample incompatible low-bitrate requests; fail visibly if policy ever drifts.
+    const version=(bytes[1]!>>3)&3, rate=[44100,48000,32000][(bytes[2]!>>2)&3]!/(version===3?1:version===2?2:4);
+    const bitrate=(version===3?[0,32,40,48,56,64,80,96,112,128,160,192,224,256,320]:[0,8,16,24,32,40,48,56,64,80,96,112,128,144,160])[bytes[2]!>>4];
+    if(bytes[0]!==255||(bytes[1]!&224)!==224||rate!==settings.sampleRate||bitrate!==settings.bitrate||((bytes[3]!>>6)===3?1:2)!==channels.length)throw new RangeError('MP3 encoder changed the requested settings. Choose another export preset.');
   } else {
     const stride=settings.bits/8, length=frames*channels.length*stride; if(length+44+(length%2)>128*1024*1024) throw new RangeError('WAV exceeds 128 MiB. Choose MP3 or shorter audio.');
     bytes=new Uint8Array(length+44+(length%2)); const view=new DataView(bytes.buffer), tag=(at:number,text:string)=>bytes.set(new TextEncoder().encode(text),at);

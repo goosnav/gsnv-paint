@@ -1,0 +1,105 @@
+Audio guidance verification — 2026-11-15
+Working directory: /home/goosnav/Desktop/code/gsnv-paint
+Selected actual command output; all commands below completed with exit 0.
+
+$ npm test
+✔ V02 bin-only imports preserve project settings, survive native reopen and place/remove explicitly (1.233723ms)
+✔ V-TIMELINE titles validate and the project round-trips through the native encoding (1.271533ms)
+ℹ tests 1248
+ℹ suites 0
+ℹ pass 1248
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43085.77583
+
+$ node --import tsx --test src/audio/*.test.ts src/image/image-batch-*.test.ts
+✔ BATCH-ZIP enforces total encoded size before reading and rejects duplicates/path traversal (22.766012ms)
+✔ BATCH-ZIP cancel discards pending bytes and blocks late asynchronous writes (0.849144ms)
+ℹ tests 70
+ℹ suites 0
+ℹ pass 70
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4130.487597
+
+$ npx playwright test -c src/audio/audio-processing.playwright.config.ts
+Running 10 tests using 1 worker
+
+(node:3301944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 src/audio/audio-processing.browser.spec.ts:6:1 › AUD-FX wizard selects first preview, changes song/effects, exports real ZIP and closes (4.9s)
+  ✓   2 src/audio/audio-processing.browser.spec.ts:18:1 › AUD-FX MP3 preview decodes at chosen quality; applied effects undo exactly (4.2s)
+  ✓   3 src/audio/audio-processing.browser.spec.ts:36:1 › AUD-FX folder batch writes dated child, report and no originals; close cancels preview (3.7s)
+  ✓   4 src/audio/audio-processing.browser.spec.ts:56:1 › AUD-FX wizard remains usable at phone width and has consistent slider controls (1.6s)
+  ✓   5 src/audio/audio-processing.browser.spec.ts:61:1 › AUD-FX real browser directory handles retain originals and write processed copies (3.2s)
+  ✓   6 src/audio/audio-processing.browser.spec.ts:73:1 › AUD-FX installed production build processes first-use audio while offline (3.9s)
+  ✓   7 src/audio/audio-processing.browser.spec.ts:80:1 › AUD-GUIDE effect and parameter helpers close independently; flanger/phaser preview uses worker (3.0s)
+  ✓   8 src/audio/audio-processing.browser.spec.ts:92:1 › AUD-GUIDE tiny MP3 presets decode with correct pitch, shrink and reach batch ZIP/report (3.2s)
+  ✓   9 src/audio/audio-processing.browser.spec.ts:114:1 › AUD-GUIDE remembered recipe repairs old codec rate visibly without losing effects (1.5s)
+  ✓  10 src/audio/audio-processing.browser.spec.ts:120:1 › AUD-GUIDE touch-sized helpers fit a phone and close without dismissing the wizard (2.5s)
+
+  10 passed (33.9s)
+
+$ AUDIO_BROWSER=webkit npx playwright test -c src/audio/audio-processing.playwright.config.ts --grep-invert 'real browser directory handles'
+Running 9 tests using 1 worker
+
+(node:3303576) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/audio/audio-processing.browser.spec.ts:6:1 › AUD-FX wizard selects first preview, changes song/effects, exports real ZIP and closes (6.1s)
+  ✓  2 src/audio/audio-processing.browser.spec.ts:18:1 › AUD-FX MP3 preview decodes at chosen quality; applied effects undo exactly (4.3s)
+  ✓  3 src/audio/audio-processing.browser.spec.ts:36:1 › AUD-FX folder batch writes dated child, report and no originals; close cancels preview (3.7s)
+  ✓  4 src/audio/audio-processing.browser.spec.ts:56:1 › AUD-FX wizard remains usable at phone width and has consistent slider controls (1.9s)
+  ✓  5 src/audio/audio-processing.browser.spec.ts:73:1 › AUD-FX installed production build processes first-use audio while offline (4.6s)
+  ✓  6 src/audio/audio-processing.browser.spec.ts:80:1 › AUD-GUIDE effect and parameter helpers close independently; flanger/phaser preview uses worker (3.7s)
+  ✓  7 src/audio/audio-processing.browser.spec.ts:92:1 › AUD-GUIDE tiny MP3 presets decode with correct pitch, shrink and reach batch ZIP/report (4.1s)
+  ✓  8 src/audio/audio-processing.browser.spec.ts:114:1 › AUD-GUIDE remembered recipe repairs old codec rate visibly without losing effects (2.0s)
+  ✓  9 src/audio/audio-processing.browser.spec.ts:120:1 › AUD-GUIDE touch-sized helpers fit a phone and close without dismissing the wizard (2.4s)
+
+  9 passed (34.7s)
+
+$ AUDIO_PRODUCTION=1 npx playwright test -c src/audio/audio-playwright.config.ts
+
+(node:3301967) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/audio/audio-workspace.browser.spec.ts:48:1 › AUDIO-APP real WAV import, playback, range edits, shared undo, native reopen and recovery (6.0s)
+  ✓  2 src/audio/audio-workspace.browser.spec.ts:70:1 › AUDIO-APP effects export sample-exact PCM WAV and invalid import retains edits (3.4s)
+  ✓  3 src/audio/audio-workspace.browser.spec.ts:90:1 › AUDIO-APP keyboard range selection and missing Web Audio are explicit (3.2s)
+
+  3 passed (13.8s)
+
+$ npx playwright test src/image/image-batch.browser.spec.ts
+
+(node:3303765) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 src/image/image-batch.browser.spec.ts:6:1 › PU-14/15 browser file fallback previews each size and exports a timestamped ZIP with honest bad-input report (2.0s)
+  ✓  2 src/image/image-batch.browser.spec.ts:13:1 › PU-15 real browser filesystem handles preserve originals and write only a fresh source child (1.7s)
+
+  2 passed (5.8s)
+
+$ npm run build
+dist/assets/index-DxapDOSU.css                       73.24 kB │ gzip:    14.05 kB
+dist/assets/code-runtime-2IlzNxoM.js                  3.04 kB │ gzip:     1.66 kB
+dist/assets/image-effects.worker-Cxz3F-xM.js          5.72 kB │ gzip:     2.57 kB
+dist/assets/image-replay.worker-D1k7zskQ.js          59.89 kB │ gzip:    20.61 kB
+dist/assets/audio-processing.worker-Bp7UpXrI.js     189.11 kB │ gzip:    67.57 kB
+dist/assets/index-DbSy_qTz.js                     3,574.77 kB │ gzip: 1,007.57 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.52s
+
+$ npx wrangler deploy --dry-run --no-autoconfig
+
+ ⛅️ wrangler 4.160.1 (update available 4.162.0)
+───────────────────────────────────────────────
+✨ Read 74 files from the assets directory /home/goosnav/Desktop/code/gsnv-paint/dist
+Total Upload: 0.31 KiB / gzip: 0.22 KiB
+No bindings found.
+--dry-run: exiting now.

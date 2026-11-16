@@ -37,3 +37,11 @@ test('AX02 quantization golden, valid ranges and malformed PCM', () => {
   for (const input of [{sampleRate:0,channels:[new Float32Array(2)]},pcm(),pcm(NaN),{sampleRate:48000,channels:[new Float32Array(2),new Float32Array(3)]}]) assert.throws(()=>validatePcm(input),RangeError);
   for(const preset of ['retro','dreamy'] as const) for(const sampleRate of [8000,48000,192000]) { const out=processAudio({sampleRate,channels:[Float32Array.from({length:1000},(_,i)=>Math.sin(i))]},audioSettings.preset(preset)); assert.ok(out.channels[0]!.every(Number.isFinite)); }
 });
+
+test('AX02 modulation engine composes in order without mutating stereo channels',async()=>{
+ const {modulateAudio}=await import('./audio-modulation.ts');
+ const input={sampleRate:8000,channels:[Float32Array.from({length:8000},(_,i)=>.1*Math.sin(i*.6)),Float32Array.from({length:8000},(_,i)=>.2*Math.sin(i*.3))]};
+ const flanger=audioSettings.effect('flanger'),phaser=audioSettings.effect('phaser');const result=processAudio(input,[flanger,phaser]);
+ for(let c=0;c<2;c++){const expected=modulateAudio(modulateAudio(input.channels[c]!,8000,flanger),8000,phaser);assert.ok(result.channels[c]!.every((sample,i)=>sample===expected[i]),'Every sample follows the ordered modulation chain');}
+ assert.notDeepEqual(processAudio(input,[phaser,flanger]),result);assert.equal(result.sampleRate,input.sampleRate);
+});

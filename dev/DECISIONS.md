@@ -473,3 +473,38 @@ children, then writes collision-safe copies to a new UTC timestamped child. Sour
 files have no write authority. Single selected files ask for an output directory;
 browsers without directory writes explicitly download a bounded ZIP. Abort retains
 completed folder files, discards unfinished ZIPs, and stops before the next write.
+
+## D39 — Guided effects and verified low-bitrate MP3 choices (2026-11-15)
+
+The owner distinguished the desired compressed-music character from the original
+Retro preset. Fresh wizards now use clean effects and Early web 64kbps MP3; saved
+recipes take precedence. Soft ambience and Slow swirl are listening starting
+points, not claims about how LEASE or Serial Experiments Lain were produced.
+Question-mark helpers distinguish dynamics compression, sample/bit reduction,
+filtering, modulation and actual lossy file compression, with lower/higher and
+suggested starting settings. Apply is explicitly effects-only; exported/preview
+MP3 uses the selected codec settings.
+
+Expose a quality ladder (192,128,96,64,48,32,24,16,8kbps) plus manual intermediate
+rates up to 320kbps. Keep the pinned LGPL encoder unchanged. It silently resamples
+some low-rate inputs depending on channel count; choose only experimentally
+verified rate/bitrate/channel combinations. The full-frame matrix checks both
+mono and stereo. Encoding additionally rejects a first frame that disagrees with
+requested settings. Old incompatible saved rates repair visibly while retaining
+the chain and bitrate. Alternative: modify the codec or report requested settings
+while writing different rates. Revisit if: replacing the encoder or adding ABR/VBR.
+
+Size estimates use total CBR bitrate. Mono does not halve a fixed-bitrate MP3
+again, though it halves otherwise comparable stereo PCM WAV. No claim of physical
+Nokia-player compatibility. 8kbps deliberately loses substantial musical detail.
+See [LAME's supported formats](https://github.com/lameproject/lame/blob/master/doc/html/usage.html).
+
+Implement flanger as an interpolated sinusoidal delay with bounded feedback and
+phaser as four swept first-order all-pass sections. Stereo uses a shared sweep
+phase, preserving identical channels. Both run in the existing worker, preserve
+duration, return owned PCM, and have analytic notch/impulse checks. Alternative:
+browser AudioNodes would couple offline sound to engine-specific behavior.
+Revisit if: the owner asks for real-time performance or appended effect tails.
+Algorithm references: Julius O. Smith's
+[Flanging](https://www.dsprelated.com/freebooks/pasp/Flanging.html) and
+[first-order all-pass phasing](https://www.dsprelated.com/freebooks/pasp/Phasing_First_Order_Allpass_Filters.html).

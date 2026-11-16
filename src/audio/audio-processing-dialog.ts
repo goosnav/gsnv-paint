@@ -16,6 +16,7 @@ import type {DialogSpec} from '../shared/dialog.ts';
 import {createAudioChainControls} from './audio-chain-controls.ts';
 import {createAudioProcessor} from './audio-processing-client.ts';
 import {audioSettings} from './audio-effect-settings.ts';
+import {audioExport} from './audio-export-profile.ts';
 import type {AudioPcm} from './audio-effects.ts';
 import {pickBatchInputs,createBatchDestination,type BatchFilePorts,type BatchSelection,type BatchDestination} from '../image/image-batch-files.ts';
 import {runAudioBatch} from './audio-batch-run.ts';
@@ -32,7 +33,7 @@ export function audioProcessingDialog(p:Ports):DialogSpec & {dispose():void}{
  const error=(cause:unknown)=>cause instanceof Error?cause.message:String(cause);
  function clearPreview(){for(const audio of [original,processed]){audio.pause();audio.removeAttribute('src');audio.load();}for(const url of urls)w.URL.revokeObjectURL(url);urls.length=0;}
  function settingsChanged(){revision++;clearPreview();downloadValue=null;download.hidden=true;try{chain.read();status.textContent='Settings changed. Update preview to hear this version.';}catch(cause){status.textContent=error(cause);}refresh();}
- let initial;try{const saved=JSON.parse(w.localStorage.getItem(KEY)??'null');if(saved)initial={chain:audioSettings.chain(saved.chain),output:audioSettings.output(saved.output)};}catch{/* Invalid/blocked optional preferences use the documented preset. */}
+ let initial;try{const saved=JSON.parse(w.localStorage.getItem(KEY)??'null');if(saved){audioExport.repair(saved.output);initial={chain:audioSettings.chain(saved.chain),output:saved.output};}}catch{/* Invalid/blocked optional preferences use the documented preset. */}
  const chain=createAudioChainControls(d,settingsChanged,initial);
  const tabs=make('nav'),pages=[make('section'),chain.effects,chain.exports],main=make('div');tabs.className='audio-wizard-tabs';tabs.setAttribute('aria-label','Audio processing steps');main.className='audio-wizard-main';
  const tabButtons=['1. Songs','2. Effects','3. Export'].map((text,i)=>{const b=button(text,()=>setStep(i));tabs.append(b);return b;});
@@ -48,17 +49,20 @@ export function audioProcessingDialog(p:Ports):DialogSpec & {dispose():void}{
  const original=make('audio'),processed=make('audio');for(const a of [original,processed]){a.controls=true;a.preload='metadata';a.onplay=()=>{(a===original?processed:original).pause();};}
  original.setAttribute('aria-label','Original preview');processed.setAttribute('aria-label','Processed preview');
  const previewButton=button('Update preview',()=>void preview()),stop=button('Stop',()=>{controller?.abort();original.pause();processed.pause();status.textContent='Stopping…';});
- previewPane.append(make('h3','Listen before processing'),label('Preview song',previewSong),label('Preview start (seconds)',offset),make('p','15-second excerpt. Press Play to listen; use the dropdown to try another song.'),previewButton,make('h4','Original'),original,make('h4','Processed'),processed);
+ const previewFormat=make('p');previewFormat.className='audio-preview-format';
+ previewPane.append(make('h3','Listen before processing'),label('Preview song',previewSong),label('Preview start (seconds)',offset),make('p','15-second excerpt. Press Play to listen; use the dropdown to try another song.'),previewButton,make('h4','Original'),original,make('h4','Processed'),processed,previewFormat);
  const progress=make('progress');progress.max=1;progress.value=0;progress.setAttribute('aria-label','Audio processing progress');
  const report=make('ol');report.setAttribute('aria-label','Song processing results');report.className='audio-wizard-report';
  const actions=make('div');actions.className='audio-wizard-row';
  const back=button('Back',()=>setStep(step-1)),next=button('Next',()=>setStep(step+1));
  const apply=button('Apply to open recording',()=>void applyCurrent()),run=button('Process songs',()=>void processSongs()),download=button('Download ZIP',()=>downloadOutput());download.hidden=true;
- actions.append(back,next,apply,run,stop,download);const content=make('div');content.className='audio-wizard-layout';main.append(...pages);content.append(main,previewPane);body.append(tabs,content,status,progress,report,actions);
+ const applyNote=make('p','Apply changes effects only. To keep the MP3 compression, use Process songs in Export and download the result.');applyNote.className='audio-wizard-note';
+ actions.append(back,next,apply,run,stop,download);const content=make('div');content.className='audio-wizard-layout';main.append(...pages);content.append(main,previewPane);body.append(tabs,content,status,progress,report,applyNote,actions);
  function hasInput(){return !!selection?.inputs.length||!!p.current;}
  function refresh(){
   chain.setDisabled(busy);songs.disabled=folder.disabled=busy;current.disabled=busy||!p.current;previewSong.disabled=offset.disabled=dest.disabled=busy;previewButton.disabled=busy||!hasInput();
   apply.disabled=busy||!p.current||!!selection||applied;apply.hidden=!p.current||!!selection;run.disabled=busy||!hasInput();run.hidden=step!==2;stop.disabled=!busy;download.disabled=busy;
+  applyNote.hidden=apply.hidden;try{previewFormat.textContent=`Preview uses these export settings: ${audioExport.describe(chain.read().output)}.`;}catch{previewFormat.textContent='Correct the highlighted settings before previewing.';}
   back.disabled=step===0;next.disabled=step===2;for(let i=0;i<3;i++){pages[i]!.hidden=i!==step;tabButtons[i]!.setAttribute('aria-pressed',String(i===step));}
  }
  function setStep(value:number){step=Math.max(0,Math.min(2,value));refresh();}

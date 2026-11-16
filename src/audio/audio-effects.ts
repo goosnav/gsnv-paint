@@ -2,7 +2,7 @@
  * PURPOSE    Render an ordered effect chain on owned PCM.
  * KIND       CORE
  * CONTRACT   IN mono/stereo finite Float32 PCM, equal lengths, 8–192kHz, <=128MiB,
- *            <=30 minutes and AX01 chain. OUT new same-length/rate channels, no clipping.
+ *            <=30 minutes and AX01 chain including flanger/phaser. OUT owned same-length/rate PCM.
  *            RAISES RangeError for invalid PCM/settings or nonfinite output.
  * GUARANTEES Pure, deterministic, no input mutation, linked dynamics preserve stereo image.
  * TUNING     MAX_PCM_BYTES=128MiB. Reverb delay bank below; no appended tail.
@@ -13,6 +13,7 @@
  * DEMO       node --import tsx src/audio/audio-effects.demo.ts
  */
 import { audioSettings, type AudioEffect } from './audio-effect-settings.ts';
+import {modulateAudio} from './audio-modulation.ts';
 export type AudioPcm = { sampleRate: number; channels: Float32Array[] };
 export function validatePcm(pcm: AudioPcm): void {
   if (!pcm || !Number.isInteger(pcm.sampleRate) || pcm.sampleRate < 8000 || pcm.sampleRate > 192000 || !Array.isArray(pcm.channels) || pcm.channels.length < 1 || pcm.channels.length > 2) throw new RangeError('Audio needs mono or stereo PCM at 8000–192000 Hz.');
@@ -66,6 +67,7 @@ export function processAudio(pcm: AudioPcm, raw: readonly AudioEffect[]): AudioP
     } else channels.forEach((channel, index) => {
       if (effect.kind === 'lowpass' || effect.kind === 'highpass') filter(channel,rate,v.cutoff!,effect.kind === 'highpass');
       else if (effect.kind === 'reverb') reverb(channel,rate,v,index);
+      else if (effect.kind === 'flanger' || effect.kind === 'phaser') channels[index]=modulateAudio(channel,rate,effect);
       else if (effect.kind === 'digital') {
         const step = Math.min(1,v.rate! / rate), levels = 2 ** (v.bits! - 1), mix = v.mix! / 100; let phase = 1, held = 0;
         for (let i = 0; i < channel.length; i++) { const dry = channel[i]!; if (phase >= 1) { held = Math.round(Math.max(-1,Math.min(1,dry))*levels)/levels; phase -= 1; } phase += step; channel[i] = dry * (1 - mix) + held * mix; }

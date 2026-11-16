@@ -1,5 +1,9 @@
 # Audio effects and quick processing — 2026-11-15
 
+The subsequent [guided audio phase](AUDIO-GUIDANCE.md) adds contextual help,
+flanger/phaser and 8–320 kbps export choices. It supersedes the original default
+recipe and output-rate restrictions below; the original phase evidence is retained.
+
 ## ConOps and scope
 The owner wants the soft, bandwidth-limited early computer music sound, editable effect order/amounts, and one-song or folder processing into a dated child folder. Everything runs locally in the existing browser/local shells. Originals are read-only. This phase adds processing, not music composition. BATCH is pre-authorized by the owner's standing instruction after this map is committed; GREEN is not owner acceptance.
 
