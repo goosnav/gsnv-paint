@@ -122,14 +122,14 @@ The launcher prints `gsnv-paint [CODE]: message` when it stops.
 
 ### Browser says "can't connect" even though the launcher reports "running"
 
-Run the following **in the same terminal/environment that started gsnv-paint**:
+Run the following **in the same terminal/environment that started gsnv-paint** (or run `./run.sh --diagnose` in another terminal):
 
 ```sh
 uname -s
 curl -I --max-time 3 http://127.0.0.1:24173/
 ```
 
-- **HTTP 200 in the launcher terminal:** the server is working in that environment. If Safari or another browser still cannot connect, first establish whether the browser and launcher are running on the same operating system/network namespace. `127.0.0.1` is local to each computer, VM, container or remote shell. If Safari is on a Mac, clone/open this folder in a **Mac Terminal** and use `./run.command` (or double-click it in Finder). If the server must run on a remote machine accessible via SSH, run `ssh -N -L 24173:127.0.0.1:24173 user@server` on the Mac, then open Safari to the same URL. Do not expose the development server on all interfaces just to make localhost work.
+- **HTTP 200 in the launcher terminal:** the server is working in that environment. If Safari still cannot connect, its `127.0.0.1` belongs to a different OS/network namespace. The simplest fix is to open this repository in **Mac Terminal** and run `./run.command` (or double-click it in Finder). If gsnv-paint must run in a remote Linux/VM/SSH environment, start it there with `./run.sh --no-browser`, then, **on the Mac running Safari**, run `./connect-mac.sh user@server`. This creates an SSH port forward, verifies the application page and opens Safari at the usual URL. It requires SSH access to that server. Do not expose the server on all interfaces: remote HTTP origins may lack secure-context features used by CAD/offline functionality.
 - **Connection refused/timed out in the launcher terminal:** that server is no longer listening in the environment where it was started. Keep the launcher process open and inspect the error output; `lsof -nP -iTCP:24173 -sTCP:LISTEN` (macOS) or `ss -ltnp` (Linux) can show what is listening.
 - **`run.command: command not found`:** terminal commands in the current directory need `./run.command` rather than `run.command`. The shell launcher is `./run.sh`; on Windows use `run.cmd`.
 

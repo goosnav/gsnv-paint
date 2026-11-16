@@ -6,6 +6,7 @@
  */
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, statSync } from 'node:fs';
+import { hostname } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -31,6 +32,30 @@ const port = Number(process.env.GSNV_PAINT_PORT ?? 24173);
 if (!Number.isInteger(port) || port < 1024 || port > 65535) fail('APP-START', 'GSNV_PAINT_PORT must be a whole number from 1024 to 65535.');
 const url = `http://127.0.0.1:${port}/`;
 
+// Verify the application identity over real HTTP in the launcher's network namespace.
+// A listening socket is not proof that the browser is on the same machine.
+async function isAppServing() {
+  try {
+    const response = await fetch(url, { signal: AbortSignal.timeout(2500) });
+    return response.ok &&
+      response.headers.get('cross-origin-opener-policy') === 'same-origin' &&
+      (await response.text()).includes('<meta name="application-name" content="gsnv-paint">');
+  } catch {
+    return false;
+  }
+}
+
+if (process.argv.includes('--diagnose')) {
+  const serving = await isAppServing();
+  console.log(`gsnv-paint [DIAGNOSE]: This shell runs on ${process.platform} (${hostname()}).`);
+  console.log(`gsnv-paint [DIAGNOSE]: ${url} responds as gsnv-paint: ${serving ? 'yes' : 'no'}.`);
+  if (process.platform !== 'darwin') {
+    console.log('If Safari is on a different Mac, it cannot reach this shell through its own 127.0.0.1. Run on the Mac directly, or use ./connect-mac.sh user@server on the Mac to forward the SSH port.');
+  }
+  process.exit(serving ? 0 : 1);
+}
+
+
 if (mtime('node_modules/.package-lock.json') < mtime('package-lock.json')) {
   console.log('Installing locked dependencies. The first launch needs a network connection…');
   // Fixed command string, no user input; a shell is what lets Windows find npm.cmd.
@@ -54,7 +79,7 @@ if (!complete || sources.some(path => mtime(path) > built)) {
 }
 
 function openBrowser() {
-  if (process.env.GSNV_PAINT_NO_OPEN) return;
+  if (process.env.GSNV_PAINT_NO_OPEN || process.argv.includes('--no-browser')) return;
   const [command, args] = process.platform === 'darwin' ? ['open', [url]]
     : process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]] : ['xdg-open', [url]];
   const unopened = () => {
@@ -63,25 +88,14 @@ function openBrowser() {
       `gsnv-paint [LAUNCH-BROWSER]: Could not open a browser from this ${process.platform} session.\n` +
       `Check the server in this terminal: ${check}\n` +
       `If it responds, open ${url} in a browser running in the SAME network environment.\n` +
-      `If the browser is on another host, VM, container or SSH client, its 127.0.0.1 is different. Run locally there or forward port ${port} via SSH.`
+      `If Safari runs on a Mac but this shell does not, use ./run.command in Mac Terminal, or run ./connect-mac.sh user@server on the Mac to forward port ${port} securely over SSH.`
     );
   };
   const child = spawn(command, args, { stdio: 'ignore', detached: true });
   child.on('error', unopened); child.on('exit', code => { if (code) unopened(); }); child.unref();
 }
 
-// A second launch reopens an existing copy on the same origin. Use this same
-// HTTP probe after preview() so "running" means the app actually answered.
-async function isAppServing() {
-  try {
-    const response = await fetch(url, { signal: AbortSignal.timeout(2500) });
-    return response.ok &&
-      response.headers.get('cross-origin-opener-policy') === 'same-origin' &&
-      (await response.text()).includes('<meta name="application-name" content="gsnv-paint">');
-  } catch {
-    return false;
-  }
-}
+// Reopen only if a real instance of this app owns the fixed origin.
 const alreadyRunning = await isAppServing();
 if (alreadyRunning) {
   console.log(`gsnv-paint is already running at ${url}`);
