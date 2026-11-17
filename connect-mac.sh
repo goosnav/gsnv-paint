@@ -34,22 +34,43 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 
 ready=0
+launch_url=''
 for attempt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
   if ! kill -0 "$tunnel_pid" 2>/dev/null; then
     printf '%s\n' 'gsnv-paint [REMOTE-TUNNEL]: SSH exited. Check the server address, credentials and local port conflicts.' >&2
     wait "$tunnel_pid" || :
     exit 1
   fi
-  if curl --noproxy 127.0.0.1 --max-time 2 -fsS "$url" 2>/dev/null | grep -Fq '<meta name="application-name" content="gsnv-paint">'; then
-    ready=1
-    break
+  # Root navigation can be intercepted by a previous browser offline worker.
+  # The launcher publishes its build header without requiring Node/Python here.
+  status_headers=$(curl --noproxy 127.0.0.1 --max-time 2 -fsSI "${url}__gsnv-local__/status" 2>/dev/null) || status_headers=''
+  build_id=$(printf '%s\n' "$status_headers" | tr -d '\r' | awk 'tolower($1) == "x-gsnv-local-build:" { print $2 }')
+  valid_build=0
+  case "$build_id" in
+    ''|*[!a-f0-9]*) ;;
+    *) if [ "${#build_id}" -eq 64 ]; then valid_build=1; fi ;;
+  esac
+  if [ "$valid_build" -eq 1 ]; then
+    launch_url="${url}__gsnv-local__/start/$build_id"
+    entry=$(curl --noproxy 127.0.0.1 --max-time 2 -fsS "$launch_url" 2>/dev/null) || entry=''
+    if printf '%s\n' "$entry" | grep -Fq '<meta name="application-name" content="gsnv-paint">'; then
+      if ! printf '%s\n' "$entry" | grep -Fq "name=\"gsnv-build-id\" content=\"$build_id\""; then
+        printf '%s\n' 'gsnv-paint [REMOTE-VERSION]: The remote page does not match its launcher build. Save your work, stop the remote launcher and start it again.' >&2
+        exit 1
+      fi
+      ready=1
+      break
+    fi
+  elif curl --noproxy 127.0.0.1 --max-time 2 -fsS "$url" 2>/dev/null | grep -Fq '<meta name="application-name" content="gsnv-paint">'; then
+    printf '%s\n' 'gsnv-paint [REMOTE-VERSION]: An older launcher is running. Save your work, stop it, update the server copy and start ./run.sh --no-browser again. This helper will not reopen the old cached app.' >&2
+    exit 1
   fi
   sleep 1
 done
 if [ "$ready" -ne 1 ]; then
-  printf 'gsnv-paint [REMOTE-TUNNEL]: No gsnv-paint page at %s. Start the remote launcher first; check its port.\n' "$url" >&2
+  printf 'gsnv-paint [REMOTE-TUNNEL]: No verified local gsnv-paint build at %s. Start the remote launcher first; check its port.\n' "$url" >&2
   exit 1
 fi
-printf 'gsnv-paint is reachable from this Mac at %s\n' "$url"
-open -a Safari "$url" || open "$url" || printf 'Open %s manually in Safari.\n' "$url" >&2
+printf 'gsnv-paint is reachable from this Mac at %s\n' "$launch_url"
+open -a Safari "$launch_url" || open "$launch_url" || printf 'Open %s manually in Safari.\n' "$launch_url" >&2
 wait "$tunnel_pid"

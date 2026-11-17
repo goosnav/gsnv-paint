@@ -78,10 +78,25 @@ Document supports styled text, lists, pictures and tables, with editable project
    - **macOS:** double-click `run.command`.
    - **Windows:** double-click `run.cmd`. Running `run.ps1` in PowerShell does the same.
    - **Linux:** open a terminal in this folder and run `./run.sh`.
-3. Your browser opens `http://127.0.0.1:24173/`. If it does not, open that address yourself.
+3. Your browser opens the current build at `http://127.0.0.1:24173/__gsnv-local__/start/…`. If it does not, copy the full address printed in the terminal. The footer should show **Local · revision**.
 4. Keep the launcher window open while you work. Press Ctrl+C in it, or close it, to stop.
 
-Starting the launcher again while it is running reopens the same copy.
+Starting the launcher again reopens a matching running copy. If another build or folder owns the port, it asks you to save work and stop that launcher before starting the current one. It does not terminate another process or silently fall back to the old app.
+
+### Update to the latest features
+
+1. Save your projects, then stop the running launcher with Ctrl+C in its terminal.
+2. For a Git checkout on macOS, double-click **`update.command`**. On Windows, double-click **`update.cmd`** (or run `run.cmd --update`); on Linux, run `./run.sh --update`.
+3. The updater downloads `origin/main`, accepts only a clean fast-forward from the official repository, then launches the updated application. Local code edits, a different branch or diverging history produce an explanation instead of being overwritten.
+4. If you downloaded a ZIP, download and extract the current complete repository folder, then start its `run.command`. The older ZIP launcher cannot download revisions for you. Saved project files and the browser's recovery data are separate from that folder.
+
+Normal launches use your installed source revision without checking GitHub. Use the update command when you want the latest features. A source archive or old Git checkout cannot acquire new features just by rebuilding.
+
+### Processing on your computer
+
+The local launcher serves the same production application and all nine workspaces as Cloudflare. Both versions perform editing in the browser on your machine: CAD rendering uses WebGL when supported; CAD calculations, RAW development, Python and image effects use their local worker/WASM engines. Cloudflare does not perform those calculations for the hosted app.
+
+The local entry loads those engines from the local server and skips downloading a second full application copy into the browser's offline cache. Keep the launcher running; internet access is unnecessary after installation unless you explicitly update. The app retains browser and hardware limits, and existing single-threaded operations remain single-threaded.
 
 ## What the first start does
 
@@ -92,7 +107,7 @@ Starting the launcher again while it is running reopens the same copy.
 | Builds the application. | no | `dist/` in this folder |
 | Serves `dist/` to this computer only and opens the browser. | no | - |
 
-Later starts skip every step whose inputs did not change, and work offline.
+Later starts verify source/dependency content and build integrity, skip work whose inputs did not change, and work offline. Preserved or misleading file timestamps cannot keep an obsolete build marked fresh.
 
 ## Where things are stored
 
@@ -100,6 +115,7 @@ Later starts skip every step whose inputs did not change, and work offline.
 |---|---|
 | Downloaded Node.js (only if needed) | macOS `~/Library/Application Support/gsnv-paint/runtime`; Windows `%LOCALAPPDATA%\gsnv-paint\runtime`; Linux `~/.local/share/gsnv-paint/runtime` |
 | Recovery data | your browser's storage for `http://127.0.0.1:24173` |
+| Local build/dependency fingerprints | `.gsnv-local/` in this source folder; not project data |
 | Project files | wherever you save them |
 
 Recovery data belongs to that exact address in that browser. A different browser, a different port, or `localhost` instead of `127.0.0.1` will not show it. Clearing site data for that address deletes it. Save project files for a durable copy.
@@ -114,10 +130,14 @@ The launcher prints `gsnv-paint [CODE]: message` when it stops.
 |---|---|---|
 | `LAUNCH-ROOT` | The launcher was moved out of its folder, or files are missing. | Keep the launcher inside the complete gsnv-paint folder. |
 | `LAUNCH-PLATFORM` | The system or processor has no supported Node.js download, or the installed Node.js is too old for `npm start`. | Install Node.js 22.12 or newer, or start with the launcher for your system. |
-| `LAUNCH-BROWSER` | No browser could be opened. The application is still running. | Open `http://127.0.0.1:24173/` yourself. |
+| `LAUNCH-BROWSER` | No browser could be opened. The application is still running. | Copy the complete versioned local URL printed by the launcher into your browser. |
 | `BOOT-NETWORK` | A download or `npm ci` failed. | Check the connection or proxy, then start again. |
 | `BOOT-INTEGRITY` | The downloaded Node.js did not match its pinned checksum and was deleted. | Start again. If it repeats, stop and report it. |
 | `BOOT-PERMISSION` / `BOOT-DISK` | The data folder could not be written or unpacked. | Check permissions and free disk space. |
+| `APP-STALE` | An older build, different source folder or unverified server owns the local port. | Save work, close old Paint tabs, stop its launcher with Ctrl+C and start the current folder. Keep the same port. |
+| `APP-BUILD` | The build is incomplete or source changed while building. | Let source changes finish, then start the launcher again. |
+| `APP-PREPARING` | Another launcher is still installing, building or updating this source folder. | Let that launcher finish, then retry; do not start competing installs manually. |
+| `UPDATE-*` | The update cannot proceed because the app is running, the folder is not a clean official main checkout, history diverges or Git/network access failed. | Follow the specific message. The updater does not discard edits, force-reset commits or switch repositories. |
 | `APP-START` | The build failed, the port is used by another program, or something unexpected happened. | Read the message. For a busy port, close the other program, or set `GSNV_PAINT_PORT` to another port; recovery data is kept per port. |
 
 ### Browser says "can't connect" even though the launcher reports "running"
@@ -132,6 +152,12 @@ curl -I --max-time 3 http://127.0.0.1:24173/
 - **HTTP 200 in the launcher terminal:** the server is working in that environment. If Safari still cannot connect, its `127.0.0.1` belongs to a different OS/network namespace. The simplest fix is to open this repository in **Mac Terminal** and run `./run.command` (or double-click it in Finder). If gsnv-paint must run in a remote Linux/VM/SSH environment, start it there with `./run.sh --no-browser`, then, **on the Mac running Safari**, run `./connect-mac.sh user@server`. This creates an SSH port forward, verifies the application page and opens Safari at the usual URL. It requires SSH access to that server. Do not expose the server on all interfaces: remote HTTP origins may lack secure-context features used by CAD/offline functionality.
 - **Connection refused/timed out in the launcher terminal:** that server is no longer listening in the environment where it was started. Keep the launcher process open and inspect the error output; `lsof -nP -iTCP:24173 -sTCP:LISTEN` (macOS) or `ss -ltnp` (Linux) can show what is listening.
 - **`run.command: command not found`:** terminal commands in the current directory need `./run.command` rather than `run.command`. The shell launcher is `./run.sh`; on Windows use `run.cmd`.
+
+### Local app looks old or says CAD is unavailable in this development build
+
+The current app opens Image first and has nine workspace tabs. A three-tab interface with a CAD placeholder is an obsolete application build.
+
+Save any open work, stop the old launcher, update the source folder as above, and double-click the current `run.command`. Use the complete URL it opens, rather than an old root-page bookmark. The dedicated local entry bypasses old cached home pages without clearing project recovery or reloading other tabs. Check **Local · revision** in the footer and the folder/revision in the terminal. Do not change ports or clear browser site data to fix this; doing so hides or deletes recovery data.
 
 Other notes:
 

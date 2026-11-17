@@ -279,6 +279,14 @@ RAISES: TypeError for unknown workspace, invalid booleans/commands or duplicate 
 DEPS: none.
 The [Save/export UX contract](SAVE-EXPORT-UX.md) amends S09/S10/S11 and A-SHELL under the owner's explicit request. S22, S11, S10, assembly and icon presentation are implemented in that order with regression tests. The linked report records verification and limits. Existing persistence/export contracts remain.
 
+## S23 local-runtime — SHELL — GREEN
+Purpose: Identify the versioned local launcher entry and display local runtime status.
+IN: Document metadata, current loopback location and an owned footer element.
+OUT: Verified build/revision or null; accessible disposable Local status. A-SHELL skips redundant offline installation only for the verified local production route.
+RAISES: TypeError for invalid status ports or identity; malformed/unmarked launch metadata returns null.
+DEPS: none.
+TEST: `src/shared/local-runtime.test.ts`; hosted S20/S21 behavior remains in place.
+
 ## Shared conceptual bindings
 
 | Design owner | Contracts |

@@ -10,6 +10,7 @@ import { createSpreadsheetWorkspace } from '../spreadsheet/spreadsheet-workspace
 import { mountApp } from './app-shell.ts';
 import { createOfflineClient } from '../shared/offline-client.ts';
 import { mountOfflineStatus } from '../shared/offline-status.ts';
+import { localRuntime, mountLocalRuntime } from '../shared/local-runtime.ts';
 import '../shared/offline-status.css';
 import { recentProjects } from '../shared/recent-projects.ts';
 import type { FilePorts } from '../shared/file-access.ts';
@@ -36,11 +37,16 @@ try {
   root.tabIndex = -1;
   void app.ready.then(() => { if (document.activeElement === document.body) root.focus(); });
   let offline: ReturnType<typeof createOfflineClient> | undefined, offlineStatus: ReturnType<typeof mountOfflineStatus> | undefined;
+  let localStatus: ReturnType<typeof mountLocalRuntime> | undefined;
   if (import.meta.env.PROD) {
-    offlineStatus = mountOfflineStatus({ root: app.offlineSlot, onRetry: () => offline?.retry(), onCheck: () => offline?.check() });
-    offline = createOfflineClient({ environment: window, buildId: document.querySelector<HTMLMetaElement>('meta[name="gsnv-build-id"]')?.content ?? '', onState: offlineStatus.update });
+    const local = localRuntime({ document, location: window.location });
+    if (local) localStatus = mountLocalRuntime({ root: app.offlineSlot, runtime: local });
+    else {
+      offlineStatus = mountOfflineStatus({ root: app.offlineSlot, onRetry: () => offline?.retry(), onCheck: () => offline?.check() });
+      offline = createOfflineClient({ environment: window, buildId: document.querySelector<HTMLMetaElement>('meta[name="gsnv-build-id"]')?.content ?? '', onState: offlineStatus.update });
+    }
   }
-  window.addEventListener('pagehide', () => { offline?.dispose(); offlineStatus?.dispose(); app.dispose(); }, { once: true });
+  window.addEventListener('pagehide', () => { offline?.dispose(); offlineStatus?.dispose(); localStatus?.dispose(); app.dispose(); }, { once: true });
 } catch (cause) {
   const notice = document.createElement('p'); notice.className = 'app-startup-error';
   notice.textContent = `gsnv-paint could not start in this browser: ${cause instanceof Error ? cause.message : String(cause)}`;

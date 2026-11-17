@@ -66,6 +66,25 @@ test('S19 root navigation aliases keep cached headers and exclude unknown, POST,
   assert.equal(f.calls(), 2);
 });
 
+test('S19 an older offline build leaves the dedicated local launch and new assets to the server', async () => {
+  const f = setup({ update: true }); await f.lifecycle('install'); await f.lifecycle('activate');
+  const caches = await f.memory.storage.keys(), calls = f.calls(), nextBuild = 'b'.repeat(64);
+  function navigation(path: string) {
+    const request = new Request(origin + path); Object.defineProperty(request, 'mode', { value: 'navigate' }); return request;
+  }
+  // A root query still reaches the old cached HTML; it cannot repair a stale launch.
+  assert.equal(await (await f.fetch(navigation(`/?build=${nextBuild}`)))?.text(), 'hello');
+  for (const request of [navigation(`/__gsnv-local__/start/${nextBuild}`),
+    new Request(origin + '/__gsnv-local__/status'), new Request(origin + '/assets/index-new-build.js'),
+    new Request(origin + '/assets/cad-workspace.worker-new-build.js'), new Request(origin + '/assets/replicad_single-new-build.wasm')]) {
+    assert.equal(await f.fetch(request), undefined, `${request.url} must reach the current local server`);
+  }
+  assert.equal(f.calls(), calls, 'bypassed requests are not fetched or cached by the older worker');
+  assert.deepEqual(await f.memory.storage.keys(), caches, 'local launches do not clear the previous offline build');
+  assert.equal(f.claims(), 0, 'an update does not claim or reload existing working tabs');
+  assert.equal(await (await f.fetch(navigation('/index.html')))?.text(), 'hello', 'ordinary web/offline navigation retains its pinned build');
+});
+
 test('S19 corrupted cache falls through with the original Range Request and never returns HTML as WASM', async () => {
   const f = setup(); await f.lifecycle('install');
   const generation = (await f.memory.storage.keys()).find(name => name.includes(':build:'))!;

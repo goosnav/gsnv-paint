@@ -27,6 +27,15 @@ try {
   assert.ok(html.includes('<meta name="application-name" content="gsnv-paint">'), 'The served page identifies the application independently of its descriptive title.');
   const script = html.match(/src="(\/assets\/[^"]+\.js)"/)?.[1];
   assert.ok(script, 'The built page references its script.');
+  const identity = await (await fetch(`${origin}/__gsnv-local__/status`)).json();
+  assert.equal(identity.app, 'gsnv-paint'); assert.equal(identity.protocol, 1);
+  for (const key of ['buildId', 'sourceId', 'checkoutId']) assert.match(identity[key], /^[a-f0-9]{64}$/);
+  const entry = await fetch(`${origin}/__gsnv-local__/start/${identity.buildId}`);
+  assert.equal(entry.status, 200); assert.equal(entry.headers.get('cache-control'), 'no-store');
+  const localHtml = await entry.text();
+  assert.ok(localHtml.includes(script), 'The local entry uses the same production bundle.');
+  assert.match(localHtml, /<base href="\/">/); assert.match(localHtml, /name="gsnv-local-runtime" content="1"/);
+  assert.ok(localHtml.includes(`name="gsnv-local-revision" content="${identity.revision}"`));
   for (const path of ['/', script]) {
     const response = await fetch(origin + path);
     assert.equal(response.status, 200, path);

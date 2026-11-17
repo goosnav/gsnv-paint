@@ -27,13 +27,11 @@ test('SSH bridge refuses missing host, invalid port and wrong OS', { skip }, () 
   }
 });
 
-test('SSH bridge forwards loopback only and opens Safari after app identity check', { skip, timeout: 15_000 }, async () => {
+async function withBridge(respond, check) {
   const dir = await mkdtemp(join(tmpdir(), 'gsnv-mac-bridge-'));
-  const server = createServer((_req, res) => {
-    res.setHeader('Content-Type', 'text/html');
-    res.end('<!doctype html><meta name="application-name" content="gsnv-paint">');
-  });
+  const requests = [], server = createServer((request, response) => { requests.push(request.url); respond(request, response); });
   let child;
+  let exited;
   try {
     await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
     const port = server.address().port;
@@ -55,26 +53,55 @@ test('SSH bridge forwards loopback only and opens Safari after app identity chec
       GSNV_OPEN_ARGS: join(dir, 'open-args'),
     };
     child = spawn('sh', [script, 'user@example.test'], { env, stdio: ['ignore', 'pipe', 'pipe'] });
+    exited = new Promise(resolve => child.once('close', resolve));
     let output = '';
     child.stdout.on('data', part => { output += part; });
     child.stderr.on('data', part => { output += part; });
+    await check({ child, port, env, requests, exited, output: () => output });
+  } finally {
+    if (child && child.exitCode === null) child.kill('SIGTERM');
+    if (exited) await exited;
+    await new Promise(resolve => server.close(resolve));
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
+const buildId = 'b'.repeat(64);
+const html = build => `<!doctype html><meta name="application-name" content="gsnv-paint"><meta name="gsnv-build-id" content="${build}">`;
+
+test('SSH bridge forwards loopback and opens the current dedicated entry after build verification', { skip, timeout: 15_000 }, async () => {
+  await withBridge((request, response) => {
+    if (request.url === '/__gsnv-local__/status') {
+      response.setHeader('X-GSNV-Local-Build', buildId); response.setHeader('Content-Type', 'application/json');
+      response.end(JSON.stringify({ app: 'gsnv-paint', protocol: 1, buildId }));
+    } else { response.setHeader('Content-Type', 'text/html'); response.end(html(buildId)); }
+  }, async ({ child, port, env, requests, output }) => {
     let opened = '';
     const deadline = Date.now() + 8_000;
     while (!opened && Date.now() < deadline) {
       try { opened = await readFile(env.GSNV_OPEN_ARGS, 'utf8'); } catch { /* pending */ }
+      assert.equal(child.exitCode, null, output());
       if (!opened) await new Promise(resolve => setTimeout(resolve, 50));
     }
-    assert.match(output, /reachable from this Mac/);
-    assert.equal(opened.trim(), '-a Safari http://127.0.0.1:' + port + '/');
+    assert.match(output(), /reachable from this Mac/);
+    assert.equal(opened.trim(), `-a Safari http://127.0.0.1:${port}/__gsnv-local__/start/${buildId}`);
+    assert.deepEqual(requests, ['/__gsnv-local__/status', `/__gsnv-local__/start/${buildId}`]);
     assert.ok((await readFile(env.GSNV_SSH_ARGS, 'utf8')).includes(
       '-L 127.0.0.1:' + port + ':127.0.0.1:' + port + ' -- user@example.test'));
-  } finally {
-    if (child) {
-      const closed = new Promise(resolve => child.once('close', resolve));
-      child.kill('SIGTERM');
-      await closed;
-    }
-    await new Promise(resolve => server.close(resolve));
-    await rm(dir, { recursive: true, force: true });
+  });
+});
+
+test('SSH bridge refuses legacy, malformed and mismatched builds without opening cached root', { skip, timeout: 15_000 }, async () => {
+  for (const header of [null, `${buildId}/untrusted`, buildId]) {
+    await withBridge((request, response) => {
+      if (request.url === '/__gsnv-local__/status' && header) response.setHeader('X-GSNV-Local-Build', header);
+      response.setHeader('Content-Type', 'text/html'); response.end(html('a'.repeat(64)));
+    }, async ({ env, exited, requests, output }) => {
+      assert.equal(await exited, 1); assert.match(output(), /REMOTE-VERSION/);
+      await assert.rejects(readFile(env.GSNV_OPEN_ARGS), { code: 'ENOENT' });
+      if (header === buildId) assert.match(output(), /does not match/);
+      else assert.match(output(), /older launcher/);
+      assert.ok(!requests.some(path => path.includes('/untrusted')));
+    });
   }
 });
