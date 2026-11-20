@@ -60,6 +60,18 @@ test('S15 checks known IEEE CRC vectors and distinct subviews of one buffer', ()
   assert.deepEqual(decode(encoded.parts), { project, assets });
 });
 
+test('S15 multi-megabyte indexed checksums match zlib and reject changed bytes after encoding', () => {
+  const pixels = new Uint8Array(4 * 1024 * 1024 + 13);
+  for (let index = 0; index < pixels.length; index++) pixels[index] = (index * 37 + (index >>> 11)) & 255;
+  const bytes = pixels.subarray(7, pixels.length - 3), value = { project, assets: [{ ...asset, bytes }] };
+  const encoded = nativeContainer({ op: 'encode', package: value });
+  const manifest = JSON.parse(new TextDecoder().decode(encoded.parts[1]));
+  assert.equal(manifest.assets[0].crc32, crc32(bytes));
+  assert.deepEqual(decode(encoded.parts), value);
+  bytes[bytes.length - 1] = bytes[bytes.length - 1]! ^ 1;
+  assert.throws(() => decode(encoded.parts), /checksum mismatch/);
+});
+
 test('S15 zero assets differ from an empty asset; IDs and order remain opaque', () => {
   for (const assets of [[], [{ ...asset, bytes: new Uint8Array() }], ['constructor', ' A:B ', '😀', '...'].map(id => ({ ...asset, id }))]) {
     assert.deepEqual(decode(nativeContainer({ op: 'encode', package: { project, assets } }).parts), { project, assets });

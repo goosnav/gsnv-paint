@@ -50,6 +50,47 @@ test('I-CONTENT layer updates share untouched tiles; stack edits reuse pixels wi
   assert.throws(() => imageContent({ operation: 'update', previous: doc, layerId: 'nope', raster }), RangeError);
 });
 
+test('I-CONTENT dirty updates cross tile boundaries without changing pixels outside the declared region', () => {
+  const width = TILE * 2 + 5, height = TILE + 3;
+  const original = imageContent({ operation: 'new', width, height, fill: [31, 41, 59, 0] });
+  const raster = imageContent({ operation: 'raster', value: original, layerId: 'background' });
+  const dirty = { x: TILE - 1, y: TILE - 1, width: 4, height: 4 };
+  for (let y = dirty.y; y < dirty.y + dirty.height; y++) for (let x = dirty.x; x < dirty.x + dirty.width; x++) raster.data.set([2, 7, 9, 255], (y * width + x) * 4);
+  raster.data.set([99, 98, 97, 96], 0); // A separate preview outside this commit must not leak into the snapshot.
+  const changed = imageContent({ operation: 'update', previous: original, layerId: 'background', raster, dirty });
+  assert.notEqual(changed, original);
+  for (let i = 0; i < original.layers[0]!.tiles.length; i++) {
+    if ([0, 1, 3, 4].includes(i)) assert.notEqual(changed.layers[0]!.tiles[i], original.layers[0]!.tiles[i]);
+    else assert.equal(changed.layers[0]!.tiles[i], original.layers[0]!.tiles[i]);
+  }
+  const pixels = imageContent({ operation: 'raster', value: changed, layerId: 'background' }).data;
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+    const expected = x >= dirty.x && x < dirty.x + dirty.width && y >= dirty.y && y < dirty.y + dirty.height ? [2, 7, 9, 255] : [31, 41, 59, 0];
+    const index = (y * width + x) * 4;
+    for (let c = 0; c < 4; c++) assert.equal(pixels[index + c], expected[c]);
+  }
+  raster.data.fill(13);
+  assert.deepEqual([...changed.layers[0]!.tiles[4]!.subarray(0, 4)], [2, 7, 9, 255], 'changed tiles must own their bytes');
+  assert.deepEqual([...original.layers[0]!.tiles[4]!.subarray(0, 4)], [31, 41, 59, 0], 'undo pixels must remain exact');
+});
+
+test('I-CONTENT dirty updates clip safely and unchanged or empty updates retain snapshot identity', () => {
+  const original = imageContent({ operation: 'new', width: 4, height: 3, fill: [1, 2, 3, 4] });
+  const raster = imageContent({ operation: 'raster', value: original, layerId: 'background' });
+  assert.equal(imageContent({ operation: 'update', previous: original, layerId: 'background', raster }), original);
+  assert.equal(imageContent({ operation: 'update', previous: original, layerId: 'background', raster, dirty: { x: 1, y: 1, width: 2, height: 2 } }), original);
+  raster.data.fill(77);
+  for (const dirty of [{ x: 1, y: 1, width: 0, height: 1 }, { x: 1, y: 1, width: 1, height: 0 }, { x: -5, y: -5, width: 2, height: 2 }, { x: 4, y: 0, width: 2, height: 2 }])
+    assert.equal(imageContent({ operation: 'update', previous: original, layerId: 'background', raster, dirty }), original);
+  const clipped = imageContent({ operation: 'update', previous: original, layerId: 'background', raster, dirty: { x: -3, y: -2, width: 5, height: 4 } });
+  const pixels = imageContent({ operation: 'raster', value: clipped, layerId: 'background' }).data;
+  for (let y = 0; y < 3; y++) for (let x = 0; x < 4; x++) assert.deepEqual([...pixels.subarray((y * 4 + x) * 4, (y * 4 + x + 1) * 4)], x < 2 && y < 2 ? [77, 77, 77, 77] : [1, 2, 3, 4]);
+  for (const dirty of [null, { x: 0.5, y: 0, width: 1, height: 1 }, { x: 0, y: 0, width: -1, height: 1 },
+    { x: NaN, y: 0, width: 1, height: 1 }, { x: 0, y: Infinity, width: 1, height: 1 }, { x: Number.MAX_SAFE_INTEGER, y: 0, width: 1, height: 1 }])
+    assert.throws(() => imageContent({ operation: 'update', previous: original, layerId: 'background', raster, dirty: dirty as never }), RangeError);
+  assert.throws(() => imageContent({ operation: 'update', previous: original, layerId: 'missing', raster, dirty: { x: 0, y: 0, width: 0, height: 0 } }), RangeError);
+});
+
 test('I-CONTENT native encode/decode is byte exact per layer and still opens single-layer projects', () => {
   const base = imageContent({ operation: 'new', width: 3, height: 2, fill: [1, 2, 3, 4] });
   const doc = imageContent({ operation: 'layers', previous: base, width: 3, height: 2, activeLayerId: 'top', layers: [{ meta: meta('background') }, { meta: meta('top', { name: 'Top', visible: false, opacity: 0.25, blend: 'screen' }), raster: createRaster(3, 2, [9, 8, 7, 6]) }] });

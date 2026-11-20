@@ -42,6 +42,7 @@ import { capabilityProbe, type ProbeRequest, type Capability } from '../shared/c
 import { projectFiles, type ProjectFileRequest } from '../shared/project-files.ts';
 import { recoverySession, type RecoveryPort } from '../shared/recovery-session.ts';
 import { nativeContainer } from '../shared/native-container.ts';
+import { samePayload } from '../shared/same-payload.ts';
 import { saveChoices } from '../shared/save-choices.ts';
 import type { RecentEntry, RecentPort } from '../shared/recent-projects.ts';
 import { createWorkspaceBridge, type EditorBridge, type BridgeResult } from '../bridge/workspace-bridge.ts';
@@ -112,17 +113,6 @@ const TWO_DIMENSIONAL = new Set(['sketch2d', 'canvas2d', 'preview2d']);
 function reason(cause: unknown): string {
   try { return String(cause instanceof Error ? cause.message : cause); } catch { return 'Operation failed.'; }
 }
-function samePayload(left: readonly Uint8Array[], right: readonly Uint8Array[]): boolean {
-  if (left === right) return true;
-  if (left.reduce((sum, part) => sum + part.length, 0) !== right.reduce((sum, part) => sum + part.length, 0)) return false;
-  let index = 0, offset = 0;
-  for (const part of left) for (const byte of part) {
-    while (offset === right[index]?.length) { index++; offset = 0; }
-    if (byte !== right[index]?.[offset++]) return false;
-  }
-  return true;
-}
-
 export function mountApp({ root, adapters, files, recovery, probe, recent }: Request): Handle {
   if (!root?.isConnected || !root.ownerDocument.defaultView) throw new TypeError('A live application root is required.');
   const document = root.ownerDocument; const window = document.defaultView!;
@@ -134,6 +124,9 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
   let recentEntries: RecentEntry[] = []; const rememberTimers: Partial<Record<Workspace, ReturnType<typeof setTimeout>>> = {};
   const remembered: Partial<Record<Workspace, string>> = {};
   const backedUp: Partial<Record<Workspace, string>> = {};
+  // Reuse the exact acknowledged recovery bytes for Recent. Keep at most the
+  // current revision per workspace; release it after Recent commits or an edit.
+  const backupPayloads: Partial<Record<Workspace, { identity: string; epoch: number; parts: readonly Uint8Array[] }>> = {};
   const backingUp: Partial<Record<Workspace, { identity: string; epoch: number; task: Promise<boolean> }>> = {};
   const starter: Partial<Record<Workspace, string>> = {};
   const startupRestored: Partial<Record<Workspace, string>> = {};
@@ -161,7 +154,7 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
   const mark = (event: SessionEvent<unknown>) => {
     state = session({ state, event }).state;
     if (event.type === 'open' || event.type === 'commit' || event.type === 'undo' || event.type === 'redo') {
-      delete backedUp[event.workspace]; delete remembered[event.workspace]; delete startupRestored[event.workspace]; delete discarded[event.workspace];
+      delete backedUp[event.workspace]; delete backupPayloads[event.workspace]; delete remembered[event.workspace]; delete startupRestored[event.workspace]; delete discarded[event.workspace];
     }
   };
   const status = (message: string) => { if (!disposed) { mark({ type: 'status', message }); render(); } };
@@ -214,16 +207,22 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
       if (!Number.isSafeInteger(generation)) { status('Recovery generation limit reached. Save a project file.'); return; }
       issued[workspace] = generation;
       let exact = false;
+      let writtenPayload: readonly Uint8Array[] | undefined;
       const result = await recoverySession({ operation: 'save', workspace, generation, package: adapters[workspace]!.encode(snapshot) }, async request => {
         const response = await nativePort(workspace)(request);
         exact = request.op === 'write' && response.ok && !!response.value && response.value.generation === request.record.generation && samePayload(response.value.payload, request.record.payload);
+        if (exact && request.op === 'write') writtenPayload = request.record.payload;
         return response;
       });
       if (current() && backingUp[workspace]?.task === task) {
         if (!result.ok || !exact) {
           recoveryErrors[workspace] = result.ok ? 'Recovery acknowledgment did not match the requested revision. Save a project file or retry browser backup.' : `${result.error.code}: ${result.error.message}`;
           status(recoveryErrors[workspace]);
-        } else { acknowledged = true; backedUp[workspace] = snapshot.identity; stored[workspace] = true; delete recoveryErrors[workspace]; render(); }
+        } else {
+          acknowledged = true; backedUp[workspace] = snapshot.identity;
+          if (recent && writtenPayload) backupPayloads[workspace] = { identity: snapshot.identity, epoch, parts: writtenPayload };
+          stored[workspace] = true; delete recoveryErrors[workspace]; render();
+        }
       }
     }).then(() => acknowledged);
     const operation = { identity: snapshot.identity, epoch, task }; backingUp[workspace] = operation;
@@ -410,8 +409,11 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
       try {
         const current = () => epochs[workspace] === epoch && state.documents[workspace]?.identity === snapshot.identity && remembering[workspace]?.task === task;
         if (!current() || !await backup(workspace) || !current() || backedUp[workspace] !== snapshot.identity) return false;
-        const parts = nativeContainer({ op: 'encode', package: adapters[workspace]!.encode(snapshot) }).parts;
+        const cached = backupPayloads[workspace];
+        const parts = cached?.identity === snapshot.identity && cached.epoch === epoch
+          ? cached.parts : nativeContainer({ op: 'encode', package: adapters[workspace]!.encode(snapshot) }).parts;
         await recent.save({ id: snapshot.id, workspace, title: snapshot.title || 'Untitled', updated: Date.now(), parts });
+        if (backupPayloads[workspace] === cached) delete backupPayloads[workspace];
         if (current() && backedUp[workspace] === snapshot.identity) remembered[workspace] = snapshot.identity;
       } catch (cause) {
         status(`Browser backup failed: ${reason(cause)} Current project kept. Use File > Save to save a project file.`);
@@ -422,7 +424,12 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
       return true;
     });
     const operation = { identity: snapshot.identity, task }; remembering[workspace] = operation; rememberQueues[workspace] = task;
-    void task.finally(() => { if (remembering[workspace] === operation) delete remembering[workspace]; });
+    void task.finally(() => {
+      if (remembering[workspace] === operation) {
+        delete remembering[workspace];
+        if (disposed) delete backupPayloads[workspace];
+      }
+    });
     return task;
   }
   function scheduleRemember(workspace: Workspace) {
@@ -576,7 +583,7 @@ export function mountApp({ root, adapters, files, recovery, probe, recent }: Req
     }
     if (id === 'recovery.discard') {
       const identity = state.documents[workspace]?.identity;
-      delete backedUp[workspace]; delete remembered[workspace]; delete backingUp[workspace];
+      delete backedUp[workspace]; delete backupPayloads[workspace]; delete remembered[workspace]; delete backingUp[workspace];
       await enqueue(workspace, async () => {
         const result = await recoverySession({ operation: 'discard', workspace, generation: issued[workspace] }, nativePort(workspace));
         if (!result.ok) { status(`${result.error.code}: ${result.error.message}`); return; }

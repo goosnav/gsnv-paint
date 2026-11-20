@@ -1,0 +1,516 @@
+{
+  "measuredAt": "2026-11-20T22:34:21.996Z",
+  "command": "node --expose-gc --import tsx dev/image-persistence-performance.mjs --baseline aef6295ee470dbacff6207e699094486e8f1531f --rounds 5 --output \"dev/image-persistence-performance.json\"",
+  "environment": {
+    "node": "v24.22.3",
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "AMD EPYC 9V74 80-Core Processor",
+    "logicalCpus": 9,
+    "dependencies": {
+      "fake-indexeddb": "6.2.8",
+      "jsdom": "31.0.0",
+      "tsx": "4.23.15"
+    }
+  },
+  "rounds": 5,
+  "warmupRounds": 1,
+  "baselineRevision": "aef6295ee470dbacff6207e699094486e8f1531f",
+  "currentCheckoutHead": "aef6295ee470dbacff6207e699094486e8f1531f",
+  "scope": "Node/JSDOM/fake-indexeddb; same immutable Image pixel payload, metadata edit, actual application recovery + Recent writes. Rendering, browser storage/disk and the normal 700 ms Recent timer are excluded.",
+  "caveats": [
+    "Medians are local CPU observations, not browser or user-device latency guarantees.",
+    "Payload comparison measures cloned/segmented bytes; successful ordinary recovery writes normally use its identity fast path.",
+    "Recent.list still reads payload-bearing records; the storage schema is unchanged."
+  ],
+  "before": {
+    "sourceSha256": "58400d99173675610339e23bc365d51cae1be5da9a1d7037efb6d3a1c9b4f9f3",
+    "scenarios": [
+      {
+        "width": 800,
+        "height": 600,
+        "layers": 1,
+        "rgbaBytes": 1920000,
+        "payloadBytes": 1920486,
+        "domainFlatten": {
+          "samplesMs": [
+            1.183,
+            0.675,
+            1.492,
+            0.995,
+            1.776
+          ],
+          "medianMs": 1.183
+        },
+        "containerEncode": {
+          "samplesMs": [
+            18.603,
+            19.13,
+            18.976,
+            18.525,
+            18.975
+          ],
+          "medianMs": 18.975
+        },
+        "containerDecodeValidation": {
+          "samplesMs": [
+            17.786,
+            18.005,
+            18.451,
+            59.158,
+            17.257
+          ],
+          "medianMs": 18.005
+        },
+        "clonedPayloadCompare": {
+          "samplesMs": [
+            24.38,
+            24.034,
+            28.155,
+            24.676,
+            24.65
+          ],
+          "medianMs": 24.65
+        },
+        "commitReturn": {
+          "samplesMs": [
+            2.627,
+            2.863,
+            2.9,
+            2.594,
+            2.919
+          ],
+          "medianMs": 2.863
+        },
+        "recoveryAndRecent": {
+          "samplesMs": [
+            66.191,
+            65.278,
+            65.173,
+            74.811,
+            78.584
+          ],
+          "medianMs": 66.191
+        },
+        "domainEncodeCallsPerRevision": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "checks": "Exact recovery/Recent bytes and current title verified; no pending-save unload warning."
+      },
+      {
+        "width": 2550,
+        "height": 3300,
+        "layers": 1,
+        "rgbaBytes": 33660000,
+        "payloadBytes": 33660489,
+        "domainFlatten": {
+          "samplesMs": [
+            71.946,
+            30.508,
+            23.386,
+            56.406,
+            20.048
+          ],
+          "medianMs": 30.508
+        },
+        "containerEncode": {
+          "samplesMs": [
+            317.492,
+            318.012,
+            316.533,
+            328.547,
+            297.732
+          ],
+          "medianMs": 317.492
+        },
+        "containerDecodeValidation": {
+          "samplesMs": [
+            315.985,
+            319.247,
+            301.807,
+            299.782,
+            306.369
+          ],
+          "medianMs": 306.369
+        },
+        "clonedPayloadCompare": {
+          "samplesMs": [
+            409.957,
+            448.403,
+            422.643,
+            419.149,
+            487.854
+          ],
+          "medianMs": 422.643
+        },
+        "commitReturn": {
+          "samplesMs": [
+            3.116,
+            2.912,
+            3.124,
+            2.934,
+            2.992
+          ],
+          "medianMs": 2.992
+        },
+        "recoveryAndRecent": {
+          "samplesMs": [
+            1260.796,
+            1105.467,
+            1098.595,
+            1161.997,
+            1302.212
+          ],
+          "medianMs": 1161.997
+        },
+        "domainEncodeCallsPerRevision": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "checks": "Exact recovery/Recent bytes and current title verified; no pending-save unload warning."
+      },
+      {
+        "width": 2550,
+        "height": 3300,
+        "layers": 3,
+        "rgbaBytes": 100980000,
+        "payloadBytes": 100980852,
+        "domainFlatten": {
+          "samplesMs": [
+            161.186,
+            51.084,
+            64.835,
+            50.329,
+            108.387
+          ],
+          "medianMs": 64.835
+        },
+        "containerEncode": {
+          "samplesMs": [
+            881.687,
+            951.068,
+            936.462,
+            913.874,
+            909.072
+          ],
+          "medianMs": 913.874
+        },
+        "containerDecodeValidation": {
+          "samplesMs": [
+            883.247,
+            985.695,
+            946.237,
+            908.826,
+            919.369
+          ],
+          "medianMs": 919.369
+        },
+        "clonedPayloadCompare": {
+          "samplesMs": [
+            757.453,
+            876.184,
+            797.525,
+            844.326,
+            797.4
+          ],
+          "medianMs": 797.525
+        },
+        "commitReturn": {
+          "samplesMs": [
+            3.165,
+            4.521,
+            3.622,
+            3.303,
+            2.887
+          ],
+          "medianMs": 3.303
+        },
+        "recoveryAndRecent": {
+          "samplesMs": [
+            3581,
+            3549.711,
+            4029.659,
+            3786.333,
+            3811.751
+          ],
+          "medianMs": 3786.333
+        },
+        "domainEncodeCallsPerRevision": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "checks": "Exact recovery/Recent bytes and current title verified; no pending-save unload warning."
+      }
+    ]
+  },
+  "after": {
+    "sourceSha256": "adb23e84fa9aec8d63b5228aa02e60f72e97b6149550a98aa7b36d4ecac4d722",
+    "scenarios": [
+      {
+        "width": 800,
+        "height": 600,
+        "layers": 1,
+        "rgbaBytes": 1920000,
+        "payloadBytes": 1920486,
+        "domainFlatten": {
+          "samplesMs": [
+            1.32,
+            0.57,
+            1.522,
+            0.884,
+            1.512
+          ],
+          "medianMs": 1.32
+        },
+        "containerEncode": {
+          "samplesMs": [
+            6.465,
+            6.706,
+            6.052,
+            6.384,
+            5.935
+          ],
+          "medianMs": 6.384
+        },
+        "containerDecodeValidation": {
+          "samplesMs": [
+            5.035,
+            4.92,
+            4.846,
+            4.938,
+            4.545
+          ],
+          "medianMs": 4.92
+        },
+        "clonedPayloadCompare": {
+          "samplesMs": [
+            2.401,
+            5.231,
+            6.771,
+            5.242,
+            5.438
+          ],
+          "medianMs": 5.242
+        },
+        "commitReturn": {
+          "samplesMs": [
+            3.196,
+            3.634,
+            2.39,
+            2.652,
+            2.533
+          ],
+          "medianMs": 2.652
+        },
+        "recoveryAndRecent": {
+          "samplesMs": [
+            23.613,
+            22.731,
+            21.488,
+            22.501,
+            20.139
+          ],
+          "medianMs": 22.501
+        },
+        "domainEncodeCallsPerRevision": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "checks": "Exact recovery/Recent bytes and current title verified; no pending-save unload warning."
+      },
+      {
+        "width": 2550,
+        "height": 3300,
+        "layers": 1,
+        "rgbaBytes": 33660000,
+        "payloadBytes": 33660489,
+        "domainFlatten": {
+          "samplesMs": [
+            15.983,
+            18.454,
+            20.382,
+            26.417,
+            31.944
+          ],
+          "medianMs": 20.382
+        },
+        "containerEncode": {
+          "samplesMs": [
+            80.403,
+            141.082,
+            85.641,
+            90.873,
+            88.351
+          ],
+          "medianMs": 88.351
+        },
+        "containerDecodeValidation": {
+          "samplesMs": [
+            78.496,
+            88.596,
+            85.729,
+            82.386,
+            78.959
+          ],
+          "medianMs": 82.386
+        },
+        "clonedPayloadCompare": {
+          "samplesMs": [
+            60.518,
+            50.018,
+            49.517,
+            47.409,
+            48.752
+          ],
+          "medianMs": 49.517
+        },
+        "commitReturn": {
+          "samplesMs": [
+            3.559,
+            2.517,
+            2.134,
+            2.601,
+            2.553
+          ],
+          "medianMs": 2.553
+        },
+        "recoveryAndRecent": {
+          "samplesMs": [
+            511.411,
+            344.025,
+            341.352,
+            343.687,
+            369.027
+          ],
+          "medianMs": 344.025
+        },
+        "domainEncodeCallsPerRevision": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "checks": "Exact recovery/Recent bytes and current title verified; no pending-save unload warning."
+      },
+      {
+        "width": 2550,
+        "height": 3300,
+        "layers": 3,
+        "rgbaBytes": 100980000,
+        "payloadBytes": 100980852,
+        "domainFlatten": {
+          "samplesMs": [
+            203.948,
+            54.965,
+            69.154,
+            64.633,
+            65.131
+          ],
+          "medianMs": 65.131
+        },
+        "containerEncode": {
+          "samplesMs": [
+            235.464,
+            241.319,
+            249.672,
+            249.687,
+            240.865
+          ],
+          "medianMs": 241.319
+        },
+        "containerDecodeValidation": {
+          "samplesMs": [
+            234.386,
+            233.16,
+            244.623,
+            270.891,
+            238.23
+          ],
+          "medianMs": 238.23
+        },
+        "clonedPayloadCompare": {
+          "samplesMs": [
+            136.671,
+            144.814,
+            149.414,
+            136.533,
+            153.652
+          ],
+          "medianMs": 144.814
+        },
+        "commitReturn": {
+          "samplesMs": [
+            3.984,
+            2.922,
+            2.773,
+            2.996,
+            2.786
+          ],
+          "medianMs": 2.922
+        },
+        "recoveryAndRecent": {
+          "samplesMs": [
+            1333.582,
+            960.541,
+            966.472,
+            1057.589,
+            951.088
+          ],
+          "medianMs": 966.472
+        },
+        "domainEncodeCallsPerRevision": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "checks": "Exact recovery/Recent bytes and current title verified; no pending-save unload warning."
+      }
+    ]
+  },
+  "comparison": [
+    {
+      "width": 800,
+      "height": 600,
+      "layers": 1,
+      "recoveryAndRecentSpeedup": 2.942,
+      "recoveryAndRecentReductionPercent": 66,
+      "containerEncodeSpeedup": 2.972,
+      "clonedPayloadCompareSpeedup": 4.702
+    },
+    {
+      "width": 2550,
+      "height": 3300,
+      "layers": 1,
+      "recoveryAndRecentSpeedup": 3.378,
+      "recoveryAndRecentReductionPercent": 70.4,
+      "containerEncodeSpeedup": 3.594,
+      "clonedPayloadCompareSpeedup": 8.535
+    },
+    {
+      "width": 2550,
+      "height": 3300,
+      "layers": 3,
+      "recoveryAndRecentSpeedup": 3.918,
+      "recoveryAndRecentReductionPercent": 74.5,
+      "containerEncodeSpeedup": 3.787,
+      "clonedPayloadCompareSpeedup": 5.507
+    }
+  ],
+  "currentIncludesUncommittedSourceChanges": true
+}

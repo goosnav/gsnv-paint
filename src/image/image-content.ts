@@ -4,7 +4,8 @@
  * CONTRACT   IN: ImageContentRequest.
  *            'new' {width,height,fill} → one "Background" layer with the supplied fill;
  *            'raster' {value,layerId} → a caller-owned working raster of that layer;
- *            'update' {previous,layerId,raster} → same document with that layer's changed tiles replaced;
+ *            'update' {previous,layerId,raster,dirty?} → changed tiles replaced; an optional dirty rectangle
+ *            limits copied pixels to that clipped region. Unchanged updates return the previous snapshot;
  *            'layers' {previous?,width,height,layers:[{meta, raster?}],activeLayerId} → rebuilds the stack: a
  *            layer without a raster keeps the tiles of its id (or of `from`, for duplicates), so reorder/hide/
  *            rename/duplicate are free;
@@ -26,7 +27,7 @@
  * TESTBENCH  src/image/image-content.test.ts -- run with: node --import tsx --test src/image/image-content.test.ts
  */
 import { pixelPolicy, type PixelPolicy } from './image-pixel-policy.ts';
-import { createRaster, isRasterSize, type Raster, type RGBA } from './raster-ops.ts';
+import { clip, createRaster, isRasterSize, type Raster, type RGBA, type Rect } from './raster-ops.ts';
 import { BLEND_MODES, type BlendMode } from './image-composite.ts';
 import { imageSelectionState, type ImageSelection } from './image-selection-state.ts';
 
@@ -38,7 +39,7 @@ type Encoded = { content: { width: number; height: number; encoding: 'rgba8-laye
 type Request =
   | { operation: 'new'; width: number; height: number; fill: RGBA; policy?: PixelPolicy }
   | { operation: 'raster'; value: ImageContent; layerId: string }
-  | { operation: 'update'; previous: ImageContent; layerId: string; raster: Raster }
+  | { operation: 'update'; previous: ImageContent; layerId: string; raster: Raster; dirty?: Rect }
   | { operation: 'policy'; previous: ImageContent; policy: PixelPolicy }
   | { operation: 'selection'; previous: ImageContent; mask: Uint8Array | null }
   | { operation: 'layers'; previous: ImageContent | null; width: number; height: number; layers: { meta: LayerMeta; raster?: Raster; from?: string }[]; activeLayerId: string; policy?: PixelPolicy }
@@ -58,14 +59,30 @@ function checkRaster(r: Raster, width: number, height: number) { if (!r || r.wid
 function checkMeta(m: LayerMeta) {
   if (!m || typeof m.id !== 'string' || !m.id || typeof m.name !== 'string' || typeof m.visible !== 'boolean' || typeof m.opacity !== 'number' || !(m.opacity >= 0 && m.opacity <= 1) || !BLEND_MODES.includes(m.blend)) throw new RangeError('Invalid layer properties.');
 }
-function tilesOf(raster: Raster, previous?: readonly Uint8ClampedArray[]): Uint8ClampedArray[] {
+function dirtyRect(rect: Rect, raster: Raster): Rect {
+  if (!rect || ![rect.x, rect.y, rect.width, rect.height, rect.x + rect.width, rect.y + rect.height].every(Number.isSafeInteger)
+    || rect.width < 0 || rect.height < 0) throw new RangeError('Dirty rectangles need safe integer coordinates and nonnegative extents.');
+  return clip(rect, raster);
+}
+function tilesOf(raster: Raster, previous?: readonly Uint8ClampedArray[], dirty?: Rect): Uint8ClampedArray[] {
   const { count, tile } = layout(raster.width, raster.height), tiles: Uint8ClampedArray[] = [];
   for (let i = 0; i < count; i++) {
-    const r = tile(i), next = new Uint8ClampedArray(r.w * r.h * 4);
-    for (let row = 0; row < r.h; row++) next.set(raster.data.subarray(((r.y + row) * raster.width + r.x) * 4, ((r.y + row) * raster.width + r.x + r.w) * 4), row * r.w * 4);
-    const old = previous?.[i]; let same = !!old && old.length === next.length;
-    for (let k = 0; same && k < next.length; k++) if (old![k] !== next[k]) same = false;
-    tiles.push(same ? old! : next);
+    const r = tile(i), old = previous?.[i];
+    const left = dirty ? Math.max(r.x, dirty.x) : r.x, top = dirty ? Math.max(r.y, dirty.y) : r.y;
+    const right = dirty ? Math.min(r.x + r.w, dirty.x + dirty.width) : r.x + r.w;
+    const bottom = dirty ? Math.min(r.y + r.h, dirty.y + dirty.height) : r.y + r.h;
+    if (dirty && old && (left >= right || top >= bottom)) { tiles.push(old); continue; }
+    let same = !!old && old.length === r.w * r.h * 4;
+    // Compare the working bytes before allocating. A tiny stroke must not copy
+    // every tile merely to discover that nearly all of them stayed unchanged.
+    for (let row = top; same && row < bottom; row++) {
+      const from = (row * raster.width + left) * 4, into = ((row - r.y) * r.w + left - r.x) * 4;
+      for (let k = 0; k < (right - left) * 4; k++) if (old![into + k] !== raster.data[from + k]) { same = false; break; }
+    }
+    if (same) { tiles.push(old!); continue; }
+    const next = dirty && old ? old.slice() : new Uint8ClampedArray(r.w * r.h * 4);
+    for (let row = top; row < bottom; row++) next.set(raster.data.subarray((row * raster.width + left) * 4, (row * raster.width + right) * 4), ((row - r.y) * r.w + left - r.x) * 4);
+    tiles.push(next);
   }
   return tiles;
 }
@@ -97,7 +114,11 @@ function applyContent(request: Request): ImageContent | Raster | Encoded {
   }
   if (r.operation === 'update') {
     checkRaster(r.raster, r.previous.width, r.previous.height); const target = layer(r.previous, r.layerId);
-    return freeze(r.previous.width, r.previous.height, r.previous.layers.map(l => l === target ? { ...l, tiles: tilesOf(r.raster, l.tiles) } : l), r.previous.activeLayerId, r.previous.selection, r.previous.policy);
+    const dirty = r.dirty === undefined ? undefined : dirtyRect(r.dirty, r.raster);
+    if (dirty && (!dirty.width || !dirty.height)) return r.previous;
+    const tiles = tilesOf(r.raster, target.tiles, dirty);
+    if (tiles.every((tile, i) => tile === target.tiles[i])) return r.previous;
+    return freeze(r.previous.width, r.previous.height, r.previous.layers.map(l => l === target ? { ...l, tiles } : l), r.previous.activeLayerId, r.previous.selection, r.previous.policy);
   }
   if (r.operation === 'layers') {
     checkSize(r.width, r.height); const sameSize = r.previous && r.previous.width === r.width && r.previous.height === r.height;

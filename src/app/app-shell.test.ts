@@ -744,3 +744,43 @@ test('PU-04 startup canvas stays out of Recent and recovery until an edit', asyn
   assert.deepEqual(await recent.list(),[]);s.close();await s.app.idle();assert.deepEqual(await recent.list(),[]);
  }finally{if(s.root.isConnected)s.close();}
 });
+
+test('A-SHELL recovery and Recent serialize each current revision once, including Undo and Redo', async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), s = setup({ storage, recent });
+  try {
+    await s.app.ready; await s.app.dispatch('file.new');
+    const persist = async (width: number, before: number) => {
+      unload(s); await s.app.idle();
+      assert.equal(s.fixtures.cad.encoded, before + 1, 'Recent must reuse the bytes already serialized for recovery');
+      assert.equal(storedWidth((await recoveryParts(storage))!), width);
+      assert.equal(storedWidth(await recent.load('fixture-id')), width);
+    };
+    await persist(10, 0);
+    let before = s.fixtures.cad.encoded;
+    s.fixtures.cad.change(90); await persist(90, before);
+    before = s.fixtures.cad.encoded;
+    await s.app.dispatch('edit.undo'); await persist(10, before);
+    before = s.fixtures.cad.encoded;
+    await s.app.dispatch('edit.redo'); await persist(90, before);
+    assert.equal(unload(s), false);
+  } finally { s.close(); await s.app.idle(); }
+});
+
+test('A-SHELL failed Recent writes retry acknowledged bytes without re-encoding or crossing revisions', async () => {
+  const storage = resource(), recent = recentProjects(storage.indexedDB), write = recent.save.bind(recent);
+  let denied = true;
+  recent.save = async value => { if (denied) throw new Error('Temporary Recent failure'); await write(value); };
+  const s = setup({ storage, recent });
+  try {
+    await s.app.ready; await s.app.dispatch('file.new'); unload(s); await s.app.idle();
+    assert.equal(s.fixtures.cad.encoded, 1); assert.equal(storedWidth((await recoveryParts(storage))!), 10);
+    denied = false; unload(s); await s.app.idle();
+    assert.equal(s.fixtures.cad.encoded, 1, 'retry must reuse the acknowledged immutable payload');
+    assert.equal(storedWidth(await recent.load('fixture-id')), 10);
+    denied = true; s.fixtures.cad.change(91); unload(s); await s.app.idle();
+    const before = s.fixtures.cad.encoded;
+    s.fixtures.cad.change(92); denied = false; unload(s); await s.app.idle();
+    assert.equal(s.fixtures.cad.encoded, before + 1);
+    assert.equal(storedWidth((await recoveryParts(storage))!), 92); assert.equal(storedWidth(await recent.load('fixture-id')), 92);
+  } finally { denied = false; s.close(); await s.app.idle(); }
+});

@@ -21,3 +21,19 @@ test('I-LAYERS lists top layer first, routes row and button actions, and gates i
   assert.equal(root.querySelector<HTMLButtonElement>('[data-layer-action=delete]')!.disabled, true);
   panel.dispose(); assert.equal(root.childElementCount, 0);
 });
+
+test('focused opacity box normalizes out-of-range and empty edits immediately', () => {
+  const dom = new JSDOM('<div id="p"></div>'), root = dom.window.document.getElementById('p')!, actions: LayerAction[] = [];
+  const panel = imageLayersPanel({ root, onAction: action => actions.push(action) });
+  panel.update({ layers: [{ id: 'bg', name: 'Background', visible: true, opacity: 1, blend: 'normal' }],
+    activeLayerId: 'bg', thumbnails: new Map(), enabled: true });
+  const box = root.querySelector<HTMLInputElement>('input[type=number][data-layer-control=opacity]')!;
+  box.focus();
+  box.value = '200'; box.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.equal(box.value, '100'); assert.deepEqual(actions.at(-1), { id: 'opacity', value: 1, commit: true });
+  box.value = ''; box.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.equal(box.value, '100'); assert.equal(actions.length, 1);
+  box.value = '-3'; box.dispatchEvent(new dom.window.Event('change', { bubbles: true }));
+  assert.equal(box.value, '0'); assert.deepEqual(actions.at(-1), { id: 'opacity', value: 0, commit: true });
+  panel.dispose(); dom.window.close();
+});

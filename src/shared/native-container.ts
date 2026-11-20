@@ -98,7 +98,8 @@ function checksumReader(): (bytes: Uint8Array) => number {
   return bytes => {
     const cached = known.get(bytes); if (cached !== undefined) return cached;
     let crc = 0xffffffff;
-    for (const byte of bytes) crc = (crc >>> 8) ^ CRC_TABLE[(crc ^ byte) & 255]!;
+    // Indexed typed-array access avoids iterator overhead on full-size rasters.
+    for (let index = 0; index < bytes.length; index++) crc = (crc >>> 8) ^ CRC_TABLE[(crc ^ bytes[index]!) & 255]!;
     const result = (crc ^ 0xffffffff) >>> 0; known.set(bytes, result); return result;
   };
 }

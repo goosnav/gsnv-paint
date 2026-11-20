@@ -14,6 +14,16 @@ test('I-RASTER new rasters are filled and bounded', () => {
   assert.throws(() => createRaster(2, 2, [256, 0, 0, 0]), RangeError);
 });
 
+test('I-RASTER bulk fill retains exact RGBA order, partial alpha and invisible RGB', () => {
+  for (const fill of [[0, 0, 0, 0], [255, 255, 255, 255], [1, 127, 253, 0], [254, 17, 3, 128], [0, 0, 0, 255]] as const) {
+    const raster = createRaster(257, 3, fill);
+    assert.ok(raster.data instanceof Uint8ClampedArray);
+    for (let i = 0; i < raster.data.length; i++) assert.equal(raster.data[i], fill[i % 4]);
+  }
+  for (const fill of [[-1, 2, 3, 4], [1.5, 2, 3, 4], [1, 2, 3, Infinity], [1, 2, 3, 256]] as const)
+    assert.throws(() => createRaster(1, 1, fill), RangeError);
+});
+
 test('I-RASTER accepts high-resolution scans and rejects area or axis overflow before allocation', () => {
   assert.equal(MAX_PIXELS, 67_108_864);
   assert.equal(MAX_DIMENSION, 16_384);

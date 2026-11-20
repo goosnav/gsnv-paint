@@ -30,6 +30,19 @@ export function compositeLayers({ width, height, layers, rect, out }: { width: n
   if (out.length !== width * height * 4 || layers.some(l => l.raster.width !== width || l.raster.height !== height)) throw new RangeError('Layer sizes must match the image.');
   for (const l of layers) if (!(l.blend in blendFns) || !(l.opacity >= 0 && l.opacity <= 1)) throw new RangeError('Invalid layer blend or opacity.');
   const visible = layers.filter(l => l.visible && l.opacity > 0), x1 = Math.min(width, rect.x + rect.width), y1 = Math.min(height, rect.y + rect.height);
+  const x0 = Math.max(0, rect.x), y0 = Math.max(0, rect.y);
+  // With one fully enabled layer, blending against transparency returns its
+  // straight-alpha bytes in every blend mode. Zero-alpha RGB is canonicalized
+  // to zero, matching the general compositor instead of blindly copying it.
+  const only = visible.length === 1 ? visible[0] : undefined;
+  if (only?.opacity === 1 && only.raster.data.length === out.length && [x0, y0, x1, y1].every(Number.isInteger)) {
+    const data = only.raster.data;
+    for (let y = y0; y < y1; y++) for (let i = (y * width + x0) * 4, end = (y * width + x1) * 4; i < end; i += 4) {
+      const alpha = data[i + 3]!;
+      out[i] = alpha ? data[i]! : 0; out[i + 1] = alpha ? data[i + 1]! : 0; out[i + 2] = alpha ? data[i + 2]! : 0; out[i + 3] = alpha;
+    }
+    return;
+  }
   for (let y = Math.max(0, rect.y); y < y1; y++) for (let x = Math.max(0, rect.x); x < x1; x++) {
     const i = (y * width + x) * 4; let r = 0, g = 0, b = 0, a = 0;
     for (const layer of visible) {

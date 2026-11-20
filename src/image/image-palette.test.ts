@@ -42,6 +42,47 @@ test('I-PALETTE colour text conversion is exact', () => {
   assert.equal(hex([1, 171, 255, 9]), '#01abff'); assert.deepEqual(parseHex('#01ABff'), [1, 171, 255, 255]); assert.throws(() => parseHex('red'), RangeError);
 });
 
+test('pointer coordinates update without rewriting controls; switching colour editor still refreshes', () => {
+  const { dom, root, palette } = setup();
+  const model = { primary: [0, 0, 0, 255] as const, secondary: [255, 255, 255, 255] as const,
+    tool: 'brush' as const, options: DEFAULT_OPTIONS, info: '800 × 600 px', enabled: true };
+  palette.update(model);
+  const observer = new dom.window.MutationObserver(() => {});
+  observer.observe(root, { attributes: true, childList: true, subtree: true });
+  palette.update({ ...model, info: '800 × 600 px · 12, 34' });
+  const info = root.querySelector('.image-info')!;
+  assert.equal(info.textContent, '800 × 600 px · 12, 34');
+  assert.ok(observer.takeRecords().every(record => record.target === info));
+  observer.disconnect();
+
+  // Selecting the already-active foreground colour still switches the editor
+  // back from Background, even though the document's colour values are equal.
+  const choice = root.querySelector<HTMLSelectElement>('[aria-label="Colour to edit"]')!;
+  const hexBox = root.querySelector<HTMLInputElement>('[aria-label="Hex colour"]')!;
+  choice.value = 'secondary'; fire(dom, choice, 'change');
+  assert.equal(hexBox.value, '#ffffff');
+  root.querySelector<HTMLButtonElement>('[data-color="#000000"]')!.click();
+  palette.update(model);
+  assert.equal(choice.value, 'primary'); assert.equal(hexBox.value, '#000000');
+  palette.dispose(); dom.window.close();
+});
+
+test('focused numeric controls normalize clamped and invalid edits without waiting for a hover', () => {
+  const { dom, root, palette } = setup();
+  const model = { primary: [0, 0, 0, 255] as const, secondary: [255, 255, 255, 255] as const,
+    tool: 'brush' as const, options: { ...DEFAULT_OPTIONS, size: 500 }, info: '', enabled: true };
+  palette.update(model);
+  const size = root.querySelector<HTMLInputElement>('input[type=number][data-option=size]')!;
+  size.focus();
+  size.value = '999'; fire(dom, size, 'change'); palette.update(model);
+  assert.equal(size.value, '500');
+  size.value = ''; fire(dom, size, 'change');
+  assert.equal(size.value, '500');
+  size.value = '0'; fire(dom, size, 'change');
+  assert.equal(size.value, '1');
+  palette.dispose(); dom.window.close();
+});
+
 test('I53 hard pixels default; pixel size and smooth-only options switch visibly and clamp', () => {
   const { dom, root, changes, palette } = setup();
   assert.equal(DEFAULT_OPTIONS.edge, 'pixel'); assert.equal(DEFAULT_OPTIONS.pixelSize, 1);

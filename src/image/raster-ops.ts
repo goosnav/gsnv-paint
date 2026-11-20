@@ -44,7 +44,11 @@ export function createRaster(width: number, height: number, fill: RGBA): Raster 
   if (!isRasterSize(width, height)) throw new RangeError(`Image size must use whole pixels, at most ${MAX_DIMENSION.toLocaleString()} per side and ${MAX_PIXELS.toLocaleString()} pixels in total.`);
   color(fill);
   const data = new Uint8ClampedArray(width * height * 4);
-  if (fill.some(v => v !== 0)) for (let i = 0; i < data.length; i += 4) data.set(fill, i);
+  if (fill.some(v => v !== 0)) {
+    // Read the first RGBA pixel as a native word, then repeat its exact bytes.
+    // This is endian-independent and retains RGB beneath zero alpha.
+    data.set(fill); const pixels = new Uint32Array(data.buffer); pixels.fill(pixels[0]!);
+  }
   return { width, height, data };
 }
 

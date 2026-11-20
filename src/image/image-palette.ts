@@ -76,6 +76,7 @@ export function imagePalette({ root, onChange }: { root: HTMLElement; onChange: 
   hexRow.append(hexLabel, hexBox, sample); more.append(hexRow, colourError);
   root.append(current, grid, more, heading, options, info);
   let shown = '', model: PaletteModel | null = null, editing: 'primary' | 'secondary' = 'primary';
+  let controlsKey = '';
 
   function colourMessage(target?: HTMLInputElement, message = '') {
     for (const n of more.querySelectorAll('[aria-invalid]')) n.removeAttribute('aria-invalid');
@@ -84,6 +85,7 @@ export function imagePalette({ root, onChange }: { root: HTMLElement; onChange: 
   }
   function renderColours(force = false) {
     if (!model) return;
+    if (force) controlsKey = ''; // A local editor switch must invalidate the cached controls too.
     targetChoice.value = editing;
     for (const n of more.querySelectorAll<HTMLInputElement>('[data-channel]')) if (force || document.activeElement !== n) n.value = String(model[editing][Number(n.dataset.channel)]);
     if (force || document.activeElement !== hexBox) hexBox.value = hex(model[editing]);
@@ -141,8 +143,12 @@ export function imagePalette({ root, onChange }: { root: HTMLElement; onChange: 
     if (target.type === 'checkbox') { if (event.type === 'change') onChange({ kind: 'option', key, value: target.checked }); return; }
     if (target.type === 'number' && event.type === 'input') return; // Typed numbers apply on Enter or blur.
     const r = RANGES[key as NumberKey], value = Math.round(Number(target.value));
-    if (!Number.isFinite(value) || target.value === '') { render(); return; }
-    onChange({ kind: 'option', key, value: Math.min(r.max, Math.max(r.min, value)) });
+    if (!Number.isFinite(value) || target.value === '') { target.value = String(model.options[key]); render(); return; }
+    const clamped = Math.min(r.max, Math.max(r.min, value));
+    // Normalize the focused box now; coordinate-only updates no longer repaint
+    // controls after blur, and a clamped value may leave the model unchanged.
+    target.value = String(clamped);
+    onChange({ kind: 'option', key, value: clamped });
   };
   const keydown = (event: KeyboardEvent) => {
     const target = event.target as HTMLInputElement;
@@ -168,7 +174,14 @@ export function imagePalette({ root, onChange }: { root: HTMLElement; onChange: 
     info.textContent = model.info;
   }
   return {
-    update(next: PaletteModel) { model = next; render(); },
+    update(next: PaletteModel) {
+      model = next;
+      // Pointer coordinates update much more often than the controls. Avoid
+      // rewriting dozens of input values/attributes for every hover or sample.
+      const key = JSON.stringify([next.primary, next.secondary, next.tool, next.options, next.enabled, editing]);
+      if (key !== controlsKey) { controlsKey = key; render(); }
+      else if (info.textContent !== next.info) info.textContent = next.info;
+    },
     dispose() { root.removeEventListener('click', click); root.removeEventListener('contextmenu', click); root.removeEventListener('input', input); root.removeEventListener('change', input); root.removeEventListener('keydown', keydown); root.replaceChildren(); },
   };
 }

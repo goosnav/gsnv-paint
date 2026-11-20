@@ -57,8 +57,15 @@ export function imageLayersPanel({ root, onAction }: { root: HTMLElement; onActi
     if (target === blend) { if (event.type === 'change') onAction({ id: 'blend', value: blend.value as BlendMode }); return; }
     if (target.dataset.layerControl !== 'opacity') return;
     if (target === opacityBox && event.type === 'input') return;
-    const value = Math.round(Number(target.value)); if (!Number.isFinite(value) || target.value === '') return;
-    onAction({ id: 'opacity', value: Math.min(100, Math.max(0, value)) / 100, commit: event.type === 'change' });
+    const value = Math.round(Number(target.value));
+    if (!Number.isFinite(value) || target.value === '') {
+      const activeId = model.activeLayerId, active = model.layers.find(layer => layer.id === activeId);
+      if (active) target.value = String(Math.round(active.opacity * 100));
+      return;
+    }
+    const clamped = Math.min(100, Math.max(0, value));
+    target.value = String(clamped);
+    onAction({ id: 'opacity', value: clamped / 100, commit: event.type === 'change' });
   };
   const key = (event: KeyboardEvent) => { const row = (event.target as HTMLElement).closest<HTMLElement>('[data-layer-id]'); if (row && (event.key === 'Enter' || event.key === ' ') && event.target === row) { event.preventDefault(); onAction({ id: 'select', layerId: row.dataset.layerId! }); } };
   root.addEventListener('click', click); root.addEventListener('dblclick', click); root.addEventListener('input', input); root.addEventListener('change', input); root.addEventListener('keydown', key);

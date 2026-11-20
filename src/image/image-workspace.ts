@@ -153,6 +153,10 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         }
       }
       function perform(operation:ImageOperation,label:string,assets:readonly ImageRecipeAsset[]=[]){
+        // Keyboard/menu edits can arrive before pointer-up. Commit the live
+        // stroke first so later operations cannot inherit unrecorded pixels.
+        if (stroke) { finishStroke(); if (tool.drag) pointer({ kind: 'cancel' }); }
+        if (shapeBase || marquee) pointer({ kind: 'cancel' });
         if(!current)return;try{const result=applyImageOperation({image:current.value as ImageContent,clipboard},operation,assets);clipboard=result.clipboard;const changed=result.image!==current.value;commitOperation(result.image,label,operation,assets);if(!changed)refresh();}
         catch(cause){resync();fail(cause);}
       }
@@ -286,6 +290,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         return map;
       }
       let thumbsFor: ImageContent | null = null, thumbCache = new Map<string, HTMLCanvasElement>();
+      let layersFor: ImageContent | null | undefined, layersOpacity: number | null = null, layersEnabled = false;
       function refresh() {
         if (disposed) return;
         notice.hidden = !!current; surface.hidden = !current; layout(); stage.dataset.tool = tool.tool;
@@ -295,7 +300,12 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         const s = floating ? { width: floating.raster.width, height: floating.raster.height } : selection?.bounds; if (s) parts.push(`selection ${s.width} × ${s.height}`);
         palette.update({ primary, secondary, tool: tool.tool, options, info: parts.join(' · '), enabled: !!current });
         if (source !== thumbsFor) { thumbsFor = source; thumbCache = thumbnails(); }
-        layers.update({ layers: source?.layers.map(l => l.id === activeId() && opacityPreview !== null ? { ...meta(l), opacity: opacityPreview } : meta(l)) ?? [], activeLayerId: activeId(), thumbnails: thumbCache, enabled: !!current });
+        // Hover and brush samples change coordinates/pixels, not the layer list.
+        // Rebuilding it here used to detach every row and thumbnail on every move.
+        if (source !== layersFor || opacityPreview !== layersOpacity || !!current !== layersEnabled) {
+          layersFor = source; layersOpacity = opacityPreview; layersEnabled = !!current;
+          layers.update({ layers: source?.layers.map(l => l.id === activeId() && opacityPreview !== null ? { ...meta(l), opacity: opacityPreview } : meta(l)) ?? [], activeLayerId: activeId(), thumbnails: thumbCache, enabled: !!current });
+        }
         if (current && document.activeElement === document.body && !document.querySelector('dialog[open]')) stage.focus();
       }
       function placeFloating() {
@@ -324,7 +334,17 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       const withOpacity = (color: RGBA): RGBA => [color[0], color[1], color[2], Math.round(color[3] * options.opacity / 100)];
       function finishStroke() {
         if (!stroke) return; if (stroke.timer !== null) window.clearInterval(stroke.timer);
-        const changed = !!stroke.dirty,operation=stroke.operation; stroke = null; if (changed) perform(operation,TOOLS[tool.tool].label);
+        const completed = stroke; stroke = null;
+        if (!completed.dirty || !current) return;
+        try {
+          // The working raster already contains the completed stroke. Snapshot
+          // only its dirty tiles; keep the recorded operation for recipe replay.
+          // Replaying here used to reconstruct/copy the full layer and paint the
+          // same stroke again before Undo or recovery could receive the result.
+          const value = imageContent({ operation: 'update', previous: current.value as ImageContent,
+            layerId: activeId(), raster: active(), dirty: completed.dirty });
+          commitOperation(value, TOOLS[completed.operation.tool].label, completed.operation);
+        } catch (cause) { resync(); fail(cause); }
       }
       function strokeApply(rect: Rect | null) {
         if (!stroke || !rect || !source) return; const raster = active();
@@ -678,7 +698,18 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
         message = '';
         if (id === 'bridge.imageToVideo') { void host.transfer?.({ route: 'image-to-video-bin' }); return; }
         const toolId = id.startsWith('image.') ? id.slice(6) as ImageTool : null;
-        if (toolId && (IMAGE_TOOLS as readonly string[]).includes(toolId)) { if (transform) placeFloating(); if (!['select', 'ellipseSelect', 'lasso', 'move'].includes(toolId)) placeFloating(); if (toolId === 'picker' && tool.tool !== 'picker') previousTool = tool.tool; tool = imageToolInput({ state: tool, event: { kind: 'tool', tool: toolId }, inside: () => false, floating: !!floating }).state; refresh(); return; }
+        if (toolId && (IMAGE_TOOLS as readonly string[]).includes(toolId)) {
+          // A shortcut can switch tools while the pointer is still held. Finish
+          // painted pixels and cancel unfinished shape/selection previews before
+          // another stroke uses this working raster as its base.
+          finishStroke();
+          if (tool.drag) pointer({ kind: 'cancel' });
+          if (transform) placeFloating();
+          if (!['select', 'ellipseSelect', 'lasso', 'move'].includes(toolId)) placeFloating();
+          if (toolId === 'picker' && tool.tool !== 'picker') previousTool = tool.tool;
+          tool = imageToolInput({ state: tool, event: { kind: 'tool', tool: toolId }, inside: () => false, floating: !!floating }).state;
+          refresh(); return;
+        }
         if (id === 'filter.downpixel') { downpixel(); return; }
         if (id === 'image.pixelSettings') { pixelSettings(); return; }
         if (id === 'image.transform') { freeTransform(); return; }
