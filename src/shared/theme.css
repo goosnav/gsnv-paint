@@ -39,7 +39,9 @@
   --cursor-zoom:url("./cursors/zoom.svg") 12 12, zoom-in;
 }
 html { cursor:var(--cursor-arrow); }
-html,body { background:var(--xp-face); color:var(--xp-text); font:var(--text)/1.45 var(--font-ui); -webkit-font-smoothing:none; text-rendering:optimizeSpeed; }
+/* Keep the browser's text antialiasing: fractional zoom/display scaling can
+   place Pixel Tahoma's strokes between device pixels, especially on macOS. */
+html,body { background:var(--xp-face); color:var(--xp-text); font:var(--text)/1.45 var(--font-ui); }
 button,input,select,textarea,summary { font:inherit; }
 svg,canvas,img { image-rendering:pixelated; }
 /* XP convention: controls keep the arrow; links and link-like targets show the hand. */

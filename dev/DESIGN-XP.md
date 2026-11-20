@@ -8,6 +8,8 @@ Owner direction (2026-11-12): the app should look like an actually better versio
 - **Focus:** the canvas or photo and the active tool. Everything else stays in XP's quiet beige and blue.
 - **Signature:** genuine Tahoma 8 pt pixel text. "Pixel Tahoma" is built from the hand-tuned 11-pixel bitmap strike of Wine's Tahoma (`dev/fonts/build-pixel-tahoma.py`), so text renders as hard pixels, as on XP. The same signature carries into crisp, aliased, colour-coded toolbar glyphs and the original XP-style cursors.
 
+Let the browser choose text antialiasing. At fractional page zoom or display scaling, the pixel font's strokes can fall between device pixels; forcing smoothing off makes small text uneven or drops parts of strokes on macOS. Keep the bundled font, its 11/22 px sizes and layout metrics, but do not globally disable font smoothing or force speed-oriented text rendering. Artwork's pixel/smooth rendering policy and pixel icons are independent of UI text smoothing. Local launchers and Cloudflare use this same theme; compare them at the same browser zoom and display scale.
+
 ## What "better" means
 
 The aim is XP's clarity without its era's mistakes:
