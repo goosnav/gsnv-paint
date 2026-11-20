@@ -33,7 +33,8 @@ to put this launcher onto a computer that still has the old one.
 - macOS `.command` wrappers invoke `run.sh` through `/bin/sh`, so a lost execute
   bit on the inner script cannot break startup. Node without working npm falls
   back to the pinned complete runtime. Windows wrappers preserve failure codes;
-  `GSNV_PAINT_NO_PAUSE=1` supports noninteractive invocation.
+  native .NET OS architecture detection supports environments missing the
+  `PROCESSOR_*` variables, and `GSNV_PAINT_NO_PAUSE=1` supports noninteractive invocation.
 - Dependency installation explicitly includes development build tools even when
   the user's environment defaults to production-only npm installation.
 - Cloudflare still builds the same `index.html` → `src/app/main.ts` production

@@ -17,8 +17,16 @@ $system = Get-Command node -CommandType Application -ErrorAction SilentlyContinu
 $systemNpm = Get-Command npm.cmd -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($system -and (Usable $system.Source) -and ($checkOnly -or ($systemNpm -and (UsableNpm $systemNpm.Source)))) { & $system.Source launcher/start.mjs @args; exit $LASTEXITCODE }
 
-$processor = if ($env:PROCESSOR_ARCHITEW6432) { $env:PROCESSOR_ARCHITEW6432 } else { $env:PROCESSOR_ARCHITECTURE }
-if ($processor -eq 'AMD64') { $arch = 'x64' } elseif ($processor -eq 'ARM64') { $arch = 'arm64' }
+# Read the native OS architecture: subprocesses can omit PROCESSOR_* variables,
+# and the current PowerShell process can itself be running under emulation.
+$processor = $null
+try { $processor = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString() } catch { }
+if ([string]::IsNullOrWhiteSpace($processor)) {
+  # Compatibility with older Windows PowerShell/.NET installations.
+  $processor = if ($env:PROCESSOR_ARCHITEW6432) { $env:PROCESSOR_ARCHITEW6432 } else { $env:PROCESSOR_ARCHITECTURE }
+}
+if ([string]::IsNullOrWhiteSpace($processor)) { $processor = 'Unknown' }
+if ($processor -eq 'X64' -or $processor -eq 'AMD64') { $arch = 'x64' } elseif ($processor -eq 'ARM64') { $arch = 'arm64' }
 else { Fail 'LAUNCH-PLATFORM' "$processor processors are not supported by this launcher. Install Node.js 22.12 or newer, then start again." }
 
 $line = Get-Content -LiteralPath 'launcher/node-runtime.sha256' | Where-Object { $_ -match "-win-$arch\.zip\s*$" } | Select-Object -First 1

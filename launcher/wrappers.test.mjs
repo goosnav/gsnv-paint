@@ -26,7 +26,10 @@ async function fixture() {
   await copyFile(join(repository, 'launcher/node-runtime.sha256'), join(root, 'launcher/node-runtime.sha256'));
   await writeFile(join(root, 'launcher/start.mjs'), launchScript);
   const record = join(directory, 'launched.json');
-  const env = { ...process.env, PATH: bin, GSNV_TEST_RECORD: record, GSNV_PAINT_NO_PAUSE: '1', XDG_DATA_HOME: data };
+  // Windows env keys are case-insensitive. Avoid passing competing PATH/Path
+  // entries when constructing the deliberately isolated runtime environment.
+  const inherited = windows ? Object.fromEntries(Object.entries(process.env).map(([key, value]) => [key.toUpperCase(), value])) : process.env;
+  const env = { ...inherited, PATH: bin, GSNV_TEST_RECORD: record, GSNV_PAINT_NO_PAUSE: '1', XDG_DATA_HOME: data };
   return { directory, root, bin, cwd, data, record, env };
 }
 
@@ -108,7 +111,7 @@ async function windowsNode(directory) {
 async function windowsTools(f) {
   const system32 = join(process.env.SystemRoot, 'System32');
   f.env.PATH = [f.bin, system32, join(system32, 'WindowsPowerShell', 'v1.0')].join(';');
-  f.env.LOCALAPPDATA = f.data; f.env.PROCESSOR_ARCHITECTURE = 'AMD64'; f.env.PROCESSOR_ARCHITEW6432 = '';
+  f.env.LOCALAPPDATA = f.data;
   await windowsNode(f.bin);
 }
 function runWindows(f, wrapper, extra = {}, args = '--no-browser "two words"') {
@@ -131,7 +134,7 @@ test('Windows command wrappers preserve exit status, arguments and source folder
   } finally { await rm(f.directory, { recursive: true, force: true }); }
 });
 
-test('Windows launcher falls back to cached Node/npm, while --check needs no npm', { skip: !windows }, async () => {
+test('Windows launcher falls back to cached Node/npm even without architecture env vars; --check needs no npm', { skip: !windows }, async () => {
   const f = await fixture();
   try {
     await windowsTools(f);
@@ -139,9 +142,11 @@ test('Windows launcher falls back to cached Node/npm, while --check needs no npm
     await assert.rejects(readFile(f.record), { code: 'ENOENT' });
     const runtime = await cachedRuntime(f, 'win'); await windowsNode(runtime);
     await writeFile(join(runtime, 'npm.cmd'), '@echo off\r\necho 11.0.0\r\nexit /b 0\r\n');
-    const result = runWindows(f, 'run.cmd'); assert.equal(result.status, 0, result.stdout + result.stderr);
-    const actual = JSON.parse(await readFile(f.record, 'utf8'));
-    assert.equal(dirname(actual.node).toLowerCase(), runtime.toLowerCase()); assert.deepEqual(actual.args, ['--no-browser', 'two words']);
-    assert.doesNotMatch(result.stdout, /Downloading/);
+    for (const environment of [{}, { PROCESSOR_ARCHITECTURE: undefined, PROCESSOR_ARCHITEW6432: undefined }]) {
+      const result = runWindows(f, 'run.cmd', environment); assert.equal(result.status, 0, result.stdout + result.stderr);
+      const actual = JSON.parse(await readFile(f.record, 'utf8'));
+      assert.equal(dirname(actual.node).toLowerCase(), runtime.toLowerCase()); assert.deepEqual(actual.args, ['--no-browser', 'two words']);
+      assert.doesNotMatch(result.stdout, /Downloading/);
+    }
   } finally { await rm(f.directory, { recursive: true, force: true }); }
 });
