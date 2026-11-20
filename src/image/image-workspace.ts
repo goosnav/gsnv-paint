@@ -152,11 +152,14 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
           if(!unchangedPreview||value.policy.palette)composite();selectionChanged();host.commit({...current,value},label,current.identity);
         }
       }
-      function perform(operation:ImageOperation,label:string,assets:readonly ImageRecipeAsset[]=[]){
-        // Keyboard/menu edits can arrive before pointer-up. Commit the live
-        // stroke first so later operations cannot inherit unrecorded pixels.
+      function settleDrawing() {
+        // Settle drawing before another operation mutates the working raster.
+        // A newly started selection-move drag must remain active during lift().
         if (stroke) { finishStroke(); if (tool.drag) pointer({ kind: 'cancel' }); }
         if (shapeBase || marquee) pointer({ kind: 'cancel' });
+      }
+      function perform(operation:ImageOperation,label:string,assets:readonly ImageRecipeAsset[]=[]){
+        settleDrawing();
         if(!current)return;try{const result=applyImageOperation({image:current.value as ImageContent,clipboard},operation,assets);clipboard=result.clipboard;const changed=result.image!==current.value;commitOperation(result.image,label,operation,assets);if(!changed)refresh();}
         catch(cause){resync();fail(cause);}
       }
@@ -319,6 +322,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       function lift() {
         if (!source || floating) return;
+        settleDrawing();
         const raster = active(), sel = selection ?? { mask: new Uint8Array(source.width * source.height).fill(255), bounds: fullRect() }, b = sel.bounds;
         const out = createRaster(b.width, b.height, [0, 0, 0, 0]), fillColor = isBottom() ? secondary : null;
         for (let y = 0; y < b.height; y++) for (let x = 0; x < b.width; x++) {
@@ -503,7 +507,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       /** Start a non-destructive on-canvas transform; sample the original only on apply. */
       function freeTransform() {
-        if (!source || transform) return; finishStroke();
+        if (!source || transform) return; settleDrawing();
         if (!floating) lift(); if (!floating) return;
         const f = floating; transform = { original: copyRaster(f.raster), box: { x: f.x, y: f.y, width: f.raster.width, height: f.raster.height, angle: 0 } };
         f.label = 'Transform'; tool = { tool: 'move', drag: null };
@@ -525,7 +529,7 @@ export function createImageWorkspace(files: FilePorts): WorkspaceAdapter {
       }
       /** Live-preview adjustment dialog applied to the active layer inside the selection. */
       function adjust(title: string, fields: DialogSpec['fields'], initial: DialogSpec['initial'], toOp: (v: Record<string, unknown>) => AdjustOp) {
-        if (!source) return; placeFloating();
+        if (!source) return; settleDrawing(); placeFloating();
         const raster = active(), base = new Uint8ClampedArray(raster.data), rect = area();
         const run = (v: Record<string, unknown>) => { raster.data.set(base); adjustRaster(raster, toOp(v), rect); if (selection) maskedMerge({ target: raster, base, mask: selection.mask, rect }); composite(rect); };
         if (!fields.length) { try { run({}); perform({kind:'adjust',adjustment:toOp({})},title); } catch (cause) { raster.data.set(base); composite(rect); fail(cause); } return; }

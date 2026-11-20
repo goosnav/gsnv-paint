@@ -204,3 +204,78 @@ test('current: switching tools with the pointer held records the stroke and canc
     expect(errors).toEqual([]);
   } finally { await page.close(); await server.close(); }
 });
+
+test('current: nudging a selection during a held stroke commits it before lifting pixels', async ({ page }) => {
+  const variant = variants.at(-1)!, { server, url } = await localServer(variant.directory, variant.revision), errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const menu = async (name: string) => { await page.getByRole('menubar').getByRole('menuitem', { name: 'Automation', exact: true }).click(); await page.getByRole('menuitem', { name, exact: true }).click(); };
+  const history = page.locator('[data-panel-history] li');
+  try {
+    await page.goto(url); await newImage(page, 128, 96); await menu('Start recording');
+    await tool(page, 'pencil'); await number(page, 'size', 1); await page.locator('.image-stage').focus(); await page.keyboard.press('Control+a');
+    const start = await point(page, 20, 20), end = await point(page, 60, 20);
+    await page.mouse.move(start.x, start.y); await page.mouse.down(); await page.mouse.move(end.x, end.y, { steps: 8 });
+    const stroke = await digest(page);
+    expect(await pixel(page, 20, 20)).toEqual([0, 0, 0, 255]);
+    await page.keyboard.press('ArrowRight');
+    await expect(history).toHaveText(['Select all', 'Pencil', 'Current state']);
+    await page.mouse.up(); await page.keyboard.press('Enter');
+    await expect(history).toHaveText(['Select all', 'Pencil', 'Move', 'Current state']);
+    expect(await pixel(page, 20, 20)).toEqual([255, 255, 255, 255]);
+    expect(await pixel(page, 21, 20)).toEqual([0, 0, 0, 255]);
+    expect(await pixel(page, 61, 20)).toEqual([0, 0, 0, 255]);
+    const nudged = await digest(page);
+
+    // The same lift seam also serves ordinary selection drags; it must not
+    // cancel the new Move gesture that requested the lift.
+    await tool(page, 'select'); await draw(page, [40, 20], [45, 24], 4); await page.keyboard.press('Enter');
+    await expect(history).toHaveText(['Select all', 'Pencil', 'Move', 'Move', 'Current state']);
+    expect(await pixel(page, 26, 24)).toEqual([0, 0, 0, 255]);
+    expect(await pixel(page, 66, 24)).toEqual([0, 0, 0, 255]);
+    expect(await pixel(page, 40, 20)).toEqual([255, 255, 255, 255]);
+    await menu('Stop recording'); const expected = await digest(page);
+    await page.locator('.gc-standard [data-command="edit.undo"]').click(); expect(await digest(page)).toBe(nudged);
+    await page.locator('.gc-standard [data-command="edit.undo"]').click(); expect(await digest(page)).toBe(stroke);
+    await page.locator('.gc-standard [data-command="edit.redo"]').click(); expect(await digest(page)).toBe(nudged);
+    await page.locator('.gc-standard [data-command="edit.redo"]').click(); expect(await digest(page)).toBe(expected);
+
+    await newImage(page, 128, 96); const blank = await digest(page);
+    await menu('Actions…'); await page.getByRole('dialog', { name: 'Image actions', exact: true }).getByRole('button', { name: 'Apply once', exact: true }).click();
+    await expect.poll(() => digest(page)).toBe(expected);
+    await page.locator('.gc-standard [data-command="edit.undo"]').click(); expect(await digest(page)).toBe(blank);
+    await page.locator('.gc-standard [data-command="edit.redo"]').click(); expect(await digest(page)).toBe(expected);
+    expect(errors).toEqual([]);
+  } finally { await page.close(); await server.close(); }
+});
+
+test('current: adjustments settle a held stroke before changing its working pixels', async ({ page }) => {
+  const variant = variants.at(-1)!, { server, url } = await localServer(variant.directory, variant.revision), errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const menu = async (name: string) => { await page.getByRole('menubar').getByRole('menuitem', { name: 'Automation', exact: true }).click(); await page.getByRole('menuitem', { name, exact: true }).click(); };
+  const history = page.locator('[data-panel-history] li');
+  try {
+    await page.goto(url); await newImage(page, 128, 96); await menu('Start recording');
+    await tool(page, 'pencil'); await number(page, 'size', 3);
+    const start = await point(page, 20, 20), end = await point(page, 60, 20);
+    await page.mouse.move(start.x, start.y); await page.mouse.down(); await page.mouse.move(end.x, end.y, { steps: 8 });
+    const stroke = await digest(page);
+    await expect(history).toHaveText(['Current state']);
+    // Exercise the command callback while the stroke is still live. Normal
+    // menu focus emits its own interruption, so activate the real command
+    // control without changing focus or releasing the pointer first.
+    await page.locator('[data-command="adjust.invert"]').evaluate((button: HTMLButtonElement) => button.click());
+    await expect(history).toHaveText(['Pencil', 'Invert colours', 'Current state']);
+    await page.mouse.up();
+    expect(await pixel(page, 40, 20)).toEqual([255, 255, 255, 255]);
+    expect(await pixel(page, 40, 50)).toEqual([0, 0, 0, 255]);
+    await menu('Stop recording'); const expected = await digest(page);
+    await page.locator('.gc-standard [data-command="edit.undo"]').click(); expect(await digest(page)).toBe(stroke);
+    await page.locator('.gc-standard [data-command="edit.redo"]').click(); expect(await digest(page)).toBe(expected);
+    await newImage(page, 128, 96); const blank = await digest(page);
+    await menu('Actions…'); await page.getByRole('dialog', { name: 'Image actions', exact: true }).getByRole('button', { name: 'Apply once', exact: true }).click();
+    await expect.poll(() => digest(page)).toBe(expected);
+    await page.locator('.gc-standard [data-command="edit.undo"]').click(); expect(await digest(page)).toBe(blank);
+    await page.locator('.gc-standard [data-command="edit.redo"]').click(); expect(await digest(page)).toBe(expected);
+    expect(errors).toEqual([]);
+  } finally { await page.close(); await server.close(); }
+});
