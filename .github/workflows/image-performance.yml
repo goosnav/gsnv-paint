@@ -46,8 +46,11 @@ jobs:
         working-directory: baseline
       - run: npx playwright install --with-deps chromium
       - name: Existing Image, recorded edits, and interruption regressions
+        env:
+          GSNV_IMAGE_RESULTS: ${{ github.workspace }}/current/test-results/image-regressions
         run: npx playwright test --config dev/image-performance.playwright.config.ts src/image/image-workspace.browser.spec.ts src/image/image-automation.browser.spec.ts src/image/image-touch.browser.spec.ts --grep 'IMAGE-APP|PU-10/11/12|TOUCH-03'
       - name: Compare the same large-image interactions on both builds
+        if: ${{ !cancelled() }}
         env:
           GSNV_BASELINE_DIST: ${{ github.workspace }}/baseline/dist
           GSNV_BASELINE_REV: aef6295ee470dbacff6207e699094486e8f1531f
@@ -60,5 +63,7 @@ jobs:
         if: always()
         with:
           name: image-performance
-          path: current/test-results/image-performance
+          path: |
+            current/test-results/image-performance
+            current/test-results/image-regressions
           if-no-files-found: ignore

@@ -13,7 +13,7 @@ export default defineConfig({
   timeout: 180_000,
   expect: { timeout: 20_000 },
   reporter: 'list',
-  outputDir: '../test-results/image-performance',
+  outputDir: process.env.GSNV_IMAGE_RESULTS ?? '../test-results/image-performance',
   use: {
     browserName: 'chromium',
     headless: true,

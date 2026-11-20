@@ -74,10 +74,20 @@ test('I-CONTENT dirty updates cross tile boundaries without changing pixels outs
   assert.deepEqual([...original.layers[0]!.tiles[4]!.subarray(0, 4)], [31, 41, 59, 0], 'undo pixels must remain exact');
 });
 
-test('I-CONTENT dirty updates clip safely and unchanged or empty updates retain snapshot identity', () => {
+test('I-CONTENT unchanged full updates create a new transaction snapshot while sharing all pixel tiles', () => {
+  const original = imageContent({ operation: 'new', width: TILE + 1, height: 3, fill: [1, 2, 3, 4] });
+  const raster = imageContent({ operation: 'raster', value: original, layerId: 'background' });
+  const committed = imageContent({ operation: 'update', previous: original, layerId: 'background', raster });
+  // Identity transforms still commit: the workspace must restore pixels lifted
+  // out of its working raster even when the final document bytes are identical.
+  assert.notEqual(committed, original);
+  assert.deepEqual(committed, original);
+  for (let i = 0; i < original.layers[0]!.tiles.length; i++) assert.equal(committed.layers[0]!.tiles[i], original.layers[0]!.tiles[i]);
+});
+
+test('I-CONTENT dirty updates clip safely and unchanged or empty dirty updates retain snapshot identity', () => {
   const original = imageContent({ operation: 'new', width: 4, height: 3, fill: [1, 2, 3, 4] });
   const raster = imageContent({ operation: 'raster', value: original, layerId: 'background' });
-  assert.equal(imageContent({ operation: 'update', previous: original, layerId: 'background', raster }), original);
   assert.equal(imageContent({ operation: 'update', previous: original, layerId: 'background', raster, dirty: { x: 1, y: 1, width: 2, height: 2 } }), original);
   raster.data.fill(77);
   for (const dirty of [{ x: 1, y: 1, width: 0, height: 1 }, { x: 1, y: 1, width: 1, height: 0 }, { x: -5, y: -5, width: 2, height: 2 }, { x: 4, y: 0, width: 2, height: 2 }])

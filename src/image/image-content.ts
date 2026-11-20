@@ -5,7 +5,8 @@
  *            'new' {width,height,fill} → one "Background" layer with the supplied fill;
  *            'raster' {value,layerId} → a caller-owned working raster of that layer;
  *            'update' {previous,layerId,raster,dirty?} → changed tiles replaced; an optional dirty rectangle
- *            limits copied pixels to that clipped region. Unchanged updates return the previous snapshot;
+ *            limits copied pixels to that clipped region. Unchanged dirty updates return the previous snapshot;
+ *            full updates retain the legacy transaction contract and always return a new snapshot;
  *            'layers' {previous?,width,height,layers:[{meta, raster?}],activeLayerId} → rebuilds the stack: a
  *            layer without a raster keeps the tiles of its id (or of `from`, for duplicates), so reorder/hide/
  *            rename/duplicate are free;
@@ -117,7 +118,7 @@ function applyContent(request: Request): ImageContent | Raster | Encoded {
     const dirty = r.dirty === undefined ? undefined : dirtyRect(r.dirty, r.raster);
     if (dirty && (!dirty.width || !dirty.height)) return r.previous;
     const tiles = tilesOf(r.raster, target.tiles, dirty);
-    if (tiles.every((tile, i) => tile === target.tiles[i])) return r.previous;
+    if (dirty && tiles.every((tile, i) => tile === target.tiles[i])) return r.previous;
     return freeze(r.previous.width, r.previous.height, r.previous.layers.map(l => l === target ? { ...l, tiles } : l), r.previous.activeLayerId, r.previous.selection, r.previous.policy);
   }
   if (r.operation === 'layers') {
