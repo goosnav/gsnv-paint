@@ -1,4 +1,4 @@
-/** Explicit update guard and real fast-forward tests. Fetch is routed only to a temporary fixture. */
+/** Automatic/required update guards and real fast-forwards; fetch uses only a temporary fixture. */
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { spawn, spawnSync } from 'node:child_process';
@@ -18,9 +18,16 @@ function start(root, env, args = ['--update']) {
   let output = ''; child.stdout.on('data', b => { output += b; }); child.stderr.on('data', b => { output += b; });
   return { child, output: () => output, closed: new Promise(resolve => child.once('close', resolve)) };
 }
+async function ready(run) {
+  const until = Date.now() + 15_000;
+  while (!run.output().includes('is running at')) {
+    assert.equal(run.child.exitCode, null, run.output()); assert.ok(Date.now() < until, run.output());
+    await new Promise(resolve => setTimeout(resolve, 25));
+  }
+}
 async function code(root) {
   for (const dir of ['src', 'launcher']) await mkdir(join(root, dir), { recursive: true });
-  for (const name of ['start.mjs', 'freshness.mjs', 'local-app.mjs']) await copyFile(join(repository, 'launcher', name), join(root, 'launcher', name));
+  for (const name of ['start.mjs', 'freshness.mjs', 'local-app.mjs', 'update.mjs']) await copyFile(join(repository, 'launcher', name), join(root, 'launcher', name));
   await copyFile(join(repository, 'package-lock.json'), join(root, 'package-lock.json'));
   await copyFile(join(repository, 'package.json'), join(root, 'package.json'));
   await writeFile(join(root, 'src/main.js'), '// fixture source');
@@ -43,7 +50,7 @@ async function fixture() {
   git(upstream, 'init', '-b', 'main'); git(upstream, 'config', 'user.name', 'Launcher test'); git(upstream, 'config', 'user.email', 'launcher@example.test'); git(upstream, 'add', '.'); git(upstream, 'commit', '-m', 'initial fixture');
   git(parent, 'clone', upstream, root); git(root, 'remote', 'set-url', 'origin', 'https://github.com/goosnav/gsnv-paint.git'); git(root, 'config', 'user.name', 'Launcher test'); git(root, 'config', 'user.email', 'launcher@example.test');
   const log = join(parent, 'git-log');
-  await writeFile(join(bin, 'git'), `#!/bin/sh\nprintf '%s\\n' "$*" >> ${quote(log)}\ncase " $* " in *' fetch '*)\n[ "$GIT_TERMINAL_PROMPT" = 0 ] || exit 90\nexec ${quote(gitPath)} -c protocol.file.allow=always fetch --no-tags ${quote(upstream)} refs/heads/main:refs/remotes/origin/main;;\n*) exec ${quote(gitPath)} "$@";; esac\n`);
+  await writeFile(join(bin, 'git'), `#!/bin/sh\nprintf '%s\\n' "$*" >> ${quote(log)}\ncase " $* " in *' fetch '*)\n[ "$GIT_TERMINAL_PROMPT" = 0 ] || exit 90\n[ "$GSNV_TEST_FAIL_FETCH" != 1 ] || exit 91\nexec ${quote(gitPath)} -c protocol.file.allow=always fetch --no-tags ${quote(upstream)} refs/heads/main:refs/remotes/origin/main;;\n*) exec ${quote(gitPath)} "$@";; esac\n`);
   await chmod(join(bin, 'git'), 0o755);
   return { parent, upstream, root, log, env: { PATH: bin + delimiter + process.env.PATH } };
 }
@@ -73,7 +80,7 @@ test('explicit update refuses local changes, other branches and foreign remotes;
     run = start(f.root, f.env); const until = Date.now() + 15_000;
     while (!run.output().includes('is running at')) { assert.equal(run.child.exitCode, null, run.output()); assert.ok(Date.now() < until, run.output()); await new Promise(resolve => setTimeout(resolve, 25)); }
     assert.equal(git(f.root, 'rev-parse', 'HEAD'), git(f.upstream, 'rev-parse', 'HEAD')); assert.equal(await readFile(join(f.root, 'RELEASE.txt'), 'utf8'), 'new official version');
-    const calls = await readFile(f.log, 'utf8'); assert.match(calls, /fetch --no-tags origin refs\/heads\/main:refs\/remotes\/origin\/main/); assert.match(calls, /merge --ff-only refs\/remotes\/origin\/main/); assert.doesNotMatch(calls, /reset|--force|clean -/);
+    const calls = await readFile(f.log, 'utf8'); assert.match(calls, /fetch --no-tags origin refs\/heads\/main:refs\/remotes\/origin\/main/); assert.ok(calls.includes(`merge --ff-only ${git(f.upstream, 'rev-parse', 'HEAD')}`)); assert.doesNotMatch(calls, /reset|--force|clean -/);
     const busy = start(f.root, f.env); assert.equal(await busy.closed, 1); assert.match(busy.output(), /UPDATE-RUNNING/);
   } finally {
     if (run) { run.child.kill(); await run.closed; }
@@ -89,4 +96,49 @@ test('explicit update refuses a diverged main without discarding a local commit'
     const attempt = start(f.root, f.env); assert.equal(await attempt.closed, 1); assert.match(attempt.output(), /UPDATE-DIVERGED/);
     assert.equal(git(f.root, 'rev-parse', 'HEAD'), before); assert.equal(await readFile(join(f.root, 'local.txt'), 'utf8'), 'owned work'); assert.doesNotMatch(await readFile(f.log, 'utf8'), /merge --ff-only|reset|--force/);
   } finally { await rm(f.parent, { recursive: true, force: true }); }
+});
+
+test('ordinary launch updates clean main and restarts once before serving the fetched revision', { skip, timeout: 30_000 }, async () => {
+  const f = await fixture(); let run;
+  try {
+    await build(f.root);
+    await writeFile(join(f.upstream, 'RELEASE.txt'), 'latest release'); git(f.upstream, 'add', 'RELEASE.txt'); git(f.upstream, 'commit', '-m', 'new release');
+    run = start(f.root, f.env, []); await ready(run);
+    const latest = git(f.upstream, 'rev-parse', 'HEAD');
+    assert.equal(git(f.root, 'rev-parse', 'HEAD'), latest); assert.match(run.output(), /Updated main:.*Restarting the updated launcher/);
+    const identity = await (await fetch(`http://127.0.0.1:${port}/__gsnv-local__/status`)).json();
+    assert.equal(identity.revision, latest.slice(0, 12));
+    const calls = await readFile(f.log, 'utf8');
+    assert.equal((calls.match(/fetch --no-tags origin/g) ?? []).length, 1, 'the restarted launcher must not fetch recursively');
+  } finally { if (run) { run.child.kill(); await run.closed; } await rm(f.parent, { recursive: true, force: true }); }
+});
+
+test('ordinary launch retains edited source, and --offline never fetches or advances a clean checkout', { skip, timeout: 30_000 }, async () => {
+  const f = await fixture(); let run;
+  try {
+    await build(f.root); const before = git(f.root, 'rev-parse', 'HEAD');
+    await writeFile(join(f.root, 'mine.txt'), 'keep my work');
+    run = start(f.root, f.env, []); await ready(run); assert.match(run.output(), /UPDATE-CHANGES/);
+    assert.equal(await readFile(join(f.root, 'mine.txt'), 'utf8'), 'keep my work');
+    run.child.kill(); await run.closed; run = undefined;
+    await rm(join(f.root, 'mine.txt'));
+    await writeFile(join(f.upstream, 'RELEASE.txt'), 'later release'); git(f.upstream, 'add', 'RELEASE.txt'); git(f.upstream, 'commit', '-m', 'later release');
+    run = start(f.root, f.env, ['--offline']); await ready(run);
+    assert.equal(git(f.root, 'rev-parse', 'HEAD'), before);
+    assert.doesNotMatch(await readFile(f.log, 'utf8'), / fetch |merge --ff-only/);
+  } finally { if (run) { run.child.kill(); await run.closed; } await rm(f.parent, { recursive: true, force: true }); }
+});
+
+test('unavailable update check falls back to installed source; required --update stops and contradictory flags fail', { skip, timeout: 30_000 }, async () => {
+  const f = await fixture(); let run;
+  try {
+    await build(f.root); const before = git(f.root, 'rev-parse', 'HEAD');
+    const env = { ...f.env, GSNV_TEST_FAIL_FETCH: '1' };
+    run = start(f.root, env, []); await ready(run); assert.match(run.output(), /UPDATE-NETWORK/);
+    assert.equal(git(f.root, 'rev-parse', 'HEAD'), before);
+    run.child.kill(); await run.closed; run = undefined;
+    const strict = start(f.root, env); assert.equal(await strict.closed, 1); assert.match(strict.output(), /UPDATE-NETWORK/); assert.doesNotMatch(strict.output(), /is running at/);
+    const conflict = start(f.root, env, ['--update', '--offline']); assert.equal(await conflict.closed, 1); assert.match(conflict.output(), /UPDATE-OPTIONS/);
+    assert.doesNotMatch(await readFile(f.log, 'utf8'), /merge --ff-only/);
+  } finally { if (run) { run.child.kill(); await run.closed; } await rm(f.parent, { recursive: true, force: true }); }
 });

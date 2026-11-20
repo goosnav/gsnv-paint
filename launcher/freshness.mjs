@@ -8,6 +8,7 @@ import { hostname } from 'node:os';
 const HEX = /^[a-f0-9]{64}$/;
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const fixedInputs = ['index.html', 'package.json', 'package-lock.json', 'vite.config.ts', 'tsconfig.json',
+  'run.sh', 'run.command', 'run.ps1', 'run.cmd', 'update.command', 'update.cmd',
   'dev/offline-build.ts', 'dev/prepare-planegcs.mjs', 'dev/planegcs-declarations.json'];
 const dependencyInputs = ['package.json', 'package-lock.json', 'dev/prepare-planegcs.mjs', 'dev/planegcs-declarations.json'];
 async function optional(path) { try { return await readFile(path); } catch (error) { if (error.code === 'ENOENT') return null; throw error; } }

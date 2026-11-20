@@ -1,4 +1,4 @@
-/** Local production launcher: verified content freshness, one stable origin, explicit updates. */
+/** Local production launcher: current source, verified builds and one stable origin. */
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { hostname } from 'node:os';
@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { acquirePreparationLock, buildMatches, inspectBuild, installedDependenciesMatch, installedLockId, readLocalState, sourceState, writeLocalState } from './freshness.mjs';
 import { localAppPath, localAppPlugin } from './local-app.mjs';
+import { updateSource } from './update.mjs';
 
 const [major, minor] = process.versions.node.split('.').map(Number);
 const supported = major > 22 || (major === 22 && minor >= 12);
@@ -16,6 +17,8 @@ process.on('uncaughtException', cause => fail('APP-START', `Unexpected launcher 
 if (!supported) fail('LAUNCH-PLATFORM', `Node.js 22.12 or newer is required; this is ${process.version}. Start with run.sh, run.command or run.cmd instead: they fetch a suitable copy.`);
 const root = fileURLToPath(new URL('..', import.meta.url));
 if (!existsSync(join(root, 'package-lock.json')) || !existsSync(join(root, 'src'))) fail('LAUNCH-ROOT', `Application files are missing from ${root}. Keep the launcher inside the complete gsnv-paint folder.`);
+const offline = process.argv.includes('--offline') || process.env.GSNV_PAINT_OFFLINE === '1';
+if (offline && process.argv.includes('--update')) fail('UPDATE-OPTIONS', 'Choose --update to require an update, or --offline to use this folder without checking GitHub.');
 const port = Number(process.env.GSNV_PAINT_PORT ?? 24173);
 if (!Number.isInteger(port) || port < 1024 || port > 65535) fail('APP-START', 'GSNV_PAINT_PORT must be a whole number from 1024 to 65535.');
 // Keep the origin fixed: project recovery belongs to this browser origin.
@@ -39,8 +42,8 @@ async function probe() {
   } catch { /* A legacy/unresponsive server must never be silently reopened. */ }
   return { occupied: true };
 }
-function git(args, { network = false } = {}) {
-  return spawnSync('git', args, { cwd: root, encoding: 'utf8', timeout: network ? 45_000 : 10_000,
+function git(args) {
+  return spawnSync('git', args, { cwd: root, encoding: 'utf8', timeout: 10_000,
     env: { ...process.env, GIT_TERMINAL_PROMPT: '0', GCM_INTERACTIVE: 'Never' }, maxBuffer: 4 * 1024 * 1024 });
 }
 function revision(sourceId) {
@@ -70,28 +73,15 @@ if (!live.occupied) {
   process.once('SIGTERM', () => { release(); process.exit(143); });
   live = await probe(); // A preceding launcher may have started while we held no lock.
 }
-if (process.argv.includes('--update')) {
-  if (live.occupied) fail('UPDATE-RUNNING', stopInstruction);
-  if (!existsSync(join(root, '.git'))) fail('UPDATE-SOURCE', 'This folder came from a ZIP or is not a Git checkout. Download the latest main ZIP from https://github.com/goosnav/gsnv-paint and start run.command/run.cmd from the newly extracted folder. Your browser projects stay at the same local address.');
-  const top = git(['rev-parse', '--show-toplevel']);
-  if (top.status !== 0 || top.stdout.trim().replaceAll('\\', '/').replace(/\/$/, '') !== root.replaceAll('\\', '/').replace(/\/$/, '')) fail('UPDATE-SOURCE', 'This is not a Git checkout of the application. For a ZIP download, download the latest main ZIP from https://github.com/goosnav/gsnv-paint and launch run.command/run.cmd from the newly extracted folder. Your browser projects stay at the same local address.');
-  const branch = git(['symbolic-ref', '--short', 'HEAD']), status = git(['status', '--porcelain', '--untracked-files=normal']), remote = git(['remote', 'get-url', 'origin']);
-  if (branch.status !== 0 || branch.stdout.trim() !== 'main') fail('UPDATE-BRANCH', 'Automatic update requires the main branch. Keep your branch unchanged and update it with your normal Git workflow.');
-  if (status.status !== 0 || status.stdout.trim()) fail('UPDATE-CHANGES', 'This source folder has local changes or untracked files. Commit or move them before updating. Nothing was overwritten.');
-  if (remote.status !== 0 || !/^(?:https:\/\/github\.com\/goosnav\/gsnv-paint(?:\.git)?\/?|git@github\.com:goosnav\/gsnv-paint(?:\.git)?|ssh:\/\/git@github\.com\/goosnav\/gsnv-paint(?:\.git)?)$/i.test(remote.stdout.trim())) fail('UPDATE-ORIGIN', 'Automatic update only accepts origin = https://github.com/goosnav/gsnv-paint.git (or its GitHub SSH equivalent). The remote was not changed.');
-  const before = git(['rev-parse', 'HEAD']).stdout.trim();
-  console.log('Checking the official main branch for updates…');
-  const fetched = git(['-c', 'credential.interactive=false', '-c', 'core.askPass=', '-c', 'core.sshCommand=ssh -oBatchMode=yes -oConnectTimeout=10', 'fetch', '--no-tags', 'origin', 'refs/heads/main:refs/remotes/origin/main'], { network: true });
-  if (fetched.status !== 0) fail('UPDATE-NETWORK', `Update could not be fetched within 45 seconds. Check your connection or Git access, then try again. The working files were kept.\n${fetched.error?.message ?? fetched.stderr.trim()}`);
-  const ancestor = git(['merge-base', '--is-ancestor', 'HEAD', 'refs/remotes/origin/main']);
-  if (ancestor.status !== 0) fail('UPDATE-DIVERGED', 'Local main has commits that cannot be fast-forwarded to official main. Resolve this with your normal Git workflow; no local commits were discarded.');
-  const again = git(['status', '--porcelain', '--untracked-files=normal']);
-  if (again.status !== 0 || again.stdout.trim() || git(['rev-parse', 'HEAD']).stdout.trim() !== before) fail('UPDATE-CHANGES', 'The source folder changed during the update check. No merge was attempted.');
-  const merged = git(['merge', '--ff-only', 'refs/remotes/origin/main']);
-  if (merged.status !== 0) fail('UPDATE-MERGE', `The fast-forward could not complete. No reset or forced update was attempted.\n${merged.stderr.trim()}`);
-  console.log(merged.stdout.trim());
+if (process.argv.includes('--update') && live.occupied) fail('UPDATE-RUNNING', stopInstruction);
+let updated = false;
+if (!live.occupied && !offline) {
+  try { updated = updateSource(root, { required: process.argv.includes('--update') }); }
+  catch (cause) { fail(cause.code ?? 'UPDATE-GIT', cause.message); }
+}
+if (updated) {
   release();
-  const child = spawn(process.execPath, [fileURLToPath(import.meta.url), ...process.argv.slice(2).filter(arg => arg !== '--update')], { cwd: root, stdio: 'inherit', env: process.env });
+  const child = spawn(process.execPath, [fileURLToPath(import.meta.url), ...process.argv.slice(2).filter(arg => arg !== '--update'), '--offline'], { cwd: root, stdio: 'inherit', env: process.env });
   // Keep terminal Stop/Ctrl+C attached to the restarted launcher, not an orphan child.
   process.removeAllListeners('SIGINT'); process.removeAllListeners('SIGTERM');
   process.once('SIGINT', () => child.kill('SIGINT')); process.once('SIGTERM', () => child.kill('SIGTERM'));
@@ -113,6 +103,7 @@ function openBrowser(buildId) {
 if (live.occupied) {
   if (!live.data || live.data.checkoutId !== state.checkoutId || live.data.sourceId !== state.sourceId || live.data.buildId !== output?.buildId || !buildMatches(stamp, state, output)) fail('APP-STALE', `A different, older or unverified server owns ${url}.\n${stopInstruction}`);
   console.log(`gsnv-paint is already running at ${origin + localAppPath(output.buildId)} (verified ${version}).`);
+  if (!offline) console.log('Save your projects and stop the running launcher before restarting to check for updates.');
   release();
   openBrowser(output.buildId);
 } else {
@@ -124,7 +115,7 @@ if (live.occupied) {
   }
   if (!ready) {
     console.log('Installing locked dependencies. The first launch or a changed lockfile needs a network connection…');
-    const install = spawnSync('npm ci --no-audit --no-fund', { cwd: root, stdio: 'inherit', shell: true });
+    const install = spawnSync('npm ci --include=dev --no-audit --no-fund', { cwd: root, stdio: 'inherit', shell: true });
     if (install.status !== 0) fail('BOOT-NETWORK', 'Installing dependencies failed; npm printed the cause above. Check the connection, then start again.');
   }
   await writeLocalState(root, 'dependencies', { schema: 1, dependencyId: state.dependencyId, installedLockId: await installedLockId(root) });

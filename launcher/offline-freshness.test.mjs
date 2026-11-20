@@ -22,8 +22,8 @@ async function launch(root) { const run = start(root); try { await ready(run); r
 async function fixture() {
   const root = await mkdtemp(join(tmpdir(), 'gsnv-launcher-current-'));
   for (const dir of ['src', 'public', 'dev', 'launcher']) await mkdir(join(root, dir));
-  await symlink(join(repository, 'node_modules'), join(root, 'node_modules'), 'dir');
-  for (const file of ['start.mjs', 'freshness.mjs', 'local-app.mjs']) await copyFile(join(repository, 'launcher', file), join(root, 'launcher', file));
+  await symlink(join(repository, 'node_modules'), join(root, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
+  for (const file of ['start.mjs', 'freshness.mjs', 'local-app.mjs', 'update.mjs']) await copyFile(join(repository, 'launcher', file), join(root, 'launcher', file));
   await copyFile(join(repository, 'package-lock.json'), join(root, 'package-lock.json'));
   await copyFile(join(repository, 'package.json'), join(root, 'package.json'));
   await writeFile(join(root, 'index.html'), '<!doctype html><html><head><meta name="application-name" content="gsnv-paint"><script type="module" src="/src/main.js"></script></head><body></body></html>');

@@ -8,7 +8,7 @@ const start = fileURLToPath(new URL('./start.mjs', import.meta.url));
 const port = 24174; // Not the user's port: a copy of the app they left running must not satisfy this test.
 const env = { ...process.env, GSNV_PAINT_PORT: String(port), GSNV_PAINT_NO_OPEN: '1' };
 function launch(args = []) {
-  const child = spawn(process.execPath, [start, ...args], { env, stdio: ['ignore', 'pipe', 'inherit'] });
+  const child = spawn(process.execPath, [start, '--offline', ...args], { env, stdio: ['ignore', 'pipe', 'inherit'] });
   let output = ''; child.stdout.on('data', chunk => { output += chunk; });
   return { child, output: () => output, exited: new Promise(resolve => child.on('exit', resolve)) };
 }

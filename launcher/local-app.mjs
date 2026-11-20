@@ -32,7 +32,8 @@ export function localAppPlugin({ buildId, sourceId, checkoutId, revision }) {
       const index = resolve(server.config.root, server.config.build.outDir, 'index.html');
       server.middlewares.use((request, response, next) => {
         const path = (request.url ?? '').split('?')[0];
-        if (!path.startsWith(PREFIX)) return next();
+        const home = path === '/' || path === '/index.html';
+        if (!home && !path.startsWith(PREFIX)) return next();
         const send = (status, content, mime = 'text/plain; charset=utf-8') => {
           response.writeHead(status, { ...HEADERS, 'Content-Type': mime, 'Content-Length': Buffer.byteLength(content) });
           response.end(request.method === 'HEAD' ? undefined : content);
@@ -42,6 +43,12 @@ export function localAppPlugin({ buildId, sourceId, checkoutId, revision }) {
         }
         if (request.method !== 'GET' && request.method !== 'HEAD') {
           response.setHeader('Allow', 'GET, HEAD'); send(405, 'This local endpoint is read-only.'); return;
+        }
+        // Bookmarks/manual root visits must use local mode too. A previous worker
+        // may still intercept its cached root before this server; run commands
+        // always open the uncached versioned entry directly for that reason.
+        if (home || (path !== entry && /^\/__gsnv-local__\/start\/[a-f0-9]{64}$/.test(path))) {
+          response.setHeader('Location', entry); send(307, 'Opening the current local Paint build.'); return;
         }
         if (path === `${PREFIX}status`) {
           response.setHeader('X-GSNV-Local-Build', buildId);

@@ -73,7 +73,7 @@ Document supports styled text, lists, pictures and tables, with editable project
 
 ## Start
 
-1. Download or clone this folder and keep it complete.
+1. Pull the current `main` branch, or [download and extract the latest complete folder](https://github.com/goosnav/gsnv-paint/archive/refs/heads/main.zip). Keep the source files and launchers together; replacing only a command file cannot update the application.
 2. Start the launcher for your system:
    - **macOS:** double-click `run.command`.
    - **Windows:** double-click `run.cmd`. Running `run.ps1` in PowerShell does the same.
@@ -81,33 +81,34 @@ Document supports styled text, lists, pictures and tables, with editable project
 3. Your browser opens the current build at `http://127.0.0.1:24173/__gsnv-local__/start/…`. If it does not, copy the full address printed in the terminal. The footer should show **Local · revision**.
 4. Keep the launcher window open while you work. Press Ctrl+C in it, or close it, to stop.
 
-Starting the launcher again reopens a matching running copy. If another build or folder owns the port, it asks you to save work and stop that launcher before starting the current one. It does not terminate another process or silently fall back to the old app.
+Starting the launcher again reopens a matching running copy. Save work and stop it before restarting to check for source updates. If another build or folder owns the port, the launcher asks you to stop that copy before starting the current one. It does not terminate another process or silently fall back to the old app. Network requests to the root address, `index.html` and older versioned launcher bookmarks redirect to the current local entry. An old worker can still serve a cached root before the server receives it, so use the full address opened/printed by the launcher.
 
 ### Update to the latest features
 
 1. Save your projects, then stop the running launcher with Ctrl+C in its terminal.
-2. For a Git checkout on macOS, double-click **`update.command`**. On Windows, double-click **`update.cmd`** (or run `run.cmd --update`); on Linux, run `./run.sh --update`.
-3. The updater downloads `origin/main`, accepts only a clean fast-forward from the official repository, then launches the updated application. Local code edits, a different branch or diverging history produce an explanation instead of being overwritten.
-4. If you downloaded a ZIP, download and extract the current complete repository folder, then start its `run.command`. The older ZIP launcher cannot download revisions for you. Saved project files and the browser's recovery data are separate from that folder.
+2. Start **`run.command`**, **`run.cmd`**, or **`./run.sh`** as usual. A clean Git checkout on the official `main` branch checks GitHub automatically, with a ten-second network timeout, and fast-forwards before building.
+3. If the network check fails, or the checkout has local edits, another branch or diverging history, the launcher reports that it is using installed source. To require an update instead, use **`update.command`**, **`update.cmd`**, or **`./run.sh --update`**. That check allows 45 seconds and stops on failure. Neither mode discards your source changes.
+4. ZIP downloads remain snapshots. Replace the complete source folder with a fresh download and start the launcher inside the new folder. Saved project files and the browser's recovery data are separate from the source folder. The old command file already on your computer must be replaced once to receive these launcher fixes.
 
-Normal launches use your installed source revision without checking GitHub. Use the update command when you want the latest features. A source archive or old Git checkout cannot acquire new features just by rebuilding.
+Use **`--offline`** to skip update checks deliberately: `./run.command --offline` on macOS, `run.cmd --offline` on Windows, or `./run.sh --offline` on Linux. After initial installation, the current source runs without internet access. Do not combine `--offline` and `--update`.
 
 ### Processing on your computer
 
 The local launcher serves the same production application and all nine workspaces as Cloudflare. Both versions perform editing in the browser on your machine: CAD rendering uses WebGL when supported; CAD calculations, RAW development, Python and image effects use their local worker/WASM engines. Cloudflare does not perform those calculations for the hosted app.
 
-The local entry loads those engines from the local server and skips downloading a second full application copy into the browser's offline cache. Keep the launcher running; internet access is unnecessary after installation unless you explicitly update. The app retains browser and hardware limits, and existing single-threaded operations remain single-threaded.
+The local entry loads those engines from the local server and skips downloading a second full application copy into the browser's offline cache. Keep the launcher running; editing does not require internet access after installation. The app retains browser and hardware limits, and existing single-threaded operations remain single-threaded.
 
 ## What the first start does
 
 | Step | Needs network | Where it goes |
 |---|---|---|
-| Finds Node.js 22.12 or newer. If none is installed, downloads Node.js 24.22.3 from nodejs.org and checks it against a pinned SHA-256. | only when downloading | the data folder below |
-| Installs the locked dependencies with `npm ci`. | yes | `node_modules/` in this folder |
+| Finds working Node.js 22.12 or newer **and npm**. If either is unavailable, downloads Node.js 24.22.3 from nodejs.org and checks it against a pinned SHA-256. | only when downloading | the data folder below |
+| Checks official `main` in a clean Git checkout, unless `--offline` is supplied. | for updates; a failed check can fall back | this source folder |
+| Installs the locked dependencies, including the local build tools, with `npm ci --include=dev`. | yes | `node_modules/` in this folder |
 | Builds the application. | no | `dist/` in this folder |
 | Serves `dist/` to this computer only and opens the browser. | no | - |
 
-Later starts verify source/dependency content and build integrity, skip work whose inputs did not change, and work offline. Preserved or misleading file timestamps cannot keep an obsolete build marked fresh.
+Later starts verify source/dependency content and build integrity, skip work whose inputs did not change, and can work offline. Preserved or misleading file timestamps cannot keep an obsolete build marked fresh.
 
 ## Where things are stored
 
@@ -146,10 +147,10 @@ Run the following **in the same terminal/environment that started gsnv-paint** (
 
 ```sh
 uname -s
-curl -I --max-time 3 http://127.0.0.1:24173/
+curl -IL --max-time 3 http://127.0.0.1:24173/
 ```
 
-- **HTTP 200 in the launcher terminal:** the server is working in that environment. If Safari still cannot connect, its `127.0.0.1` belongs to a different OS/network namespace. The simplest fix is to open this repository in **Mac Terminal** and run `./run.command` (or double-click it in Finder). If gsnv-paint must run in a remote Linux/VM/SSH environment, start it there with `./run.sh --no-browser`, then, **on the Mac running Safari**, run `./connect-mac.sh user@server`. This creates an SSH port forward, verifies the application page and opens Safari at the usual URL. It requires SSH access to that server. Do not expose the server on all interfaces: remote HTTP origins may lack secure-context features used by CAD/offline functionality.
+- **HTTP 307 followed by 200 in the launcher terminal:** the root redirects to the current verified local entry, and the server is working in that environment. If Safari still cannot connect, its `127.0.0.1` belongs to a different OS/network namespace. Open this repository in **Mac Terminal** and run `./run.command` (or double-click it in Finder). If gsnv-paint must run in a remote Linux/VM/SSH environment, start it there with `./run.sh --no-browser`, then, **on the Mac running Safari**, run `./connect-mac.sh user@server`. This creates an SSH port forward, verifies the application page and opens Safari at the usual URL. It requires SSH access to that server. Keep the server bound to loopback; remote HTTP origins may lack secure-context features used by CAD/offline functionality.
 - **Connection refused/timed out in the launcher terminal:** that server is no longer listening in the environment where it was started. Keep the launcher process open and inspect the error output; `lsof -nP -iTCP:24173 -sTCP:LISTEN` (macOS) or `ss -ltnp` (Linux) can show what is listening.
 - **`run.command: command not found`:** terminal commands in the current directory need `./run.command` rather than `run.command`. The shell launcher is `./run.sh`; on Windows use `run.cmd`.
 

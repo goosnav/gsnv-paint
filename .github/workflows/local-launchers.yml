@@ -1,0 +1,45 @@
+name: Local launchers
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-launch:
+    name: Native launcher / ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: source tree/gsnv paint
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Exercise quoting in the complete wrapper -> Node -> build path.
+          path: source tree/gsnv paint
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: source tree/gsnv paint/package-lock.json
+      - run: npm ci --include=dev --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Launcher freshness, update, and routing regressions
+        run: npm run test:launcher
+      - name: Native wrapper and current editor in a real browser
+        run: npm run test:launcher:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: local-launcher-${{ matrix.os }}
+          path: source tree/gsnv paint/test-results/local-launchers
+          if-no-files-found: ignore

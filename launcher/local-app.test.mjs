@@ -46,15 +46,23 @@ test('local entry serves the same current bundle outside old cached roots and re
       assert.equal(response.headers.get('clear-site-data'), null);
     }
     assert.equal(await (await fetch(origin + '/assets/current.js')).text(), 'normal static route');
-    assert.equal(await (await fetch(origin + '/')).text(), 'normal static route');
+    for (const path of ['/', '/index.html', '/?old-bookmark=1', localAppPath('d'.repeat(64))]) {
+      const redirected = await fetch(origin + path, { redirect: 'manual' });
+      assert.equal(redirected.status, 307);
+      assert.equal(redirected.headers.get('location'), localAppPath(meta.buildId));
+      assert.equal(redirected.headers.get('cache-control'), 'no-store');
+      const current = await fetch(origin + path);
+      assert.equal(current.url, origin + localAppPath(meta.buildId));
+      assert.match(await current.text(), /name="gsnv-local-runtime" content="1"/);
+    }
     const head = await fetch(origin + localAppPath(meta.buildId), { method: 'HEAD' });
     assert.equal(head.status, 200); assert.equal(await head.text(), '');
   });
 });
 
-test('local entry refuses a stale URL or output changed under a running launcher', async () => {
+test('local entry refuses invalid routes or output changed under a running launcher', async () => {
   await fixture(async ({ root, origin }) => {
-    const stale = await fetch(origin + localAppPath('d'.repeat(64)));
+    const stale = await fetch(origin + '/__gsnv-local__/start/not-a-build');
     assert.equal(stale.status, 409); assert.match(await stale.text(), /Save any open work/);
     await writeFile(join(root, 'dist/index.html'), html.replaceAll(meta.buildId, 'e'.repeat(64)));
     const changed = await fetch(origin + localAppPath(meta.buildId));
@@ -70,6 +78,7 @@ test('local endpoints reject foreign hosts and writes, and never interpolate inv
     assert.equal(post.status, 405); assert.equal(post.headers.get('allow'), 'GET, HEAD');
     const foreign = await new Promise((resolve, reject) => get({ hostname: '127.0.0.1', port, path: '/__gsnv-local__/status', headers: { Host: 'example.com' } }, response => { response.resume(); resolve(response.statusCode); }).on('error', reject));
     assert.equal(foreign, 403);
+    const homePost = await fetch(origin + '/', { method: 'POST' }); assert.equal(homePost.status, 405);
   });
   for (const change of [{ buildId: '../index' }, { sourceId: '' }, { checkoutId: 'bad' }, { revision: '"><script>' }, { revision: 'x'.repeat(65) }])
     assert.throws(() => localAppPlugin({ ...meta, ...change }), TypeError);

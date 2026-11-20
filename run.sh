@@ -1,6 +1,6 @@
 #!/bin/sh
 # gsnv-paint launcher for macOS and Linux.
-# Uses the installed Node.js when it is new enough; otherwise downloads the pinned,
+# Uses the installed Node.js/npm when usable; otherwise downloads the pinned,
 # checksum-verified copy listed in launcher/node-runtime.sha256 into the user's
 # application-data folder. Then runs launcher/start.mjs, which opens the browser.
 set -eu
@@ -8,10 +8,15 @@ cd "$(dirname "$0")"
 
 fail() { printf '\ngsnv-paint [%s]: %s\n' "$1" "$2" >&2; exit 1; }
 usable() { "$1" launcher/start.mjs --check >/dev/null 2>&1; }
+npm_usable() { "$1" --version >/dev/null 2>&1; }
+check_only=0
+for argument in "$@"; do
+  [ "$argument" != --check ] || check_only=1
+done
 
 [ -f launcher/start.mjs ] || fail LAUNCH-ROOT "launcher/start.mjs is missing. Keep run.sh inside the complete gsnv-paint folder."
 
-if command -v node >/dev/null 2>&1 && usable node; then
+if command -v node >/dev/null 2>&1 && usable node && { [ "$check_only" = 1 ] || npm_usable npm; }; then
   exec node launcher/start.mjs "$@"
 fi
 
@@ -33,8 +38,11 @@ name=${archive%.tar.gz}
 version=${name#node-}; version=${version%%-*}
 runtime="$data/runtime"
 node_home="$runtime/$name"
+runtime_usable() {
+  usable "$node_home/bin/node" && { [ "$check_only" = 1 ] || PATH="$node_home/bin:$PATH" npm_usable "$node_home/bin/npm"; }
+}
 
-if ! usable "$node_home/bin/node"; then
+if ! runtime_usable; then
   echo "Downloading Node.js $version for gsnv-paint. This happens once and needs a network connection…"
   partial="$runtime/partial"
   mkdir -p "$runtime" && rm -rf "$partial" && mkdir "$partial" || fail BOOT-PERMISSION "Cannot write to $runtime."
@@ -55,7 +63,7 @@ if ! usable "$node_home/bin/node"; then
   rm -rf "$node_home"
   mv "$partial/$name" "$node_home"
   rm -rf "$partial"
-  usable "$node_home/bin/node" || fail LAUNCH-PLATFORM "The downloaded Node.js does not run on this system. Install Node.js 22.12 or newer, then start again."
+  runtime_usable || fail LAUNCH-PLATFORM "The downloaded Node.js and npm do not run on this system. Install Node.js 22.12 or newer with npm, then start again."
 fi
 
 PATH="$node_home/bin:$PATH"
